@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oliverbooth.dev", "oliverbooth.dev\oliverbooth.dev.csproj", "{A58A6FA3-480C-400B-822A-3786741BF39C}"
 EndProject
@@ -14,6 +14,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scss", "scss", "{822F528E-3CA7-4B7D-9250-BD248ADA7BAE}"
 	ProjectSection(SolutionItems) = preProject
 		src\scss\app.scss = src\scss\app.scss
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-4F47-809D-8BBBA6E0A048}"
+	ProjectSection(SolutionItems) = preProject
+		src\ts\app.ts = src\ts\app.ts
 	EndProjectSection
 EndProject
 Global
