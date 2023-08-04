@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oliverbooth.dev", "oliverbooth.dev\oliverbooth.dev.csproj", "{A58A6FA3-480C-400B-822A-3786741BF39C}"
 EndProject
@@ -6,6 +6,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 		package.json = package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8A323E64-E41E-4780-99FD-17BF58961FB5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scss", "scss", "{822F528E-3CA7-4B7D-9250-BD248ADA7BAE}"
+	ProjectSection(SolutionItems) = preProject
+		src\scss\app.scss = src\scss\app.scss
 	EndProjectSection
 EndProject
 Global
@@ -18,5 +25,9 @@ Global
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{822F528E-3CA7-4B7D-9250-BD248ADA7BAE} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
+		{BB9F76AC-292A-4F47-809D-8BBBA6E0A048} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
 	EndGlobalSection
 EndGlobal
