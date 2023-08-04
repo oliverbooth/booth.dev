@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace oliverbooth.dev.Pages;
+namespace OliverBooth.Pages;
 
 public class IndexModel : PageModel
 {
