@@ -1,7 +1,23 @@
+using Microsoft.AspNetCore.Localization;
+using OliverBooth.Middleware;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorPages();
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddRazorPages().AddViewLocalization().AddDataAnnotationsLocalization();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+var supportedCultures = new[]
+{
+    CultureInfo.GetCultureInfo("en"),
+    CultureInfo.GetCultureInfo("fr")
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(supportedCultures[0]);
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 
 WebApplication app = builder.Build();
 
@@ -17,6 +33,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthorization();
+
+app.UseRequestLocalization(options =>
+{
+    options.ApplyCurrentCultureToResponseHeaders = true;
+    options.DefaultRequestCulture = new RequestCulture(supportedCultures[0]);
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+    options.RequestCultureProviders.Insert(0, new RouteCultureProvider(supportedCultures[0]));
+});
+app.UseCultureRedirect();
+app.MapControllerRoute("default", "{culture=en}/{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
