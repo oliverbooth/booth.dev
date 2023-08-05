@@ -14,4 +14,9 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="X10D" Version="3.2.2"/>
+        <PackageReference Include="X10D.Hosting" Version="3.2.2"/>
+    </ItemGroup>
+
 </Project>
