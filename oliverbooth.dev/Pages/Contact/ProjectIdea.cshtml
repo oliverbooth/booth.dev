@@ -1,0 +1,58 @@
+@page "/{culture=en}/contact/project-idea"
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<h1 class="display-4">Contact</h1>
+<p class="lead">Project Idea</p>
+<p>
+    I'm always looking for new projects to work on, and I'm open to suggestions. If you have an idea for a project that
+    you'd like to see me work on, please feel free to get in touch. If you'd like to collaborate, please
+    <strong>do not</strong> use this form, instead, please use <a asp-page="/contact/jobopportunity">this one</a>.
+</p>
+<p>
+    Please note that by submitting an idea through the form on this page, you acknowledge and agree that any
+    intellectual property rights associated with the idea, including but not limited to copyright, patent, or any other
+    proprietary rights, shall be immediately and irrevocably transferred to me. You understand that this transfer of
+    intellectual property rights grants me the unrestricted and exclusive right to use, modify, reproduce, distribute,
+    disclose, or otherwise exploit the idea for any purpose, without the obligation to provide credit or compensation to
+    you. This includes the right to file for intellectual property protection or pursue commercial opportunities derived
+    from the idea. By submitting the idea, you further confirm that it is your original work and does not infringe upon
+    the rights of any third party.
+</p>
+<p>
+    If you're happy with all that, please fill out the form below.
+</p>
+
+<form method="post">
+    <input type="hidden" name="contact-type" value="project-idea">
+    
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="project-title">Your Name</label>
+        <input type="text" class="form-control" id="name" name="project-title" placeholder="Bob">
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="project-title">Your Email Adddress</label>
+        <input type="email" class="form-control" id="email" name="project-title" placeholder="bob@example.com">
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="project-title">Project Title (If Applicable)</label>
+        <input type="text" class="form-control" id="project-title" name="project-title" placeholder="Title">
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="project-description">Project Description</label>
+        <textarea class="form-control" id="project-description" name="project-description" rows="5" required placeholder="Explain the idea here"></textarea>
+    </div>
+
+    <div class="form-check" style="margin-top: 10px;">
+        <input class="form-check-input" type="checkbox" value="" id="agreement-checkbox" required>
+        <label class="form-check-label" for="agreement-checkbox">
+            I acknowledge and agree to the transfer of intellectual property rights as described above.
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+</form>

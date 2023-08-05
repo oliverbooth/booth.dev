@@ -1,0 +1,39 @@
+﻿@page "/{culture=en}/contact/other"
+
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<h1 class="display-4">Contact</h1>
+<p class="lead">Other</p>
+<p>
+    Thanks for getting in touch! While I do my best to read to all inquiries, I cannot guarantee that I will be able to
+    respond to your message. Nevertheless, I appreciate you taking the time to reach out to me and I will respond if I
+    can.
+</p>
+
+<form>
+    <input type="hidden" name="contact-type" value="other">
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="your-name">Your Name</label>
+        <input type="text" class="form-control" id="your-name" name="your-name" placeholder="Who are you?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="your-email">Your Email Address</label>
+        <input type="email" class="form-control" id="your-email" name="your-email" placeholder="How can I reach you?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="subject">Subject</label>
+        <input type="text" class="form-control" id="subject" name="subject" placeholder="What's the gist?" maxlength="100" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="message">Message</label>
+        <textarea class="form-control" id="message" name="message" rows="5" required placeholder="What's on your mind?"></textarea>
+    </div>
+
+    <button asp-action="Submit" class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+</form>

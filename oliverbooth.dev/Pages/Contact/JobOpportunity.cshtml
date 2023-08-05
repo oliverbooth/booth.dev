@@ -1,0 +1,51 @@
+@page "/{culture=en}/contact/job-opportunity"
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<h1 class="display-4">Contact</h1>
+<p class="lead">Job Opportunity</p>
+<p>
+    I'm honoured that you would consider me for a job opportunity. I have some prerequisites that I'd like to make you
+    aware of before you contact me. Please read the following carefully.
+</p>
+<p>
+    If you are not based in South East Wales UK, and your work is not 100% remote, I am not interested. I will not be
+    relocating for any job, nor will I be commuting to any office if it's an unreasonable distance away.
+</p>
+
+<form method="post">
+    <input type="hidden" name="contact-type" value="job-opportunity">
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="your-name">Your Name</label>
+        <input type="text" class="form-control" id="your-name" name="your-name" placeholder="Who are you?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="your-email">Your Email Address</label>
+        <input type="email" class="form-control" id="your-email" name="your-email" placeholder="How can I reach you?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="company-name">Company Name</label>
+        <input type="text" class="form-control" id="company-name" name="company-name" placeholder="Who do you represent?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="position-title">Job Position Title</label>
+        <input type="text" class="form-control" id="position-title" name="position-title" placeholder="e.g. C# Software Developer" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="position-description">Description</label>
+        <textarea class="form-control" id="position-description" name="position-description" rows="5" required placeholder="Explain the duties of the role and a bit about the company."></textarea>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="starting-salary">Starting Salary</label>
+        <input type="number" class="form-control" id="starting-salary" name="starting-salary" placeholder="e.g. £30,000" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+</form>
