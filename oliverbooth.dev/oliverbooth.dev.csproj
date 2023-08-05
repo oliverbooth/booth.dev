@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <RootNamespace>OliverBooth</RootNamespace>
+        <TargetCulture>en</TargetCulture>
+        <UICulture>en</UICulture>
     </PropertyGroup>
 
     <ItemGroup>
