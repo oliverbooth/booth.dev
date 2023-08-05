@@ -1,7 +1,9 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 using OliverBooth;
 using OliverBooth.Middleware;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -22,6 +24,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 });
+
+builder.Services.Configure<LocalizationOptions>(options => options.ResourcesPath = "Resources");
 
 WebApplication app = builder.Build();
 

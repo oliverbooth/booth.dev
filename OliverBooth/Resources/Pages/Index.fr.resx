@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <data name="HomeTitle" xml:space="preserve">
+        <value>Salut, je suis Oliver.</value>
+    </data>
+    <data name="HomeSubtitle" xml:space="preserve">
+        <value>Je suis un passionné de technologie, un buveur de café, et un developpeur de logiciels.</value>
+    </data>
+    <data name="Intro1" xml:space="preserve">
+        <value>Je me concentre principalement sur C#, bien que j'ai également expérimenté plusieurs autres langues telles que Java, Kotlin, VB, C / C++, Python et d'autres. Au fil des ans, j'ai constitué une collection de projets. Certains dont je suis extrêmement fier, et d'autres que j'ai tranquillement abandonnés et enterrés. Je travaille actuellement sur quelques projets que j'espère publier dans un proche avenir, mais en attendant, n'hésitez pas à consulter certains de mes &lt;a asp-page="/Projects/Index"&gt;travaux précédents.&lt;/a&gt;</value>
+    </data>
+</root>

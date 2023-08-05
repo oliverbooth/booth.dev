@@ -1,0 +1,75 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@{
+    CultureInfo? requestCulture = Context.Features.Get<IRequestCultureFeature>()?.RequestCulture.Culture;
+    string culture = (requestCulture ?? CultureInfo.CurrentCulture).TwoLetterISOLanguageName;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Oliver Booth</title>
+    <link rel="shortcut icon" href="~/img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" integrity="sha512-Z/def5z5u2aR89OuzYcxmDJ0Bnd5V1cKqBEbvLOiUNWdg9PQeXVvXLI90SE4QOHGlfLqUnDNVAYyZi8UwUTmWQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/app.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/oliverbooth.dev.styles.css" asp-append-version="true"/>
+</head>
+<body>
+<header class="container" style="margin-top: 20px;">
+    <div id="site-title" class="text-center">
+        <h1>
+            <a href="/"><img src="~/img/ob-256x256.png" alt="Oliver Booth" height="128"> Oliver Booth</a>
+        </h1>
+    </div>
+</header>
+<nav>
+    <ul class="site-nav">
+        <li>
+            <a asp-page="/index" asp-route-culture="@culture">@Localizer["Home"]</a>
+        </li>
+        <li>
+            <a href="https://blog.oliverbooth.dev">Blog</a>
+        </li>
+        <li>
+            <a asp-page="/tutorials/index" asp-route-culture="@culture">@Localizer["Tutorials"]</a>
+        </li>
+        <li>
+            <a asp-page="/projects/index" asp-route-culture="@culture">@Localizer["Projects"]</a>
+        </li>
+        <li>
+            <a asp-page="/contact/index" asp-route-culture="@culture">@Localizer["Contact"]</a>
+        </li>
+        <li>
+            <a asp-page="/donate" asp-route-culture="@culture">@Localizer["Donate"]</a>
+        </li>
+    </ul>
+</nav>
+<hr class="page-separator"/>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="footer text-muted">
+    <div class="container text-center">
+        &copy; @DateTime.UtcNow.Year &bullet; <a asp-area="" asp-page="/privacy/index" asp-route-culture="@culture">@Localizer["Privacy"]</a>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js" integrity="sha512-ToL6UYWePxjhDQKNioSi4AyJ5KkRxY+F1+Fi7Jgh0Hp5Kk2/s8FD7zusJDdonfe5B00Qw+B8taXxF6CFLnqNCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script src="~/js/app.min.js" asp-append-version="true"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

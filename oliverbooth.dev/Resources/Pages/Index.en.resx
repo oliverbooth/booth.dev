@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root>
-    <data name="HomeTitle" xml:space="preserve">
-        <value>Hi, I'm Oliver.</value>
-    </data>
-    <data name="HomeSubtitle" xml:space="preserve">
-        <value>I'm a tech enthusiast, coffee drinker, and software developer.</value>
-    </data>
-</root>

@@ -1,10 +1,10 @@
-@page "/{culture=en}/error/{code:int?}"
+﻿@page "/{culture=en}/error/{code:int?}"
 @model OliverBooth.Pages.ErrorModel
 @{
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
+<h1 class="text-danger">Error @(Model.StatusCode != 200 ? Model.StatusCode.ToString() : "")</h1>
 <h2 class="text-danger">An error occurred while processing your request.</h2>
 
 @if (Model.ShowRequestId)

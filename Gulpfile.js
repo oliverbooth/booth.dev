@@ -6,7 +6,7 @@ const ts = require('gulp-typescript');
 const terser = require('gulp-terser');
 
 const srcDir = 'src';
-const destDir = 'oliverbooth.dev/wwwroot';
+const destDir = 'OliverBooth/wwwroot';
 
 function compileSCSS() {
     return gulp.src(`${srcDir}/scss/**/*.scss`)
