@@ -2,9 +2,25 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 
+<h1 class="display-4">@Localizer["HomeTitle"]</h1>
+<p class="lead">@Localizer["HomeSubtitle"]</p>
 
+<p>
+    My primary focus is C#, though I have dabbled in several other languages such as Java, Kotlin, VB, C/C++,
+    Python, and others. Over the years I've built up a collection of projects. Some of which I'm extremely proud of,
+    and others I've quietly abandoned and buried. I'm currently working on a few projects that I hope to release in
+    the near future, but in the meantime, feel free to check out some of my <a asp-page="/Projects/Index">previous work.</a>
+</p>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<p>
+    I've also written a few <a asp-page="/tutorials/index">tutorials</a> on various topics, usually involving
+    information not readily available elsewhere. I hope you find them useful.
+</p>
+
+<p>
+    If you want a general overview of stuff I've made, check out my <a href="https://github.com/oliverbooth">GitHub</a>,
+    <a href="https://oliverbooth.itch.io">itch.io</a>, and
+    <a href="https://play.google.com/store/apps/dev?id=9010459220239503006">Google Play</a>.
+</p>
+
+<p>If you'd like to get in touch, you can do so by <a asp-page="/contact/index">clicking here</a>.</p>
