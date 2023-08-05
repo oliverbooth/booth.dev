@@ -1,9 +1,13 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using OliverBooth;
 using OliverBooth.Middleware;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddRazorPages().AddViewLocalization().AddDataAnnotationsLocalization();
+
+builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var supportedCultures = new[]
@@ -42,6 +46,8 @@ app.UseRequestLocalization(options =>
     options.SupportedUICultures = supportedCultures;
     options.RequestCultureProviders.Insert(0, new RouteCultureProvider(supportedCultures[0]));
 });
+
+app.MapControllers();
 app.UseCultureRedirect();
 app.MapControllerRoute("default", "{culture=en}/{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
