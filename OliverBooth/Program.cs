@@ -1,4 +1,12 @@
+using NLog.Extensions.Logging;
+using OliverBooth.Services;
+using X10D.Hosting.DependencyInjection;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddNLog();
+builder.Services.AddHostedSingleton<LoggingService>();
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
