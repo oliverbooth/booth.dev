@@ -1,12 +1,13 @@
-﻿@page "/{culture=en}/donate"
-@using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
+﻿@page
 @{
     ViewData["Title"] = "Donate";
 }
 
-<h1 class="display-4">@Localizer["Donate"]</h1>
-<p>@Localizer["DonatePart1"]</p>
+<h1 class="display-4">Donate</h1>
+<p>
+    If you like what I do and would like to donate money to me and fund my coffee addiction, there are a few options for
+    you!
+</p>
 
 <p>
     <script type="text/javascript" src="https://storage.ko-fi.com/cdn/widget/Widget_2.js"></script>
@@ -19,7 +20,7 @@
     </a>
 </p>
 
-<p>@Localizer["DonatePart2"]</p>
+<p>I also accept cryptocurrency donations.</p>
 
 <ul>
     <li>BTC: 1LmXvavJr1omscfkXjp7A4VyNf3XhKP9JK</li>

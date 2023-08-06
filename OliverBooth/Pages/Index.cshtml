@@ -1,11 +1,14 @@
-@page "/{culture=en}"
-@using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
+@page
 
-<h1 class="display-4">@Localizer["HomeTitle"]</h1>
-<p class="lead">@Localizer["HomeSubtitle"]</p>
+<h1 class="display-4">Hi, I'm Oliver.</h1>
+<p class="lead">I'm a tech enthusiast, coffee drinker, and software developer.</p>
 
-<p>@Localizer.GetHtml("Intro1")</p>
+<p>
+    My primary focus is C#, though I have dabbled in several other languages such as Java, Kotlin, VB, C/C++, Python,
+    and others. Over the years I've built up a collection of projects. Some of which I'm extremely proud of, and others
+    I've quietly abandoned and buried. I'm currently working on a few projects that I hope to release in the near
+    future, but in the meantime, feel free to check out some of my <a asp-page="/Projects/Index">previous work.</a>
+</p>
 
 <p>
     I've also written a few <a asp-page="/tutorials/index">tutorials</a> on various topics, usually involving
