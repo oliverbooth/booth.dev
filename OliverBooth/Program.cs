@@ -1,13 +1,17 @@
 using NLog.Extensions.Logging;
+using OliverBooth.Data;
 using OliverBooth.Services;
 using X10D.Hosting.DependencyInjection;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddTomlFile("data/config.toml", true, true);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddNLog();
 builder.Services.AddHostedSingleton<LoggingService>();
 
+builder.Services.AddDbContextFactory<BlogContext>();
+builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

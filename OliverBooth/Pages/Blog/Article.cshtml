@@ -1,0 +1,9 @@
+﻿@page "/blog/{year:int}/{month:int}/{slug}"
+@model OliverBooth.Pages.Blog.Article
+
+@if (Model.Post is { } post)
+{
+    <h1>@post.Title</h1>
+    <p class="text-muted">@post.Published.ToString("MMMM dd, yyyy") &bull; @Model.Author?.Name</p>
+    @Html.Raw(Model.SanitizeContent(post.Body))
+}

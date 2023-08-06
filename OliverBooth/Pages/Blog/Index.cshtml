@@ -1,0 +1,16 @@
+﻿@page
+@using OliverBooth.Data.Blog
+@model OliverBooth.Pages.Blog.Index
+
+@foreach (BlogPost post in Model.BlogPosts)
+{
+    <h2>
+        <a asp-page="/blog/article" asp-route-year="@post.Published.Year" asp-route-month="@post.Published.Month.ToString().PadLeft(2, '0')" asp-route-slug="@post.Slug">@post.Title</a>
+    </h2>
+    <p class="text-muted">@post.Published.ToString("MMMM dd, yyyy") &bull; @Model.GetAuthor(post)?.Name</p>
+    <p>@Html.Raw(Model.SanitizeContent(Model.TrimContent(post.Body, out bool trimmed)))</p>
+    if (trimmed)
+    {
+        <p><a asp-page="/blog/article" asp-route-year="@post.Published.Year" asp-route-month="@post.Published.Month.ToString().PadLeft(2, '0')" asp-route-slug="@post.Slug">Read more...</a></p>
+    }
+}
