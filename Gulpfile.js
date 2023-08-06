@@ -24,5 +24,10 @@ function compileTS() {
         .pipe(gulp.dest(`${destDir}/js`));
 }
 
+function copyImages() {
+    return gulp.src(`${srcDir}/img/**/*.*`)
+        .pipe(gulp.dest(`${destDir}/img`));
+}
+
 exports.default = compileSCSS;
-exports.default = gulp.parallel(compileSCSS, compileTS);
+exports.default = gulp.parallel(compileSCSS, compileTS, copyImages);
