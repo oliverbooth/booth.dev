@@ -24,10 +24,22 @@ public sealed class BlogPost : IEquatable<BlogPost>
     public int Id { get; private set; }
 
     /// <summary>
+    ///     Gets or sets a value indicating whether the blog post is a redirect.
+    /// </summary>
+    /// <value><see langword="true" /> if the blog post is a redirect; otherwise, <see langword="false" />.</value>
+    public bool IsRedirect { get; set; }
+
+    /// <summary>
     ///     Gets or sets the date and time at which the blog post was published.
     /// </summary>
     /// <value>The publish timestamp.</value>
     public DateTimeOffset Published { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the redirect URL of the blog post.
+    /// </summary>
+    /// <value>The redirect URL.</value>
+    public string? RedirectUrl { get; set; }
 
     /// <summary>
     ///     Gets or sets the URL slug of the blog post.
