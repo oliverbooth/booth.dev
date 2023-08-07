@@ -1,4 +1,4 @@
-﻿namespace OliverBooth.Data.Blog;
+namespace OliverBooth.Data.Blog;
 
 /// <summary>
 ///     Represents a blog post.
@@ -40,6 +40,12 @@ public sealed class BlogPost : IEquatable<BlogPost>
     /// </summary>
     /// <value>The title.</value>
     public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the date and time at which the blog post was updated.
+    /// </summary>
+    /// <value>The update timestamp.</value>
+    public DateTimeOffset? Updated { get; set; }
 
     /// <summary>
     ///     Gets or sets the legacy WordPress ID of the blog post.

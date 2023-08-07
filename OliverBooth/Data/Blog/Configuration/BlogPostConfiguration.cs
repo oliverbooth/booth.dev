@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace OliverBooth.Data.Blog.Configuration;
@@ -19,6 +19,7 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.Slug).HasMaxLength(100).IsRequired();
         builder.Property(e => e.AuthorId).IsRequired();
         builder.Property(e => e.Published).IsRequired();
+        builder.Property(e => e.Updated).IsRequired(false);
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.Body).IsRequired();
     }
