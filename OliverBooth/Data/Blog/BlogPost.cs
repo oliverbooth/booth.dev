@@ -1,4 +1,4 @@
-namespace OliverBooth.Data.Blog;
+﻿namespace OliverBooth.Data.Blog;
 
 /// <summary>
 ///     Represents a blog post.
@@ -16,6 +16,12 @@ public sealed class BlogPost : IEquatable<BlogPost>
     /// </summary>
     /// <value>The body.</value>
     public string Body { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether comments are enabled for the blog post.
+    /// </summary>
+    /// <value><see langword="true" /> if comments are enabled; otherwise, <see langword="false" />.</value>
+    public bool EnableComments { get; set; } = true;
 
     /// <summary>
     ///     Gets the ID of the blog post.

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace OliverBooth.Data.Blog.Configuration;
@@ -24,5 +24,6 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.Body).IsRequired();
         builder.Property(e => e.IsRedirect).IsRequired();
         builder.Property(e => e.RedirectUrl).IsRequired(false);
+        builder.Property(e => e.EnableComments).IsRequired();
     }
 }
