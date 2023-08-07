@@ -1,3 +1,4 @@
+using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ namespace OliverBooth.Pages.Blog;
 public class Article : PageModel
 {
     private readonly IDbContextFactory<BlogContext> _dbContextFactory;
+    private readonly MarkdownPipeline _markdownPipeline;
 
-    public Article(IDbContextFactory<BlogContext> dbContextFactory)
+    public Article(IDbContextFactory<BlogContext> dbContextFactory, MarkdownPipeline markdownPipeline)
     {
         _dbContextFactory = dbContextFactory;
+        _markdownPipeline = markdownPipeline;
     }
 
     public Author Author { get; private set; }
@@ -28,7 +31,7 @@ public class Article : PageModel
             content = content.Replace("\n\n", "\n");
         }
 
-        return Markdig.Markdown.ToHtml(content.Trim());
+        return Markdown.ToHtml(content.Trim(), _markdownPipeline);
     }
 
     public IActionResult OnGet(int year, int month, int day, string slug)
