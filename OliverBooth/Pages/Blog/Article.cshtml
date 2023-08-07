@@ -1,9 +1,32 @@
 @page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
+@using Humanizer
 @model OliverBooth.Pages.Blog.Article
 
 @if (Model.Post is { } post)
 {
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="/blog/index">Blog</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@post.Title</li>
+        </ol>
+    </nav>
+
     <h1>@post.Title</h1>
-    <p class="text-muted">@post.Published.ToString("MMMM dd, yyyy") &bull; @Model.Author?.Name</p>
-    @Html.Raw(Model.SanitizeContent(post.Body))
+    <p class="text-muted">
+        <img class="blog-author-icon" src="https://gravatar.com/avatar/@Model.Author?.AvatarHash?s=28">
+        @Model.Author?.Name
+        &bull;
+        <abbr data-bs-toggle="tooltip" data-bs-title="@post.Published.ToString("f")">
+            @post.Published.Humanize()
+        </abbr>
+    </p>
+
+    <article>
+        @Html.Raw(Model.SanitizeContent(post.Body))
+    </article>
+
+    <hr>
+
 }
