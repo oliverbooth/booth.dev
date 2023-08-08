@@ -21,6 +21,7 @@
         <PackageReference Include="NLog" Version="5.2.3"/>
         <PackageReference Include="NLog.Extensions.Logging" Version="5.3.3"/>
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0"/>
+        <PackageReference Include="SmartFormat.NET" Version="3.2.2"/>
         <PackageReference Include="X10D" Version="3.2.2"/>
         <PackageReference Include="X10D.Hosting" Version="3.2.2"/>
     </ItemGroup>

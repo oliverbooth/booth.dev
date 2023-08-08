@@ -1,4 +1,6 @@
-﻿namespace OliverBooth.Data.Blog;
+using SmartFormat;
+
+namespace OliverBooth.Data.Blog;
 
 /// <summary>
 ///     Represents a blog post.
@@ -22,6 +24,24 @@ public sealed class BlogPost : IEquatable<BlogPost>
     /// </summary>
     /// <value><see langword="true" /> if comments are enabled; otherwise, <see langword="false" />.</value>
     public bool EnableComments { get; set; } = true;
+
+    /// <summary>
+    ///     Gets or sets the base URL of the Disqus comments for the blog post.
+    /// </summary>
+    /// <value>The Disqus base URL.</value>
+    public string? DisqusDomain { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the identifier of the Disqus comments for the blog post.
+    /// </summary>
+    /// <value>The Disqus identifier.</value>
+    public string? DisqusIdentifier { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the URL path of the Disqus comments for the blog post.
+    /// </summary>
+    /// <value>The Disqus URL path.</value>
+    public string? DisqusPath { get; set; }
 
     /// <summary>
     ///     Gets the ID of the blog post.
@@ -86,5 +106,38 @@ public sealed class BlogPost : IEquatable<BlogPost>
     public override int GetHashCode()
     {
         return Id;
+    }
+
+    /// <summary>
+    ///     Gets the Disqus identifier for the blog post.
+    /// </summary>
+    /// <returns>The Disqus identifier.</returns>
+    public string GetDisqusIdentifier()
+    {
+        return string.IsNullOrWhiteSpace(DisqusIdentifier) ? $"post-{Id}" : Smart.Format(DisqusIdentifier, this);
+    }
+
+    /// <summary>
+    ///     Gets the Disqus domain for the blog post.
+    /// </summary>
+    /// <returns>The Disqus domain.</returns>
+    public string GetDisqusDomain()
+    {
+        return string.IsNullOrWhiteSpace(DisqusDomain)
+            ? "https://oliverbooth.dev/blog"
+            : Smart.Format(DisqusDomain, this);
+    }
+
+    /// <summary>
+    ///     Gets the Disqus URL for the blog post.
+    /// </summary>
+    /// <returns>The Disqus URL.</returns>
+    public string GetDisqusUrl()
+    {
+        string path = string.IsNullOrWhiteSpace(DisqusPath)
+            ? $"{Published:yyyy/MM/dd}/{Slug}/"
+            : Smart.Format(DisqusPath, this);
+
+        return $"{GetDisqusDomain()}/{path}";
     }
 }

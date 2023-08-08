@@ -15,10 +15,6 @@
     var month = published.ToString("MM");
     var day = published.ToString("dd");
 
-    bool isLegacyPost = post.WordPressId is not null;
-    string disqusDomain = isLegacyPost ? "https://blog.oliverbooth.dev" : "https://oliverbooth.dev/blog";
-    string disqusId = isLegacyPost ? $"{post.WordPressId} {disqusDomain}/?p={post.WordPressId}" : post.Id.ToString();
-
     <div class="card blog-card" style="margin-bottom: 50px;">
         <div class="card-body">
             <h2>
@@ -46,7 +42,7 @@
                        asp-route-month="@month"
                        asp-route-day="@day"
                        asp-route-slug="@post.Slug"
-                       asp-fragment="disqus_thread" data-disqus-identifier="@disqusId">
+                       asp-fragment="disqus_thread" data-disqus-identifier="@post.GetDisqusIdentifier()">
                         0 Comments
                     </a>
                 }
