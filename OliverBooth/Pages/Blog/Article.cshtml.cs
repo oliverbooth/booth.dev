@@ -1,4 +1,4 @@
-using Markdig;
+﻿using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +19,14 @@ public class Article : PageModel
     }
 
     public Author Author { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the post is a legacy WordPress post.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the post is a legacy WordPress post; otherwise, <see langword="false" />.
+    /// </value>
+    public bool IsWordPressLegacyPost => Post?.WordPressId.HasValue ?? false;
 
     public BlogPost Post { get; private set; } = new();
 
