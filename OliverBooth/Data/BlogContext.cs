@@ -11,6 +11,10 @@ public sealed class BlogContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BlogContext" /> class.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
     public BlogContext(IConfiguration configuration)
     {
         _configuration = configuration;
@@ -36,6 +40,7 @@ public sealed class BlogContext : DbContext
         optionsBuilder.UseMySql(connectionString, serverVersion);
     }
 
+    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new AuthorConfiguration());
