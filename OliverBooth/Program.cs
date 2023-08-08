@@ -1,6 +1,7 @@
 using Markdig;
 using NLog.Extensions.Logging;
 using OliverBooth.Data;
+using OliverBooth.Markdown;
 using OliverBooth.Services;
 using X10D.Hosting.DependencyInjection;
 
@@ -10,7 +11,9 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddNLog();
 builder.Services.AddHostedSingleton<LoggingService>();
-builder.Services.AddSingleton(new MarkdownPipelineBuilder()
+builder.Services.AddSingleton<TemplateService>();
+
+builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .UseAbbreviations()
     .UseAdvancedExtensions()
     .UseBootstrap()
@@ -23,6 +26,7 @@ builder.Services.AddSingleton(new MarkdownPipelineBuilder()
     .UseMathematics()
     .UseAutoIdentifiers()
     .UseAutoLinks()
+    .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
     .Build());
 
 builder.Services.AddDbContextFactory<BlogContext>();

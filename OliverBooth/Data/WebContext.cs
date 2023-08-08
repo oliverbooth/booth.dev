@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OliverBooth.Data.Web;
+using OliverBooth.Data.Web.Configuration;
 
 namespace OliverBooth.Data;
 
@@ -9,10 +11,20 @@ public sealed class WebContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="WebContext" /> class.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
     public WebContext(IConfiguration configuration)
     {
         _configuration = configuration;
     }
+
+    /// <summary>
+    ///     Gets the set of article templates.
+    /// </summary>
+    /// <value>The set of article templates.</value>
+    public DbSet<ArticleTemplate> ArticleTemplates { get; private set; } = null!;
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -24,5 +36,6 @@ public sealed class WebContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new ArticleTemplateConfiguration());
     }
 }

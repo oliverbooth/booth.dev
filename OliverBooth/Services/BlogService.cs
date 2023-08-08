@@ -43,7 +43,7 @@ public sealed class BlogService
     /// <returns>The processed content of the blog post.</returns>
     public string GetContent(BlogPost post)
     {
-        return ProcessContent(post.Body);
+        return RenderContent(post.Body);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public sealed class BlogService
         int moreIndex = span.IndexOf("<!--more-->", StringComparison.Ordinal);
         trimmed = moreIndex != -1 || span.Length > 256;
         string result = moreIndex != -1 ? span[..moreIndex].Trim().ToString() : post.Body.Truncate(256);
-        return ProcessContent(result);
+        return RenderContent(result);
     }
 
     /// <summary>
@@ -139,8 +139,8 @@ public sealed class BlogService
         post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == postId);
         return post is not null;
     }
-
-    private string ProcessContent(string content)
+    
+    private string RenderContent(string content)
     {
         content = content.Replace("<!--more-->", string.Empty);
 
@@ -149,6 +149,6 @@ public sealed class BlogService
             content = content.Replace("\n\n", "\n");
         }
 
-        return Markdown.ToHtml(content.Trim(), _markdownPipeline);
+        return Markdig.Markdown.ToHtml(content.Trim(), _markdownPipeline);
     }
 }
