@@ -1,4 +1,4 @@
-﻿using Cysharp.Text;
+using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
 
@@ -76,8 +76,7 @@ public sealed class TemplateInlineParser : InlineParser
                 ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, false, out bool hasValue);
                 if (!hasValue)
                 {
-                    var argument = result.ToString();
-                    argumentList.Add(argument);
+                    argumentList.Add(result.ToString());
                     continue;
                 }
 
