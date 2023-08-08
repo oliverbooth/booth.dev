@@ -113,7 +113,6 @@ public sealed class BlogPost : IEquatable<BlogPost>
     /// </returns>
     public static bool operator !=(BlogPost? left, BlogPost? right) => !(left == right);
 
-
     /// <summary>
     ///     Returns a value indicating whether this instance of <see cref="BlogPost" /> is equal to another instance.
     /// </summary>
