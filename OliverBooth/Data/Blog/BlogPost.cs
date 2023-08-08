@@ -103,11 +103,6 @@ public sealed class BlogPost : IEquatable<BlogPost>
         return ReferenceEquals(this, obj) || obj is BlogPost other && Equals(other);
     }
 
-    public override int GetHashCode()
-    {
-        return Id;
-    }
-
     /// <summary>
     ///     Gets the Disqus identifier for the blog post.
     /// </summary>
@@ -139,5 +134,9 @@ public sealed class BlogPost : IEquatable<BlogPost>
             : Smart.Format(DisqusPath, this);
 
         return $"{GetDisqusDomain()}/{path}";
+    }
+    public override int GetHashCode()
+    {
+        return Id;
     }
 }
