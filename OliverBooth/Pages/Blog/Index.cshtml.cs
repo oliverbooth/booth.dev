@@ -57,7 +57,7 @@ public class Index : PageModel
 
         if (post is not null)
         {
-            return Redirect($"/blog/{post.Published:yyyy/MM}/{post.Slug}");
+            return Redirect($"/blog/{post.Published:yyyy/MM/dd}/{post.Slug}");
         }
 
         return NotFound();
