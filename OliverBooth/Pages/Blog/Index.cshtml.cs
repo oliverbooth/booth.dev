@@ -39,22 +39,12 @@ public class Index : PageModel
     public IActionResult OnGet([FromQuery(Name = "pid")] int? postId = null,
         [FromQuery(Name = "p")] int? wpPostId = null)
     {
-        if (!(postId.HasValue ^ wpPostId.HasValue))
+        if (postId.HasValue == wpPostId.HasValue)
         {
             return Page();
         }
 
-        if (wpPostId.HasValue)
-        {
-            return HandleWordPressRoute(wpPostId.Value);
-        }
-
-        if (postId.HasValue)
-        {
-            return HandleNewRoute(postId.Value);
-        }
-
-        throw new UnreachableException();
+        return postId.HasValue ? HandleNewRoute(postId.Value) : HandleWordPressRoute(wpPostId!.Value);
     }
 
     private IActionResult HandleNewRoute(int postId)
