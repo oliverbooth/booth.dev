@@ -1,0 +1,112 @@
+﻿$background: #1E1E1E;
+$foreground: #DCDCDA;
+
+// C#
+$comment: #23A658;
+$string: #EA9D78;
+$function: #A0D7A7;
+$class-name: #13C9C6;
+$keyword: #439CE2;
+$preprocessor-property: #9B9B99;
+
+// Css
+$atrule: $keyword;
+$css-foreground: #C8C8C6;
+$css-selector: #D8BA76;
+$css-property: #67DCFF;
+
+// Markup (HTML, XML)
+$doctype: $class-name;
+$markup-tag: $keyword;
+$attr-name: #87DCFF;
+$markup-punctuation: #80807F;
+$markup-attr-value: $css-foreground;
+
+code[class*="language-"] {
+  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  background: $background;
+  color: $foreground;
+}
+
+.token {
+  &.punctuation {
+    color: $foreground;
+  }
+
+  &.comment {
+    color: $comment;
+  }
+
+  &.string {
+    color: $string;
+  }
+
+  &.function {
+    color: $function;
+  }
+
+  &.class-name {
+    color: $class-name;
+  }
+
+  &.doctype, &.prolog {
+    color: $doctype;
+  }
+
+  &.keyword {
+    color: $keyword;
+  }
+
+  &.preprocessor.property {
+    color: $preprocessor-property;
+
+    .keyword {
+      color: $preprocessor-property;
+    }
+  }
+
+  &.selector {
+    color: $css-selector;
+  }
+
+  &.atrule {
+    color: $atrule;
+  }
+
+  &.tag {
+    color: $markup-tag;
+  }
+
+  &.attr-name {
+    color: $attr-name;
+  }
+
+  &.attr-value {
+    color: $markup-attr-value;
+  }
+}
+
+// CSS
+code[class*="language-css"] {
+  color: $css-foreground;
+
+  .token {
+
+    &.property {
+      color: $css-property;
+    }
+
+    &.string {
+      color: $css-foreground;
+    }
+  }
+}
+
+// Markup
+code[class*="language-markup"] {
+  .token {
+    &.punctuation {
+      color: $markup-punctuation;
+    }
+  }
+}

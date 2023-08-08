@@ -14,11 +14,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scss", "scss", "{822F528E-3CA7-4B7D-9250-BD248ADA7BAE}"
 	ProjectSection(SolutionItems) = preProject
 		src\scss\app.scss = src\scss\app.scss
+		src\scss\prism.vs.scss = src\scss\prism.vs.scss
+		src\scss\prism.css = src\scss\prism.css
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-4F47-809D-8BBBA6E0A048}"
 	ProjectSection(SolutionItems) = preProject
 		src\ts\app.ts = src\ts\app.ts
+		src\ts\prism.js = src\ts\prism.js
 	EndProjectSection
 EndProject
 Global
