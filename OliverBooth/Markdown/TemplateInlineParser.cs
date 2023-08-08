@@ -1,4 +1,4 @@
-using Cysharp.Text;
+﻿using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
 
@@ -104,6 +104,8 @@ public sealed class TemplateInlineParser : InlineParser
         out bool hasValue)
     {
         var isEscaped = false;
+        
+        int startIndex = index;
         for (; index < argumentSpan.Length; index++)
         {
             char currentChar = argumentSpan[index];
@@ -119,16 +121,16 @@ public sealed class TemplateInlineParser : InlineParser
 
                 case '|' when !isEscaped:
                     hasValue = false;
-                    return argumentSpan[..index];
+                    return argumentSpan[startIndex..index];
 
                 case '=' when !isEscaped && !consumeToken:
                     hasValue = true;
-                    return argumentSpan[..index];
+                    return argumentSpan[startIndex..index];
             }
         }
 
         hasValue = false;
-        return argumentSpan[..index];
+        return argumentSpan[startIndex..index];
     }
 
     private static ReadOnlySpan<char> ReadUntilClosure(ReadOnlySpan<char> input)
