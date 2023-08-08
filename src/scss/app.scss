@@ -131,6 +131,22 @@ nav {
   }
 }
 
+article {
+  p > img.img-fluid {
+    text-align: center;
+  }
+
+  iframe {
+    text-align: center;
+  }
+
+  div.math {
+    text-align: center;
+    font-size: 32px;
+    margin: 50px 0;
+  }
+}
+
 pre code span.line {
   counter-increment: line;
 
