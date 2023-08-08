@@ -1,12 +1,19 @@
-declare const bootstrap: any;
+﻿declare const bootstrap: any;
 declare const katex: any;
 
 (() => {
     document.querySelectorAll("pre code").forEach((block) => {
-        const content = block.textContent;
+        let content = block.textContent;
         if (content.split("\n").length > 1) {
             block.parentElement.classList.add("line-numbers");
         }
+
+        content = block.innerHTML;
+        // @ts-ignore
+        content = content.replaceAll("&lt;mark&gt;", "<mark>");
+        // @ts-ignore
+        content = content.replaceAll("&lt;/mark&gt;", "</mark>");
+        block.innerHTML = content;
     });
 
     document.querySelectorAll("img[title]").forEach((img) => {
