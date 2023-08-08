@@ -2,6 +2,13 @@ declare const bootstrap: any;
 declare const katex: any;
 
 (() => {
+    document.querySelectorAll("pre code").forEach((block) => {
+        const content = block.textContent;
+        if (content.split("\n").length > 1) {
+            block.parentElement.classList.add("line-numbers");
+        }
+    });
+
     const list = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     list.forEach((el: Element) => new bootstrap.Tooltip(el));
 
