@@ -1,4 +1,4 @@
-using SmartFormat;
+﻿using SmartFormat;
 
 namespace OliverBooth.Data.Blog;
 
@@ -90,6 +90,29 @@ public sealed class BlogPost : IEquatable<BlogPost>
     /// </summary>
     /// <value>The legacy WordPress ID.</value>
     public int? WordPressId { get; set; }
+
+    /// <summary>
+    ///     Returns a value indicating whether two instances of <see cref="BlogPost" /> are equal.
+    /// </summary>
+    /// <param name="left">The first instance of <see cref="BlogPost" /> to compare.</param>
+    /// <param name="right">The second instance of <see cref="BlogPost" /> to compare.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public static bool operator ==(BlogPost? left, BlogPost? right) => Equals(left, right);
+
+    /// <summary>
+    ///     Returns a value indicating whether two instances of <see cref="BlogPost" /> are not equal.
+    /// </summary>
+    /// <param name="left">The first instance of <see cref="BlogPost" /> to compare.</param>
+    /// <param name="right">The second instance of <see cref="BlogPost" /> to compare.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public static bool operator !=(BlogPost? left, BlogPost? right) => !(left == right);
+
 
     /// <summary>
     ///     Returns a value indicating whether this instance of <see cref="BlogPost" /> is equal to another instance.
