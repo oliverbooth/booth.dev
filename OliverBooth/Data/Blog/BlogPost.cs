@@ -137,6 +137,7 @@ public sealed class BlogPost : IEquatable<BlogPost>
     }
     public override int GetHashCode()
     {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
         return Id;
     }
 }
