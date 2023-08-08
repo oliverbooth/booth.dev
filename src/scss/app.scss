@@ -184,3 +184,7 @@ article blockquote {
   border-left: 2px solid #f03;
   padding-left: 10px;
 }
+
+div.alert *:last-child {
+  margin-bottom: 0 !important;
+}
