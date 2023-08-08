@@ -24,10 +24,22 @@ function compileTS() {
         .pipe(gulp.dest(`${destDir}/js`));
 }
 
+function copyJS() {
+    return gulp.src(`${srcDir}/ts/**/*.js`)
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest(`${destDir}/js`));
+}
+
+function copyCSS() {
+    return gulp.src(`${srcDir}/scss/**/*.css`)
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest(`${destDir}/css`));
+}
+
 function copyImages() {
     return gulp.src(`${srcDir}/img/**/*.*`)
         .pipe(gulp.dest(`${destDir}/img`));
 }
 
 exports.default = compileSCSS;
-exports.default = gulp.parallel(compileSCSS, compileTS, copyImages);
+exports.default = gulp.parallel(compileSCSS, compileTS, copyCSS, copyJS, copyImages);
