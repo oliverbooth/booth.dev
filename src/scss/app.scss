@@ -159,6 +159,15 @@ article {
   }
 }
 
+pre {
+  background: #1e1e1e;
+
+  code mark, code mark span {
+    background: #d8ba76 !important;
+    color: #000 !important;
+  }
+}
+
 :root {
   color-scheme: light dark;
 }
