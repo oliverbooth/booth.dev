@@ -9,6 +9,8 @@
 {
     Author? author = Model.GetAuthor(post);
     DateTimeOffset published = post.Published;
+    DateTimeOffset timestamp = post.Updated ?? published;
+    bool isUpdated = post.Updated.HasValue;
     var year = published.ToString("yyyy");
     var month = published.ToString("MM");
     var day = published.ToString("dd");
@@ -33,8 +35,8 @@
                 <img class="blog-author-icon" src="https://gravatar.com/avatar/@author?.AvatarHash?s=28">
                 @author?.Name
                 &bull;
-                <abbr data-bs-toggle="tooltip" data-bs-title="@post.Published.ToString("f")">
-                    @post.Published.Humanize()
+                <abbr data-bs-toggle="tooltip" data-bs-title="@timestamp.ToString("f")">
+                    @(isUpdated ? "Updated" : "Published") @timestamp.Humanize()
                 </abbr>
                 @if (post.EnableComments)
                 {

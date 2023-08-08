@@ -29,8 +29,15 @@
     @Model.Author?.Name
     &bull;
     <abbr data-bs-toggle="tooltip" data-bs-title="@post.Published.ToString("f")">
-        @post.Published.Humanize()
+        Published @post.Published.Humanize()
     </abbr>
+    @if (post.Updated is { } updated)
+    {
+        <span>&bull;</span>
+        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("f")">
+            Updated @updated.Humanize()
+        </abbr>
+    }
     @if (post.EnableComments)
     {
         <span>&bull;</span>
