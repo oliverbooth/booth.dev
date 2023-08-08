@@ -1,22 +1,19 @@
 ﻿using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data;
 using OliverBooth.Data.Blog;
+using OliverBooth.Services;
 
 namespace OliverBooth.Pages.Blog;
 
 public class Index : PageModel
 {
-    private readonly IDbContextFactory<BlogContext> _dbContextFactory;
+    private readonly BlogService _blogService;
 
-    public Index(IDbContextFactory<BlogContext> dbContextFactory)
+    public Index(BlogService blogService)
     {
-        _dbContextFactory = dbContextFactory;
+        _blogService = blogService;
     }
-
-    public IReadOnlyCollection<BlogPost> BlogPosts { get; private set; } = ArraySegment<BlogPost>.Empty;
 
     public string SanitizeContent(string content)
     {
@@ -38,35 +35,18 @@ public class Index : PageModel
         return moreIndex != -1 ? span[..moreIndex].Trim().ToString() : content.Truncate(256);
     }
 
-    public Author? GetAuthor(BlogPost post)
-    {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        return context.Authors.FirstOrDefault(a => a.Id == post.AuthorId);
-    }
-
     public IActionResult OnGet([FromQuery(Name = "p")] int? postId = null)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        if (postId is null)
+        if (!postId.HasValue) return Page();
+        if (!_blogService.TryGetWordPressBlogPost(postId.Value, out BlogPost? post)) return NotFound();
+
+        var route = new
         {
-            BlogPosts = context.BlogPosts.ToArray();
-            return Page();
-        }
-
-        BlogPost? post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == postId);
-
-        if (post is not null)
-        {
-            var route = new
-            {
-                year = post.Published.Year,
-                month = post.Published.Month,
-                day = post.Published.Day,
-                slug = post.Slug
-            };
-            return Redirect(Url.Page("/Blog/Article", route)!);
-        }
-
-        return NotFound();
+            year = post.Published.Year,
+            month = post.Published.Month,
+            day = post.Published.Day,
+            slug = post.Slug
+        };
+        return Redirect(Url.Page("/Blog/Article", route)!);
     }
 }

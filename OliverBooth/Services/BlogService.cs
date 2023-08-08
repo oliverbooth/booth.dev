@@ -74,4 +74,21 @@ public sealed class BlogService
 
         return post is not null;
     }
+
+    /// <summary>
+    ///     Attempts to find a blog post by its publication date and slug.
+    /// </summary>
+    /// <param name="postId">The WordPress ID of the post.</param>
+    /// <param name="post">
+    ///     When this method returns, contains the <see cref="BlogPost" /> associated with the specified publication
+    ///     date and slug, if the post is found; otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns><see langword="true" /> if the post is found; otherwise, <see langword="false" />.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    public bool TryGetWordPressBlogPost(int postId, [NotNullWhen(true)] out BlogPost? post)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == postId);
+        return post is not null;
+    }
 }
