@@ -85,7 +85,7 @@ public sealed class TemplateInlineParser : InlineParser
             }
             else
             {
-                ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, false, out bool hasValue);
+                ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, true, out bool _);
                 var key = buffer.ToString();
                 var value = result.ToString();
 
