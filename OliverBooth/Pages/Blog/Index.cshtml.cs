@@ -57,7 +57,14 @@ public class Index : PageModel
 
         if (post is not null)
         {
-            return Redirect($"/blog/{post.Published:yyyy/MM/dd}/{post.Slug}");
+            var route = new
+            {
+                year = post.Published.Year,
+                month = post.Published.Month,
+                day = post.Published.Day,
+                slug = post.Slug
+            };
+            return Redirect(Url.Page("/Blog/Article", route)!);
         }
 
         return NotFound();
