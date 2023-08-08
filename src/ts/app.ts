@@ -9,6 +9,13 @@ declare const katex: any;
         }
     });
 
+    document.querySelectorAll("img[title]").forEach((img) => {
+        img.setAttribute("data-bs-toggle", "tooltip");
+        img.setAttribute("data-bs-placement", "bottom");
+        img.setAttribute("data-bs-html", "true");
+        img.setAttribute("data-bs-title", img.getAttribute("title"));
+    });
+
     const list = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     list.forEach((el: Element) => new bootstrap.Tooltip(el));
 
