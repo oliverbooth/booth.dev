@@ -16,7 +16,7 @@ declare const katex: any;
         block.innerHTML = content;
     });
 
-    document.querySelectorAll("img[title]").forEach((img) => {
+    document.querySelectorAll("[title]").forEach((img) => {
         img.setAttribute("data-bs-toggle", "tooltip");
         img.setAttribute("data-bs-placement", "bottom");
         img.setAttribute("data-bs-html", "true");
