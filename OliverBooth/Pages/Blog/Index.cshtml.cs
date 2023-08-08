@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
@@ -19,7 +20,7 @@ public class Index : PageModel
 
     public string SanitizeContent(string content)
     {
-        content = content.Replace("<more>", string.Empty);
+        content = content.Replace("<!--more-->", string.Empty);
 
         while (content.Contains("\n\n"))
         {
@@ -32,20 +33,33 @@ public class Index : PageModel
     public string TrimContent(string content, out bool trimmed)
     {
         ReadOnlySpan<char> span = content.AsSpan();
-        int moreIndex = span.IndexOf("<more>", StringComparison.Ordinal);
+        int moreIndex = span.IndexOf("<!--more-->", StringComparison.Ordinal);
         trimmed = moreIndex != -1 || span.Length > 256;
         return moreIndex != -1 ? span[..moreIndex].Trim().ToString() : content.Truncate(256);
     }
-    
+
     public Author? GetAuthor(BlogPost post)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.Authors.FirstOrDefault(a => a.Id == post.AuthorId);
     }
 
-    public void OnGet()
+    public IActionResult OnGet([FromQuery(Name = "p")] int? postId = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
-        BlogPosts = context.BlogPosts.ToArray();
+        if (postId is null)
+        {
+            BlogPosts = context.BlogPosts.ToArray();
+            return Page();
+        }
+
+        BlogPost? post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == postId);
+
+        if (post is not null)
+        {
+            return Redirect($"/blog/{post.Published:yyyy/MM}/{post.Slug}");
+        }
+
+        return NotFound();
     }
 }

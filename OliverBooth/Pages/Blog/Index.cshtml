@@ -1,16 +1,73 @@
 ﻿@page
+@using Humanizer
 @using OliverBooth.Data.Blog
+@using OliverBooth.Services
 @model OliverBooth.Pages.Blog.Index
+@inject BlogService BlogService
 
-@foreach (BlogPost post in Model.BlogPosts)
+@foreach (BlogPost post in BlogService.AllPosts)
 {
-    <h2>
-        <a asp-page="/blog/article" asp-route-year="@post.Published.Year" asp-route-month="@post.Published.Month.ToString().PadLeft(2, '0')" asp-route-slug="@post.Slug">@post.Title</a>
-    </h2>
-    <p class="text-muted">@post.Published.ToString("MMMM dd, yyyy") &bull; @Model.GetAuthor(post)?.Name</p>
-    <p>@Html.Raw(Model.SanitizeContent(Model.TrimContent(post.Body, out bool trimmed)))</p>
-    if (trimmed)
-    {
-        <p><a asp-page="/blog/article" asp-route-year="@post.Published.Year" asp-route-month="@post.Published.Month.ToString().PadLeft(2, '0')" asp-route-slug="@post.Slug">Read more...</a></p>
-    }
+    Author? author = Model.GetAuthor(post);
+    DateTimeOffset published = post.Published;
+    var year = published.ToString("yyyy");
+    var month = published.ToString("MM");
+    var day = published.ToString("dd");
+
+    bool isLegacyPost = post.WordPressId is not null;
+    string disqusDomain = isLegacyPost ? "https://blog.oliverbooth.dev" : "https://oliverbooth.dev/blog";
+    string disqusId = isLegacyPost ? $"{post.WordPressId} {disqusDomain}/?p={post.WordPressId}" : post.Id.ToString();
+
+    <div class="card blog-card" style="margin-bottom: 50px;">
+        <div class="card-body">
+            <h2>
+                <a asp-page="/blog/article"
+                   asp-route-year="@year"
+                   asp-route-month="@month"
+                   asp-route-day="@day"
+                   asp-route-slug="@post.Slug">
+                    @post.Title
+                </a>
+            </h2>
+
+            <p class="text-muted">
+                <img class="blog-author-icon" src="https://gravatar.com/avatar/@author?.AvatarHash?s=28">
+                @author?.Name
+                &bull;
+                <abbr data-bs-toggle="tooltip" data-bs-title="@post.Published.ToString("f")">
+                    @post.Published.Humanize()
+                </abbr>
+                @if (post.EnableComments)
+                {
+                    <span>&bull;</span>
+                    <a asp-page="/blog/article"
+                       asp-route-year="@year"
+                       asp-route-month="@month"
+                       asp-route-day="@day"
+                       asp-route-slug="@post.Slug"
+                       asp-fragment="disqus_thread" data-disqus-identifier="@disqusId">
+                        0 Comments
+                    </a>
+                }
+            </p>
+
+            <p>@Html.Raw(Model.SanitizeContent(Model.TrimContent(post.Body, out bool trimmed)))</p>
+
+            <article>
+                @if (trimmed)
+                {
+                    <p>
+                        <a asp-page="/blog/article"
+                           asp-route-year="@year"
+                           asp-route-month="@month"
+                           asp-route-day="@day"
+                           asp-route-slug="@post.Slug">
+                            Read more...
+                        </a>
+                    </p>
+                }
+            </article>
+        </div>
+    </div>
+
+    <script id="dsq-count-scr" src="https://oliverbooth-dev.disqus.com/count.js" async></script>
 }

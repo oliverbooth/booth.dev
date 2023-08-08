@@ -27,6 +27,7 @@ builder.Services.AddSingleton(new MarkdownPipelineBuilder()
 
 builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddDbContextFactory<WebContext>();
+builder.Services.AddSingleton<BlogService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
