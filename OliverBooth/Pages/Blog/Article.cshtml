@@ -1,6 +1,8 @@
-@page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
+﻿@page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
 @using Humanizer
+@using OliverBooth.Services
 @model OliverBooth.Pages.Blog.Article
+@inject BlogService BlogService
 
 @if (Model.Post is not { } post)
 {
@@ -39,7 +41,7 @@
 </p>
 
 <article>
-    @Html.Raw(Model.SanitizeContent(post.Body))
+    @Html.Raw(BlogService.GetContent(post))
 </article>
 
 <hr>

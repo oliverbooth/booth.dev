@@ -48,7 +48,7 @@
                 }
             </p>
 
-            <p>@Html.Raw(Model.SanitizeContent(Model.TrimContent(post.Body, out bool trimmed)))</p>
+            <p>@Html.Raw(BlogService.GetExcerpt(post, out bool trimmed))</p>
 
             <article>
                 @if (trimmed)

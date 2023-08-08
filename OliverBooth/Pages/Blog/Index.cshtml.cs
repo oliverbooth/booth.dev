@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using Humanizer;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
@@ -14,26 +12,6 @@ public class Index : PageModel
     public Index(BlogService blogService)
     {
         _blogService = blogService;
-    }
-
-    public string SanitizeContent(string content)
-    {
-        content = content.Replace("<!--more-->", string.Empty);
-
-        while (content.Contains("\n\n"))
-        {
-            content = content.Replace("\n\n", "\n");
-        }
-
-        return Markdig.Markdown.ToHtml(content.Trim());
-    }
-
-    public string TrimContent(string content, out bool trimmed)
-    {
-        ReadOnlySpan<char> span = content.AsSpan();
-        int moreIndex = span.IndexOf("<!--more-->", StringComparison.Ordinal);
-        trimmed = moreIndex != -1 || span.Length > 256;
-        return moreIndex != -1 ? span[..moreIndex].Trim().ToString() : content.Truncate(256);
     }
 
     public IActionResult OnGet([FromQuery(Name = "pid")] int? postId = null,

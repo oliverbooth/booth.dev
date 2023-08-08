@@ -1,5 +1,4 @@
-﻿using Markdig;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
@@ -12,17 +11,14 @@ namespace OliverBooth.Pages.Blog;
 public class Article : PageModel
 {
     private readonly BlogService _blogService;
-    private readonly MarkdownPipeline _markdownPipeline;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Article" /> class.
     /// </summary>
     /// <param name="blogService">The <see cref="BlogService" />.</param>
-    /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
-    public Article(BlogService blogService, MarkdownPipeline markdownPipeline)
+    public Article(BlogService blogService)
     {
         _blogService = blogService;
-        _markdownPipeline = markdownPipeline;
     }
 
     /// <summary>
@@ -44,23 +40,6 @@ public class Article : PageModel
     /// </summary>
     /// <value>The requested blog post.</value>
     public BlogPost Post { get; private set; } = null!;
-
-    /// <summary>
-    ///     Sanitizes the content of the blog post.
-    /// </summary>
-    /// <param name="content">The content of the blog post.</param>
-    /// <returns>The sanitized content of the blog post.</returns>
-    public string SanitizeContent(string content)
-    {
-        content = content.Replace("<!--more-->", string.Empty);
-
-        while (content.Contains("\n\n"))
-        {
-            content = content.Replace("\n\n", "\n");
-        }
-
-        return Markdown.ToHtml(content.Trim(), _markdownPipeline);
-    }
 
     public IActionResult OnGet(int year, int month, int day, string slug)
     {

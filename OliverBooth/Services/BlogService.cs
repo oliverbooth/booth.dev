@@ -1,4 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Humanizer;
+using Markdig;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 using OliverBooth.Data.Blog;
@@ -8,14 +10,17 @@ namespace OliverBooth.Services;
 public sealed class BlogService
 {
     private readonly IDbContextFactory<BlogContext> _dbContextFactory;
+    private readonly MarkdownPipeline _markdownPipeline;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The <see cref="IDbContextFactory{TContext}" />.</param>
-    public BlogService(IDbContextFactory<BlogContext> dbContextFactory)
+    /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
+    public BlogService(IDbContextFactory<BlogContext> dbContextFactory, MarkdownPipeline markdownPipeline)
     {
         _dbContextFactory = dbContextFactory;
+        _markdownPipeline = markdownPipeline;
     }
 
     /// <summary>
@@ -29,6 +34,34 @@ public sealed class BlogService
             using BlogContext context = _dbContextFactory.CreateDbContext();
             return context.BlogPosts.OrderByDescending(p => p.Published).ToArray();
         }
+    }
+
+    /// <summary>
+    ///     Gets the processed content of a blog post.
+    /// </summary>
+    /// <param name="post">The blog post.</param>
+    /// <returns>The processed content of the blog post.</returns>
+    public string GetContent(BlogPost post)
+    {
+        return ProcessContent(post.Body);
+    }
+
+    /// <summary>
+    ///     Gets the processed excerpt of a blog post.
+    /// </summary>
+    /// <param name="post">The blog post.</param>
+    /// <param name="trimmed">
+    ///     When this method returns, contains <see langword="true" /> if the content was trimmed; otherwise,
+    ///     <see langword="false" />.
+    /// </param>
+    /// <returns>The processed excerpt of the blog post.</returns>
+    public string GetExcerpt(BlogPost post, out bool trimmed)
+    {
+        ReadOnlySpan<char> span = post.Body.AsSpan();
+        int moreIndex = span.IndexOf("<!--more-->", StringComparison.Ordinal);
+        trimmed = moreIndex != -1 || span.Length > 256;
+        string result = moreIndex != -1 ? span[..moreIndex].Trim().ToString() : post.Body.Truncate(256);
+        return ProcessContent(result);
     }
 
     /// <summary>
@@ -105,5 +138,17 @@ public sealed class BlogService
         using BlogContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == postId);
         return post is not null;
+    }
+
+    private string ProcessContent(string content)
+    {
+        content = content.Replace("<!--more-->", string.Empty);
+
+        while (content.Contains("\n\n"))
+        {
+            content = content.Replace("\n\n", "\n");
+        }
+
+        return Markdown.ToHtml(content.Trim(), _markdownPipeline);
     }
 }
