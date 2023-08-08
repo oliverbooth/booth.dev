@@ -91,6 +91,14 @@ public sealed class BlogPost : IEquatable<BlogPost>
     /// <value>The legacy WordPress ID.</value>
     public int? WordPressId { get; set; }
 
+    /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="BlogPost" /> is equal to another instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
     public bool Equals(BlogPost? other)
     {
         if (ReferenceEquals(null, other)) return false;
@@ -98,6 +106,14 @@ public sealed class BlogPost : IEquatable<BlogPost>
         return Id == other.Id;
     }
 
+    /// <summary>
+    ///     Returns a value indicating whether this instance is equal to a specified object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="obj" /> is an instance of <see cref="BlogPost" /> and equals the
+    ///     value of this instance; otherwise, <see langword="false" />.
+    /// </returns>
     public override bool Equals(object? obj)
     {
         return ReferenceEquals(this, obj) || obj is BlogPost other && Equals(other);
@@ -135,6 +151,11 @@ public sealed class BlogPost : IEquatable<BlogPost>
 
         return $"{GetDisqusDomain()}/{path}";
     }
+
+    /// <summary>
+    ///     Gets the hash code for this instance.
+    /// </summary>
+    /// <returns>The hash code.</returns>
     public override int GetHashCode()
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
