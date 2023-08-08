@@ -29,5 +29,5 @@ public sealed class TemplateInline : Inline
     ///     Gets the template parameters.
     /// </summary>
     /// <value>The template parameters.</value>
-    public Dictionary<string, string> Params { get; set; } = new();
+    public IReadOnlyDictionary<string, string> Params { get; set; } = null!;
 }

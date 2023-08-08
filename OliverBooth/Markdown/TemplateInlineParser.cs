@@ -9,159 +9,184 @@ namespace OliverBooth.Markdown;
 /// </summary>
 public sealed class TemplateInlineParser : InlineParser
 {
+    private static readonly IReadOnlyDictionary<string, string> EmptyParams =
+        new Dictionary<string, string>().AsReadOnly();
+
     /// <inheritdoc />
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
-        ReadOnlySpan<char> span = slice.Text.AsSpan();
-        ReadOnlySpan<char> template = span[slice.Start..];
-
-        if (!template.StartsWith("{{"))
+        ReadOnlySpan<char> span = slice.Text.AsSpan()[slice.Start..];
+        if (!span.StartsWith("{{"))
         {
             return false;
         }
 
-        int endIndex = template.IndexOf("}}");
-        if (endIndex == -1)
+        ReadOnlySpan<char> template = ReadUntilClosure(span);
+        if (template.IsEmpty)
         {
             return false;
         }
 
-        template = template[2..endIndex];
-        ReadOnlySpan<char> templateName = template;
-        int pipeIndex = template.IndexOf('|');
-        var templateArgs = new Dictionary<string, string>();
-        var rawArgumentString = string.Empty;
-        var argumentList = new List<string>();
-
-        if (pipeIndex != -1)
+        template = template[2..^2]; // trim {{ and }}
+        ReadOnlySpan<char> name = ReadTemplateName(template, out ReadOnlySpan<char> argumentSpan);
+        if (argumentSpan.IsEmpty)
         {
-            templateName = templateName[..pipeIndex];
-            rawArgumentString = template[(pipeIndex + 1)..].ToString();
-
-            ReadOnlySpan<char> args = template[(pipeIndex + 1)..];
-
-            using Utf8ValueStringBuilder keyBuilder = ZString.CreateUtf8StringBuilder();
-            using Utf8ValueStringBuilder valueBuilder = ZString.CreateUtf8StringBuilder();
-
-            var isKey = true;
-            var isEscape = false;
-            var nestLevel = 0;
-
-            for (var index = 0; index < args.Length; index++)
+            processor.Inline = new TemplateInline
             {
-                char current = args[index];
-                var key = keyBuilder.ToString();
-                var value = valueBuilder.ToString();
+                Name = name.ToString(),
+                ArgumentString = string.Empty,
+                ArgumentList = ArraySegment<string>.Empty,
+                Params = EmptyParams
+            };
 
-                if (current == '=' && isKey && !isEscape)
-                {
-                    isKey = false;
-                    continue;
-                }
-
-                if (current == '{' && index < args.Length - 1 && args[index + 1] == '{')
-                {
-                    nestLevel++;
-                }
-
-                if (current == '}' && index < args.Length - 1 && args[index + 1] == '}')
-                {
-                    if (nestLevel == 0)
-                    {
-                        template = template[..(pipeIndex + 1 + index)];
-                        args = args[..index];
-                    }
-                    else
-                    {
-                        nestLevel--;
-                    }
-                }
-
-                if (isKey)
-                {
-                    if (current == '\'')
-                    {
-                        if (isEscape)
-                        {
-                            keyBuilder.Append('\'');
-                            isEscape = false;
-                            continue;
-                        }
-
-                        isEscape = !isEscape;
-
-                        if (index == args.Length - 1)
-                        {
-                            argumentList.Add(isKey ? key : $"{key}={value}");
-                            templateArgs.Add(key, value);
-                        }
-
-                        continue;
-                    }
-
-                    if (current == '|' && !isEscape)
-                    {
-                        argumentList.Add(key);
-                        templateArgs.Add(key, string.Empty);
-                        keyBuilder.Clear();
-
-                        if (index == args.Length - 1)
-                        {
-                            argumentList.Add(isKey ? key : $"{key}={value}");
-                            templateArgs.Add(key, value);
-                        }
-
-                        continue;
-                    }
-
-                    keyBuilder.Append(current);
-
-                    if (index == args.Length - 1)
-                    {
-                        argumentList.Add(isKey ? key : $"{key}={value}");
-                        templateArgs.Add(key, value);
-                    }
-
-                    continue;
-                }
-
-                if (current == '\'')
-                {
-                    if (isEscape)
-                    {
-                        valueBuilder.Append('\'');
-                        isEscape = false;
-                        continue;
-                    }
-
-                    isEscape = !isEscape;
-                    continue;
-                }
-
-                if (current == '|' && !isEscape)
-                {
-                    argumentList.Add($"{key}={value}");
-                    templateArgs.Add(key, value);
-                    keyBuilder.Clear();
-                    valueBuilder.Clear();
-                    isKey = true;
-                    continue;
-                }
-
-                valueBuilder.Append(current);
-            }
+            slice.End = slice.Start;
+            slice.Start += template.Length + 4;
+            return true;
         }
+
+        var argumentList = new List<string>();
+        var paramsList = new Dictionary<string, string>();
+
+        ParseArguments(argumentSpan, argumentList, paramsList);
 
         processor.Inline = new TemplateInline
         {
-            Name = templateName.ToString(),
-            Params = templateArgs,
-            ArgumentString = rawArgumentString,
-            ArgumentList = argumentList.ToArray()
+            Name = name.ToString(),
+            ArgumentString = argumentSpan.ToString(),
+            ArgumentList = argumentList.AsReadOnly(),
+            Params = paramsList.AsReadOnly()
         };
 
         slice.End = slice.Start;
         slice.Start += template.Length + 4;
         return true;
+    }
+
+    private static void ParseArguments(ReadOnlySpan<char> argumentSpan,
+        IList<string> argumentList,
+        IDictionary<string, string> paramsList)
+    {
+        using Utf8ValueStringBuilder buffer = ZString.CreateUtf8StringBuilder();
+        var isKey = true;
+
+        for (var index = 0; index < argumentSpan.Length; index++)
+        {
+            if (isKey)
+            {
+                ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, false, out bool hasValue);
+                if (!hasValue)
+                {
+                    var argument = result.ToString();
+                    argumentList.Add(argument);
+                }
+
+                buffer.Append(result);
+                isKey = false;
+            }
+            else
+            {
+                ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, false, out bool hasValue);
+                var key = buffer.ToString();
+                var value = result.ToString();
+
+                buffer.Clear();
+                isKey = true;
+
+                paramsList.Add(key, value);
+                argumentList.Add($"{key}={value}");
+            }
+        }
+    }
+
+    private static ReadOnlySpan<char> ReadNext(ReadOnlySpan<char> argumentSpan,
+        ref int index,
+        bool consumeToken,
+        out bool hasValue)
+    {
+        var isEscaped = false;
+        for (; index < argumentSpan.Length; index++)
+        {
+            char currentChar = argumentSpan[index];
+            switch (currentChar)
+            {
+                case '\\' when isEscaped:
+                    isEscaped = false;
+                    break;
+
+                case '\\':
+                    isEscaped = true;
+                    break;
+
+                case '|' when !isEscaped:
+                    hasValue = false;
+                    return argumentSpan[..index];
+
+                case '=' when !isEscaped && !consumeToken:
+                    hasValue = true;
+                    return argumentSpan[..index];
+            }
+        }
+
+        hasValue = false;
+        return argumentSpan[..index];
+    }
+
+    private static ReadOnlySpan<char> ReadUntilClosure(ReadOnlySpan<char> input)
+    {
+        int endIndex = FindClosingBraceIndex(input);
+        return endIndex != -1 ? input[..(endIndex + 1)] : ReadOnlySpan<char>.Empty;
+    }
+
+    private static ReadOnlySpan<char> ReadTemplateName(ReadOnlySpan<char> input, out ReadOnlySpan<char> argumentSpan)
+    {
+        int argumentStartIndex = input.IndexOf('|');
+        if (argumentStartIndex == -1)
+        {
+            argumentSpan = Span<char>.Empty;
+            return input;
+        }
+
+        argumentSpan = input[(argumentStartIndex + 1)..];
+        return input[..argumentStartIndex];
+    }
+
+    private static int FindClosingBraceIndex(ReadOnlySpan<char> input)
+    {
+        var openingBraces = 0;
+        var closingBraces = 0;
+
+        for (var index = 0; index < input.Length - 1; index++)
+        {
+            char currentChar = input[index];
+            char nextChar = index < input.Length - 2 ? input[index + 1] : '\0';
+
+            if (IsOpeningBraceSequence(currentChar, nextChar))
+            {
+                openingBraces++;
+                index++;
+            }
+            else if (IsClosingBraceSequence(currentChar, nextChar))
+            {
+                closingBraces++;
+                index++;
+            }
+
+            if (openingBraces == closingBraces && openingBraces > 0)
+            {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    private static bool IsOpeningBraceSequence(char currentChar, char nextChar)
+    {
+        return currentChar == '{' && nextChar == '{';
+    }
+
+    private static bool IsClosingBraceSequence(char currentChar, char nextChar)
+    {
+        return currentChar == '}' && nextChar == '}';
     }
 }
