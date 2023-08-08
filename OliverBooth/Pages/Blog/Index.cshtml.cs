@@ -1,4 +1,5 @@
-﻿using Humanizer;
+﻿using System.Diagnostics;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
@@ -35,11 +36,39 @@ public class Index : PageModel
         return moreIndex != -1 ? span[..moreIndex].Trim().ToString() : content.Truncate(256);
     }
 
-    public IActionResult OnGet([FromQuery(Name = "p")] int? postId = null)
+    public IActionResult OnGet([FromQuery(Name = "pid")] int? postId = null,
+        [FromQuery(Name = "p")] int? wpPostId = null)
     {
-        if (!postId.HasValue) return Page();
-        if (!_blogService.TryGetWordPressBlogPost(postId.Value, out BlogPost? post)) return NotFound();
+        if (!(postId.HasValue ^ wpPostId.HasValue))
+        {
+            return Page();
+        }
 
+        if (wpPostId.HasValue)
+        {
+            return HandleWordPressRoute(wpPostId.Value);
+        }
+
+        if (postId.HasValue)
+        {
+            return HandleNewRoute(postId.Value);
+        }
+
+        throw new UnreachableException();
+    }
+
+    private IActionResult HandleNewRoute(int postId)
+    {
+        return _blogService.TryGetBlogPost(postId, out BlogPost? post) ? RedirectToPost(post) : NotFound();
+    }
+
+    private IActionResult HandleWordPressRoute(int wpPostId)
+    {
+        return _blogService.TryGetWordPressBlogPost(wpPostId, out BlogPost? post) ? RedirectToPost(post) : NotFound();
+    }
+
+    private IActionResult RedirectToPost(BlogPost post)
+    {
         var route = new
         {
             year = post.Published.Year,
