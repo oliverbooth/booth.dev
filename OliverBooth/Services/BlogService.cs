@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 using OliverBooth.Data.Blog;
@@ -7,7 +7,7 @@ namespace OliverBooth.Services;
 
 public sealed class BlogService
 {
-    private IDbContextFactory<BlogContext> _dbContextFactory;
+    private readonly IDbContextFactory<BlogContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogService" /> class.
