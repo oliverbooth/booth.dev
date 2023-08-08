@@ -78,6 +78,7 @@ public sealed class TemplateInlineParser : InlineParser
                 {
                     var argument = result.ToString();
                     argumentList.Add(argument);
+                    continue;
                 }
 
                 buffer.Append(result);
