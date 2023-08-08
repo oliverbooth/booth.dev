@@ -7,7 +7,7 @@
 
 @foreach (BlogPost post in BlogService.AllPosts)
 {
-    Author? author = Model.GetAuthor(post);
+    BlogService.TryGetAuthor(post, out Author? author);
     DateTimeOffset published = post.Published;
     DateTimeOffset timestamp = post.Updated ?? published;
     bool isUpdated = post.Updated.HasValue;
