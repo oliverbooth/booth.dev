@@ -1,4 +1,4 @@
-﻿@page
+@page
 @using Humanizer
 @using OliverBooth.Data.Blog
 @using OliverBooth.Services
@@ -28,21 +28,23 @@
             </h2>
 
             <p class="text-muted">
-                <img class="blog-author-icon" src="https://gravatar.com/avatar/@author?.AvatarHash?s=28">
-                @author?.Name
-                &bull;
+                <img class="blog-author-icon" src="https://gravatar.com/avatar/@author?.AvatarHash?s=28" alt="@author?.Name">
+                @author?.Name &bull;
+
                 <abbr data-bs-toggle="tooltip" data-bs-title="@timestamp.ToString("f")">
                     @(isUpdated ? "Updated" : "Published") @timestamp.Humanize()
                 </abbr>
+
                 @if (post.EnableComments)
                 {
-                    <span>&bull;</span>
+                    <span> &bull;</span>
                     <a asp-page="/blog/article"
+                       asp-fragment="disqus_thread"
                        asp-route-year="@year"
                        asp-route-month="@month"
                        asp-route-day="@day"
                        asp-route-slug="@post.Slug"
-                       asp-fragment="disqus_thread" data-disqus-identifier="@post.GetDisqusIdentifier()">
+                       data-disqus-identifier="@post.GetDisqusIdentifier()">
                         0 Comments
                     </a>
                 }
