@@ -1,10 +1,10 @@
-﻿declare const bootstrap: any;
+declare const bootstrap: any;
 declare const katex: any;
 
 (() => {
     document.querySelectorAll("pre code").forEach((block) => {
         let content = block.textContent;
-        if (content.split("\n").length > 1) {
+        if (content.trim().split("\n").length > 1) {
             block.parentElement.classList.add("line-numbers");
         }
 
