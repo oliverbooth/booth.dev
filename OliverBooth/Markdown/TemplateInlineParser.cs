@@ -12,6 +12,14 @@ public sealed class TemplateInlineParser : InlineParser
     private static readonly IReadOnlyDictionary<string, string> EmptyParams =
         new Dictionary<string, string>().AsReadOnly();
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="TemplateInlineParser" /> class.
+    /// </summary>
+    public TemplateInlineParser()
+    {
+        OpeningCharacters = new[] { '{' };
+    }
+
     /// <inheritdoc />
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
