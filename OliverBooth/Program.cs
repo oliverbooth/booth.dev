@@ -19,6 +19,7 @@ builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
     .UseAdvancedExtensions()
     .UseBootstrap()
+    .UseSmartyPants()
     .Build());
 
 builder.Services.AddDbContextFactory<BlogContext>();
