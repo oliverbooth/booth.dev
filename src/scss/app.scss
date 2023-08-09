@@ -136,6 +136,13 @@ nav {
 }
 
 article {
+  background: #333333;
+  padding: 20px;
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+
   blockquote {
     border-left: 2px solid #f03;
     padding-left: 10px;
@@ -161,6 +168,11 @@ article {
 
   &:hover {
     transform: scale(1.05);
+  }
+
+  article {
+    background: none;
+    padding: 0;
   }
 }
 
