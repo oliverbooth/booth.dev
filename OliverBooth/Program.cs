@@ -16,19 +16,9 @@ builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
-    .UseAbbreviations()
+    .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
     .UseAdvancedExtensions()
     .UseBootstrap()
-    .UseCitations()
-    .UseDiagrams()
-    .UseFigures()
-    .UseFooters()
-    .UseFootnotes()
-    .UseGlobalization()
-    .UseMathematics()
-    .UseAutoIdentifiers()
-    .UseAutoLinks()
-    .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
     .Build());
 
 builder.Services.AddDbContextFactory<BlogContext>();
