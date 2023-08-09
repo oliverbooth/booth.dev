@@ -2,6 +2,7 @@ using Markdig;
 using NLog.Extensions.Logging;
 using OliverBooth.Data;
 using OliverBooth.Markdown;
+using OliverBooth.Middleware;
 using OliverBooth.Services;
 using X10D.Hosting.DependencyInjection;
 
@@ -11,6 +12,7 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddNLog();
 builder.Services.AddHostedSingleton<LoggingService>();
+builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
@@ -53,5 +55,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+app.MapRssFeed("/blog/feed");
 
 app.Run();

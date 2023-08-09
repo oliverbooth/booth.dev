@@ -26,6 +26,12 @@ public sealed class WebContext : DbContext
     /// <value>The set of article templates.</value>
     public DbSet<ArticleTemplate> ArticleTemplates { get; private set; } = null!;
 
+    /// <summary>
+    ///     Gets the set of site configuration items.
+    /// </summary>
+    /// <value>The set of site configuration items.</value>
+    public DbSet<SiteConfiguration> SiteConfiguration { get; private set; } = null!;
+
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -37,5 +43,6 @@ public sealed class WebContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ArticleTemplateConfiguration());
+        modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
     }
 }
