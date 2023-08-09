@@ -1,7 +1,4 @@
-﻿using SmartFormat;
-using SmartFormat.Core.Extensions;
-
-namespace OliverBooth.Data.Web;
+﻿namespace OliverBooth.Data.Web;
 
 /// <summary>
 ///     Represents a MediaWiki-style template.
