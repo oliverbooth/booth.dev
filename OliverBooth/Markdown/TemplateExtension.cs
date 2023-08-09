@@ -11,6 +11,10 @@ internal sealed class TemplateExtension : IMarkdownExtension
 {
     private readonly TemplateService _templateService;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="TemplateExtension" /> class.
+    /// </summary>
+    /// <param name="templateService">The template service.</param>
     public TemplateExtension(TemplateService templateService)
     {
         _templateService = templateService;
