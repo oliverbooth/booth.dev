@@ -161,6 +161,11 @@ article {
     font-size: 32px;
     margin: 50px 0;
   }
+  
+  abbr {
+    text-decoration: none;
+    border-bottom: 1px dotted #ffffff;
+  }
 }
 
 .blog-card {
