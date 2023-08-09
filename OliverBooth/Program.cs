@@ -19,6 +19,7 @@ builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
     .UseAdvancedExtensions()
     .UseBootstrap()
+    .UseEmojiAndSmiley()
     .UseSmartyPants()
     .Build());
 
