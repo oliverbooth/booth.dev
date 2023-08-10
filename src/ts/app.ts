@@ -52,6 +52,8 @@ declare const Handlebars: any;
             disqusCounter.src = "https://oliverbooth-dev.disqus.com/count.js";
             disqusCounter.async = true;
 
+            UI.updateUI();
+
             const spinner = document.querySelector("#blog-loading-spinner");
             if (spinner) {
                 spinner.classList.add("removed");
@@ -60,17 +62,7 @@ declare const Handlebars: any;
         });
     }
 
-    document.querySelectorAll("pre code").forEach((block) => {
-        let content = block.textContent;
-        if (content.trim().split("\n").length > 1) {
-            block.parentElement.classList.add("line-numbers");
-        }
-
-        content = block.innerHTML;
-        content = content.replaceAll("&lt;mark&gt;", "<mark>");
-        content = content.replaceAll("&lt;/mark&gt;", "</mark>");
-        block.innerHTML = content;
-    });
+    UI.updateUI();
 
     const tex = document.getElementsByClassName("math");
     Array.prototype.forEach.call(tex, function (el) {
