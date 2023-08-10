@@ -5,7 +5,15 @@
 @model OliverBooth.Pages.Blog.Index
 @inject BlogService BlogService
 
-@foreach (BlogPost post in BlogService.AllPosts)
+<div id="all_blog_posts">
+    <div id="blog_loading_spinner" class="d-flex justify-content-center">
+        <div class="spinner-border text-light" role="status">
+            <p class="text-center sr-only">Loading...</p>
+        </div>
+    </div>
+</div>
+
+@foreach (BlogPost post in ArraySegment<BlogPost>.Empty /*BlogService.AllPosts*/)
 {
     BlogService.TryGetAuthor(post, out Author? author);
     DateTimeOffset published = post.Published;

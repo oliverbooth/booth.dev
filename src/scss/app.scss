@@ -161,12 +161,12 @@ article {
     font-size: 32px;
     margin: 50px 0;
   }
-  
+
   abbr {
     text-decoration: none;
     border-bottom: 1px dotted #ffffff;
   }
-  
+
   span.timestamp {
     background: lighten(#333333, 12.5%);
     border-radius: 2px;
@@ -210,4 +210,29 @@ code[class*="language-"] {
 
 div.alert *:last-child {
   margin-bottom: 0 !important;
+}
+
+#blog_loading_spinner {
+  margin: 20px;
+
+  &.removed {
+    animation: spinner-removed 2s ease-in-out;
+  }
+}
+
+@keyframes spinner-removed {
+  0% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
 }

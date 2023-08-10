@@ -4,6 +4,7 @@ const cleanCSS = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const ts = require('gulp-typescript');
 const terser = require('gulp-terser');
+const webpack = require('webpack-stream');
 
 const srcDir = 'src';
 const destDir = 'OliverBooth/wwwroot';
@@ -17,10 +18,13 @@ function compileSCSS() {
 }
 
 function compileTS() {
-    return gulp.src(`${srcDir}/ts/**/*.ts`)
-        .pipe(ts())
+    gulp.src(`${srcDir}/ts/**/*.ts`)
+        .pipe(ts("tsconfig.json"))
         .pipe(terser())
-        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest(`tmp/js`));
+
+    return gulp.src('tmp/js/*.js')
+        .pipe(webpack({ mode: 'production', output: { filename: 'app.min.js' } }))
         .pipe(gulp.dest(`${destDir}/js`));
 }
 

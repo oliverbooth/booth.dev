@@ -1,7 +1,102 @@
+import API from "./API";
+import TimeUtility from "./TimeUtility";
+
 declare const bootstrap: any;
 declare const katex: any;
 
 (() => {
+    const blogPostContainer = document.querySelector("#all_blog_posts");
+    if (blogPostContainer) {
+        API.getBlogPostCount().then(async (count) => {
+            for (let i = 0; i < count; i++) {
+                const posts = await API.getBlogPosts(i, 5);
+                for (const post of posts) {
+                    const author = await API.getAuthor(post.authorId);
+
+                    const card = document.createElement("div") as HTMLDivElement;
+                    card.classList.add("card");
+                    card.classList.add("blog-card");
+                    card.classList.add("animate__animated");
+                    card.classList.add("animate__fadeIn");
+                    card.style.marginBottom = "50px";
+
+                    const cardBody = document.createElement("div");
+                    cardBody.classList.add("card-body");
+                    card.appendChild(cardBody);
+
+                    const postTitle = document.createElement("h2");
+                    postTitle.classList.add("card-title");
+                    cardBody.appendChild(postTitle);
+
+                    const titleLink = document.createElement("a");
+                    titleLink.href = post.url;
+                    titleLink.innerText = post.title;
+                    postTitle.appendChild(titleLink);
+
+                    const metadata = document.createElement("p");
+                    metadata.classList.add("text-muted");
+                    cardBody.appendChild(metadata);
+
+                    const authorIcon = document.createElement("img");
+                    authorIcon.classList.add("blog-author-icon");
+                    authorIcon.src = `https://gravatar.com/avatar/${author.avatarHash}?s=28`;
+                    authorIcon.alt = author.name;
+                    metadata.appendChild(authorIcon);
+
+                    const authorName = document.createElement("span");
+                    authorName.innerHTML = ` ${author.name} &bull; `;
+                    metadata.appendChild(authorName);
+
+                    const postDate = document.createElement("span");
+                    if (post.updated) {
+                        postDate.innerHTML = `Updated ${TimeUtility.formatRelativeTimestamp(post.updated)}`;
+                    } else {
+                        postDate.innerHTML = `Published ${TimeUtility.formatRelativeTimestamp(post.published)}`;
+                    }
+                    metadata.appendChild(postDate);
+
+                    if (post.commentsEnabled) {
+                        const bullet = document.createElement("span");
+                        bullet.innerHTML = " &bull; ";
+                        metadata.appendChild(bullet);
+
+                        const commentCount = document.createElement("a");
+                        commentCount.href = post.url + "#disqus_thread";
+                        commentCount.innerHTML = "0 Comments";
+                        commentCount.setAttribute("data-disqus-identifier", post.identifier);
+                        metadata.appendChild(commentCount);
+                    }
+
+                    const postExcerpt = document.createElement("p");
+                    postExcerpt.innerHTML = post.excerpt;
+                    cardBody.appendChild(postExcerpt);
+
+                    if (post.trimmed) {
+                        const readMoreLink = document.createElement("a");
+                        readMoreLink.href = post.url;
+                        readMoreLink.innerHTML = "Read more &hellip;";
+                        cardBody.appendChild(readMoreLink);
+                    }
+
+                    blogPostContainer.appendChild(card);
+                }
+
+                i += 4;
+            }
+            
+            const disqusCounter = document.createElement("script");
+            disqusCounter.id = "dsq-count-scr";
+            disqusCounter.src = "https://oliverbooth-dev.disqus.com/count.js";
+            disqusCounter.async = true;
+
+            const spinner = document.querySelector("#blog_loading_spinner");
+            if (spinner) {
+                spinner.classList.add("removed");
+                setTimeout(() => spinner.remove(), 1100);
+            }
+        });
+    }
+
     const formatRelativeTime = function (timestamp) {
         const now = new Date();
         // @ts-ignore

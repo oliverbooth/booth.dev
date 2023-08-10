@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-
 	ProjectSection(SolutionItems) = preProject
 		src\ts\app.ts = src\ts\app.ts
 		src\ts\prism.js = src\ts\prism.js
+		src\ts\API.ts = src\ts\API.ts
+		src\ts\BlogPost.ts = src\ts\BlogPost.ts
+		src\ts\Author.ts = src\ts\Author.ts
+		src\ts\TimeUtility.ts = src\ts\TimeUtility.ts
 	EndProjectSection
 EndProject
 Global
