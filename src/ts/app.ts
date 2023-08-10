@@ -1,11 +1,12 @@
 import API from "./API";
 import TimeUtility from "./TimeUtility";
+import UI from "./UI";
 
 declare const bootstrap: any;
 declare const katex: any;
 
 (() => {
-    const blogPostContainer = document.querySelector("#all-blog-posts");
+    const blogPostContainer = UI.blogPostContainer;
     if (blogPostContainer) {
         API.getBlogPostCount().then(async (count) => {
             for (let i = 0; i < count; i++) {
