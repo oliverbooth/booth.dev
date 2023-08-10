@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-
 		src\ts\BlogPost.ts = src\ts\BlogPost.ts
 		src\ts\Author.ts = src\ts\Author.ts
 		src\ts\TimeUtility.ts = src\ts\TimeUtility.ts
+		src\ts\UI.ts = src\ts\UI.ts
 	EndProjectSection
 EndProject
 Global
