@@ -1,6 +1,6 @@
 ﻿class Author {
-    private _name: string;
-    private _avatarHash: string;
+    private readonly _name: string;
+    private readonly _avatarHash: string;
 
     constructor(json: any) {
         this._name = json.name;
