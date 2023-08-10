@@ -1,4 +1,4 @@
-import BlogPost from "./BlogPost";
+﻿import BlogPost from "./BlogPost";
 import Author from "./Author";
 import TimeUtility from "./TimeUtility";
 
@@ -63,6 +63,7 @@ class UI {
 
     /**
      * Forces all UI elements under the given element to update their rendering.
+     * @param element The element to search for UI elements in.
      */
     public static updateUI(element?: Element) {
         element = element || document.body;
@@ -75,6 +76,7 @@ class UI {
 
     /**
      * Adds Bootstrap tooltips to all elements with a title attribute.
+     * @param element The element to search for elements with a title attribute in.
      */
     public static addBootstrapTooltips(element?: Element) {
         element = element || document.body;
@@ -90,6 +92,7 @@ class UI {
 
     /**
      * Adds line numbers to all <pre> <code> blocks that have more than one line.
+     * @param element The element to search for <pre> <code> blocks in.
      */
     public static addLineNumbers(element?: Element) {
         element = element || document.body;
@@ -114,6 +117,7 @@ class UI {
 
     /**
      * Renders all TeX in the document.
+     * @param element The element to search for TeX in.
      */
     public static renderTeX(element?: Element) {
         element = element || document.body;
@@ -129,6 +133,7 @@ class UI {
 
     /**
      * Unescapes all <mark> tags in <pre> <code> blocks.
+     * @param element The element to search for <pre> <code> blocks in.
      */
     public static unescapeMarkTags(element?: Element) {
         element = element || document.body;
