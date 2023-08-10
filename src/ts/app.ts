@@ -5,7 +5,7 @@ declare const bootstrap: any;
 declare const katex: any;
 
 (() => {
-    const blogPostContainer = document.querySelector("#all_blog_posts");
+    const blogPostContainer = document.querySelector("#all-blog-posts");
     if (blogPostContainer) {
         API.getBlogPostCount().then(async (count) => {
             for (let i = 0; i < count; i++) {
