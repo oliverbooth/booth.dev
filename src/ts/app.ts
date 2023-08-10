@@ -67,9 +67,7 @@ declare const Handlebars: any;
         }
 
         content = block.innerHTML;
-        // @ts-ignore
         content = content.replaceAll("&lt;mark&gt;", "<mark>");
-        // @ts-ignore
         content = content.replaceAll("&lt;/mark&gt;", "</mark>");
         block.innerHTML = content;
     });
