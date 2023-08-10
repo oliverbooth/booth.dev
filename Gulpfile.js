@@ -18,11 +18,13 @@ function compileSCSS() {
 }
 
 function compileTS() {
-    gulp.src(`${srcDir}/ts/**/*.ts`)
+    return gulp.src(`${srcDir}/ts/**/*.ts`)
         .pipe(ts("tsconfig.json"))
         .pipe(terser())
         .pipe(gulp.dest(`tmp/js`));
+}
 
+function bundleJS() {
     return gulp.src('tmp/js/*.js')
         .pipe(webpack({ mode: 'production', output: { filename: 'app.min.js' } }))
         .pipe(gulp.dest(`${destDir}/js`));
@@ -46,4 +48,4 @@ function copyImages() {
 }
 
 exports.default = compileSCSS;
-exports.default = gulp.parallel(compileSCSS, compileTS, copyCSS, copyJS, copyImages);
+exports.default = gulp.parallel(compileSCSS, gulp.series(compileTS, bundleJS), copyCSS, copyJS, copyImages);
