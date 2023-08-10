@@ -2,6 +2,7 @@ using Markdig;
 using NLog.Extensions.Logging;
 using OliverBooth.Data;
 using OliverBooth.Markdown;
+using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Middleware;
 using OliverBooth.Services;
 using X10D.Hosting.DependencyInjection;
@@ -16,6 +17,7 @@ builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
+    .Use<TimestampExtension>()
     .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
     .UseAdvancedExtensions()
     .UseBootstrap()
