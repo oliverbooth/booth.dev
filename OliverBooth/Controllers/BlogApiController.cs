@@ -16,14 +16,14 @@ public sealed class BlogApiController : ControllerBase
         _blogService = blogService;
     }
 
-    [Route("count")]
+    [HttpGet("count")]
     public IActionResult Count()
     {
         if (!ValidateReferer()) return NotFound();
         return Ok(new { count = _blogService.AllPosts.Count });
     }
 
-    [Route("all/{skip:int?}/{take:int?}")]
+    [HttpGet("all/{skip:int?}/{take:int?}")]
     public IActionResult GetAllBlogPosts(int skip = 0, int take = -1)
     {
         if (!ValidateReferer()) return NotFound();
@@ -52,7 +52,7 @@ public sealed class BlogApiController : ControllerBase
         }));
     }
 
-    [Route("author/{id:int}")]
+    [HttpGet("author/{id:int}")]
     public IActionResult GetAuthor(int id)
     {
         if (!ValidateReferer()) return NotFound();
@@ -64,7 +64,7 @@ public sealed class BlogApiController : ControllerBase
             avatarHash = author.AvatarHash,
         });
     }
-    
+
     private bool ValidateReferer()
     {
         var referer = Request.Headers["Referer"].ToString();
