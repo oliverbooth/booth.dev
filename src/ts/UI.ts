@@ -1,5 +1,6 @@
-﻿declare const bootstrap: any;
+declare const bootstrap: any;
 declare const katex: any;
+declare const Prism: any;
 
 class UI {
     public static get blogPostContainer(): HTMLDivElement {
@@ -27,6 +28,7 @@ class UI {
     public static updateUI(element?: Element) {
         element = element || document.body;
         UI.addLineNumbers(element);
+        UI.addHighlighting(element);
         UI.addBootstrapTooltips(element);
         UI.renderTeX(element);
         UI.unescapeMarkTags(element);
@@ -57,6 +59,17 @@ class UI {
             if (content.trim().split("\n").length > 1) {
                 block.parentElement.classList.add("line-numbers");
             }
+        });
+    }
+
+    /**
+     * Adds syntax highlighting to all <pre> <code> blocks in the element.
+     * @param element The element to search for <pre> <code> blocks in.
+     */
+    public static addHighlighting(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("pre code").forEach((block) => {
+            Prism.highlightAllUnder(block.parentElement);
         });
     }
 
