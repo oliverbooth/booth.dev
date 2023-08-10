@@ -1,4 +1,4 @@
-﻿using Humanizer;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using OliverBooth.Data.Blog;
@@ -29,7 +29,6 @@ public sealed class BlogApiController : ControllerBase
         if (take == -1) take = _blogService.AllPosts.Count;
 
         var referer = Request.Headers["Referer"].ToString();
-        Console.WriteLine($"Referer: {referer}");
         if (!referer.StartsWith(Url.PageLink("/Blog/Index")!))
         {
             return NotFound();
