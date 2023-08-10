@@ -11,6 +11,17 @@ class UI {
     }
 
     /**
+     * Creates a <script> element that loads the Disqus comment counter.
+     */
+    public static createDisqusCounterScript(): HTMLScriptElement {
+        const script = document.createElement("script");
+        script.id = "dsq-count-scr";
+        script.src = "https://oliverbooth-dev.disqus.com/count.js";
+        script.async = true;
+        return script;
+    }
+
+    /**
      * Forces all UI elements to update.
      */
     public static updateUI(element?: Element) {

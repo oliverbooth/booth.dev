@@ -23,7 +23,7 @@
             {{#if post.enable_comments}}
                 <span> &bull; </span>
                 <a href="{{post.url}}#disqus_thread" data-disqus-identifier="{{post.disqus_identifier}}">
-                    0 Comments
+                    Loading comment count &hellip;
                 </a>
             {{/if}}
         </p>
@@ -39,5 +39,3 @@
         {{/if}}
     </div>
 </script>
-
-<script id="dsq-count-scr" src="https://oliverbooth-dev.disqus.com/count.js" async></script>

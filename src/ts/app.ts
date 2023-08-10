@@ -47,6 +47,8 @@ declare const Handlebars: any;
                 i += 4;
             }
 
+            document.body.appendChild(UI.createDisqusCounterScript());
+
             const spinner = document.querySelector("#blog-loading-spinner");
             if (spinner) {
                 spinner.classList.add("removed");
