@@ -2,9 +2,24 @@ import API from "./API";
 import UI from "./UI";
 import Input from "./Input";
 
+const pkg = require("../../package.json");
+
 declare const Handlebars: any;
 
 (() => {
+    let isCtrl = false;
+    document.addEventListener('keyup', (e) => {
+        if (e.ctrlKey) isCtrl = false;
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey) isCtrl = true;
+        if (isCtrl && e.key === "u") {
+            window.open(pkg.repository.url, "_blank");
+            return false;
+        }
+    });
+
     Input.registerShortcut(Input.KONAMI_CODE, () => {
         window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
     });
