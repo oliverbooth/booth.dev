@@ -193,6 +193,11 @@ class UI {
         element = element || document.body;
         element.querySelectorAll("pre code").forEach((block) => {
             let content = block.innerHTML;
+            
+            // but ugly fucking hack. I hate this
+            content = content.replaceAll('<span class="token operator">&lt;</span>mark<span class="token operator">&gt;</span>', "<mark>");
+            content = content.replaceAll('<span class="token operator">&lt;</span><span class="token operator">/</span>mark<span class="token operator">&gt;</span>', "</mark>");
+
             content = content.replaceAll("&lt;mark&gt;", "<mark>");
             content = content.replaceAll("&lt;/mark&gt;", "</mark>");
             block.innerHTML = content;
