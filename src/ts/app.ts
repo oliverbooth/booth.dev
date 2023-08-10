@@ -13,33 +13,7 @@ declare const Handlebars: any;
                 const posts = await API.getBlogPosts(i, 5);
                 for (const post of posts) {
                     const author = await API.getAuthor(post.authorId);
-
-                    const card = document.createElement("div") as HTMLDivElement;
-                    card.classList.add("card");
-                    card.classList.add("blog-card");
-                    card.classList.add("animate__animated");
-                    card.classList.add("animate__fadeIn");
-                    card.style.marginBottom = "50px";
-
-                    const body = template({
-                        post: {
-                            title: post.title,
-                            excerpt: post.excerpt,
-                            url: post.url,
-                            date: TimeUtility.formatRelativeTimestamp(post.published),
-                            formattedDate: post.formattedDate,
-                            date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
-                            enable_comments: post.commentsEnabled,
-                            disqus_identifier: post.identifier,
-                            trimmed: post.trimmed,
-                        },
-                        author: {
-                            name: author.name,
-                            avatar: `https://gravatar.com/avatar/${author.avatarHash}?s=28`,
-                        }
-                    });
-                    card.innerHTML = body.trim();
-
+                    const card = UI.createBlogPostCard(template, post, author);
                     blogPostContainer.appendChild(card);
                     UI.updateUI(card);
                 }

@@ -1,3 +1,7 @@
+import BlogPost from "./BlogPost";
+import Author from "./Author";
+import TimeUtility from "./TimeUtility";
+
 declare const bootstrap: any;
 declare const katex: any;
 declare const Prism: any;
@@ -23,7 +27,42 @@ class UI {
     }
 
     /**
-     * Forces all UI elements to update.
+     * Creates a blog post card from the given template, post, and author.
+     * @param template The Handlebars template to use.
+     * @param post The blog post to use.
+     * @param author The author of the blog post.
+     */
+    public static createBlogPostCard(template: any, post: BlogPost, author: Author): HTMLDivElement {
+        const card = document.createElement("div") as HTMLDivElement;
+        card.classList.add("card");
+        card.classList.add("blog-card");
+        card.classList.add("animate__animated");
+        card.classList.add("animate__fadeIn");
+        card.style.marginBottom = "50px";
+
+        const body = template({
+            post: {
+                title: post.title,
+                excerpt: post.excerpt,
+                url: post.url,
+                date: TimeUtility.formatRelativeTimestamp(post.published),
+                formattedDate: post.formattedDate,
+                date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
+                enable_comments: post.commentsEnabled,
+                disqus_identifier: post.identifier,
+                trimmed: post.trimmed,
+            },
+            author: {
+                name: author.name,
+                avatar: `https://gravatar.com/avatar/${author.avatarHash}?s=28`,
+            }
+        });
+        card.innerHTML = body.trim();
+        return card;
+    }
+
+    /**
+     * Forces all UI elements under the given element to update their rendering.
      */
     public static updateUI(element?: Element) {
         element = element || document.body;
