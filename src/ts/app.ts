@@ -90,7 +90,7 @@ declare const katex: any;
             disqusCounter.src = "https://oliverbooth-dev.disqus.com/count.js";
             disqusCounter.async = true;
 
-            const spinner = document.querySelector("#blog_loading_spinner");
+            const spinner = document.querySelector("#blog-loading-spinner");
             if (spinner) {
                 spinner.classList.add("removed");
                 setTimeout(() => spinner.remove(), 1100);
