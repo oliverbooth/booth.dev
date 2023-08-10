@@ -1,5 +1,4 @@
 using Markdig;
-using Markdig.Extensions.MediaLinks;
 using NLog.Extensions.Logging;
 using OliverBooth.Data;
 using OliverBooth.Markdown;
