@@ -19,20 +19,15 @@ public sealed class BlogApiController : ControllerBase
     [Route("count")]
     public IActionResult Count()
     {
+        if (!ValidateReferer()) return NotFound();
         return Ok(new { count = _blogService.AllPosts.Count });
     }
 
     [Route("all/{skip:int?}/{take:int?}")]
     public IActionResult GetAllBlogPosts(int skip = 0, int take = -1)
     {
+        if (!ValidateReferer()) return NotFound();
         if (take == -1) take = _blogService.AllPosts.Count;
-
-        var referer = Request.Headers["Referer"].ToString();
-        if (!referer.StartsWith(Url.PageLink("/Blog/Index")!))
-        {
-            return NotFound();
-        }
-
         return Ok(_blogService.AllPosts.Skip(skip).Take(take).Select(post => new
         {
             id = post.Id,
@@ -60,6 +55,7 @@ public sealed class BlogApiController : ControllerBase
     [Route("author/{id:int}")]
     public IActionResult GetAuthor(int id)
     {
+        if (!ValidateReferer()) return NotFound();
         if (!_blogService.TryGetAuthor(id, out Author? author)) return NotFound();
 
         return Ok(new
@@ -67,5 +63,11 @@ public sealed class BlogApiController : ControllerBase
             name = author.Name,
             avatarHash = author.AvatarHash,
         });
+    }
+    
+    private bool ValidateReferer()
+    {
+        var referer = Request.Headers["Referer"].ToString();
+        return referer.StartsWith(Url.PageLink("/Blog/Index")!);
     }
 }
