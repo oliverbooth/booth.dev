@@ -60,20 +60,18 @@
 
             <p>@Html.Raw(BlogService.GetExcerpt(post, out bool trimmed))</p>
 
-            <article>
-                @if (trimmed)
-                {
-                    <p>
-                        <a asp-page="/blog/article"
-                           asp-route-year="@year"
-                           asp-route-month="@month"
-                           asp-route-day="@day"
-                           asp-route-slug="@post.Slug">
-                            Read more...
-                        </a>
-                    </p>
-                }
-            </article>
+            @if (trimmed)
+            {
+                <p>
+                    <a asp-page="/blog/article"
+                       asp-route-year="@year"
+                       asp-route-month="@month"
+                       asp-route-day="@day"
+                       asp-route-slug="@post.Slug">
+                        Read more...
+                    </a>
+                </p>
+            }
         </div>
     </div>
 
