@@ -1,4 +1,4 @@
-using Humanizer;
+﻿using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using OliverBooth.Data.Blog;
@@ -50,9 +50,9 @@ public sealed class BlogApiController : ControllerBase
             url = Url.Page("/Blog/Article",
                 new
                 {
-                    year = post.Published.Year,
-                    month = post.Published.Month,
-                    day = post.Published.Day,
+                    year = post.Published.ToString("yyyy"),
+                    month = post.Published.ToString("MM"),
+                    day = post.Published.ToString("dd"),
                     slug = post.Slug
                 })
         }));
