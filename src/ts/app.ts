@@ -27,6 +27,7 @@ declare const Handlebars: any;
                             excerpt: post.excerpt,
                             url: post.url,
                             date: TimeUtility.formatRelativeTimestamp(post.published),
+                            formattedDate: post.formattedDate,
                             date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
                             enable_comments: post.commentsEnabled,
                             disqus_identifier: post.identifier,

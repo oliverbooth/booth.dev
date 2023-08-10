@@ -19,7 +19,7 @@
             <img class="blog-author-icon" src="{{author.avatar}}" alt="{{author.name}}">
             <span>{{author.name}}<span>
             <span> &bull; </span>
-            <span title="{{ post.date }}">{{ post.date_humanized }}</span>
+            <abbr title="{{ post.formattedDate }}">{{ post.date_humanized }}</abbr>
             {{#if post.enable_comments}}
                 <span> &bull; </span>
                 <a href="{{post.url}}#disqus_thread" data-disqus-identifier="{{post.disqus_identifier}}">

@@ -29,14 +29,14 @@
     <img class="blog-author-icon" src="https://gravatar.com/avatar/@author.AvatarHash?s=28" alt="@author.Name">
     @author.Name &bull;
 
-    <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("f")">
+    <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("dddd, d MMMM yyyy HH:mm")">
         Published @published.Humanize()
     </abbr>
 
     @if (post.Updated is { } updated)
     {
         <span>&bull;</span>
-        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("f")">
+        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("dddd, d MMMM yyyy HH:mm")">
             Updated @updated.Humanize()
         </abbr>
     }

@@ -43,6 +43,7 @@ public sealed class BlogApiController : ControllerBase
             author = post.AuthorId,
             title = post.Title,
             published = post.Published.ToUnixTimeSeconds(),
+            formattedDate = post.Published.ToString("dddd, d MMMM yyyy HH:mm"),
             updated = post.Updated?.ToUnixTimeSeconds(),
             humanizedTimestamp = post.Updated?.Humanize() ?? post.Published.Humanize(), 
             excerpt = _blogService.GetExcerpt(post, out bool trimmed),
