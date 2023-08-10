@@ -2,7 +2,6 @@ import API from "./API";
 import TimeUtility from "./TimeUtility";
 import UI from "./UI";
 
-declare const bootstrap: any;
 declare const Handlebars: any;
 
 (() => {
@@ -103,14 +102,4 @@ declare const Handlebars: any;
                 break;
         }
     });
-
-    document.querySelectorAll("[title]").forEach((el) => {
-        el.setAttribute("data-bs-toggle", "tooltip");
-        el.setAttribute("data-bs-placement", "bottom");
-        el.setAttribute("data-bs-html", "true");
-        el.setAttribute("data-bs-title", el.getAttribute("title"));
-    });
-
-    const list = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    list.forEach((el: Element) => new bootstrap.Tooltip(el));
 })();

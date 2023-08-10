@@ -1,4 +1,5 @@
-﻿declare const katex: any;
+declare const bootstrap: any;
+declare const katex: any;
 
 class UI {
     public static get blogPostContainer(): HTMLDivElement {
@@ -14,8 +15,23 @@ class UI {
      */
     public static updateUI() {
         UI.addLineNumbers();
+        UI.addBootstrapTooltips();
         UI.renderTeX();
         UI.unescapeMarkTags();
+    }
+
+    /**
+     * Adds Bootstrap tooltips to all elements with a title attribute.
+     */
+    public static addBootstrapTooltips() {
+        document.querySelectorAll("[title]").forEach((el) => {
+            el.setAttribute("data-bs-toggle", "tooltip");
+            el.setAttribute("data-bs-placement", "bottom");
+            el.setAttribute("data-bs-html", "true");
+            el.setAttribute("data-bs-title", el.getAttribute("title"));
+
+            new bootstrap.Tooltip(el);
+        });
     }
 
     /**
