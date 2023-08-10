@@ -5,8 +5,17 @@ import Input from "./Input";
 const pkg = require("../../package.json");
 
 declare const Handlebars: any;
+declare const Prism: any;
 
 (() => {
+    Prism.languages.extend('markup', {});
+    Prism.languages.insertBefore('custom', 'tag', {
+        'mark': {
+            pattern: /<\/?mark(?:\s+\w+(?:=(?:"[^"]*"|'[^']*'|[^\s'">=]+))?\s*|\s*)\/?>/,
+            greedy: true
+        }
+    });
+    
     let isCtrl = false;
     document.addEventListener('keyup', (e) => {
         if (e.ctrlKey) isCtrl = false;
