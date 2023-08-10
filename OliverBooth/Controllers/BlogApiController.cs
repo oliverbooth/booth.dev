@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
@@ -43,6 +44,7 @@ public sealed class BlogApiController : ControllerBase
             title = post.Title,
             published = post.Published.ToUnixTimeSeconds(),
             updated = post.Updated?.ToUnixTimeSeconds(),
+            humanizedTimestamp = post.Updated?.Humanize() ?? post.Published.Humanize(), 
             excerpt = _blogService.GetExcerpt(post, out bool trimmed),
             trimmed,
             url = Url.Page("/Blog/Article",

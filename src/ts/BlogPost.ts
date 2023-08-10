@@ -9,6 +9,7 @@
     private readonly _url: string;
     private readonly _trimmed: boolean;
     private readonly _identifier: string;
+    private readonly _humanizedTimestamp: string;
 
     constructor(json: any) {
         this._id = json.id;
@@ -21,6 +22,7 @@
         this._url = json.url;
         this._trimmed = json.trimmed;
         this._identifier = json.identifier;
+        this._humanizedTimestamp = json.humanizedTimestamp;
     }
 
     get id(): number {
@@ -61,6 +63,10 @@
 
     get identifier(): string {
         return this._identifier;
+    }
+
+    get humanizedTimestamp(): string {
+        return this._humanizedTimestamp;
     }
 }
 
