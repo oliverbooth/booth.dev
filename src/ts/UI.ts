@@ -1,4 +1,6 @@
-﻿class UI {
+﻿declare const katex: any;
+
+class UI {
     public static get blogPostContainer(): HTMLDivElement {
         return document.querySelector("#all-blog-posts");
     }
@@ -12,6 +14,7 @@
      */
     public static updateUI() {
         UI.addLineNumbers();
+        UI.renderTeX();
         UI.unescapeMarkTags();
     }
 
@@ -24,6 +27,20 @@
             if (content.trim().split("\n").length > 1) {
                 block.parentElement.classList.add("line-numbers");
             }
+        });
+    }
+
+    /**
+     * Renders all TeX in the document.
+     */
+    public static renderTeX() {
+        const tex = document.getElementsByClassName("math");
+        Array.from(tex).forEach(function (el: Element) {
+            let content = el.textContent.trim();
+            if (content.startsWith("\\[")) content = content.slice(2);
+            if (content.endsWith("\\]")) content = content.slice(0, -2);
+
+            katex.render(content, el);
         });
     }
 

@@ -3,7 +3,6 @@ import TimeUtility from "./TimeUtility";
 import UI from "./UI";
 
 declare const bootstrap: any;
-declare const katex: any;
 declare const Handlebars: any;
 
 (() => {
@@ -58,15 +57,6 @@ declare const Handlebars: any;
     }
 
     UI.updateUI();
-
-    const tex = document.getElementsByClassName("math");
-    Array.prototype.forEach.call(tex, function (el) {
-        let content = el.textContent.trim();
-        if (content.startsWith("\\[")) content = content.slice(2);
-        if (content.endsWith("\\]")) content = content.slice(0, -2);
-
-        katex.render(content, el);
-    });
 
     const timestamps = document.querySelectorAll("span[data-timestamp][data-format]");
     timestamps.forEach((timestamp) => {
