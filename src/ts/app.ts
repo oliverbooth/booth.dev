@@ -47,11 +47,6 @@ declare const Handlebars: any;
                 i += 4;
             }
 
-            const disqusCounter = document.createElement("script");
-            disqusCounter.id = "dsq-count-scr";
-            disqusCounter.src = "https://oliverbooth-dev.disqus.com/count.js";
-            disqusCounter.async = true;
-
             UI.updateUI();
 
             const spinner = document.querySelector("#blog-loading-spinner");
