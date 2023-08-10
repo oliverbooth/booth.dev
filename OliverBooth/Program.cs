@@ -1,4 +1,5 @@
 using Markdig;
+using NLog;
 using NLog.Extensions.Logging;
 using OliverBooth.Data;
 using OliverBooth.Markdown;
@@ -52,3 +53,5 @@ app.MapRazorPages();
 app.MapRssFeed("/blog/feed");
 
 app.Run();
+
+LogManager.Shutdown();
