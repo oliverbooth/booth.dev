@@ -1,9 +1,14 @@
-﻿import API from "./API";
+import API from "./API";
 import UI from "./UI";
+import Input from "./Input";
 
 declare const Handlebars: any;
 
 (() => {
+    Input.registerShortcut(Input.KONAMI_CODE, () => {
+        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+    });
+
     const blogPostContainer = UI.blogPostContainer;
     if (blogPostContainer) {
         const template = Handlebars.compile(UI.blogPostTemplate.innerHTML);
