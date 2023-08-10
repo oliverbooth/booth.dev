@@ -81,6 +81,10 @@ class UI {
      */
     public static addBootstrapTooltips(element?: Element) {
         element = element || document.body;
+
+        const list = element.querySelectorAll('[data-bs-toggle="tooltip"]');
+        list.forEach((el: Element) => new bootstrap.Tooltip(el));
+
         element.querySelectorAll("[title]").forEach((el) => {
             el.setAttribute("data-bs-toggle", "tooltip");
             el.setAttribute("data-bs-placement", "bottom");
