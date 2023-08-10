@@ -1,4 +1,4 @@
-declare const bootstrap: any;
+﻿declare const bootstrap: any;
 declare const katex: any;
 
 class UI {
@@ -13,18 +13,20 @@ class UI {
     /**
      * Forces all UI elements to update.
      */
-    public static updateUI() {
-        UI.addLineNumbers();
-        UI.addBootstrapTooltips();
-        UI.renderTeX();
-        UI.unescapeMarkTags();
+    public static updateUI(element?: Element) {
+        element = element || document.body;
+        UI.addLineNumbers(element);
+        UI.addBootstrapTooltips(element);
+        UI.renderTeX(element);
+        UI.unescapeMarkTags(element);
     }
 
     /**
      * Adds Bootstrap tooltips to all elements with a title attribute.
      */
-    public static addBootstrapTooltips() {
-        document.querySelectorAll("[title]").forEach((el) => {
+    public static addBootstrapTooltips(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("[title]").forEach((el) => {
             el.setAttribute("data-bs-toggle", "tooltip");
             el.setAttribute("data-bs-placement", "bottom");
             el.setAttribute("data-bs-html", "true");
@@ -37,8 +39,9 @@ class UI {
     /**
      * Adds line numbers to all <pre> <code> blocks that have more than one line.
      */
-    public static addLineNumbers() {
-        document.querySelectorAll("pre code").forEach((block) => {
+    public static addLineNumbers(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("pre code").forEach((block) => {
             let content = block.textContent;
             if (content.trim().split("\n").length > 1) {
                 block.parentElement.classList.add("line-numbers");
@@ -49,8 +52,9 @@ class UI {
     /**
      * Renders all TeX in the document.
      */
-    public static renderTeX() {
-        const tex = document.getElementsByClassName("math");
+    public static renderTeX(element?: Element) {
+        element = element || document.body;
+        const tex = element.getElementsByClassName("math");
         Array.from(tex).forEach(function (el: Element) {
             let content = el.textContent.trim();
             if (content.startsWith("\\[")) content = content.slice(2);
@@ -63,8 +67,9 @@ class UI {
     /**
      * Unescapes all <mark> tags in <pre> <code> blocks.
      */
-    public static unescapeMarkTags() {
-        document.querySelectorAll("pre code").forEach((block) => {
+    public static unescapeMarkTags(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("pre code").forEach((block) => {
             let content = block.innerHTML;
             content = content.replaceAll("&lt;mark&gt;", "<mark>");
             content = content.replaceAll("&lt;/mark&gt;", "</mark>");

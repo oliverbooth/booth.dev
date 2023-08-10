@@ -40,12 +40,11 @@ declare const Handlebars: any;
                     card.innerHTML = body.trim();
 
                     blogPostContainer.appendChild(card);
+                    UI.updateUI(card);
                 }
 
                 i += 4;
             }
-
-            UI.updateUI();
 
             const spinner = document.querySelector("#blog-loading-spinner");
             if (spinner) {
