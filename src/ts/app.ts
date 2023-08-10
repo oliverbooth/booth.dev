@@ -4,10 +4,12 @@ import UI from "./UI";
 
 declare const bootstrap: any;
 declare const katex: any;
+declare const Handlebars: any;
 
 (() => {
     const blogPostContainer = UI.blogPostContainer;
     if (blogPostContainer) {
+        const template = Handlebars.compile(UI.blogPostTemplate.innerHTML);
         API.getBlogPostCount().then(async (count) => {
             for (let i = 0; i < count; i++) {
                 const posts = await API.getBlogPosts(i, 5);
@@ -21,63 +23,23 @@ declare const katex: any;
                     card.classList.add("animate__fadeIn");
                     card.style.marginBottom = "50px";
 
-                    const cardBody = document.createElement("div");
-                    cardBody.classList.add("card-body");
-                    card.appendChild(cardBody);
-
-                    const postTitle = document.createElement("h2");
-                    postTitle.classList.add("card-title");
-                    cardBody.appendChild(postTitle);
-
-                    const titleLink = document.createElement("a");
-                    titleLink.href = post.url;
-                    titleLink.innerText = post.title;
-                    postTitle.appendChild(titleLink);
-
-                    const metadata = document.createElement("p");
-                    metadata.classList.add("text-muted");
-                    cardBody.appendChild(metadata);
-
-                    const authorIcon = document.createElement("img");
-                    authorIcon.classList.add("blog-author-icon");
-                    authorIcon.src = `https://gravatar.com/avatar/${author.avatarHash}?s=28`;
-                    authorIcon.alt = author.name;
-                    metadata.appendChild(authorIcon);
-
-                    const authorName = document.createElement("span");
-                    authorName.innerHTML = ` ${author.name} &bull; `;
-                    metadata.appendChild(authorName);
-
-                    const postDate = document.createElement("span");
-                    if (post.updated) {
-                        postDate.innerHTML = `Updated ${TimeUtility.formatRelativeTimestamp(post.updated)}`;
-                    } else {
-                        postDate.innerHTML = `Published ${TimeUtility.formatRelativeTimestamp(post.published)}`;
-                    }
-                    metadata.appendChild(postDate);
-
-                    if (post.commentsEnabled) {
-                        const bullet = document.createElement("span");
-                        bullet.innerHTML = " &bull; ";
-                        metadata.appendChild(bullet);
-
-                        const commentCount = document.createElement("a");
-                        commentCount.href = post.url + "#disqus_thread";
-                        commentCount.innerHTML = "0 Comments";
-                        commentCount.setAttribute("data-disqus-identifier", post.identifier);
-                        metadata.appendChild(commentCount);
-                    }
-
-                    const postExcerpt = document.createElement("p");
-                    postExcerpt.innerHTML = post.excerpt;
-                    cardBody.appendChild(postExcerpt);
-
-                    if (post.trimmed) {
-                        const readMoreLink = document.createElement("a");
-                        readMoreLink.href = post.url;
-                        readMoreLink.innerHTML = "Read more &hellip;";
-                        cardBody.appendChild(readMoreLink);
-                    }
+                    const body = template({
+                        post: {
+                            title: post.title,
+                            excerpt: post.excerpt,
+                            url: post.url,
+                            date: TimeUtility.formatRelativeTimestamp(post.published),
+                            date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
+                            enable_comments: post.commentsEnabled,
+                            disqus_identifier: post.identifier,
+                            trimmed: post.trimmed,
+                        },
+                        author: {
+                            name: author.name,
+                            avatar: `https://gravatar.com/avatar/${author.avatarHash}?s=28`,
+                        }
+                    });
+                    card.innerHTML = body.trim();
 
                     blogPostContainer.appendChild(card);
                 }
