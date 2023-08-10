@@ -1,5 +1,4 @@
-import API from "./API";
-import TimeUtility from "./TimeUtility";
+﻿import API from "./API";
 import UI from "./UI";
 
 declare const Handlebars: any;
@@ -32,50 +31,4 @@ declare const Handlebars: any;
     }
 
     UI.updateUI();
-
-    const timestamps = document.querySelectorAll("span[data-timestamp][data-format]");
-    timestamps.forEach((timestamp) => {
-        const seconds = parseInt(timestamp.getAttribute("data-timestamp"));
-        const format = timestamp.getAttribute("data-format");
-        const date = new Date(seconds * 1000);
-
-        const shortTimeString = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
-        const shortDateString = date.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"});
-        const longTimeString = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"});
-        const longDateString = date.toLocaleDateString([], {day: "numeric", month: "long", year: "numeric"});
-        const weekday = date.toLocaleString([], {weekday: "long"});
-        timestamp.setAttribute("title", `${weekday}, ${longDateString} ${shortTimeString}`);
-
-        switch (format) {
-            case "t":
-                timestamp.textContent = shortTimeString;
-                break;
-
-            case "T":
-                timestamp.textContent = longTimeString;
-                break;
-
-            case "d":
-                timestamp.textContent = shortDateString;
-                break;
-
-            case "D":
-                timestamp.textContent = longDateString;
-                break;
-
-            case "f":
-                timestamp.textContent = `${longDateString} at ${shortTimeString}`
-                break;
-
-            case "F":
-                timestamp.textContent = `${weekday}, ${longDateString} at ${shortTimeString}`
-                break;
-
-            case "R":
-                setInterval(() => {
-                    timestamp.textContent = TimeUtility.formatRelativeTimestamp(date);
-                }, 1000);
-                break;
-        }
-    });
 })();
