@@ -1,6 +1,5 @@
 ﻿using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
 
@@ -20,7 +19,7 @@ public sealed class BlogApiController : ControllerBase
     [Route("count")]
     public IActionResult Count()
     {
-        return new JsonResult(new { count = _blogService.AllPosts.Count });
+        return Ok(new { count = _blogService.AllPosts.Count });
     }
 
     [Route("all/{skip:int?}/{take:int?}")]
@@ -34,7 +33,7 @@ public sealed class BlogApiController : ControllerBase
             return NotFound();
         }
 
-        return new JsonResult(_blogService.AllPosts.Skip(skip).Take(take).Select(post => new
+        return Ok(_blogService.AllPosts.Skip(skip).Take(take).Select(post => new
         {
             id = post.Id,
             commentsEnabled = post.EnableComments,
@@ -44,7 +43,7 @@ public sealed class BlogApiController : ControllerBase
             published = post.Published.ToUnixTimeSeconds(),
             formattedDate = post.Published.ToString("dddd, d MMMM yyyy HH:mm"),
             updated = post.Updated?.ToUnixTimeSeconds(),
-            humanizedTimestamp = post.Updated?.Humanize() ?? post.Published.Humanize(), 
+            humanizedTimestamp = post.Updated?.Humanize() ?? post.Published.Humanize(),
             excerpt = _blogService.GetExcerpt(post, out bool trimmed),
             trimmed,
             url = Url.Page("/Blog/Article",
@@ -63,7 +62,7 @@ public sealed class BlogApiController : ControllerBase
     {
         if (!_blogService.TryGetAuthor(id, out Author? author)) return NotFound();
 
-        return new JsonResult(new
+        return Ok(new
         {
             name = author.Name,
             avatarHash = author.AvatarHash,
