@@ -67,12 +67,12 @@ class UI {
      */
     public static updateUI(element?: Element) {
         element = element || document.body;
+        UI.unescapeMarkTags(element);
         UI.addLineNumbers(element);
         UI.addHighlighting(element);
         UI.addBootstrapTooltips(element);
         UI.renderTeX(element);
         UI.renderTimestamps(element);
-        UI.unescapeMarkTags(element);
     }
 
     /**
@@ -195,9 +195,6 @@ class UI {
             let content = block.innerHTML;
             
             // but ugly fucking hack. I hate this
-            content = content.replaceAll('<span class="token operator">&lt;</span>mark<span class="token operator">&gt;</span>', "<mark>");
-            content = content.replaceAll('<span class="token operator">&lt;</span><span class="token operator">/</span>mark<span class="token operator">&gt;</span>', "</mark>");
-
             content = content.replaceAll("&lt;mark&gt;", "<mark>");
             content = content.replaceAll("&lt;/mark&gt;", "</mark>");
             block.innerHTML = content;
