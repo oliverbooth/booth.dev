@@ -80,6 +80,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapControllerRoute("scoped", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 app.MapRssFeed("/blog/feed");

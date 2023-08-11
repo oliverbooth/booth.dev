@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
 
-namespace OliverBooth.Pages.Blog;
+namespace OliverBooth.Areas.Blog.Pages;
 
 /// <summary>
 ///     Represents the page model for the <c>Article</c> page.

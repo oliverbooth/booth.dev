@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
 
-namespace OliverBooth.Pages.Blog;
+namespace OliverBooth.Areas.Blog.Pages;
 
 public class Index : PageModel
 {
