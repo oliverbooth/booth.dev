@@ -17,7 +17,7 @@ class API {
         return JSON.parse(text).map(obj => new BlogPost(obj));
     }
     
-    static async getAuthor(id: number): Promise<Author> {
+    static async getAuthor(id: string): Promise<Author> {
         const response = await fetch(`${API.BASE_URL + API.BLOG_URL}/author/${id}`);
         const text = await response.text();
         return new Author(JSON.parse(text));

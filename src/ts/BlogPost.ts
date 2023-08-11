@@ -1,9 +1,9 @@
 class BlogPost {
-    private readonly _id: number;
+    private readonly _id: string;
     private readonly _commentsEnabled: boolean;
     private readonly _title: string;
     private readonly _excerpt: string;
-    private readonly _authorId: number;
+    private readonly _authorId: string;
     private readonly _published: Date;
     private readonly _updated?: Date;
     private readonly _url: string;
@@ -17,7 +17,7 @@ class BlogPost {
         this._commentsEnabled = json.commentsEnabled;
         this._title = json.title;
         this._excerpt = json.excerpt;
-        this._authorId = parseInt(json.author);
+        this._authorId = json.author;
         this._published = new Date(json.published * 1000);
         this._updated = (json.updated && new Date(json.updated * 1000)) || null;
         this._url = json.url;
@@ -27,7 +27,7 @@ class BlogPost {
         this._formattedDate = json.formattedDate;
     }
 
-    get id(): number {
+    get id(): string {
         return this._id;
     }
 
@@ -43,7 +43,7 @@ class BlogPost {
         return this._excerpt;
     }
 
-    get authorId(): number {
+    get authorId(): string {
         return this._authorId;
     }
 
