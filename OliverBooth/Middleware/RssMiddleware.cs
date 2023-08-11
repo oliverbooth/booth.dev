@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
-using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Rss;
 using OliverBooth.Services;
