@@ -49,9 +49,10 @@ public sealed class BlogApiController : ControllerBase
             humanizedTimestamp = post.Updated?.Humanize() ?? post.Published.Humanize(),
             excerpt = _blogService.GetExcerpt(post, out bool trimmed),
             trimmed,
-            url = Url.Page("/Blog/Article",
+            url = Url.Page("/Article",
                 new
                 {
+                    area = "blog",
                     year = post.Published.ToString("yyyy"),
                     month = post.Published.ToString("MM"),
                     day = post.Published.ToString("dd"),
