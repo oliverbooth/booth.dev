@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
 
-namespace OliverBooth.Areas.Api.Controllers;
+namespace OliverBooth.Controllers;
 
 /// <summary>
 ///     Represents a controller for the blog API.
 /// </summary>
-[Controller]
-[Area("api")]
-[Route("blog")]
+[ApiController]
+[Route("api/blog")]
+[Produces("application/json")]
 public sealed class BlogApiController : ControllerBase
 {
     private readonly BlogService _blogService;
@@ -24,7 +24,7 @@ public sealed class BlogApiController : ControllerBase
         _blogService = blogService;
     }
 
-    [HttpGet("count")]
+    [Route("count")]
     public IActionResult Count()
     {
         if (!ValidateReferer()) return NotFound();
@@ -69,6 +69,7 @@ public sealed class BlogApiController : ControllerBase
 
         return Ok(new
         {
+            id = author.Id,
             name = author.Name,
             avatarHash = author.AvatarHash,
         });
@@ -77,6 +78,6 @@ public sealed class BlogApiController : ControllerBase
     private bool ValidateReferer()
     {
         var referer = Request.Headers["Referer"].ToString();
-        return referer.StartsWith(Url.PageLink("/Blog/Index")!);
+        return referer.StartsWith(Url.PageLink("/index",values: new{area="blog"})!);
     }
 }
