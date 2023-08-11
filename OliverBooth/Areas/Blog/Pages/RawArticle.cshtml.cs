@@ -27,7 +27,6 @@ public class RawArticle : PageModel
     {
         if (!_blogService.TryGetBlogPost(year, month, day, slug, out BlogPost? post))
         {
-            Response.StatusCode = 404;
             return NotFound();
         }
         
