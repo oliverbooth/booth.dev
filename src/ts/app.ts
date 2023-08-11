@@ -15,7 +15,7 @@ declare const Prism: any;
             greedy: true
         }
     });
-    
+
     let isCtrl = false;
     document.addEventListener('keyup', (e) => {
         if (e.ctrlKey) isCtrl = false;
@@ -54,7 +54,7 @@ declare const Prism: any;
             const spinner = document.querySelector("#blog-loading-spinner");
             if (spinner) {
                 spinner.classList.add("removed");
-                setTimeout(() => spinner.remove(), 1100);
+                setTimeout(() => spinner.remove(), 1000);
             }
         });
     }

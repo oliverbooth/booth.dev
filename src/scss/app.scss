@@ -214,25 +214,23 @@ div.alert *:last-child {
 
 #blog-loading-spinner {
   margin: 20px;
+  height: auto;
+  opacity: 1;
 
   &.removed {
-    animation: spinner-removed 2s ease-in-out;
+    margin: 0;
+    height: 0;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
   }
 }
 
-@keyframes spinner-removed {
-  0% {
-    transform: scaleY(1);
-    opacity: 1;
+a.bmc-btn {
+  &:link, &:visited, &:active {
+    color: #000;
   }
 
-  50% {
-    transform: scaleY(1);
-    opacity: 0;
-  }
-
-  100% {
-    transform: scaleY(0);
-    opacity: 0;
+  &:hover {
+    color: #fff;
   }
 }
