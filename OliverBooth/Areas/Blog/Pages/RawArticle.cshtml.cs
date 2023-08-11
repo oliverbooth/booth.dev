@@ -29,18 +29,20 @@ public class RawArticle : PageModel
         {
             return NotFound();
         }
-        
+
+        Response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("# " + post.Title);
         if (_blogService.TryGetAuthor(post, out Author? author))
             builder.AppendLine($"Author: {author.Name}");
-        
+
         builder.AppendLine($"Published: {post.Published:R}");
         if (post.Updated.HasValue)
             builder.AppendLine($"Updated: {post.Updated:R}");
-        
+
         builder.AppendLine();
         builder.AppendLine(post.Body);
-        return Content(builder.ToString(), "text/plain");
+        return Content(builder.ToString());
     }
 }
