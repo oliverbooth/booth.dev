@@ -4,7 +4,6 @@ using Markdig;
 using NLog;
 using NLog.Extensions.Logging;
 using OliverBooth.Data;
-using OliverBooth.Markdown;
 using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Middleware;

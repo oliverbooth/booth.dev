@@ -32,6 +32,7 @@ public sealed class TemplateService
         _formatter.AddExtensions(new DefaultSource());
         _formatter.AddExtensions(new ReflectionSource());
         _formatter.AddExtensions(new DateFormatter());
+        _formatter.AddExtensions(new MarkdownFormatter(serviceProvider));
 
         _serviceProvider = serviceProvider;
         _webContextFactory = webContextFactory;
@@ -51,7 +52,6 @@ public sealed class TemplateService
     public string RenderTemplate(TemplateInline templateInline)
     {
         if (templateInline is null) throw new ArgumentNullException(nameof(templateInline));
-        MarkdownPipeline? markdownPipeline = _serviceProvider.GetService<MarkdownPipeline>();
 
         using WebContext webContext = _webContextFactory.CreateDbContext();
         ArticleTemplate? template = webContext.ArticleTemplates.Find(templateInline.Name);
@@ -60,21 +60,13 @@ public sealed class TemplateService
             return $"{{{{{templateInline.Name}}}}}";
         }
 
-        string[] arguments = templateInline.ArgumentList.ToArray();
-        for (var index = 0; index < arguments.Length; index++)
-        {
-            MarkdownDocument document = Markdig.Markdown.Parse(arguments[index], markdownPipeline);
-            string result = document.ToHtml(markdownPipeline);
-            arguments[index] = result;
-        }
-
         Span<byte> randomBytes = stackalloc byte[20];
         Random.NextBytes(randomBytes);
 
         var formatted = new
         {
-            ArgumentList = arguments,
-            ArgumentString = string.Join("|", arguments),
+            templateInline.ArgumentList,
+            templateInline.ArgumentString,
             templateInline.Params,
             RandomInt = BinaryPrimitives.ReadInt32LittleEndian(randomBytes[..4]),
             RandomGuid = new Guid(randomBytes[4..]).ToString("N"),
@@ -82,7 +74,7 @@ public sealed class TemplateService
 
         try
         {
-            return Markdig.Markdown.ToHtml(_formatter.Format(template.FormatString, formatted));
+            return _formatter.Format(template.FormatString, formatted);
         }
         catch
         {
