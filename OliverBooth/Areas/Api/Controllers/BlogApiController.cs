@@ -5,6 +5,9 @@ using OliverBooth.Services;
 
 namespace OliverBooth.Areas.Api.Controllers;
 
+/// <summary>
+///     Represents a controller for the blog API.
+/// </summary>
 [Controller]
 [Area("api")]
 [Route("blog")]
@@ -12,6 +15,10 @@ public sealed class BlogApiController : ControllerBase
 {
     private readonly BlogService _blogService;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BlogApiController" /> class.
+    /// </summary>
+    /// <param name="blogService">The <see cref="BlogService" />.</param>
     public BlogApiController(BlogService blogService)
     {
         _blogService = blogService;
