@@ -3,12 +3,19 @@
     ViewData["Title"] = "Contact";
 }
 
-<h1 class="display-4">Contact</h1>
-<p class="lead">Job Opportunity</p>
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/contact/index">Contact</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Job Opportunity</li>
+    </ol>
+</nav>
+
 <p>
     I am always open to hearing about future opportunities. If you have a position you think I could be a good fit for,
     please feel free to contact me using the form below. At this time, I am only open to positions based in South East
-    Wales or that are 100% remote. 
+    Wales or that are 100% remote.
 </p>
 <p>I look forward to hearing from you!</p>
 

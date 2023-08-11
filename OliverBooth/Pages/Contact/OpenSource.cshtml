@@ -3,8 +3,15 @@
     ViewData["Title"] = "Contact";
 }
 
-<h1 class="display-4">Contact</h1>
-<p class="lead">Open Source Contribution</p>
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/contact/index">Contact</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Open Source Contribution</li>
+    </ol>
+</nav>
+
 <p>
     Thank you for taking the time to consider contributing to one of my open source projects! I am always looking for
     ways to improve my code, and I appreciate any and all contributions that I receive. You do not need to contact

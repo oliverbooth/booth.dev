@@ -3,8 +3,15 @@
     ViewData["Title"] = "Contact";
 }
 
-<h1 class="display-4">Contact</h1>
-<p class="lead">Other</p>
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/contact/index">Contact</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Other</li>
+    </ol>
+</nav>
+
 <p>
     Thanks for getting in touch! While I do my best to read to all inquiries, I cannot guarantee that I will be able to
     respond to your message. Nevertheless, I appreciate you taking the time to reach out to me and I will respond if I

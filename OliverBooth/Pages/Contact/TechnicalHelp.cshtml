@@ -3,8 +3,15 @@
     ViewData["Title"] = "Contact";
 }
 
-<h1 class="display-4">Contact</h1>
-<p class="lead">Technical Help</p>
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/contact/index">Contact</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Technical Help</li>
+    </ol>
+</nav>
+
 <p>
     I'm sorry, but do I not offer help or advice regarding development of any kind outside of my website, and Discord
     servers of which I'm a member. I'm most active in the <a href="https://discord.gg/brackeys">Brackeys Community</a>
