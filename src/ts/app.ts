@@ -39,7 +39,7 @@ declare const Prism: any;
         const authors = [];
         const template = Handlebars.compile(UI.blogPostTemplate.innerHTML);
         API.getBlogPostCount().then(async (count) => {
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < count; i += 5) {
                 const posts = await API.getBlogPosts(i, 5);
                 for (const post of posts) {
                     let author: Author;
@@ -54,8 +54,6 @@ declare const Prism: any;
                     blogPostContainer.appendChild(card);
                     UI.updateUI(card);
                 }
-
-                i += 4;
             }
 
             document.body.appendChild(UI.createDisqusCounterScript());
