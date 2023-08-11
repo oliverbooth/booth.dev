@@ -1,6 +1,10 @@
 @page
 @model OliverBooth.Pages.Blog.Index
 
+@{
+    ViewData["Title"] = "Blog";
+}
+
 <div id="all-blog-posts">
     @await Html.PartialAsync("_LoadingSpinner")
 </div>
