@@ -1,4 +1,5 @@
 using Humanizer;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
@@ -11,6 +12,7 @@ namespace OliverBooth.Controllers;
 [ApiController]
 [Route("api/blog")]
 [Produces("application/json")]
+[EnableCors("BlogApi")]
 public sealed class BlogApiController : ControllerBase
 {
     private readonly BlogService _blogService;

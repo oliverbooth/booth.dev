@@ -34,6 +34,11 @@ builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddSingleton<BlogService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
+builder.Services.AddCors(options => options.AddPolicy("BlogApi", policy => (builder.Environment.IsDevelopment()
+        ? policy.AllowAnyOrigin()
+        : policy.WithOrigins("https://oliverbooth.dev"))
+    .AllowAnyMethod()
+    .AllowAnyHeader()));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.WebHost.UseKestrel(kestrel =>
@@ -79,6 +84,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+app.UseCors("BlogApi");
 
 app.MapControllers();
 app.MapRazorPages();
