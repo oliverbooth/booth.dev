@@ -1,4 +1,4 @@
-﻿import BlogPost from "./BlogPost";
+import BlogPost from "./BlogPost";
 import Author from "./Author";
 import TimeUtility from "./TimeUtility";
 
@@ -71,6 +71,7 @@ class UI {
         UI.addLineNumbers(element);
         UI.addHighlighting(element);
         UI.addBootstrapTooltips(element);
+        UI.renderSpoilers(element);
         UI.renderTeX(element);
         UI.renderTimestamps(element);
     }
@@ -117,6 +118,20 @@ class UI {
         element = element || document.body;
         element.querySelectorAll("pre code").forEach((block) => {
             Prism.highlightAllUnder(block.parentElement);
+        });
+    }
+
+    /**
+     * Renders all spoilers in the document.
+     * @param element The element to search for spoilers in.
+     */
+    public static renderSpoilers(element?: Element) {
+        element = element || document.body;
+        const spoilers = element.querySelectorAll(".spoiler");
+        spoilers.forEach((spoiler) => {
+            spoiler.addEventListener("click", () => {
+                spoiler.classList.add("spoiler-revealed");
+            });
         });
     }
 
@@ -197,7 +212,7 @@ class UI {
         element = element || document.body;
         element.querySelectorAll("pre code").forEach((block) => {
             let content = block.innerHTML;
-            
+
             // but ugly fucking hack. I hate this
             content = content.replaceAll("&lt;mark&gt;", "<mark>");
             content = content.replaceAll("&lt;/mark&gt;", "</mark>");
