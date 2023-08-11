@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
@@ -41,9 +41,9 @@ public class Index : PageModel
         var route = new
         {
             area = "blog",
-            year = post.Published.Year,
-            month = post.Published.Month,
-            day = post.Published.Day,
+            year = post.Published.ToString("yyyy"),
+            month = post.Published.ToString("MM"),
+            day = post.Published.ToString("dd"),
             slug = post.Slug
         };
         return Redirect(Url.Page("/Article", route)!);
