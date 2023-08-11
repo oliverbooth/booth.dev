@@ -14,7 +14,7 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.ToTable("BlogPost");
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Id);
         builder.Property(e => e.WordPressId).IsRequired(false);
         builder.Property(e => e.Slug).HasMaxLength(100).IsRequired();
         builder.Property(e => e.AuthorId).IsRequired();

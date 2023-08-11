@@ -11,7 +11,7 @@ public sealed class BlogPost : IEquatable<BlogPost>
     ///     Gets the ID of the author.
     /// </summary>
     /// <value>The author ID.</value>
-    public int AuthorId { get; private set; }
+    public Guid AuthorId { get; private set; }
 
     /// <summary>
     ///     Gets or sets the body of the blog post.
@@ -47,7 +47,7 @@ public sealed class BlogPost : IEquatable<BlogPost>
     ///     Gets the ID of the blog post.
     /// </summary>
     /// <value>The ID.</value>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the blog post is a redirect.
@@ -181,6 +181,6 @@ public sealed class BlogPost : IEquatable<BlogPost>
     public override int GetHashCode()
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
-        return Id;
+        return Id.GetHashCode();
     }
 }

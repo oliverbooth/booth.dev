@@ -52,8 +52,8 @@ public sealed class BlogApiController : ControllerBase
         }));
     }
 
-    [HttpGet("author/{id:int}")]
-    public IActionResult GetAuthor(int id)
+    [HttpGet("author/{id:guid}")]
+    public IActionResult GetAuthor(Guid id)
     {
         if (!ValidateReferer()) return NotFound();
         if (!_blogService.TryGetAuthor(id, out Author? author)) return NotFound();

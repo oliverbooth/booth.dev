@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
@@ -14,7 +14,7 @@ public class Index : PageModel
         _blogService = blogService;
     }
 
-    public IActionResult OnGet([FromQuery(Name = "pid")] int? postId = null,
+    public IActionResult OnGet([FromQuery(Name = "pid")] Guid? postId = null,
         [FromQuery(Name = "p")] int? wpPostId = null)
     {
         if (postId.HasValue == wpPostId.HasValue)
@@ -25,7 +25,7 @@ public class Index : PageModel
         return postId.HasValue ? HandleNewRoute(postId.Value) : HandleWordPressRoute(wpPostId!.Value);
     }
 
-    private IActionResult HandleNewRoute(int postId)
+    private IActionResult HandleNewRoute(Guid postId)
     {
         return _blogService.TryGetBlogPost(postId, out BlogPost? post) ? RedirectToPost(post) : NotFound();
     }

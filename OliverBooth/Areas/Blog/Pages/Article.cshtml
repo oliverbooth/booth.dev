@@ -1,4 +1,4 @@
-@page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
+﻿@page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
 @using Humanizer
 @using OliverBooth.Data.Blog
 @using OliverBooth.Services
@@ -64,7 +64,7 @@
              this.page.url = "@post.GetDisqusUrl()";
              this.page.identifier = "@post.GetDisqusIdentifier()";
              this.page.title = "@post.Title";
-             this.page.postId = "@(post.WordPressId ?? post.Id)";
+             this.page.postId = "@(post.WordPressId?.ToString() ?? post.Id.ToString())";
          };
         
         (function() {

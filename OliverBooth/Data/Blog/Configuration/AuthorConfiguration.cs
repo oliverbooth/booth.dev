@@ -14,7 +14,7 @@ internal sealed class AuthorConfiguration : IEntityTypeConfiguration<Author>
         builder.ToTable("Author");
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Id);
         builder.Property(e => e.Name).HasMaxLength(100).IsRequired();
         builder.Property(e => e.EmailAddress).HasMaxLength(255).IsRequired(false);
     }

@@ -48,7 +48,7 @@ public sealed class Author : IEquatable<Author>
     ///     Gets the ID of the author.
     /// </summary>
     /// <value>The ID.</value>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets or sets the name of the author.
@@ -70,6 +70,6 @@ public sealed class Author : IEquatable<Author>
 
     public override int GetHashCode()
     {
-        return Id;
+        return Id.GetHashCode();
     }
 }
