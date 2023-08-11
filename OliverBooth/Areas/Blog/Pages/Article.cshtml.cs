@@ -8,6 +8,7 @@ namespace OliverBooth.Areas.Blog.Pages;
 /// <summary>
 ///     Represents the page model for the <c>Article</c> page.
 /// </summary>
+[Area("blog")]
 public class Article : PageModel
 {
     private readonly BlogService _blogService;

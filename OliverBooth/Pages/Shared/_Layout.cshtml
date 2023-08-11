@@ -36,22 +36,22 @@
 <nav>
     <ul class="site-nav">
         <li>
-            <a asp-page="/index">About</a>
+            <a asp-area="" asp-page="/index">About</a>
         </li>
         <li>
-            <a asp-area="Blog" asp-page="/index">Blog</a>
+            <a asp-area="blog" asp-page="/index">Blog</a>
         </li>
         <li>
-            <a asp-page="/tutorials/index">Tutorials</a>
+            <a asp-area="" asp-page="/tutorials/index">Tutorials</a>
         </li>
         <li>
-            <a asp-page="/projects/index">Projects</a>
+            <a asp-area="" asp-page="/projects/index">Projects</a>
         </li>
         <li>
-            <a asp-page="/contact/index">Contact</a>
+            <a asp-area="" asp-page="/contact/index">Contact</a>
         </li>
         <li>
-            <a asp-page="/donate">Donate</a>
+            <a asp-area="" asp-page="/donate">Donate</a>
         </li>
     </ul>
 </nav>
@@ -68,7 +68,7 @@
     <div class="container text-center">
         &copy; @DateTime.UtcNow.Year
         &bullet;
-        <a asp-page="/privacy/index">Privacy</a>
+        <a asp-area="" asp-page="/privacy/index">Privacy</a>
         &bullet;
         <a href="https://mastodon.olivr.me/@@oliver" rel="me">Mastodon</a>
         &bullet;

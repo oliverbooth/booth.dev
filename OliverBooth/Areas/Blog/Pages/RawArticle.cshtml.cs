@@ -1,4 +1,4 @@
-﻿using Cysharp.Text;
+using Cysharp.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
@@ -9,6 +9,7 @@ namespace OliverBooth.Areas.Blog.Pages;
 /// <summary>
 ///     Represents the page model for the <c>RawArticle</c> page.
 /// </summary>
+[Area("blog")]
 public class RawArticle : PageModel
 {
     private readonly BlogService _blogService;

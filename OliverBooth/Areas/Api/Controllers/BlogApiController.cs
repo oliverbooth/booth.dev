@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
 
-namespace OliverBooth.Controllers;
+namespace OliverBooth.Areas.Api.Controllers;
 
 [Controller]
-[Route("/api/blog")]
+[Area("api")]
+[Route("blog")]
 public sealed class BlogApiController : ControllerBase
 {
     private readonly BlogService _blogService;

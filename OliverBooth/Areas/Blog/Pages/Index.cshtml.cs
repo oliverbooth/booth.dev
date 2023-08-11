@@ -5,6 +5,7 @@ using OliverBooth.Services;
 
 namespace OliverBooth.Areas.Blog.Pages;
 
+[Area("blog")]
 public class Index : PageModel
 {
     private readonly BlogService _blogService;
