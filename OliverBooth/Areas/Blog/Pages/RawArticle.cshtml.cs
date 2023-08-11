@@ -1,4 +1,4 @@
-using Cysharp.Text;
+﻿using Cysharp.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Data.Blog;
@@ -22,12 +22,6 @@ public class RawArticle : PageModel
     {
         _blogService = blogService;
     }
-
-    /// <summary>
-    ///     Gets the requested blog post.
-    /// </summary>
-    /// <value>The requested blog post.</value>
-    public BlogPost Post { get; private set; } = null!;
 
     public IActionResult OnGet(int year, int month, int day, string slug)
     {
