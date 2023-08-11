@@ -74,6 +74,10 @@
 <script src="~/js/prism.min.js" asp-append-version="true" data-manual></script>
 <script src="~/js/app.min.js" asp-append-version="true"></script>
 
+<script id="loading-spinner-template" type="text/x-handlebars-template">
+    @await Html.PartialAsync("_LoadingSpinner")
+</script>
+
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
