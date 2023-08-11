@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 using OliverBooth.Data.Web;
 using OliverBooth.Markdown;
+using OliverBooth.Markdown.Template;
 using SmartFormat;
 using SmartFormat.Extensions;
 

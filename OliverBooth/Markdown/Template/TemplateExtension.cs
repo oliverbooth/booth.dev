@@ -2,7 +2,7 @@ using Markdig;
 using Markdig.Renderers;
 using OliverBooth.Services;
 
-namespace OliverBooth.Markdown;
+namespace OliverBooth.Markdown.Template;
 
 /// <summary>
 ///     Represents a Markdown extension that adds support for MediaWiki-style templates.

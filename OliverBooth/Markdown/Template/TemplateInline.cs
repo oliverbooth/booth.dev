@@ -1,6 +1,6 @@
 using Markdig.Syntax.Inlines;
 
-namespace OliverBooth.Markdown;
+namespace OliverBooth.Markdown.Template;
 
 /// <summary>
 ///     Represents a Markdown inline element that represents a MediaWiki-style template.

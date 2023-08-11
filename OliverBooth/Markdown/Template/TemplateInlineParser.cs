@@ -2,7 +2,7 @@ using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
 
-namespace OliverBooth.Markdown;
+namespace OliverBooth.Markdown.Template;
 
 /// <summary>
 ///     Represents a Markdown inline parser that handles MediaWiki-style templates.

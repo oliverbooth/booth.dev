@@ -2,7 +2,7 @@ using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using OliverBooth.Services;
 
-namespace OliverBooth.Markdown;
+namespace OliverBooth.Markdown.Template;
 
 /// <summary>
 ///     Represents a Markdown object renderer that handles <see cref="TemplateInline" /> elements.
