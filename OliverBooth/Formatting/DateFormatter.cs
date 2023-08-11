@@ -1,7 +1,7 @@
 using System.Globalization;
 using SmartFormat.Core.Extensions;
 
-namespace OliverBooth;
+namespace OliverBooth.Formatting;
 
 /// <summary>
 ///     Represents a SmartFormat formatter that formats a date.

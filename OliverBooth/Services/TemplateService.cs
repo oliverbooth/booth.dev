@@ -4,6 +4,7 @@ using Markdig.Syntax;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 using OliverBooth.Data.Web;
+using OliverBooth.Formatting;
 using OliverBooth.Markdown.Template;
 using SmartFormat;
 using SmartFormat.Extensions;
