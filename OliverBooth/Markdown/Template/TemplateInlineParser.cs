@@ -112,7 +112,7 @@ public sealed class TemplateInlineParser : InlineParser
         out bool hasValue)
     {
         var isEscaped = false;
-        
+
         int startIndex = index;
         for (; index < argumentSpan.Length; index++)
         {
