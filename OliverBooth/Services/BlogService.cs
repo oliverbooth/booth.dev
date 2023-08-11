@@ -74,7 +74,7 @@ public sealed class BlogService
     /// </param>
     /// <returns><see langword="true" /> if the author is found; otherwise, <see langword="false" />.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
-    public bool TryGetAuthor(int id, [NotNullWhen(true)] out Author? author)
+    public bool TryGetAuthor(Guid id, [NotNullWhen(true)] out Author? author)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         author = context.Authors.FirstOrDefault(a => a.Id == id);
@@ -136,7 +136,7 @@ public sealed class BlogService
     ///     otherwise, <see langword="null" />.
     /// </param>
     /// <returns><see langword="true" /> if the post is found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetBlogPost(int postId, [NotNullWhen(true)] out BlogPost? post)
+    public bool TryGetBlogPost(Guid postId, [NotNullWhen(true)] out BlogPost? post)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(p => p.Id == postId);
