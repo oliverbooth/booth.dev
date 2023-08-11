@@ -1,4 +1,4 @@
-﻿namespace OliverBooth.Markdown.Timestamp;
+namespace OliverBooth.Markdown.Timestamp;
 
 /// <summary>
 ///     An enumeration of timestamp formats.

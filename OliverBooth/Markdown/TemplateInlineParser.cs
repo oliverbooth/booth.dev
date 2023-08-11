@@ -1,4 +1,4 @@
-﻿using Cysharp.Text;
+using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
 

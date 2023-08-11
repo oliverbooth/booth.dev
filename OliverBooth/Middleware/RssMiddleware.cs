@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Rss;

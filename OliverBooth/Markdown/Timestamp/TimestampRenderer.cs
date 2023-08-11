@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Humanizer;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;

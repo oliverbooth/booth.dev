@@ -1,4 +1,4 @@
-﻿class Author {
+class Author {
     private readonly _name: string;
     private readonly _avatarHash: string;
 

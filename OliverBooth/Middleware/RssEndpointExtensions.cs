@@ -1,4 +1,4 @@
-﻿namespace OliverBooth.Middleware;
+namespace OliverBooth.Middleware;
 
 internal static class RssEndpointExtensions
 {

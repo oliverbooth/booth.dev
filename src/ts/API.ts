@@ -1,4 +1,4 @@
-﻿import BlogPost from "./BlogPost";
+import BlogPost from "./BlogPost";
 import Author from "./Author";
 
 class API {

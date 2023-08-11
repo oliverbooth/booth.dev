@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 
 namespace OliverBooth.Services;

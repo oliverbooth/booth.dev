@@ -1,4 +1,4 @@
-﻿namespace OliverBooth.Data.Web;
+namespace OliverBooth.Data.Web;
 
 /// <summary>
 ///     Represents a site configuration item.

@@ -1,4 +1,4 @@
-﻿using SmartFormat;
+using SmartFormat;
 
 namespace OliverBooth.Data.Blog;
 

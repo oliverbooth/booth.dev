@@ -1,4 +1,4 @@
-﻿class TimeUtility {
+class TimeUtility {
     public static formatRelativeTimestamp(timestamp: Date) {
         const now = new Date();
         // @ts-ignore

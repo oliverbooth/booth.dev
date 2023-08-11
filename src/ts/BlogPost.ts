@@ -1,4 +1,4 @@
-﻿class BlogPost {
+class BlogPost {
     private readonly _id: number;
     private readonly _commentsEnabled: boolean;
     private readonly _title: string;

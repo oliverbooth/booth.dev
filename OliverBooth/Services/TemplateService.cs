@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 using OliverBooth.Data.Web;
 using OliverBooth.Markdown;

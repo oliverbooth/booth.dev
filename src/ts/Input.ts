@@ -1,4 +1,4 @@
-﻿class Input {
+class Input {
     public static readonly KONAMI_CODE = [
         "ArrowUp",
         "ArrowUp",

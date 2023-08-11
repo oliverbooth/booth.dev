@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Blog.Configuration;
 
