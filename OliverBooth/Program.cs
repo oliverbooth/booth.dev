@@ -18,7 +18,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
 builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
-builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
