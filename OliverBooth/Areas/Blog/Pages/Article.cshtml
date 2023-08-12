@@ -12,7 +12,7 @@
 
 @{
     ViewData["Title"] = post.Title;
-    Author author = Model.Author;
+    User author = Model.Author;
     DateTimeOffset published = post.Published;
 }
 
@@ -27,8 +27,8 @@
 
 <h1>@post.Title</h1>
 <p class="text-muted">
-    <img class="blog-author-icon" src="https://gravatar.com/avatar/@author.AvatarHash?s=28" alt="@author.Name">
-    @author.Name &bull;
+    <img class="blog-author-icon" src="https://gravatar.com/avatar/@author.AvatarHash?s=28" alt="@author.DisplayName">
+    @author.DisplayName &bull;
 
     <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("dddd, d MMMM yyyy HH:mm")">
         Published @published.Humanize()

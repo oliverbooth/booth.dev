@@ -12,21 +12,24 @@ namespace OliverBooth.Areas.Blog.Pages;
 public class Article : PageModel
 {
     private readonly BlogService _blogService;
+    private readonly BlogUserService _blogUserService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Article" /> class.
     /// </summary>
     /// <param name="blogService">The <see cref="BlogService" />.</param>
-    public Article(BlogService blogService)
+    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
+    public Article(BlogService blogService, BlogUserService blogUserService)
     {
         _blogService = blogService;
+        _blogUserService = blogUserService;
     }
 
     /// <summary>
     ///     Gets the author of the post.
     /// </summary>
     /// <value>The author of the post.</value>
-    public Author Author { get; private set; } = null!;
+    public User Author { get; private set; } = null!;
 
     /// <summary>
     ///     Gets a value indicating whether the post is a legacy WordPress post.
@@ -51,7 +54,7 @@ public class Article : PageModel
         }
 
         Post = post;
-        Author = _blogService.TryGetAuthor(post, out Author? author) ? author : null!;
+        Author = _blogUserService.TryGetUser(post.AuthorId, out User? author) ? author : null!;
         return Page();
     }
 }

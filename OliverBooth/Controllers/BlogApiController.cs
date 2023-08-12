@@ -16,14 +16,17 @@ namespace OliverBooth.Controllers;
 public sealed class BlogApiController : ControllerBase
 {
     private readonly BlogService _blogService;
+    private readonly BlogUserService _blogUserService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogApiController" /> class.
     /// </summary>
     /// <param name="blogService">The <see cref="BlogService" />.</param>
-    public BlogApiController(BlogService blogService)
+    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
+    public BlogApiController(BlogService blogService, BlogUserService blogUserService)
     {
         _blogService = blogService;
+        _blogUserService = blogUserService;
     }
 
     [Route("count")]
@@ -67,12 +70,12 @@ public sealed class BlogApiController : ControllerBase
     public IActionResult GetAuthor(Guid id)
     {
         if (!ValidateReferer()) return NotFound();
-        if (!_blogService.TryGetAuthor(id, out Author? author)) return NotFound();
+        if (!_blogUserService.TryGetUser(id, out User? author)) return NotFound();
 
         return Ok(new
         {
             id = author.Id,
-            name = author.Name,
+            name = author.DisplayName,
             avatarHash = author.AvatarHash,
         });
     }
@@ -80,6 +83,6 @@ public sealed class BlogApiController : ControllerBase
     private bool ValidateReferer()
     {
         var referer = Request.Headers["Referer"].ToString();
-        return referer.StartsWith(Url.PageLink("/index",values: new{area="blog"})!);
+        return referer.StartsWith(Url.PageLink("/index", values: new { area = "blog" })!);
     }
 }

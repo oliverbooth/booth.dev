@@ -12,6 +12,7 @@ namespace OliverBooth.Middleware;
 internal sealed class RssMiddleware
 {
     private readonly BlogService _blogService;
+    private readonly BlogUserService _userService;
     private readonly ConfigurationService _configurationService;
 
     /// <summary>
@@ -19,12 +20,15 @@ internal sealed class RssMiddleware
     /// </summary>
     /// <param name="_">The request delegate.</param>
     /// <param name="blogService">The blog service.</param>
+    /// <param name="userService">The user service.</param>
     /// <param name="configurationService">The configuration service.</param>
     public RssMiddleware(RequestDelegate _,
         BlogService blogService,
+        BlogUserService userService,
         ConfigurationService configurationService)
     {
         _blogService = blogService;
+        _userService = userService;
         _configurationService = configurationService;
     }
 
@@ -42,14 +46,14 @@ internal sealed class RssMiddleware
             string excerpt = _blogService.GetExcerpt(blogPost, out _);
             var description = $"{excerpt}<p><a href=\"{url}\">Read more...</a></p>";
 
-            _blogService.TryGetAuthor(blogPost, out Author? author);
+            _userService.TryGetUser(blogPost.AuthorId, out User? author);
 
             var item = new BlogItem
             {
                 Title = blogPost.Title,
                 Link = url,
                 Comments = $"{url}#disqus_thread",
-                Creator = author?.Name ?? string.Empty,
+                Creator = author?.DisplayName ?? string.Empty,
                 PubDate = blogPost.Published.ToString("R"),
                 Guid = $"{baseUrl}?pid={blogPost.Id}",
                 Description = description

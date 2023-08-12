@@ -65,44 +65,6 @@ public sealed class BlogService
     }
 
     /// <summary>
-    ///     Attempts to find the author by ID.
-    /// </summary>
-    /// <param name="id">The ID of the author.</param>
-    /// <param name="author">
-    ///     When this method returns, contains the <see cref="Author" /> associated with the specified ID, if the author
-    ///     is found; otherwise, <see langword="null" />.
-    /// </param>
-    /// <returns><see langword="true" /> if the author is found; otherwise, <see langword="false" />.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
-    public bool TryGetAuthor(Guid id, [NotNullWhen(true)] out Author? author)
-    {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        author = context.Authors.FirstOrDefault(a => a.Id == id);
-
-        return author is not null;
-    }
-
-    /// <summary>
-    ///     Attempts to find the author of a blog post.
-    /// </summary>
-    /// <param name="post">The blog post.</param>
-    /// <param name="author">
-    ///     When this method returns, contains the <see cref="Author" /> associated with the specified blog post, if the
-    ///     author is found; otherwise, <see langword="null" />.
-    /// </param>
-    /// <returns><see langword="true" /> if the author is found; otherwise, <see langword="false" />.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
-    public bool TryGetAuthor(BlogPost post, [NotNullWhen(true)] out Author? author)
-    {
-        if (post is null) throw new ArgumentNullException(nameof(post));
-
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        author = context.Authors.FirstOrDefault(a => a.Id == post.AuthorId);
-
-        return author is not null;
-    }
-
-    /// <summary>
     ///     Attempts to find a blog post by its publication date and slug.
     /// </summary>
     /// <param name="year">The year the post was published.</param>
@@ -158,7 +120,7 @@ public sealed class BlogService
         post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == postId);
         return post is not null;
     }
-    
+
     private string RenderContent(string content)
     {
         content = content.Replace("<!--more-->", string.Empty);

@@ -21,16 +21,16 @@ public sealed class BlogContext : DbContext
     }
 
     /// <summary>
-    ///     Gets the set of authors.
-    /// </summary>
-    /// <value>The set of authors.</value>
-    public DbSet<Author> Authors { get; internal set; } = null!;
-
-    /// <summary>
     ///     Gets the set of blog posts.
     /// </summary>
     /// <value>The set of blog posts.</value>
     public DbSet<BlogPost> BlogPosts { get; internal set; } = null!;
+
+    /// <summary>
+    ///     Gets the set of users.
+    /// </summary>
+    /// <value>The set of users.</value>
+    public DbSet<User> Users { get; internal set; } = null!;
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -43,7 +43,7 @@ public sealed class BlogContext : DbContext
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new AuthorConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

@@ -13,14 +13,17 @@ namespace OliverBooth.Areas.Blog.Pages;
 public class RawArticle : PageModel
 {
     private readonly BlogService _blogService;
+    private readonly BlogUserService _blogUserService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RawArticle" /> class.
     /// </summary>
     /// <param name="blogService">The <see cref="BlogService" />.</param>
-    public RawArticle(BlogService blogService)
+    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
+    public RawArticle(BlogService blogService, BlogUserService blogUserService)
     {
         _blogService = blogService;
+        _blogUserService = blogUserService;
     }
 
     public IActionResult OnGet(int year, int month, int day, string slug)
@@ -34,8 +37,8 @@ public class RawArticle : PageModel
 
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("# " + post.Title);
-        if (_blogService.TryGetAuthor(post, out Author? author))
-            builder.AppendLine($"Author: {author.Name}");
+        if (_blogUserService.TryGetUser(post.AuthorId, out User? author))
+            builder.AppendLine($"Author: {author.DisplayName}");
 
         builder.AppendLine($"Published: {post.Published:R}");
         if (post.Updated.HasValue)

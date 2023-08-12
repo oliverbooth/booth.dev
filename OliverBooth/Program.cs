@@ -18,6 +18,7 @@ builder.Logging.AddNLog();
 builder.Services.AddHostedSingleton<LoggingService>();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
+builder.Services.AddSingleton<BlogUserService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use<TimestampExtension>()
