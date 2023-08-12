@@ -1,6 +1,7 @@
 using Markdig;
 using NLog;
 using NLog.Extensions.Logging;
+using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
 using OliverBooth.Data;
 using OliverBooth.Markdown.Template;
@@ -13,6 +14,8 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddNLog();
+
+builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
 builder.Services.AddHostedSingleton<LoggingService>();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
