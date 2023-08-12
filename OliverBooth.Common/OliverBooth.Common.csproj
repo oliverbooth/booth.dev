@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +18,11 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.10"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.10"/>
         <PackageReference Include="Markdig" Version="0.32.0"/>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.10"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="wwwroot\**\*"/>
     </ItemGroup>
 
 </Project>

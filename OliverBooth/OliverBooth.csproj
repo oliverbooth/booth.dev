@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\OliverBooth.Common\OliverBooth.Common.csproj" />
+        <ProjectReference Include="..\OliverBooth.Common\OliverBooth.Common.csproj"/>
     </ItemGroup>
 
 </Project>
