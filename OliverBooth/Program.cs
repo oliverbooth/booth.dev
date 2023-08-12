@@ -1,8 +1,7 @@
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using Markdig;
 using NLog;
 using NLog.Extensions.Logging;
+using OliverBooth.Common.Extensions;
 using OliverBooth.Data;
 using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
@@ -18,6 +17,7 @@ builder.Logging.AddNLog();
 builder.Services.AddHostedSingleton<LoggingService>();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
+builder.Services.AddHostedSingleton<BlogSessionService>();
 builder.Services.AddSingleton<BlogUserService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
@@ -41,35 +41,7 @@ builder.Services.AddCors(options => options.AddPolicy("BlogApi", policy => (buil
     .AllowAnyHeader()));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-builder.WebHost.UseKestrel(kestrel =>
-{
-    string certPath = Environment.GetEnvironmentVariable("SSL_CERT_PATH")!;
-    if (!File.Exists(certPath))
-    {
-        kestrel.ListenAnyIP(5049);
-        return;
-    }
-
-    string? keyPath = Environment.GetEnvironmentVariable("SSL_KEY_PATH");
-    if (string.IsNullOrWhiteSpace(keyPath) || !File.Exists(keyPath)) keyPath = null;
-
-    kestrel.ListenAnyIP(2845, options =>
-    {
-        X509Certificate2 cert = CreateCertFromPemFile(certPath, keyPath);
-        options.UseHttps(cert);
-    });
-    return;
-
-    static X509Certificate2 CreateCertFromPemFile(string certPath, string? keyPath)
-    {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            return X509Certificate2.CreateFromPemFile(certPath, keyPath);
-
-        //workaround for windows issue https://github.com/dotnet/runtime/issues/23749#issuecomment-388231655
-        using var cert = X509Certificate2.CreateFromPemFile(certPath, keyPath);
-        return new X509Certificate2(cert.Export(X509ContentType.Pkcs12));
-    }
-});
+builder.WebHost.AddCertificateFromEnvironment();
 
 WebApplication app = builder.Build();
 
