@@ -3,9 +3,18 @@ using OliverBooth.Blog.Middleware;
 using OliverBooth.Blog.Services;
 using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
+using Serilog;
+using X10D.Hosting.DependencyInjection;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/latest.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddTomlFile("data/config.toml", true, true);
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 
 builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
 builder.Services.AddDbContextFactory<BlogContext>();

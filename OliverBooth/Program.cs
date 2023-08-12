@@ -1,22 +1,23 @@
 using Markdig;
-using NLog;
-using NLog.Extensions.Logging;
 using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
 using OliverBooth.Data;
 using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
-using X10D.Hosting.DependencyInjection;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/latest.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddTomlFile("data/config.toml", true, true);
-
 builder.Logging.ClearProviders();
-builder.Logging.AddNLog();
+builder.Logging.AddSerilog();
 
 builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
-builder.Services.AddHostedSingleton<LoggingService>();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
 
@@ -60,5 +61,3 @@ app.MapControllers();
 app.MapRazorPages();
 
 app.Run();
-
-LogManager.Shutdown();
