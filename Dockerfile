@@ -5,16 +5,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["oliverbooth.dev/oliverbooth.dev.csproj", "oliverbooth.dev/"]
+COPY ["OliverBooth/OliverBooth.csproj", "OliverBooth/"]
 RUN dotnet restore "oliverbooth.dev/oliverbooth.dev.csproj"
 COPY . .
-WORKDIR "/src/oliverbooth.dev"
-RUN dotnet build "oliverbooth.dev.csproj" -c Release -o /app/build
+WORKDIR "/src/OliverBooth"
+RUN dotnet build "OliverBooth.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "oliverbooth.dev.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "OliverBooth.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "oliverbooth.dev.dll"]
+ENTRYPOINT ["dotnet", "OliverBooth.dll"]
