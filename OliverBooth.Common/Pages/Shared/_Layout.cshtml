@@ -1,5 +1,6 @@
 @{
     string rootUrl = Environment.GetEnvironmentVariable("ROOT_URL") ?? "https://oliverbooth.dev";
+    string blogUrl = Environment.GetEnvironmentVariable("BLOG_URL") ?? "https://blog.oliverbooth.dev";
 }
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
@@ -42,7 +43,7 @@
             <a href="@rootUrl">About</a>
         </li>
         <li>
-            <a asp-page="/index">Blog</a>
+            <a href="@blogUrl">Blog</a>
         </li>
         <li>
             <a href="@rootUrl/tutorials">Tutorials</a>
@@ -71,11 +72,11 @@
     <div class="container text-center">
         &copy; @DateTime.UtcNow.Year
         &bullet;
-        <a asp-area="" asp-page="/privacy/index">Privacy</a>
+        <a href="@rootUrl/privacy/index">Privacy</a>
         &bullet;
         <a href="https://mastodon.olivr.me/@@oliver" rel="me">Mastodon</a>
         &bullet;
-        <a href="/blog/feed"><i class="fa-solid fa-rss text-orange"></i></a>
+        <a href="@blogUrl/feed"><i class="fa-solid fa-rss text-orange"></i></a>
     </div>
 </footer>
 
