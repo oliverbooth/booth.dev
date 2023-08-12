@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Blog.Data;
+using OliverBooth.Blog.Services;
 
-namespace OliverBooth.Areas.Blog.Pages;
+namespace OliverBooth.Blog.Pages;
 
 [Area("blog")]
 public class Index : PageModel
 {
-    private readonly BlogService _blogService;
+    private readonly IBlogPostService _blogPostService;
 
-    public Index(BlogService blogService)
+    public Index(IBlogPostService blogPostService)
     {
-        _blogService = blogService;
+        _blogPostService = blogPostService;
     }
 
     public IActionResult OnGet([FromQuery(Name = "pid")] Guid? postId = null,
@@ -28,15 +28,15 @@ public class Index : PageModel
 
     private IActionResult HandleNewRoute(Guid postId)
     {
-        return _blogService.TryGetBlogPost(postId, out BlogPost? post) ? RedirectToPost(post) : NotFound();
+        return _blogPostService.TryGetPost(postId, out IBlogPost? post) ? RedirectToPost(post) : NotFound();
     }
 
     private IActionResult HandleWordPressRoute(int wpPostId)
     {
-        return _blogService.TryGetWordPressBlogPost(wpPostId, out BlogPost? post) ? RedirectToPost(post) : NotFound();
+        return _blogPostService.TryGetPost(wpPostId, out IBlogPost? post) ? RedirectToPost(post) : NotFound();
     }
 
-    private IActionResult RedirectToPost(BlogPost post)
+    private IActionResult RedirectToPost(IBlogPost post)
     {
         var route = new
         {

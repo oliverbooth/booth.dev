@@ -1,13 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data.Blog;
-using OliverBooth.Data.Blog.Configuration;
+using OliverBooth.Blog.Data.Configuration;
 
-namespace OliverBooth.Data;
+namespace OliverBooth.Blog.Data;
 
 /// <summary>
 ///     Represents a session with the blog database.
 /// </summary>
-public sealed class BlogContext : DbContext
+internal sealed class BlogContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
@@ -21,16 +20,16 @@ public sealed class BlogContext : DbContext
     }
 
     /// <summary>
-    ///     Gets the set of blog posts.
+    ///     Gets the collection of blog posts in the database.
     /// </summary>
-    /// <value>The set of blog posts.</value>
-    public DbSet<BlogPost> BlogPosts { get; internal set; } = null!;
+    /// <value>The collection of blog posts.</value>
+    public DbSet<BlogPost> BlogPosts { get; private set; } = null!;
 
     /// <summary>
-    ///     Gets the set of users.
+    ///     Gets the collection of users in the database.
     /// </summary>
-    /// <value>The set of users.</value>
-    public DbSet<User> Users { get; internal set; } = null!;
+    /// <value>The collection of users.</value>
+    public DbSet<User> Users { get; private set; } = null!;
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -16,6 +16,7 @@
         <PackageReference Include="Alexinea.Extensions.Configuration.Toml" Version="7.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.9"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9"/>
+        <PackageReference Include="Markdig" Version="0.32.0"/>
     </ItemGroup>
 
 </Project>

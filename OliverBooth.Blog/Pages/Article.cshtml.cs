@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Blog.Data;
+using OliverBooth.Blog.Services;
 
-namespace OliverBooth.Areas.Blog.Pages;
+namespace OliverBooth.Blog.Pages;
 
 /// <summary>
 ///     Represents the page model for the <c>Article</c> page.
@@ -11,26 +11,18 @@ namespace OliverBooth.Areas.Blog.Pages;
 [Area("blog")]
 public class Article : PageModel
 {
-    private readonly BlogService _blogService;
-    private readonly BlogUserService _blogUserService;
+    private readonly IBlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Article" /> class.
     /// </summary>
-    /// <param name="blogService">The <see cref="BlogService" />.</param>
-    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
-    public Article(BlogService blogService, BlogUserService blogUserService)
+    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
+    public Article(IBlogPostService blogPostService)
     {
-        _blogService = blogService;
-        _blogUserService = blogUserService;
+        _blogPostService = blogPostService;
     }
 
-    /// <summary>
-    ///     Gets the author of the post.
-    /// </summary>
-    /// <value>The author of the post.</value>
-    public User Author { get; private set; } = null!;
-
+    /*
     /// <summary>
     ///     Gets a value indicating whether the post is a legacy WordPress post.
     /// </summary>
@@ -38,23 +30,29 @@ public class Article : PageModel
     ///     <see langword="true" /> if the post is a legacy WordPress post; otherwise, <see langword="false" />.
     /// </value>
     public bool IsWordPressLegacyPost => Post.WordPressId.HasValue;
+    */
 
     /// <summary>
     ///     Gets the requested blog post.
     /// </summary>
     /// <value>The requested blog post.</value>
-    public BlogPost Post { get; private set; } = null!;
+    public IBlogPost Post { get; private set; } = null!;
 
     public IActionResult OnGet(int year, int month, int day, string slug)
     {
-        if (!_blogService.TryGetBlogPost(year, month, day, slug, out BlogPost? post))
+        var date = new DateOnly(year, month, day);
+        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
         {
             Response.StatusCode = 404;
             return NotFound();
         }
 
+        if (post.IsRedirect)
+        {
+            return Redirect(post.RedirectUrl!.ToString());
+        }
+
         Post = post;
-        Author = _blogUserService.TryGetUser(post.AuthorId, out User? author) ? author : null!;
         return Page();
     }
 }

@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace OliverBooth.Data.Blog.Configuration;
+namespace OliverBooth.Blog.Data.Configuration;
 
-/// <summary>
-///     Represents the configuration for the <see cref="BlogPost" /> entity.
-/// </summary>
 internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
 {
     /// <inheritdoc />
@@ -23,7 +21,7 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.Body).IsRequired();
         builder.Property(e => e.IsRedirect).IsRequired();
-        builder.Property(e => e.RedirectUrl).IsRequired(false);
+        builder.Property(e => e.RedirectUrl).HasConversion<UriToStringConverter>().HasMaxLength(255).IsRequired(false);
         builder.Property(e => e.EnableComments).IsRequired();
         builder.Property(e => e.DisqusDomain).IsRequired(false);
         builder.Property(e => e.DisqusIdentifier).IsRequired(false);

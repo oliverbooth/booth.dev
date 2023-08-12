@@ -5,7 +5,6 @@ using OliverBooth.Common.Extensions;
 using OliverBooth.Data;
 using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
-using OliverBooth.Middleware;
 using OliverBooth.Services;
 using X10D.Hosting.DependencyInjection;
 
@@ -17,8 +16,6 @@ builder.Logging.AddNLog();
 builder.Services.AddHostedSingleton<LoggingService>();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TemplateService>();
-builder.Services.AddHostedSingleton<BlogSessionService>();
-builder.Services.AddSingleton<BlogUserService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use<TimestampExtension>()
@@ -29,9 +26,7 @@ builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .UseSmartyPants()
     .Build());
 
-builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddDbContextFactory<WebContext>();
-builder.Services.AddSingleton<BlogService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 builder.Services.AddCors(options => options.AddPolicy("BlogApi", policy => (builder.Environment.IsDevelopment()
@@ -41,7 +36,7 @@ builder.Services.AddCors(options => options.AddPolicy("BlogApi", policy => (buil
     .AllowAnyHeader()));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-builder.WebHost.AddCertificateFromEnvironment();
+builder.WebHost.AddCertificateFromEnvironment(2845, 5049);
 
 WebApplication app = builder.Build();
 
@@ -60,7 +55,6 @@ app.UseCors("BlogApi");
 
 app.MapControllers();
 app.MapRazorPages();
-app.MapRssFeed("/blog/feed");
 
 app.Run();
 

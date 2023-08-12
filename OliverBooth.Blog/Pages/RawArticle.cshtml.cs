@@ -1,10 +1,10 @@
 using Cysharp.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Blog.Data;
+using OliverBooth.Blog.Services;
 
-namespace OliverBooth.Areas.Blog.Pages;
+namespace OliverBooth.Blog.Pages;
 
 /// <summary>
 ///     Represents the page model for the <c>RawArticle</c> page.
@@ -12,23 +12,21 @@ namespace OliverBooth.Areas.Blog.Pages;
 [Area("blog")]
 public class RawArticle : PageModel
 {
-    private readonly BlogService _blogService;
-    private readonly BlogUserService _blogUserService;
+    private readonly IBlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RawArticle" /> class.
     /// </summary>
-    /// <param name="blogService">The <see cref="BlogService" />.</param>
-    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
-    public RawArticle(BlogService blogService, BlogUserService blogUserService)
+    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
+    public RawArticle(IBlogPostService blogPostService)
     {
-        _blogService = blogService;
-        _blogUserService = blogUserService;
+        _blogPostService = blogPostService;
     }
 
     public IActionResult OnGet(int year, int month, int day, string slug)
     {
-        if (!_blogService.TryGetBlogPost(year, month, day, slug, out BlogPost? post))
+        var date = new DateOnly(year, month, day);
+        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
         {
             return NotFound();
         }
@@ -37,8 +35,7 @@ public class RawArticle : PageModel
 
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("# " + post.Title);
-        if (_blogUserService.TryGetUser(post.AuthorId, out User? author))
-            builder.AppendLine($"Author: {author.DisplayName}");
+        builder.AppendLine($"Author: {post.Author.DisplayName}");
 
         builder.AppendLine($"Published: {post.Published:R}");
         if (post.Updated.HasValue)

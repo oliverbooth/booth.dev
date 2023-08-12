@@ -1,35 +1,18 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
-using OliverBooth.Data.Blog;
+using OliverBooth.Blog.Data;
+using OliverBooth.Blog.Services;
 using OliverBooth.Data.Rss;
-using OliverBooth.Services;
 
-namespace OliverBooth.Middleware;
+namespace OliverBooth.Blog.Middleware;
 
-/// <summary>
-///     Represents the RSS middleware.
-/// </summary>
 internal sealed class RssMiddleware
 {
-    private readonly BlogService _blogService;
-    private readonly BlogUserService _userService;
-    private readonly ConfigurationService _configurationService;
+    private readonly IBlogPostService _blogPostService;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="RssMiddleware" /> class.
-    /// </summary>
-    /// <param name="_">The request delegate.</param>
-    /// <param name="blogService">The blog service.</param>
-    /// <param name="userService">The user service.</param>
-    /// <param name="configurationService">The configuration service.</param>
-    public RssMiddleware(RequestDelegate _,
-        BlogService blogService,
-        BlogUserService userService,
-        ConfigurationService configurationService)
+    public RssMiddleware(RequestDelegate _, IBlogPostService blogPostService)
     {
-        _blogService = blogService;
-        _userService = userService;
-        _configurationService = configurationService;
+        _blogPostService = blogPostService;
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Middleware")]
@@ -40,28 +23,25 @@ internal sealed class RssMiddleware
         var baseUrl = $"https://{context.Request.Host}/blog";
         var blogItems = new List<BlogItem>();
 
-        foreach (BlogPost blogPost in _blogService.AllPosts.OrderByDescending(p => p.Published))
+        foreach (IBlogPost post in _blogPostService.GetAllBlogPosts())
         {
-            var url = $"{baseUrl}/{blogPost.Published:yyyy/MM/dd}/{blogPost.Slug}";
-            string excerpt = _blogService.GetExcerpt(blogPost, out _);
+            var url = $"{baseUrl}/{post.Published:yyyy/MM/dd}/{post.Slug}";
+            string excerpt = _blogPostService.RenderExcerpt(post, out _);
             var description = $"{excerpt}<p><a href=\"{url}\">Read more...</a></p>";
-
-            _userService.TryGetUser(blogPost.AuthorId, out User? author);
 
             var item = new BlogItem
             {
-                Title = blogPost.Title,
+                Title = post.Title,
                 Link = url,
                 Comments = $"{url}#disqus_thread",
-                Creator = author?.DisplayName ?? string.Empty,
-                PubDate = blogPost.Published.ToString("R"),
-                Guid = $"{baseUrl}?pid={blogPost.Id}",
+                Creator = post.Author.DisplayName,
+                PubDate = post.Published.ToString("R"),
+                Guid = $"{baseUrl}?pid={post.Id}",
                 Description = description
             };
             blogItems.Add(item);
         }
 
-        string siteTitle = _configurationService.GetSiteConfiguration("SiteTitle") ?? string.Empty;
         var rss = new BlogRoot
         {
             Channel = new BlogChannel
@@ -73,7 +53,7 @@ internal sealed class RssMiddleware
                 Description = $"{baseUrl}/",
                 LastBuildDate = DateTimeOffset.UtcNow.ToString("R"),
                 Link = $"{baseUrl}/",
-                Title = siteTitle,
+                Title = "Oliver Booth",
                 Generator = $"{baseUrl}/",
                 Items = blogItems
             }
@@ -90,6 +70,5 @@ internal sealed class RssMiddleware
 
         await using var writer = new StreamWriter(context.Response.BodyWriter.AsStream());
         serializer.Serialize(writer, rss, xmlNamespaces);
-        // await context.Response.WriteAsync(document.OuterXml);
     }
 }
