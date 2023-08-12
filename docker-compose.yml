@@ -17,3 +17,21 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  oliverbooth-blog:
+    container_name: blog.oliverbooth.dev
+    pull_policy: build
+    build: .
+    volumes:
+      - type: bind
+        source: /var/log/oliverbooth-blog/site
+        target: /app/logs
+      - type: bind
+        source: /etc/oliverbooth-blog/site
+        target: /app/data
+    restart: always
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
