@@ -1,12 +1,13 @@
 using Markdig;
+using Microsoft.Extensions.DependencyInjection;
 using SmartFormat.Core.Extensions;
 
-namespace OliverBooth.Formatting;
+namespace OliverBooth.Common.Formatting;
 
 /// <summary>
 ///     Represents a SmartFormat formatter that formats markdown.
 /// </summary>
-internal sealed class MarkdownFormatter : IFormatter
+public sealed class MarkdownFormatter : IFormatter
 {
     private readonly IServiceProvider _serviceProvider;
 

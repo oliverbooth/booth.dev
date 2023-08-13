@@ -1,8 +1,8 @@
 using Markdig;
 using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
+using OliverBooth.Common.Services;
 using OliverBooth.Data;
-using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
 using Serilog;
@@ -18,11 +18,11 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
 builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
-builder.Services.AddSingleton<TemplateService>();
+builder.Services.AddSingleton<ITemplateService, TemplateService>();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use<TimestampExtension>()
-    .Use(new TemplateExtension(provider.GetRequiredService<TemplateService>()))
+    .Use(new TemplateExtension(provider.GetRequiredService<ITemplateService>()))
     .UseAdvancedExtensions()
     .UseBootstrap()
     .UseEmojiAndSmiley()

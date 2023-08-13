@@ -26,6 +26,12 @@ internal sealed class BlogContext : DbContext
     public DbSet<BlogPost> BlogPosts { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the collection of templates in the database.
+    /// </summary>
+    /// <value>The collection of templates.</value>
+    public DbSet<Template> Templates { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the collection of users in the database.
     /// </summary>
     /// <value>The collection of users.</value>
@@ -43,6 +49,7 @@ internal sealed class BlogContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
+        modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

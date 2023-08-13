@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace OliverBooth.Data.Web.Configuration;
 
 /// <summary>
-///     Represents the configuration for the <see cref="ArticleTemplate" /> entity.
+///     Represents the configuration for the <see cref="Template" /> entity.
 /// </summary>
-internal sealed class ArticleTemplateConfiguration : IEntityTypeConfiguration<ArticleTemplate>
+internal sealed class TemplateConfiguration : IEntityTypeConfiguration<Template>
 {
-    public void Configure(EntityTypeBuilder<ArticleTemplate> builder)
+    public void Configure(EntityTypeBuilder<Template> builder)
     {
-        builder.ToTable("ArticleTemplate");
+        builder.ToTable("Template");
         builder.HasKey(e => e.Name);
 
         builder.Property(e => e.Name).IsRequired();

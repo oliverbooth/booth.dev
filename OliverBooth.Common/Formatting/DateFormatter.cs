@@ -1,12 +1,12 @@
 using System.Globalization;
 using SmartFormat.Core.Extensions;
 
-namespace OliverBooth.Formatting;
+namespace OliverBooth.Common.Formatting;
 
 /// <summary>
 ///     Represents a SmartFormat formatter that formats a date.
 /// </summary>
-internal sealed class DateFormatter : IFormatter
+public sealed class DateFormatter : IFormatter
 {
     /// <inheritdoc />
     public bool CanAutoDetect { get; set; } = true;

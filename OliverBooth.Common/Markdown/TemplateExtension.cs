@@ -1,21 +1,21 @@
 using Markdig;
 using Markdig.Renderers;
-using OliverBooth.Services;
+using OliverBooth.Common.Services;
 
-namespace OliverBooth.Markdown.Template;
+namespace OliverBooth.Common.Markdown;
 
 /// <summary>
 ///     Represents a Markdown extension that adds support for MediaWiki-style templates.
 /// </summary>
-internal sealed class TemplateExtension : IMarkdownExtension
+public sealed class TemplateExtension : IMarkdownExtension
 {
-    private readonly TemplateService _templateService;
+    private readonly ITemplateService _templateService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TemplateExtension" /> class.
     /// </summary>
     /// <param name="templateService">The template service.</param>
-    public TemplateExtension(TemplateService templateService)
+    public TemplateExtension(ITemplateService templateService)
     {
         _templateService = templateService;
     }

@@ -3,6 +3,7 @@ using OliverBooth.Blog.Middleware;
 using OliverBooth.Blog.Services;
 using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
+using OliverBooth.Common.Services;
 using Serilog;
 using X10D.Hosting.DependencyInjection;
 
@@ -20,6 +21,7 @@ builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
 builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 
