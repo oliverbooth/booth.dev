@@ -8,7 +8,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        RelationalEntityTypeBuilderExtensions.ToTable((EntityTypeBuilder)builder, "User");
+        builder.ToTable("User");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
