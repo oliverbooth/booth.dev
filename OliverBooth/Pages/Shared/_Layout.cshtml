@@ -1,3 +1,10 @@
+@using OliverBooth.Data.Blog
+@using OliverBooth.Services
+@inject IBlogPostService BlogPostService
+@{
+    HttpRequest request = Context.Request;
+    var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
+}
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
@@ -12,6 +19,20 @@
     else
     {
         <title>Oliver Booth</title>
+    }
+    @if (ViewData["Post"] is IBlogPost post)
+    {
+        string excerpt = BlogPostService.RenderExcerpt(post, out bool trimmed);
+        <meta name="title" content="@post.Title">
+        <meta name="description" content="@excerpt">
+        <meta property="og:title" content="@post.Title">
+        <meta property="og:description" content="@excerpt">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="@url">
+        <meta property="twitter:title" content="@post.Title">
+        <meta property="twitter:description" content="@excerpt">
+        <meta property="twitter:card" content="summary">
+        <meta property="twitter:url" content="@url">
     }
     <link rel="shortcut icon" href="/img/favicon.png" asp-append-version="true">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" integrity="sha512-Z/def5z5u2aR89OuzYcxmDJ0Bnd5V1cKqBEbvLOiUNWdg9PQeXVvXLI90SE4QOHGlfLqUnDNVAYyZi8UwUTmWQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
