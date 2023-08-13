@@ -9,6 +9,7 @@
 }
 
 @{
+    ViewData["Post"] = post;
     ViewData["Title"] = post.Title;
     IBlogAuthor author = post.Author;
     DateTimeOffset published = post.Published;
