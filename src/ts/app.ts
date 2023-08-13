@@ -34,6 +34,15 @@ declare const Prism: any;
         window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
     });
 
+    const blogPost = UI.blogPost;
+    if (blogPost) {
+        const id = blogPost.dataset.blogId;
+        API.getBlogPost(id).then((post) => {
+            blogPost.innerHTML = post.content;
+            UI.updateUI(blogPost);
+        });
+    }
+
     const blogPostContainer = UI.blogPostContainer;
     if (blogPostContainer) {
         const authors = [];

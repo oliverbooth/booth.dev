@@ -2,7 +2,7 @@ import BlogPost from "./BlogPost";
 import Author from "./Author";
 
 class API {
-    private static readonly BASE_URL: string = "https://api.oliverbooth.dev";
+    private static readonly BASE_URL: string = "/api";
     private static readonly BLOG_URL: string = "/blog";
 
     static async getBlogPostCount(): Promise<number> {

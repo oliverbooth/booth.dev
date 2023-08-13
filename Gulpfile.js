@@ -7,7 +7,7 @@ const terser = require('gulp-terser');
 const webpack = require('webpack-stream');
 
 const srcDir = 'src';
-const destDir = 'OliverBooth.Common/wwwroot';
+const destDir = 'OliverBooth/wwwroot';
 
 function compileSCSS() {
     return gulp.src(`${srcDir}/scss/**/*.scss`)

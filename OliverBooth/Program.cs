@@ -1,7 +1,9 @@
-using OliverBooth.Common;
-using OliverBooth.Common.Extensions;
-using OliverBooth.Common.Services;
-using OliverBooth.Data;
+using Markdig;
+using OliverBooth.Data.Blog;
+using OliverBooth.Data.Web;
+using OliverBooth.Extensions;
+using OliverBooth.Markdown.Template;
+using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
 using Serilog;
 
@@ -15,15 +17,28 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
-builder.Services.AddMarkdownPipeline();
-builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
-builder.Services.AddSingleton<ITemplateService, TemplateService>();
+builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
+    .Use<TimestampExtension>()
+    .Use(new TemplateExtension(provider.GetRequiredService<ITemplateService>()))
+    .UseAdvancedExtensions()
+    .UseBootstrap()
+    .UseEmojiAndSmiley()
+    .UseSmartyPants()
+    .Build());
+
+builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddDbContextFactory<WebContext>();
+builder.Services.AddSingleton<ITemplateService, TemplateService>();
+builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
+builder.Services.AddSingleton<IBlogUserService, BlogUserService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-builder.WebHost.AddCertificateFromEnvironment(2845, 5049);
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.AddCertificateFromEnvironment(2845, 5049);
+}
 
 WebApplication app = builder.Build();
 

@@ -1,0 +1,87 @@
+@page "/{year:int}/{month:int}/{day:int}/{slug}"
+@using Humanizer
+@using OliverBooth.Data.Blog
+@model Article
+
+@if (Model.Post is not { } post)
+{
+    return;
+}
+
+@{
+    ViewData["Title"] = post.Title;
+    IBlogAuthor author = post.Author;
+    DateTimeOffset published = post.Published;
+}
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/index">Blog</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">@post.Title</li>
+    </ol>
+</nav>
+
+<h1>@post.Title</h1>
+<p class="text-muted">
+    <img class="blog-author-icon" src="@author.AvatarUrl" alt="@author.DisplayName">
+    @author.DisplayName &bull;
+
+    <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("dddd, d MMMM yyyy HH:mm")">
+        Published @published.Humanize()
+    </abbr>
+
+    @if (post.Updated is { } updated)
+    {
+        <span>&bull;</span>
+        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("dddd, d MMMM yyyy HH:mm")">
+            Updated @updated.Humanize()
+        </abbr>
+    }
+
+    @if (post.EnableComments)
+    {
+        <span>&bull;</span>
+        <a href="#disqus_thread" data-disqus-identifier="@post.GetDisqusIdentifier()">0 Comments</a>
+    }
+</p>
+
+<article data-blog-post="true" data-blog-id="@post.Id.ToString("D")">
+    <p class="text-center">Loading ...</p>
+</article>
+
+<hr>
+
+@if (post.EnableComments)
+{
+    <div id="disqus_thread"></div>
+    <script>
+         var disqus_config = function () {
+             this.page.url = "@post.GetDisqusUrl()";
+             this.page.identifier = "@post.GetDisqusIdentifier()";
+             this.page.title = "@post.Title";
+             this.page.postId = "@post.GetDisqusPostId()";
+         };
+        
+        (function() {
+            const d = document, s = d.createElement("script");
+            s.async = true;
+            s.type = "text/javascript";
+            s.src = "https://oliverbooth-dev.disqus.com/embed.js";
+            s.setAttribute("data-timestamp", + new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <script id="dsq-count-scr" src="https://oliverbooth-dev.disqus.com/count.js" async></script>
+    <noscript>
+        Please enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript" rel="nofollow">
+            comments powered by Disqus.
+        </a>
+    </noscript>
+}
+else
+{
+    <p class="text-center text-muted">Comments are not enabled for this post.</p>
+}

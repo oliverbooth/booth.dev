@@ -1,10 +1,8 @@
 using System.Buffers.Binary;
 using Microsoft.EntityFrameworkCore;
-using OliverBooth.Common.Formatting;
-using OliverBooth.Common.Markdown;
-using OliverBooth.Common.Services;
-using OliverBooth.Data;
-using OliverBooth.Data.Web;
+using OliverBooth.Data.Blog;
+using OliverBooth.Formatting;
+using OliverBooth.Markdown.Template;
 using SmartFormat;
 using SmartFormat.Extensions;
 
@@ -16,15 +14,15 @@ namespace OliverBooth.Services;
 internal sealed class TemplateService : ITemplateService
 {
     private static readonly Random Random = new();
-    private readonly IDbContextFactory<WebContext> _webContextFactory;
+    private readonly IDbContextFactory<BlogContext> _webContextFactory;
     private readonly SmartFormatter _formatter;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TemplateService" /> class.
     /// </summary>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" />.</param>
-    /// <param name="webContextFactory">The <see cref="WebContext" /> factory.</param>
-    public TemplateService(IServiceProvider serviceProvider, IDbContextFactory<WebContext> webContextFactory)
+    /// <param name="webContextFactory">The <see cref="BlogContext" /> factory.</param>
+    public TemplateService(IServiceProvider serviceProvider, IDbContextFactory<BlogContext> webContextFactory)
     {
         _formatter = Smart.CreateDefaultSmartFormat();
         _formatter.AddExtensions(new DefaultSource());
@@ -40,7 +38,7 @@ internal sealed class TemplateService : ITemplateService
     {
         if (templateInline is null) throw new ArgumentNullException(nameof(templateInline));
 
-        using WebContext webContext = _webContextFactory.CreateDbContext();
+        using BlogContext webContext = _webContextFactory.CreateDbContext();
         Template? template = webContext.Templates.Find(templateInline.Name);
         if (template is null)
         {

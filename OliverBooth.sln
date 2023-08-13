@@ -34,10 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-
 		src\ts\Input.ts = src\ts\Input.ts
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliverBooth.Blog", "OliverBooth.Blog\OliverBooth.Blog.csproj", "{B114A2ED-3015-43C5-B0CE-B755B18F49D0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliverBooth.Common", "OliverBooth.Common\OliverBooth.Common.csproj", "{38DEB2FA-3DF4-4D37-A12D-22CAEEA3A8AB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,14 +44,6 @@ Global
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B114A2ED-3015-43C5-B0CE-B755B18F49D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B114A2ED-3015-43C5-B0CE-B755B18F49D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B114A2ED-3015-43C5-B0CE-B755B18F49D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B114A2ED-3015-43C5-B0CE-B755B18F49D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38DEB2FA-3DF4-4D37-A12D-22CAEEA3A8AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38DEB2FA-3DF4-4D37-A12D-22CAEEA3A8AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38DEB2FA-3DF4-4D37-A12D-22CAEEA3A8AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38DEB2FA-3DF4-4D37-A12D-22CAEEA3A8AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{822F528E-3CA7-4B7D-9250-BD248ADA7BAE} = {8A323E64-E41E-4780-99FD-17BF58961FB5}

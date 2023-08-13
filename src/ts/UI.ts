@@ -7,6 +7,10 @@ declare const katex: any;
 declare const Prism: any;
 
 class UI {
+    public static get blogPost(): HTMLDivElement {
+        return document.querySelector("article[data-blog-post='true']");
+    }
+    
     public static get blogPostContainer(): HTMLDivElement {
         return document.querySelector("#all-blog-posts");
     }

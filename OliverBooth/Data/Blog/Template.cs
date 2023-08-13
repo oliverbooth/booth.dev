@@ -1,4 +1,4 @@
-namespace OliverBooth.Data.Web;
+namespace OliverBooth.Data.Blog;
 
 /// <summary>
 ///     Represents a MediaWiki-style template.
