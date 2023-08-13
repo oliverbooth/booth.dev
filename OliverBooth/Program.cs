@@ -1,6 +1,7 @@
 using Markdig;
 using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
+using OliverBooth.Common.Markdown;
 using OliverBooth.Common.Services;
 using OliverBooth.Data;
 using OliverBooth.Markdown.Timestamp;
