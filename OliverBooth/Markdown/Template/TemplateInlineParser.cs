@@ -65,7 +65,6 @@ public sealed class TemplateInlineParser : InlineParser
             Params = paramsList.AsReadOnly()
         };
 
-        slice.End = slice.Start;
         slice.Start += template.Length + 4;
         return true;
     }
