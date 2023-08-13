@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data.Blog;
+using OliverBooth.Data;
+using OliverBooth.Data.Web;
 using OliverBooth.Formatting;
 using OliverBooth.Markdown.Template;
 using SmartFormat;
@@ -14,15 +15,16 @@ namespace OliverBooth.Services;
 internal sealed class TemplateService : ITemplateService
 {
     private static readonly Random Random = new();
-    private readonly IDbContextFactory<BlogContext> _webContextFactory;
+    private readonly IDbContextFactory<WebContext> _webContextFactory;
     private readonly SmartFormatter _formatter;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TemplateService" /> class.
     /// </summary>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" />.</param>
-    /// <param name="webContextFactory">The <see cref="BlogContext" /> factory.</param>
-    public TemplateService(IServiceProvider serviceProvider, IDbContextFactory<BlogContext> webContextFactory)
+    /// <param name="webContextFactory">The <see cref="WebContext" /> factory.</param>
+    public TemplateService(IServiceProvider serviceProvider,
+        IDbContextFactory<WebContext> webContextFactory)
     {
         _formatter = Smart.CreateDefaultSmartFormat();
         _formatter.AddExtensions(new DefaultSource());
@@ -34,15 +36,21 @@ internal sealed class TemplateService : ITemplateService
     }
 
     /// <inheritdoc />
-    public string RenderTemplate(TemplateInline templateInline)
+    public string RenderGlobalTemplate(TemplateInline templateInline)
     {
         if (templateInline is null) throw new ArgumentNullException(nameof(templateInline));
 
-        using BlogContext webContext = _webContextFactory.CreateDbContext();
-        Template? template = webContext.Templates.Find(templateInline.Name);
+        using WebContext context = _webContextFactory.CreateDbContext();
+        Template? template = context.Templates.Find(templateInline.Name);
+        return RenderTemplate(templateInline, template);
+    }
+
+    /// <inheritdoc />
+    public string RenderTemplate(TemplateInline inline, ITemplate? template)
+    {
         if (template is null)
         {
-            return $"{{{{{templateInline.Name}}}}}";
+            return $"{{{{{inline.Name}}}}}";
         }
 
         Span<byte> randomBytes = stackalloc byte[20];
@@ -50,9 +58,9 @@ internal sealed class TemplateService : ITemplateService
 
         var formatted = new
         {
-            templateInline.ArgumentList,
-            templateInline.ArgumentString,
-            templateInline.Params,
+            inline.ArgumentList,
+            inline.ArgumentString,
+            inline.Params,
             RandomInt = BinaryPrimitives.ReadInt32LittleEndian(randomBytes[..4]),
             RandomGuid = new Guid(randomBytes[4..]).ToString("N"),
         };
@@ -63,7 +71,7 @@ internal sealed class TemplateService : ITemplateService
         }
         catch
         {
-            return $"{{{{{templateInline.Name}|{templateInline.ArgumentString}}}}}";
+            return $"{{{{{inline.Name}|{inline.ArgumentString}}}}}";
         }
     }
 }

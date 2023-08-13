@@ -23,6 +23,6 @@ internal sealed class TemplateRenderer : HtmlObjectRenderer<TemplateInline>
     /// <inheritdoc />
     protected override void Write(HtmlRenderer renderer, TemplateInline template)
     {
-        renderer.Write(_templateService.RenderTemplate(template));
+        renderer.Write(_templateService.RenderGlobalTemplate(template));
     }
 }

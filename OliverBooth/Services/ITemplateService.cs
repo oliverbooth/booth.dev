@@ -1,3 +1,4 @@
+using OliverBooth.Data;
 using OliverBooth.Markdown.Template;
 
 namespace OliverBooth.Services;
@@ -8,12 +9,23 @@ namespace OliverBooth.Services;
 public interface ITemplateService
 {
     /// <summary>
-    ///     Renders the specified template with the specified arguments.
+    ///     Renders the specified global template with the specified arguments.
     /// </summary>
-    /// <param name="templateInline">The template to render.</param>
-    /// <returns>The rendered template.</returns>
+    /// <param name="templateInline">The global template to render.</param>
+    /// <returns>The rendered global template.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <paramref name="templateInline" /> is <see langword="null" />.
     /// </exception>
-    string RenderTemplate(TemplateInline templateInline);
+    string RenderGlobalTemplate(TemplateInline templateInline);
+
+    /// <summary>
+    ///     Renders the specified global template with the specified arguments.
+    /// </summary>
+    /// <param name="templateInline">The global template to render.</param>
+    /// <param name="template">The database template object.</param>
+    /// <returns>The rendered global template.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <paramref name="templateInline" /> is <see langword="null" />.
+    /// </exception>
+    string RenderTemplate(TemplateInline templateInline, ITemplate? template);
 }
