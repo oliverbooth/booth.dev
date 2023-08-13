@@ -1,12 +1,12 @@
 class Author {
     private readonly _id: string;
     private readonly _name: string;
-    private readonly _avatarHash: string;
+    private readonly _avatarUrl: string;
 
     constructor(json: any) {
         this._id = json.id;
         this._name = json.name;
-        this._avatarHash = json.avatarHash;
+        this._avatarUrl = json.avatarUrl;
     }
 
     get id(): string {
@@ -17,8 +17,8 @@ class Author {
         return this._name;
     }
 
-    get avatarHash(): string {
-        return this._avatarHash;
+    get avatarUrl(): string {
+        return this._avatarUrl;
     }
 }
 

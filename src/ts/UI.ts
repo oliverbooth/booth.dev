@@ -54,7 +54,7 @@ class UI {
             },
             author: {
                 name: author.name,
-                avatar: `https://gravatar.com/avatar/${author.avatarHash}?s=28`,
+                avatar: author.avatarUrl
             }
         });
         card.innerHTML = body.trim();

@@ -39,8 +39,8 @@ declare const Prism: any;
         const authors = [];
         const template = Handlebars.compile(UI.blogPostTemplate.innerHTML);
         API.getBlogPostCount().then(async (count) => {
-            for (let i = 0; i < count; i += 5) {
-                const posts = await API.getBlogPosts(i, 5);
+            for (let i = 0; i <= count / 10; i++) {
+                const posts = await API.getBlogPosts(i);
                 for (const post of posts) {
                     let author: Author;
                     if (authors[post.authorId]) {
