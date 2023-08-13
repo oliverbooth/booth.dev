@@ -1,7 +1,3 @@
-@{
-    string rootUrl = Environment.GetEnvironmentVariable("ROOT_URL") ?? "https://oliverbooth.dev";
-    string blogUrl = Environment.GetEnvironmentVariable("BLOG_URL") ?? "https://blog.oliverbooth.dev";
-}
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
@@ -40,22 +36,22 @@
 <nav>
     <ul class="site-nav">
         <li>
-            <a href="@rootUrl">About</a>
+            <a asp-page="/index">About</a>
         </li>
         <li>
-            <a href="@blogUrl">Blog</a>
+            <a asp-page="/blog/index">Blog</a>
         </li>
         <li>
-            <a href="@rootUrl/tutorials">Tutorials</a>
+            <a asp-page="/tutorials/index">Tutorials</a>
         </li>
         <li>
-            <a href="@rootUrl/projects">Projects</a>
+            <a asp-page="/projects/index">Projects</a>
         </li>
         <li>
-            <a href="@rootUrl/contact">Contact</a>
+            <a asp-page="/contact/index">Contact</a>
         </li>
         <li>
-            <a href="@rootUrl/donate">Donate</a>
+            <a asp-page="/donate">Donate</a>
         </li>
     </ul>
 </nav>
@@ -72,11 +68,11 @@
     <div class="container text-center">
         &copy; @DateTime.UtcNow.Year
         &bullet;
-        <a href="@rootUrl/privacy/index">Privacy</a>
+        <a asp-page="/privacy/index">Privacy</a>
         &bullet;
         <a href="https://mastodon.olivr.me/@@oliver" rel="me">Mastodon</a>
         &bullet;
-        <a href="@blogUrl/feed"><i class="fa-solid fa-rss text-orange"></i></a>
+        <a asp-controller="Rss" asp-action="OnGet"><i class="fa-solid fa-rss text-orange"></i></a>
     </div>
 </footer>
 
