@@ -32,11 +32,6 @@ builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
 builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
-builder.Services.AddCors(options => options.AddPolicy("BlogApi", policy => (builder.Environment.IsDevelopment()
-        ? policy.AllowAnyOrigin()
-        : policy.WithOrigins("https://oliverbooth.dev"))
-    .AllowAnyMethod()
-    .AllowAnyHeader()));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.WebHost.AddCertificateFromEnvironment(2845, 5049);
@@ -54,7 +49,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-app.UseCors("BlogApi");
 
 app.MapControllers();
 app.MapRazorPages();
