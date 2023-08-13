@@ -1,10 +1,7 @@
-using Markdig;
 using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
-using OliverBooth.Common.Markdown;
 using OliverBooth.Common.Services;
 using OliverBooth.Data;
-using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
 using Serilog;
 
@@ -18,18 +15,9 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
+builder.Services.AddMarkdownPipeline();
 builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
-
-builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
-    .Use<TimestampExtension>()
-    .Use(new TemplateExtension(provider.GetRequiredService<ITemplateService>()))
-    .UseAdvancedExtensions()
-    .UseBootstrap()
-    .UseEmojiAndSmiley()
-    .UseSmartyPants()
-    .Build());
-
 builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();

@@ -5,7 +5,6 @@ using OliverBooth.Common;
 using OliverBooth.Common.Extensions;
 using OliverBooth.Common.Services;
 using Serilog;
-using X10D.Hosting.DependencyInjection;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -17,6 +16,7 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
+builder.Services.AddMarkdownPipeline();
 builder.Services.ConfigureOptions<OliverBoothConfigureOptions>();
 builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
