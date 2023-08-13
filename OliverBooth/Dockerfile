@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -6,7 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["OliverBooth/OliverBooth.csproj", "OliverBooth/"]
-RUN dotnet restore "oliverbooth.dev/oliverbooth.dev.csproj"
+RUN dotnet restore "OliverBooth/OliverBooth.csproj"
 COPY . .
 WORKDIR "/src/OliverBooth"
 RUN dotnet build "OliverBooth.csproj" -c Release -o /app/build

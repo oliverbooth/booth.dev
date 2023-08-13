@@ -3,7 +3,9 @@ services:
   oliverbooth:
     container_name: oliverbooth.dev
     pull_policy: build
-    build: .
+    build:
+      context: .
+      dockerfile: OliverBooth/Dockerfile
     volumes:
       - type: bind
         source: /var/log/oliverbooth/site
@@ -11,27 +13,23 @@ services:
       - type: bind
         source: /etc/oliverbooth/site
         target: /app/data
+    ports:
+      - "2845:2845"
     restart: always
-    environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
   oliverbooth-blog:
     container_name: blog.oliverbooth.dev
     pull_policy: build
-    build: .
+    build:
+      context: .
+      dockerfile: OliverBooth/Dockerfile
     volumes:
       - type: bind
-        source: /var/log/oliverbooth-blog/site
+        source: /var/log/oliverbooth/blog
         target: /app/logs
       - type: bind
-        source: /etc/oliverbooth-blog/site
+        source: /etc/oliverbooth/blog
         target: /app/data
+    ports:
+      - "2846:2846"
     restart: always
-    environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
