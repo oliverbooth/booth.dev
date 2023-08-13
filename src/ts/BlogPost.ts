@@ -1,3 +1,5 @@
+import BlogUrl from "./BlogUrl";
+
 class BlogPost {
     private readonly _id: string;
     private readonly _commentsEnabled: boolean;
@@ -7,7 +9,7 @@ class BlogPost {
     private readonly _authorId: string;
     private readonly _published: Date;
     private readonly _updated?: Date;
-    private readonly _url: string;
+    private readonly _url: BlogUrl;
     private readonly _trimmed: boolean;
     private readonly _identifier: string;
     private readonly _humanizedTimestamp: string;
@@ -22,7 +24,7 @@ class BlogPost {
         this._authorId = json.author;
         this._published = new Date(json.published * 1000);
         this._updated = (json.updated && new Date(json.updated * 1000)) || null;
-        this._url = json.url;
+        this._url = new BlogUrl(json.url);
         this._trimmed = json.trimmed;
         this._identifier = json.identifier;
         this._humanizedTimestamp = json.humanizedTimestamp;
@@ -61,7 +63,7 @@ class BlogPost {
         return this._updated;
     }
 
-    get url(): string {
+    get url(): BlogUrl {
         return this._url;
     }
 

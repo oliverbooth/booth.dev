@@ -48,7 +48,7 @@ class UI {
             post: {
                 title: post.title,
                 excerpt: post.excerpt,
-                url: post.url,
+                url: `${post.url.year}/${post.url.month}/${post.url.day}/${post.url.slug}`,
                 date: TimeUtility.formatRelativeTimestamp(post.published),
                 formattedDate: post.formattedDate,
                 date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,

@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliverBooth", "OliverBooth\OliverBooth.csproj", "{A58A6FA3-480C-400B-822A-3786741BF39C}"
 EndProject
@@ -32,6 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-
 		src\ts\TimeUtility.ts = src\ts\TimeUtility.ts
 		src\ts\UI.ts = src\ts\UI.ts
 		src\ts\Input.ts = src\ts\Input.ts
+		src\ts\BlogUrl.ts = src\ts\BlogUrl.ts
 	EndProjectSection
 EndProject
 Global
