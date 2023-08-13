@@ -1,32 +1,39 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
+using Microsoft.AspNetCore.Mvc;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Blog.Rss;
 using OliverBooth.Services;
 
-namespace OliverBooth.Middleware;
+namespace OliverBooth.Controllers.Blog;
 
-internal sealed class RssMiddleware
+[ApiController]
+[Route("blog/feed")]
+public class RssController : Controller
 {
     private readonly IBlogPostService _blogPostService;
 
-    public RssMiddleware(RequestDelegate _, IBlogPostService blogPostService)
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="RssController" /> class.
+    /// </summary>
+    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
+    public RssController(IBlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
 
-    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Middleware")]
-    public async Task Invoke(HttpContext context)
+    [HttpGet]
+    [Produces("application/rss+xml")]
+    public IActionResult OnGet()
     {
-        context.Response.ContentType = "application/rss+xml";
+        Response.ContentType = "application/rss+xml";
 
-        var baseUrl = $"https://{context.Request.Host}/blog";
+        var baseUrl = $"https://{Request.Host}/blog";
         var blogItems = new List<BlogItem>();
 
         foreach (IBlogPost post in _blogPostService.GetAllBlogPosts())
         {
             var url = $"{baseUrl}/{post.Published:yyyy/MM/dd}/{post.Slug}";
-            string excerpt = _blogPostService.RenderExcerpt(post, out _);
+            string excerpt = _blogPostService.RenderPost(post);
             var description = $"{excerpt}<p><a href=\"{url}\">Read more...</a></p>";
 
             var item = new BlogItem
@@ -36,7 +43,7 @@ internal sealed class RssMiddleware
                 Comments = $"{url}#disqus_thread",
                 Creator = post.Author.DisplayName,
                 PubDate = post.Published.ToString("R"),
-                Guid = $"{baseUrl}?pid={post.Id}",
+                Guid = post.WordPressId.HasValue ? $"{baseUrl}?p={post.WordPressId.Value}" : $"{baseUrl}?pid={post.Id}",
                 Description = description
             };
             blogItems.Add(item);
@@ -68,7 +75,9 @@ internal sealed class RssMiddleware
         xmlNamespaces.Add("sy", "http://purl.org/rss/1.0/modules/syndication/");
         xmlNamespaces.Add("slash", "http://purl.org/rss/1.0/modules/slash/");
 
-        await using var writer = new StreamWriter(context.Response.BodyWriter.AsStream());
+        using var writer = new StreamWriter(Response.BodyWriter.AsStream());
         serializer.Serialize(writer, rss, xmlNamespaces);
+
+        return Ok();
     }
 }

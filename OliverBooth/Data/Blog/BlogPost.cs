@@ -37,6 +37,9 @@ internal sealed class BlogPost : IBlogPost
     /// <inheritdoc />
     public DateTimeOffset? Updated { get; internal set; }
 
+    /// <inheritdoc />
+    public int? WordPressId { get; set; }
+
     /// <summary>
     ///     Gets or sets the ID of the author of this blog post.
     /// </summary>
@@ -60,12 +63,6 @@ internal sealed class BlogPost : IBlogPost
     /// </summary>
     /// <value>The Disqus URL path.</value>
     internal string? DisqusPath { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the WordPress ID of this blog post.
-    /// </summary>
-    /// <value>The WordPress ID of this blog post.</value>
-    internal int? WordPressId { get; set; }
 
     /// <summary>
     ///     Gets the Disqus domain for the blog post.

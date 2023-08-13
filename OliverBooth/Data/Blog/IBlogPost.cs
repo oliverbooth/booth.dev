@@ -70,6 +70,14 @@ public interface IBlogPost
     DateTimeOffset? Updated { get; }
 
     /// <summary>
+    ///     Gets the WordPress ID of the post.
+    /// </summary>
+    /// <value>
+    ///     The WordPress ID of the post, or <see langword="null" /> if the post was not imported from WordPress.
+    /// </value>
+    int? WordPressId { get; }
+
+    /// <summary>
     ///     Gets the Disqus identifier for the post.
     /// </summary>
     /// <returns>The Disqus identifier for the post.</returns>
