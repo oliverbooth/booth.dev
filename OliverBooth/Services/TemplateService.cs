@@ -1,7 +1,6 @@
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data;
 using OliverBooth.Data.Web;
 using OliverBooth.Formatting;
 using OliverBooth.Markdown.Template;

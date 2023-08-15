@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using OliverBooth.Data;
 using OliverBooth.Data.Web;
 using OliverBooth.Markdown.Template;
 
