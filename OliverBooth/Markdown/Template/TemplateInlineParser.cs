@@ -1,7 +1,6 @@
 using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
-using Serilog;
 
 namespace OliverBooth.Markdown.Template;
 
@@ -44,7 +43,6 @@ public sealed class TemplateInlineParser : InlineParser
 
         if (hasVariant)
         {
-            Log.Debug("Index of variant: {Index}", variantIndex);
             variant = name[(variantIndex + 1)..];
             name = name[..variantIndex];
         }
