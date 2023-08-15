@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
 using OliverBooth.Data.Web;
@@ -40,17 +41,17 @@ internal sealed class TemplateService : ITemplateService
     {
         if (templateInline is null) throw new ArgumentNullException(nameof(templateInline));
 
-        using WebContext context = _webContextFactory.CreateDbContext();
-        Template? template = context.Templates.Find(templateInline.Name);
-        return RenderTemplate(templateInline, template);
+        return TryGetTemplate(templateInline.Name, templateInline.Variant, out ITemplate? template)
+            ? RenderTemplate(templateInline, template)
+            : GetDefaultRender(templateInline);
     }
 
     /// <inheritdoc />
-    public string RenderTemplate(TemplateInline inline, ITemplate? template)
+    public string RenderTemplate(TemplateInline templateInline, ITemplate? template)
     {
         if (template is null)
         {
-            return $"{{{{{inline.Name}}}}}";
+            return GetDefaultRender(templateInline);
         }
 
         Span<byte> randomBytes = stackalloc byte[20];
@@ -58,9 +59,9 @@ internal sealed class TemplateService : ITemplateService
 
         var formatted = new
         {
-            inline.ArgumentList,
-            inline.ArgumentString,
-            inline.Params,
+            templateInline.ArgumentList,
+            templateInline.ArgumentString,
+            templateInline.Params,
             RandomInt = BinaryPrimitives.ReadInt32LittleEndian(randomBytes[..4]),
             RandomGuid = new Guid(randomBytes[4..]).ToString("N"),
         };
@@ -71,7 +72,28 @@ internal sealed class TemplateService : ITemplateService
         }
         catch
         {
-            return $"{{{{{inline.Name}|{inline.ArgumentString}}}}}";
+            return GetDefaultRender(templateInline);
         }
+    }
+
+    /// <inheritdoc />
+    public bool TryGetTemplate(string name, [NotNullWhen(true)] out ITemplate? template)
+    {
+        return TryGetTemplate(name, string.Empty, out template);
+    }
+
+    /// <inheritdoc />
+    public bool TryGetTemplate(string name, string variant, [NotNullWhen(true)] out ITemplate? template)
+    {
+        using WebContext context = _webContextFactory.CreateDbContext();
+        template = context.Templates.FirstOrDefault(t => t.Name == name && t.Variant == variant);
+        return template is not null;
+    }
+
+    private static string GetDefaultRender(TemplateInline templateInline)
+    {
+        return string.IsNullOrWhiteSpace(templateInline.ArgumentString)
+            ? $"{{{{{templateInline.Name}}}}}"
+            : $"{{{{{templateInline.Name}|{templateInline.ArgumentString}}}}}";
     }
 }

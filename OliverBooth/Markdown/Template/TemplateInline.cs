@@ -30,4 +30,10 @@ public sealed class TemplateInline : Inline
     /// </summary>
     /// <value>The template parameters.</value>
     public IReadOnlyDictionary<string, string> Params { get; set; } = null!;
+
+    /// <summary>
+    ///     Gets the variant of the template.
+    /// </summary>
+    /// <value>The variant of the template.</value>
+    public string Variant { get; set; } = string.Empty;
 }

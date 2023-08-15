@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using OliverBooth.Data;
+using OliverBooth.Data.Web;
 using OliverBooth.Markdown.Template;
 
 namespace OliverBooth.Services;
@@ -28,4 +30,27 @@ public interface ITemplateService
     ///     <paramref name="templateInline" /> is <see langword="null" />.
     /// </exception>
     string RenderTemplate(TemplateInline templateInline, ITemplate? template);
+
+    /// <summary>
+    ///     Attempts to get the template with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the template.</param>
+    /// <param name="template">
+    ///     When this method returns, contains the template with the specified name, if the template is found;
+    ///     otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns><see langword="true" /> if the template exists; otherwise, <see langword="false" />.</returns>
+    bool TryGetTemplate(string name, [NotNullWhen(true)] out ITemplate? template);
+
+    /// <summary>
+    ///     Attempts to get the template with the specified name and variant.
+    /// </summary>
+    /// <param name="name">The name of the template.</param>
+    /// <param name="variant">The variant of the template.</param>
+    /// <param name="template">
+    ///     When this method returns, contains the template with the specified name and variant, if the template is
+    ///     found; otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns><see langword="true" /> if the template exists; otherwise, <see langword="false" />.</returns>
+    bool TryGetTemplate(string name, string variant, [NotNullWhen(true)] out ITemplate? template);
 }

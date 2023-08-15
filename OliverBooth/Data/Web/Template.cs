@@ -11,6 +11,9 @@ public sealed class Template : ITemplate, IEquatable<Template>
     /// <inheritdoc />
     public string Name { get; private set; } = string.Empty;
 
+    /// <inheritdoc />
+    public string Variant { get; private set; } = string.Empty;
+
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="Template" /> are equal.
     /// </summary>
@@ -46,7 +49,7 @@ public sealed class Template : ITemplate, IEquatable<Template>
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name;
+        return Name == other.Name && Variant == other.Variant;
     }
 
     /// <summary>
@@ -68,7 +71,7 @@ public sealed class Template : ITemplate, IEquatable<Template>
     /// <returns>The hash code.</returns>
     public override int GetHashCode()
     {
-        // ReSharper disable once NonReadonlyMemberInGetHashCode
-        return Name.GetHashCode();
+        // ReSharper disable NonReadonlyMemberInGetHashCode
+        return HashCode.Combine(Name, Variant);
     }
 }

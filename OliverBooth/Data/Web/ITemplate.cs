@@ -1,4 +1,4 @@
-namespace OliverBooth.Data;
+namespace OliverBooth.Data.Web;
 
 /// <summary>
 ///     Represents a template.
@@ -15,4 +15,10 @@ public interface ITemplate
     ///     Gets the name of the template.
     /// </summary>
     string Name { get; }
+
+    /// <summary>
+    ///     Gets the variant of the template.
+    /// </summary>
+    /// <value>The variant of the template.</value>
+    string Variant { get; }
 }

@@ -1,6 +1,7 @@
 using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
+using Serilog;
 
 namespace OliverBooth.Markdown.Template;
 
@@ -37,11 +38,23 @@ public sealed class TemplateInlineParser : InlineParser
 
         template = template[2..^2]; // trim {{ and }}
         ReadOnlySpan<char> name = ReadTemplateName(template, out ReadOnlySpan<char> argumentSpan);
+        int variantIndex = name.IndexOf(':');
+        bool hasVariant = variantIndex > -1;
+        var variant = ReadOnlySpan<char>.Empty;
+
+        if (hasVariant)
+        {
+            Log.Debug("Index of variant: {Index}", variantIndex);
+            variant = name[(variantIndex + 1)..];
+            name = name[..variantIndex];
+        }
+
         if (argumentSpan.IsEmpty)
         {
             processor.Inline = new TemplateInline
             {
                 Name = name.ToString(),
+                Variant = hasVariant ? variant.ToString() : string.Empty,
                 ArgumentString = string.Empty,
                 ArgumentList = ArraySegment<string>.Empty,
                 Params = EmptyParams
@@ -60,6 +73,7 @@ public sealed class TemplateInlineParser : InlineParser
         processor.Inline = new TemplateInline
         {
             Name = name.ToString(),
+            Variant = hasVariant ? variant.ToString() : string.Empty,
             ArgumentString = argumentSpan.ToString(),
             ArgumentList = argumentList.AsReadOnly(),
             Params = paramsList.AsReadOnly()
