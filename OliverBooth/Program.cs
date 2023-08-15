@@ -10,6 +10,9 @@ using Serilog;
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/latest.log", rollingInterval: RollingInterval.Day)
+#if DEBUG
+    .MinimumLevel.Debug()
+#endif
     .CreateLogger();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
