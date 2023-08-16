@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data.Web.Configuration;
 
 namespace OliverBooth.Data.Web;
@@ -6,7 +6,7 @@ namespace OliverBooth.Data.Web;
 /// <summary>
 ///     Represents a session with the web database.
 /// </summary>
-public sealed class WebContext : DbContext
+internal sealed class WebContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
