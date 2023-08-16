@@ -218,7 +218,7 @@ class UI {
             let content = block.innerHTML;
 
             // but ugly fucking hack. I hate this
-            content = content.replaceAll("&lt;mark&gt;", "<mark>");
+            content = content.replaceAll(/&lt;mark(.*?)&gt;/g, "<mark$1>");
             content = content.replaceAll("&lt;/mark&gt;", "</mark>");
             block.innerHTML = content;
         });
