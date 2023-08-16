@@ -12,7 +12,7 @@ declare const Prism: any;
     Prism.languages.extend('markup', {});
     Prism.languages.hex = {
         'number': {
-            pattern: /(?:[a-f0-9]{3}){1,2}\b/i,
+            pattern: /(?:[a-fA-F0-9]{3}){1,2}\b/i,
             lookbehind: true
         }
     };
