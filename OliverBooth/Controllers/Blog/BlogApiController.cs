@@ -20,7 +20,7 @@ public sealed class BlogApiController : ControllerBase
     ///     Initializes a new instance of the <see cref="BlogApiController" /> class.
     /// </summary>
     /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
-    /// <param name="userService">The <see cref="IUserService" />.</param>
+    /// <param name="userService">The <see cref="IBlogUserService" />.</param>
     public BlogApiController(IBlogPostService blogPostService, IBlogUserService userService)
     {
         _blogPostService = blogPostService;
