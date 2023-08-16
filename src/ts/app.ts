@@ -3,8 +3,6 @@ import UI from "./UI";
 import Input from "./Input";
 import Author from "./Author";
 
-const pkg = require("../../package.json");
-
 declare const Handlebars: any;
 declare const Prism: any;
 
@@ -26,19 +24,6 @@ declare const Prism: any;
         'mark': {
             pattern: /<\/?mark(?:\s+\w+(?:=(?:"[^"]*"|'[^']*'|[^\s'">=]+))?\s*|\s*)\/?>/,
             greedy: true
-        }
-    });
-
-    let isCtrl = false;
-    document.addEventListener('keyup', (e) => {
-        if (e.ctrlKey) isCtrl = false;
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey) isCtrl = true;
-        if (isCtrl && e.key === "u") {
-            window.open(pkg.repository.url, "_blank");
-            return false;
         }
     });
 
