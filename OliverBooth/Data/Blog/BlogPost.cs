@@ -23,6 +23,9 @@ internal sealed class BlogPost : IBlogPost
     public bool IsRedirect { get; internal set; }
 
     /// <inheritdoc />
+    public string? Password { get; internal set; }
+
+    /// <inheritdoc />
     public DateTimeOffset Published { get; internal set; }
 
     /// <inheritdoc />
@@ -36,6 +39,9 @@ internal sealed class BlogPost : IBlogPost
 
     /// <inheritdoc />
     public DateTimeOffset? Updated { get; internal set; }
+
+    /// <inheritdoc />
+    public BlogPostVisibility Visibility { get; internal set; }
 
     /// <inheritdoc />
     public int? WordPressId { get; set; }

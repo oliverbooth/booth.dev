@@ -43,7 +43,9 @@ internal sealed class BlogPostService : IBlogPostService
     public IReadOnlyList<IBlogPost> GetAllBlogPosts(int limit = -1)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<BlogPost> ordered = context.BlogPosts.OrderByDescending(post => post.Published);
+        IQueryable<BlogPost> ordered = context.BlogPosts
+            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .OrderByDescending(post => post.Published);
         if (limit > -1)
         {
             ordered = ordered.Take(limit);
@@ -57,6 +59,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
+            .Where(p => p.Visibility == BlogPostVisibility.Published)
             .OrderByDescending(post => post.Published)
             .Skip(page * pageSize)
             .Take(pageSize)

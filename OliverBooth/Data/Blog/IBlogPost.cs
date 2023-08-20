@@ -40,6 +40,12 @@ public interface IBlogPost
     bool IsRedirect { get; }
 
     /// <summary>
+    ///     Gets the password of the post.
+    /// </summary>
+    /// <value>The password of the post.</value>
+    string? Password { get; }
+
+    /// <summary>
     ///     Gets the date and time the post was published.
     /// </summary>
     /// <value>The publication date and time.</value>
@@ -68,6 +74,12 @@ public interface IBlogPost
     /// </summary>
     /// <value>The update date and time, or <see langword="null" /> if the post has not been updated.</value>
     DateTimeOffset? Updated { get; }
+
+    /// <summary>
+    ///     Gets the visibility of the post.
+    /// </summary>
+    /// <value>The visibility of the post.</value>
+    BlogPostVisibility Visibility { get; }
 
     /// <summary>
     ///     Gets the WordPress ID of the post.
