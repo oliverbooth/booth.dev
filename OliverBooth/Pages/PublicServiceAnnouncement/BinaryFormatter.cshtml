@@ -1,0 +1,47 @@
+@page "/psa/binaryformatter"
+
+<div class="alert alert-danger">
+    <h2 class="alert-heading">⚠️ Stop! This application is unsafe!</h2>
+    <p>
+        This application is using an insecure method to read and write data, and needs to be updated
+        <em>immediately</em>.
+    </p>
+</div>
+
+<div class="alert alert-warning">
+    <h4 class="alert-heading">I'm a user, what does this mean?</h4>
+    <p>
+        If you are seeing this message, it means you loaded a payload that I crafted to exploit this vulnerability. Be
+        fortunate, because I could have done much worse including stealing your data or installing malware on your
+        computer.
+    </p>
+    <p>
+        If you're seeing this because you loaded my data from a game, this means it's possible for an attacker to craft
+        a save file that can, for example, steal your Steam credentials and send them to a remote server. Just because
+        you loaded - what seemed to be - a save file!
+    </p>
+    <hr/>
+    <p>
+        <strong>Do not</strong> load any more data into this application until the developer has addressed this issue.
+    </p>
+</div>
+
+<div class="alert alert-info">
+    <h4 class="alert-heading">I'm a developer, can you explain more?</h4>
+    <p>
+        <code>BinaryFormatter</code> is a .NET class that is used to serialize and deserialize data such as game saves
+        or configuration files. However, it was discovered that this class is vulnerable to remote code execution when
+        deserializing untrusted data.
+    </p>
+    <p>
+        <strong>Please update your application to use a different serialization method.</strong>
+    </p>
+    <hr/>
+    <p>
+        For more information, please read the
+        <a href="https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide">
+            official security notice
+        </a>
+        from Microsoft.
+    </p>
+</div>
