@@ -35,6 +35,20 @@ public interface IBlogPostService
     IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10);
 
     /// <summary>
+    ///     Returns the next blog post from the specified blog post.
+    /// </summary>
+    /// <param name="blogPost">The blog post whose next post to return.</param>
+    /// <returns>The next blog post from the specified blog post.</returns>
+    IBlogPost? GetNextPost(IBlogPost blogPost);
+
+    /// <summary>
+    ///     Returns the previous blog post from the specified blog post.
+    /// </summary>
+    /// <param name="blogPost">The blog post whose previous post to return.</param>
+    /// <returns>The previous blog post from the specified blog post.</returns>
+    IBlogPost? GetPreviousPost(IBlogPost blogPost);
+
+    /// <summary>
     ///     Renders the excerpt of the specified blog post.
     /// </summary>
     /// <param name="post">The blog post whose excerpt to render.</param>

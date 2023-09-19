@@ -67,6 +67,26 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
+    public IBlogPost? GetNextPost(IBlogPost blogPost)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        return context.BlogPosts
+            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .OrderBy(post => post.Published)
+            .FirstOrDefault(post => post.Published > blogPost.Published);
+    }
+
+    /// <inheritdoc />
+    public IBlogPost? GetPreviousPost(IBlogPost blogPost)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        return context.BlogPosts
+            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .OrderByDescending(post => post.Published)
+            .FirstOrDefault(post => post.Published < blogPost.Published);
+    }
+
+    /// <inheritdoc />
     public string RenderExcerpt(IBlogPost post, out bool wasTrimmed)
     {
         string body = post.Body;
