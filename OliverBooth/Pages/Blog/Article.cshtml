@@ -26,6 +26,21 @@
     </ol>
 </nav>
 
+@switch (post.Visibility)
+{
+    case BlogPostVisibility.Private:
+        <div class="alert alert-danger" role="alert">
+            This post is private and can only be viewed by those with the password.
+        </div>
+        break;
+
+    case BlogPostVisibility.Unlisted:
+        <div class="alert alert-warning" role="alert">
+            This post is unlisted and can only be viewed by those with the link.
+        </div>
+        break;
+}
+
 <h1>@post.Title</h1>
 <p class="text-muted">
     <img class="blog-author-icon" src="@author.AvatarUrl" alt="@author.DisplayName">
