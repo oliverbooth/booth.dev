@@ -40,12 +40,11 @@ public class Index : PageModel
     {
         var route = new
         {
-            area = "blog",
             year = post.Published.ToString("yyyy"),
             month = post.Published.ToString("MM"),
             day = post.Published.ToString("dd"),
             slug = post.Slug
         };
-        return Redirect(Url.Page("/Article", route)!);
+        return Redirect(Url.Page("/Blog/Article", route)!);
     }
 }
