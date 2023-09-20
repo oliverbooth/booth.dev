@@ -122,7 +122,7 @@
             s.async = true;
             s.type = "text/javascript";
             s.src = "https://oliverbooth-dev.disqus.com/embed.js";
-            s.setAttribute("data-timestamp", + new Date());
+            s.setAttribute("data-timestamp", (+ new Date()).toString());
             (d.head || d.body).appendChild(s);
         })();
     </script>
