@@ -1,14 +1,15 @@
 @page
+@model OliverBooth.Pages.Projects.Index
 @{
     ViewData["Title"] = "Projects";
 }
 
 <h1 class="display-4">Projects</h1>
-<h2 class="lead" style="margin-top: 20px">Ongoing Development</h2>
-<p>This is work that I am actively developing and/or maintaining.</p>
+
 <div class="card-group row">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-success project-card">
+            <div class="card-header text-bg-success">In Active Development</div>
             <img src="~/img/projects/hero/x10d-1280x640.png" class="card-img-top" alt="X10D">
             <div class="card-body">
                 <h5 class="card-title">X10D</h5>
@@ -18,7 +19,8 @@
         </div>
     </div>
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-success project-card">
+            <div class="card-header text-bg-success">In Active Development</div>
             <img src="~/img/projects/hero/brackeysbot-1280x640.png" class="card-img-top" alt="BrackeysBot">
             <div class="card-body">
                 <h5 class="card-title">BrackeysBot</h5>
@@ -30,7 +32,8 @@
 </div>
 <div class="card-group row" style="margin-top: 20px;">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-success project-card">
+            <div class="card-header text-bg-success">In Active Development</div>
             <img src="~/img/projects/hero/none-1280x640.png" class="card-img-top" alt="Project KW">
             <div class="card-body">
                 <h5 class="card-title">Project KW</h5>
@@ -41,14 +44,10 @@
     </div>
 </div>
 
-<h2 class="lead" style="margin-top: 20px">Past Work</h2>
-<p>
-    This is work that I have deemed either "ready for public consumption" or "no further work needs to be done". It
-    includes projects that are both retired and still in use.
-</p>
 <div class="card-group row" style="margin-top: 20px;">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-info project-card">
+            <div class="card-header text-bg-info">Past Work</div>
             <img src="~/img/projects/hero/fiveoclock-1280x640.png" class="card-img-top" alt="It's 5 O'Clock Somewhere">
             <div class="card-body">
                 <h5 class="card-title">It's 5 O'Clock Somewhere</h5>
@@ -58,7 +57,8 @@
         </div>
     </div>
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-info project-card">
+            <div class="card-header text-bg-info">Past Work</div>
             <img src="~/img/projects/hero/birthday-1280x640.png" class="card-img-top" alt="Is It My Birthday?">
             <div class="card-body">
                 <h5 class="card-title">Is It My Birthday?</h5>
@@ -70,7 +70,8 @@
 </div>
 <div class="card-group row" style="margin-top: 20px;">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-info project-card">
+            <div class="card-header text-bg-info">Past Work</div>
             <img src="~/img/projects/hero/candyjam-1280x640.png" class="card-img-top" alt="Scrolling Candy Apple Saga">
             <div class="card-body">
                 <h5 class="card-title">Scrolling Candy Apple Saga</h5>
@@ -80,8 +81,9 @@
         </div>
     </div>
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
-            <img src="~/img/projects/hero/none-1280x640.png" class="card-img-top" alt="SAMP.NET">
+        <div class="card border-light project-card">
+            <div class="card-header text-bg-light">Retired</div>
+            <img src="~/img/projects/hero/sampdotnet-1280x640.png" class="card-img-top" alt="SAMP.NET">
             <div class="card-body">
                 <h5 class="card-title">SAMP.NET</h5>
                 <p class="card-text">A .NET wrapper for the Pawn SAMP API, made during my time in college.</p>
@@ -92,7 +94,8 @@
 </div>
 <div class="card-group row" style="margin-top: 20px;">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-light project-card">
+            <div class="card-header text-bg-light">Retired</div>
             <img src="~/img/projects/hero/none-1280x640.png" class="card-img-top" alt="SAMP.NET">
             <div class="card-body">
                 <h5 class="card-title">HaloMCCForgePatcher</h5>
@@ -101,16 +104,23 @@
             </div>
         </div>
     </div>
+    <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
+        <div class="card border-light project-card">
+            <div class="card-header text-bg-light">Retired</div>
+            <img src="~/img/projects/hero/unitydocs-1280x640.png" class="card-img-top" alt="Unity API Docs">
+            <div class="card-body">
+                <h5 class="card-title">Unity API Docs</h5>
+                <p class="card-text">A complete rewrite and redesign of the Unity API docs, inspired by the C# and .NET documentation on Microsoft Learn.</p>
+                <p>This project was cancelled following Unity's pricing change announcement.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<h2 class="lead" style="margin-top: 20px">On Hiatus</h2>
-<p>
-    This is work that I have put on indefinite hold; projects that I would like to revisit one day, but I have no
-    timeline for when or if that will happen.
-</p>
 <div class="card-group row" style="margin-top: 20px">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-dark project-card">
+            <div class="card-header text-bg-dark">On Hiatus</div>
             <img src="~/img/projects/hero/olive-1280x640.png" class="card-img-top" alt="Olive">
             <div class="card-body">
                 <h5 class="card-title">Olive</h5>
@@ -120,7 +130,8 @@
         </div>
     </div>
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-dark project-card">
+            <div class="card-header text-bg-dark">On Hiatus</div>
             <img src="~/img/projects/hero/none-1280x640.png" class="card-img-top" alt="TCP.NET">
             <div class="card-body">
                 <h5 class="card-title">TCP.NET</h5>
@@ -132,7 +143,8 @@
 </div>
 <div class="card-group row" style="margin-top: 20px;">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-dark project-card">
+            <div class="card-header text-bg-dark">On Hiatus</div>
             <img src="~/img/projects/hero/none-1280x640.png" class="card-img-top" alt="MelonSharp">
             <div class="card-body">
                 <h5 class="card-title">MelonSharp</h5>
@@ -142,7 +154,8 @@
         </div>
     </div>
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-dark project-card">
+            <div class="card-header text-bg-dark">On Hiatus</div>
             <img src="~/img/projects/hero/syntaxgen-1280x640.png" class="card-img-top" alt="SyntaxGen.NET">
             <div class="card-body">
                 <h5 class="card-title">SyntaxGen.NET</h5>
@@ -154,17 +167,8 @@
 </div>
 <div class="card-group row" style="margin-top: 20px;">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
-            <img src="~/img/projects/hero/unitydocs-1280x640.png" class="card-img-top" alt="Unity API Docs">
-            <div class="card-body">
-                <h5 class="card-title">Unity API Docs</h5>
-                <p class="card-text">A complete rewrite and redesign of the Unity API docs, inspired by the C# and .NET documentation on Microsoft Learn.</p>
-                <p>This project is currently closed source until a stable prototype is ready.</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-dark project-card">
+            <div class="card-header text-bg-dark">On Hiatus</div>
             <img src="~/img/projects/hero/mutation-1280x640.png" class="card-img-top" alt="Mutation">
             <div class="card-body">
                 <h5 class="card-title">Mutation</h5>
@@ -173,10 +177,9 @@
             </div>
         </div>
     </div>
-</div>
-<div class="card-group row" style="margin-top: 20px">
     <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-        <div class="card">
+        <div class="card border-dark project-card">
+            <div class="card-header text-bg-dark">On Hiatus</div>
             <img src="~/img/projects/hero/none-1280x640.png" class="card-img-top" alt="Olive">
             <div class="card-body">
                 <h5 class="card-title">Astraeos</h5>
