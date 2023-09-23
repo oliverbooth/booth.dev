@@ -35,6 +35,9 @@ internal sealed class BlogPost : IBlogPost
     public string Slug { get; internal set; } = string.Empty;
 
     /// <inheritdoc />
+    public IReadOnlyList<string> Tags { get; internal set; } = ArraySegment<string>.Empty;
+
+    /// <inheritdoc />
     public string Title { get; internal set; } = string.Empty;
 
     /// <inheritdoc />

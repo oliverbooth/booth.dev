@@ -77,6 +77,7 @@ public sealed class BlogApiController : ControllerBase
             excerpt = _blogPostService.RenderExcerpt(post, out bool trimmed),
             content = includeContent ? _blogPostService.RenderPost(post) : null,
             trimmed,
+            tags = post.Tags.Select(t => t.Replace(' ', '-')),
             url = new
             {
                 year = post.Published.ToString("yyyy"),

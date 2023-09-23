@@ -55,6 +55,7 @@ class UI {
                 enable_comments: post.commentsEnabled,
                 disqus_identifier: post.identifier,
                 trimmed: post.trimmed,
+                tags: post.tags
             },
             author: {
                 name: author.name,

@@ -64,6 +64,13 @@
         <a href="#disqus_thread" data-disqus-identifier="@post.GetDisqusIdentifier()">0 Comments</a>
     }
 </p>
+<div>
+    @foreach (string tag in post.Tags)
+    {
+        <a asp-page="Index" asp-route-tag="@tag" class="badge bg-secondary">@tag</a>
+    }
+</div>
+<hr>
 
 <article data-blog-post="true" data-blog-id="@post.Id.ToString("D")">
     <p class="text-center">Loading ...</p>

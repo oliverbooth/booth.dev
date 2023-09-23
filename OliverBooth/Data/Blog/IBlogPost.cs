@@ -64,6 +64,12 @@ public interface IBlogPost
     string Slug { get; }
 
     /// <summary>
+    ///     Gets the tags of the post.
+    /// </summary>
+    /// <value>The tags of the post.</value>
+    IReadOnlyList<string> Tags { get; }
+
+    /// <summary>
     ///     Gets the title of the post.
     /// </summary>
     /// <value>The title of the post.</value>

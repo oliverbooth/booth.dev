@@ -14,6 +14,7 @@ class BlogPost {
     private readonly _identifier: string;
     private readonly _humanizedTimestamp: string;
     private readonly _formattedDate: string;
+    private readonly _tags: string[];
 
     constructor(json: any) {
         this._id = json.id;
@@ -29,6 +30,7 @@ class BlogPost {
         this._identifier = json.identifier;
         this._humanizedTimestamp = json.humanizedTimestamp;
         this._formattedDate = json.formattedDate;
+        this._tags = json.tags;
     }
 
     get id(): string {
@@ -65,6 +67,10 @@ class BlogPost {
 
     get url(): BlogUrl {
         return this._url;
+    }
+    
+    get tags(): string[] {
+        return this._tags;
     }
 
     get trimmed(): boolean {

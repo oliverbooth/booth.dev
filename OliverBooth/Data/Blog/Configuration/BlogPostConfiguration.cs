@@ -28,5 +28,10 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.DisqusPath).IsRequired(false);
         builder.Property(e => e.Visibility).HasConversion(new EnumToStringConverter<BlogPostVisibility>()).IsRequired();
         builder.Property(e => e.Password).HasMaxLength(255).IsRequired(false);
+        builder.Property(e => e.Tags).IsRequired()
+            .HasConversion(
+                tags => string.Join(' ', tags.Select(t => t.Replace(' ', '-'))),
+                tags => tags.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(t => t.Replace('-', ' ')).ToArray());
     }
 }

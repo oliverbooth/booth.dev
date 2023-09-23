@@ -38,4 +38,9 @@
             </p>
         {{/if}}
     </div>
+    <div class="card-footer">
+        {{#each post.tags}}
+            <a href="?tag={{this}}" class="badge text-bg-dark">{{this}}</a>
+        {{/each}}
+    </div>
 </script>
