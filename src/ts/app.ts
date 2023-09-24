@@ -28,6 +28,8 @@ declare const Prism: any;
         }
     });
 
+    Handlebars.registerHelper("urlEncode", encodeURIComponent);
+
     function getQueryVariable(variable: string): string {
         const query = window.location.search.substring(1);
         const vars = query.split("&");
