@@ -41,6 +41,17 @@ public sealed class BlogApiController : ControllerBase
         return Ok(allPosts.Select(post => CreatePostObject(post)));
     }
 
+    [HttpGet("posts/tagged/{tag}/{page:int?}")]
+    public IActionResult GetTaggedBlogPosts(string tag, int page = 0)
+    {
+        const int itemsPerPage = 10;
+        tag = tag.Replace('-', ' ').ToLowerInvariant();
+
+        IReadOnlyList<IBlogPost> allPosts = _blogPostService.GetBlogPosts(page, itemsPerPage);
+        allPosts = allPosts.Where(post => post.Tags.Contains(tag)).ToList();
+        return Ok(allPosts.Select(post => CreatePostObject(post)));
+    }
+
     [HttpGet("author/{id:guid}")]
     public IActionResult GetAuthor(Guid id)
     {

@@ -20,6 +20,11 @@ class API {
         return response.map(obj => new BlogPost(obj));
     }
 
+    static async getBlogPostsByTag(tag: string, page: number): Promise<BlogPost[]> {
+        const response = await API.getResponse(`posts/tagged/${tag}/${page}`);
+        return response.map(obj => new BlogPost(obj));
+    }
+
     static async getAuthor(id: string): Promise<Author> {
         const response = await API.getResponse(`author/${id}`);
         return new Author(response);
