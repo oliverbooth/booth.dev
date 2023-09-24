@@ -65,8 +65,8 @@ declare const Prism: any;
                 let posts: BlogPost[];
 
                 const tag = getQueryVariable("tag");
-                if (tag !== null) {
-                    posts = await API.getBlogPostsByTag(tag, i);
+                if (tag !== null && tag !== "") {
+                    posts = await API.getBlogPostsByTag(decodeURIComponent(tag), i);
                 } else {
                     posts = await API.getBlogPosts(i);
                 }
