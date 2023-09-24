@@ -279,3 +279,25 @@ a.bmc-btn {
     }
   }
 }
+
+a.brand-mastodon {
+  &:link, &:visited, &:hover, &:active {
+    text-decoration: none;
+    color: #5a48dd;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+a.brand-linkedin {
+  &:link, &:visited, &:hover, &:active {
+    text-decoration: none;
+    color: #0077b5;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+}
