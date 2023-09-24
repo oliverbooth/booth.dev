@@ -20,6 +20,12 @@ internal sealed class WebContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of projects in the database.
+    /// </summary>
+    /// <value>The collection of projects.</value>
+    public DbSet<Project> Projects { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the set of site configuration items.
     /// </summary>
     /// <value>The set of site configuration items.</value>
@@ -41,6 +47,7 @@ internal sealed class WebContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
     }

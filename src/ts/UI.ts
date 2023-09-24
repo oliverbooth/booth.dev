@@ -79,6 +79,7 @@ class UI {
         UI.renderSpoilers(element);
         UI.renderTeX(element);
         UI.renderTimestamps(element);
+        UI.updateProjectCards(element);
     }
 
     /**
@@ -222,6 +223,13 @@ class UI {
             content = content.replaceAll(/&lt;mark(.*?)&gt;/g, "<mark$1>");
             content = content.replaceAll("&lt;/mark&gt;", "</mark>");
             block.innerHTML = content;
+        });
+    }
+
+    private static updateProjectCards(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll(".project-card .card-body p").forEach((p: HTMLParagraphElement) => {
+            p.classList.add("card-text");
         });
     }
 }

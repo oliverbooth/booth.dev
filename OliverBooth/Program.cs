@@ -34,6 +34,7 @@ builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
 builder.Services.AddSingleton<IBlogUserService, BlogUserService>();
+builder.Services.AddSingleton<IProjectService, ProjectService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
