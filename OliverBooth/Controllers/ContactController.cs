@@ -46,12 +46,21 @@ public class ContactController : Controller
         StringValues message = form["message"];
 
         await using SmtpSender sender = CreateSender();
-        await sender.WriteEmail
-            .To("Oliver Booth", _destination.Get<string>())
-            .From(name, email)
-            .Subject($"[Contact via Website] {subject}")
-            .BodyText(message)
-            .SendAsync();
+        try
+        {
+            await sender.WriteEmail
+                .To("Oliver Booth", _destination.Get<string>())
+                .From(name, email)
+                .Subject($"[Contact via Website] {subject}")
+                .BodyText(message)
+                .SendAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Failed to send email");
+            TempData["Success"] = false;
+            return RedirectToPage("/Contact/Result");
+        }
 
         TempData["Success"] = true;
         return RedirectToPage("/Contact/Result");
