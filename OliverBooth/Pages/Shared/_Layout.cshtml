@@ -88,12 +88,18 @@
 
 <footer class="footer text-muted">
     <div class="container text-center">
+        <hr>
+
         <ul class="footer-nav">
+            <li><a title="@("@oliver@mastodon.olivr.me")" href="https://mastodon.olivr.me/@@oliver" rel="me" class="brand-mastodon"><i class="fa-brands fa-mastodon"></i></a></li>
+            <li><a title="LinkedIn/oliverlukebooth" href="https://www.linkedin.com/in/oliverlukebooth/" class="brand-linkedin"><i class="fa-brands fa-linkedin"></i></a></li>
+            <li><a title="Blog RSS Feed" asp-controller="Rss" asp-action="OnGet"><i class="fa-solid fa-rss text-orange"></i></a></li>
+            <li><a title="View Source" href="https://git.oliverbooth.dev/oliverbooth/oliverbooth.dev"><i class="fa-solid fa-code"></i></a></li>
+        </ul>
+
+        <ul class="footer-nav" style="margin-top: 20px;">
             <li>&copy; @DateTime.UtcNow.Year</li>
             <li><a asp-page="/privacy/index">Privacy</a></li>
-            <li><a href="https://mastodon.olivr.me/@@oliver" rel="me" class="brand-mastodon"><i class="fa-brands fa-mastodon"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/oliverlukebooth/" class="brand-linkedin"><i class="fa-brands fa-linkedin"></i></a></li>
-            <li><a asp-controller="Rss" asp-action="OnGet"><i class="fa-solid fa-rss text-orange"></i></a></li>
         </ul>
     </div>
 </footer>
