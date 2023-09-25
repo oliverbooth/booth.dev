@@ -34,8 +34,9 @@
     <div class="form-group" style="margin-top: 10px;">
         <label for="privacy-policy">Privacy Policy</label>
         <select name="privacy-policy" class="form-control" id="privacy-policy">
-            <option value="website" selected="@(Model.Which != "google-play")">This website's policy</option>
+            <option value="website" selected="@(Model.Which == "website")">This website's policy</option>
             <option value="google-play" selected="@(Model.Which == "google-play")">Google Play policy</option>
+            <option value="five-oclock-somewhere" selected="@(Model.Which == "five-oclock-somewhere")">It's 5 O'Clock Somewhere policy</option>
         </select>
     </div>
 
