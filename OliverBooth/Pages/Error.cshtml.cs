@@ -8,28 +8,21 @@ namespace OliverBooth.Pages;
 [IgnoreAntiforgeryToken]
 public class ErrorModel : PageModel
 {
-    private readonly ILogger<ErrorModel> _logger;
-
-    public ErrorModel(ILogger<ErrorModel> logger)
-    {
-        _logger = logger;
-    }
-
     public string? RequestId { get; set; }
 
     public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-    public int StatusCode { get; private set; }
+    public int HttpStatusCode { get; private set; }
 
-    public void OnGet(int? code = null)
+    public IActionResult OnGet(int? code = null)
     {
-        StatusCode = code ?? HttpContext.Response.StatusCode;
-        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
-
-        var originalPath = "unknown";
-        if (HttpContext.Items.TryGetValue("originalPath", out object? value))
+        HttpStatusCode = code ?? HttpContext.Response.StatusCode;
+        if (HttpStatusCode == 200)
         {
-            originalPath = value as string;
+            return RedirectToPage("/Index");
         }
+
+        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        return Page();
     }
 }
