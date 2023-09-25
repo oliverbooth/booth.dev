@@ -4,13 +4,34 @@
 }
 
 <h1 class="display-4">Contact</h1>
-<p class="lead">What would you like to talk about?</p>
-<ul class="contact-reasons">
-    <li><a asp-page="JobOpportunity">💼 Job opportunity / collaboration</a></li>
-    <li><a asp-page="/Donate">☕ Donate money for coffee</a></li>
-    <li><a asp-page="ProjectIdea">💡 Project idea</a></li>
-    <li><a asp-page="TechnicalHelp">💬️ Technical help and code review</a></li>
-    <li><a asp-page="OpenSource">🌍 Open source contribution</a></li>
-    <li><a asp-page="Privacy">🔒 Privacy policy concerns</a></li>
-    <li><a asp-page="Other">❓ Misc / general inquiry</a></li>
-</ul>
+<p>
+    Thanks for getting in touch! While I do my best to read to all inquiries, I cannot guarantee that I will be able to
+    respond to your message. Nevertheless, I appreciate you taking the time to reach out to me and I will respond if I
+    can.
+</p>
+
+<form method="post" asp-controller="Contact" asp-action="HandleForm">
+    <input type="hidden" name="contact-type" value="other">
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="name">Your Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Who are you?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="email">Your Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="How can I reach you?" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="subject">Subject</label>
+        <input type="text" class="form-control" id="subject" name="subject" placeholder="What's the gist?" maxlength="100" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+        <label for="message">Message</label>
+        <textarea class="form-control" id="message" name="message" rows="5" required placeholder="What's on your mind?"></textarea>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+</form>

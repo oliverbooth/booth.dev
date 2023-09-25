@@ -31,35 +31,8 @@ public class ContactController : Controller
         return RedirectToPage("/Contact/Index");
     }
 
-    [HttpPost("privacy-policy")]
-    public async Task<IActionResult> HandlePrivacyPolicy()
-    {
-        if (!Request.HasFormContentType)
-        {
-            return RedirectToPage("/Contact/Privacy");
-        }
-
-        IFormCollection form = Request.Form;
-        StringValues name = form["name"];
-        StringValues email = form["email"];
-        StringValues subject = form["subject"];
-        StringValues message = form["message"];
-        StringValues privacyPolicy = form["privacy-policy"];
-
-        await using SmtpSender sender = CreateSender();
-        await sender.WriteEmail
-            .To("Oliver Booth", _destination.GetValue<string>("PrivacyPolicy"))
-            .From(name, email)
-            .Subject($"[{privacyPolicy}] {subject}")
-            .BodyHtml(message)
-            .SendAsync();
-
-        TempData["Success"] = true;
-        return RedirectToPage("/Contact/Result");
-    }
-
     [HttpPost("other")]
-    public async Task<IActionResult> HandleMiscellaneous()
+    public async Task<IActionResult> HandleForm()
     {
         if (!Request.HasFormContentType)
         {
@@ -74,10 +47,10 @@ public class ContactController : Controller
 
         await using SmtpSender sender = CreateSender();
         await sender.WriteEmail
-            .To("Oliver Booth", _destination.GetValue<string>("Other"))
+            .To("Oliver Booth", _destination.Get<string>())
             .From(name, email)
-            .Subject(subject)
-            .BodyHtml(message)
+            .Subject($"[Contact via Website] {subject}")
+            .BodyText(message)
             .SendAsync();
 
         TempData["Success"] = true;
