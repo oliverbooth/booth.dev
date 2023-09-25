@@ -36,7 +36,7 @@ public class ContactController : Controller
     {
         if (!Request.HasFormContentType)
         {
-            return RedirectToPage("/Contact/Other");
+            return RedirectToPage("/Contact/Index");
         }
 
         IFormCollection form = Request.Form;
