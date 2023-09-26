@@ -1,3 +1,11 @@
+# run Gulp to build the app
+FROM node:12.16.1-alpine as build-stage
+COPY package*.json ./
+COPY Gulpfile.js ./
+RUN npm install --global gulp-cli
+RUN npm install
+RUN gulp
+
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
