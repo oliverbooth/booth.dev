@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Primitives;
 using OliverBooth.Data.Blog;
 using OliverBooth.Services;
+using BC = BCrypt.Net.BCrypt;
 
 namespace OliverBooth.Pages.Blog;
 
@@ -38,6 +40,14 @@ public class Article : PageModel
     /// <value>The requested blog post.</value>
     public IBlogPost Post { get; private set; } = null!;
 
+    /// <summary>
+    ///     Gets a value indicating whether to show the password prompt.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the password prompt should be shown; otherwise, <see langword="false" />.
+    /// </value>
+    public bool ShowPasswordPrompt { get; private set; }
+
     public IActionResult OnGet(int year, int month, int day, string slug)
     {
         var date = new DateOnly(year, month, day);
@@ -45,6 +55,39 @@ public class Article : PageModel
         {
             Response.StatusCode = 404;
             return NotFound();
+        }
+
+        if (!string.IsNullOrWhiteSpace(post.Password))
+        {
+            ShowPasswordPrompt = true;
+        }
+
+        if (post.IsRedirect)
+        {
+            return Redirect(post.RedirectUrl!.ToString());
+        }
+
+        Post = post;
+        return Page();
+    }
+
+    public IActionResult OnPost([FromRoute] int year,
+        [FromRoute] int month,
+        [FromRoute] int day,
+        [FromRoute] string slug)
+    {
+        var date = new DateOnly(year, month, day);
+        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
+        {
+            Response.StatusCode = 404;
+            return NotFound();
+        }
+
+        ShowPasswordPrompt = true;
+
+        if (Request.Form.TryGetValue("password", out StringValues password) && BC.Verify(password, post.Password))
+        {
+            ShowPasswordPrompt = false;
         }
 
         if (post.IsRedirect)

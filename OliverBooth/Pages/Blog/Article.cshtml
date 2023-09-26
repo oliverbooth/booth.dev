@@ -5,6 +5,22 @@
 @inject IBlogPostService BlogPostService
 @model Article
 
+@if (Model.ShowPasswordPrompt)
+{
+    <div class="alert alert-danger" role="alert">
+        This post is private and can only be viewed by those with the password.
+    </div>
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    return;
+}
+
 @if (Model.Post is not { } post)
 {
     return;
