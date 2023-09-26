@@ -25,6 +25,7 @@
         string excerpt = BlogPostService.RenderExcerpt(post, out bool trimmed);
         <meta name="title" content="@post.Title">
         <meta name="description" content="@excerpt">
+        <meta property="og:image" content="@Url.Content("~/img/favicon.png")">
         <meta property="og:title" content="@post.Title">
         <meta property="og:description" content="@excerpt">
         <meta property="og:type" content="article">
@@ -32,6 +33,7 @@
         <meta property="twitter:title" content="@post.Title">
         <meta property="twitter:creator" content="@post.Author.DisplayName">
         <meta property="twitter:description" content="@excerpt">
+        <meta property="twitter:image" content="@Url.Content("~/img/favicon.png")">
         <meta property="twitter:card" content="summary">
         <meta property="twitter:url" content="@url">
     }
