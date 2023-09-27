@@ -6,7 +6,7 @@ namespace OliverBooth.Data.Blog.Rss;
 public sealed class BlogRoot
 {
     [XmlAttribute("version")]
-    public string Version { get; set; } = default!;
+    public string Version { get; set; } = "2.0";
 
     [XmlElement("channel")]
     public BlogChannel Channel { get; set; } = default!;
