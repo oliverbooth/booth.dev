@@ -88,8 +88,8 @@
 </div>
 <hr>
 
-<article data-blog-post="true" data-blog-id="@post.Id.ToString("D")">
-    <p class="text-center">Loading ...</p>
+<article>
+    @Html.Raw(BlogPostService.RenderPost(post))
 </article>
 
 <hr>

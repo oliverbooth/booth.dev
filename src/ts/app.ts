@@ -53,13 +53,6 @@ declare const Prism: any;
         API.getBlogPost(id).then((post) => {
             blogPost.innerHTML = post.content;
             UI.updateUI(blogPost);
-            
-            if (location.hash && location.hash !== '#' && location.hash.startsWith('#')) {
-                const element = document.querySelector(location.hash);
-                if (element) {
-                    setTimeout(() => element.scrollIntoView(), 1000);
-                }
-            }
         });
     }
 
