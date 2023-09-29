@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using Markdig;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Web;
@@ -38,6 +39,7 @@ builder.Services.AddSingleton<IProjectService, ProjectService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 
 if (builder.Environment.IsProduction())
 {

@@ -39,6 +39,13 @@ public class ContactController : Controller
             return RedirectToPage("/Contact/Index");
         }
 
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError("Captcha validation failed");
+            TempData["Success"] = false;
+            return RedirectToPage("/Contact/Result");
+        }
+
         IFormCollection form = Request.Form;
         StringValues name = form["name"];
         StringValues email = form["email"];
