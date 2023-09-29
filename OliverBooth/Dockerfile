@@ -3,18 +3,20 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+FROM node:alpine as build-deps
+WORKDIR /src
+COPY package.json package-lock.json ./
+RUN npm i -g gulp-cli
+RUN npm i
+COPY . ./
+RUN gulp
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+COPY --from=build-deps /src/OliverBooth/wwwroot /src/OliverBooth/wwwroot
 WORKDIR /src
 COPY ["OliverBooth/OliverBooth.csproj", "OliverBooth/"]
 RUN dotnet restore "OliverBooth/OliverBooth.csproj"
 COPY . .
-
-RUN apt-get update && apt-get install -y curl
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
-RUN apt-get install -y nodejs
-RUN npm i -g gulp-cli
-RUN npm i
-RUN gulp
 
 WORKDIR "/src/OliverBooth"
 RUN dotnet build "OliverBooth.csproj" -c Release -o /app/build
