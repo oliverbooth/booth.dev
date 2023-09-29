@@ -35,6 +35,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-
 		src\ts\BlogUrl.ts = src\ts\BlogUrl.ts
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{8996BEBA-0D9C-4D76-9117-8E4E89148A1A}"
+	ProjectSection(SolutionItems) = preProject
+		src\img\favicon.png = src\img\favicon.png
+		src\img\headshot_512x512_2023.jpg = src\img\headshot_512x512_2023.jpg
+		src\img\ob-256x256.png = src\img\ob-256x256.png
+		src\img\oliverbooth-704x330.png = src\img\oliverbooth-704x330.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,5 +57,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{822F528E-3CA7-4B7D-9250-BD248ADA7BAE} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
 		{BB9F76AC-292A-4F47-809D-8BBBA6E0A048} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
+		{8996BEBA-0D9C-4D76-9117-8E4E89148A1A} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
 	EndGlobalSection
 EndGlobal
