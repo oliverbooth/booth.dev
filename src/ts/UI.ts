@@ -50,7 +50,7 @@ class UI {
                 excerpt: post.excerpt,
                 url: `/blog/${post.url.year}/${post.url.month}/${post.url.day}/${post.url.slug}`,
                 date: TimeUtility.formatRelativeTimestamp(post.published),
-                formattedDate: post.formattedDate,
+                formattedDate: post.updated ? post.formattedUpdateDate : post.formattedPublishDate,
                 date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
                 enable_comments: post.commentsEnabled,
                 disqus_identifier: post.identifier,

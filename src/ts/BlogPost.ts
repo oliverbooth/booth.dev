@@ -13,7 +13,8 @@ class BlogPost {
     private readonly _trimmed: boolean;
     private readonly _identifier: string;
     private readonly _humanizedTimestamp: string;
-    private readonly _formattedDate: string;
+    private readonly _formattedPublishDate: string;
+    private readonly _formattedUpdateDate: string;
     private readonly _tags: string[];
 
     constructor(json: any) {
@@ -29,7 +30,8 @@ class BlogPost {
         this._trimmed = json.trimmed;
         this._identifier = json.identifier;
         this._humanizedTimestamp = json.humanizedTimestamp;
-        this._formattedDate = json.formattedDate;
+        this._formattedPublishDate = json.formattedPublishDate;
+        this._formattedUpdateDate = json.formattedUpdateDate;
         this._tags = json.tags;
     }
 
@@ -85,8 +87,12 @@ class BlogPost {
         return this._humanizedTimestamp;
     }
 
-    get formattedDate(): string {
-        return this._formattedDate;
+    get formattedPublishDate(): string {
+        return this._formattedPublishDate;
+    }
+
+    get formattedUpdateDate(): string {
+        return this._formattedUpdateDate;
     }
 }
 
