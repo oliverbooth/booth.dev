@@ -20,6 +20,12 @@ internal sealed class WebContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of books in the reading list.
+    /// </summary>
+    /// <value>The collection of books.</value>
+    public DbSet<Book> Books { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -47,6 +53,7 @@ internal sealed class WebContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
