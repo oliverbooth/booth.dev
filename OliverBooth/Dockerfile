@@ -3,7 +3,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM node:alpine as build-deps
+FROM node:20-alpine as build-deps
 WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm i -g gulp-cli
