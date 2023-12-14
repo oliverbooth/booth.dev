@@ -1,3 +1,5 @@
+using SixLabors.ImageSharp;
+
 namespace OliverBooth.Data.Web;
 
 /// <summary>
@@ -28,4 +30,11 @@ public interface IBook
     /// </summary>
     /// <value>The title of the book.</value>
     string Title { get; }
+
+    /// <summary>
+    ///     Generates the barcode for this book.
+    /// </summary>
+    /// <returns>The EAN-13 barcode encoded as PNG in Base64.</returns>
+    /// <remarks>This value should be disposed.</remarks>
+    string GetBarcode();
 }
