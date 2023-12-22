@@ -23,6 +23,11 @@ body {
   margin-bottom: 60px;
 }
 
+main.container {
+  background: #333;
+  padding: 20px;
+}
+
 a {
   &:link, &:visited, &:hover, &:active {
     text-decoration: none;

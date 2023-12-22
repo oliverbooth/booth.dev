@@ -6,31 +6,33 @@
     ViewData["Title"] = "Blacklist";
 }
 
-<h1 class="display-4">Contact Blacklist</h1>
-<p>
-    Below is a list of email addresses that have been blocked from contacting me. This list is public so that others may
-    also block these addresses if they wish. Any email address that contains an asterisk (*) is a wildcard, meaning that
-    any email address that matches the pattern will be blocked.
-</p>
+<main class="container">
+    <h1 class="display-4">Contact Blacklist</h1>
+    <p>
+        Below is a list of email addresses that have been blocked from contacting me. This list is public so that others
+        may also block these addresses if they wish. Any email address that contains an asterisk (*) is a wildcard,
+        meaning that any email address that matches the pattern will be blocked.
+    </p>
 
-<p>
-    You can view this list in JSON format
-    <a asp-controller="FormattedBlacklist" asp-action="OnGet" asp-route-format="json">here</a>,
-    or in CSV format
-    <a asp-controller="FormattedBlacklist" asp-action="OnGet" asp-route-format="csv">here</a>.
-</p>
+    <p>
+        You can view this list in JSON format
+        <a asp-controller="FormattedBlacklist" asp-action="OnGet" asp-route-format="json">here</a>,
+        or in CSV format
+        <a asp-controller="FormattedBlacklist" asp-action="OnGet" asp-route-format="csv">here</a>.
+    </p>
 
-<table class="table">
-    <tr>
-        <th>Name / Email</th>
-        <th>Reason</th>
-    </tr>
-
-    @foreach (IBlacklistEntry entry in ContactService.GetBlacklist())
-    {
+    <table class="table">
         <tr>
-            <td>@entry.Name &lt;@entry.EmailAddress&gt;</td>
-            <td>@entry.Reason</td>
+            <th>Name / Email</th>
+            <th>Reason</th>
         </tr>
-    }
-</table>
+
+        @foreach (IBlacklistEntry entry in ContactService.GetBlacklist())
+        {
+            <tr>
+                <td>@entry.Name &lt;@entry.EmailAddress&gt;</td>
+                <td>@entry.Reason</td>
+            </tr>
+        }
+    </table>
+</main>

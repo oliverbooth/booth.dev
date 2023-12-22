@@ -6,100 +6,102 @@
     ViewData["Title"] = "Projects";
 }
 
-<h1 class="display-4">Projects</h1>
+<main class="container">
+    <h1 class="display-4">Projects</h1>
 
-@foreach (IProject[] chunk in ProjectService.GetProjects(ProjectStatus.Ongoing).OrderBy(p => p.Rank).Chunk(2))
-{
-    <div class="card-group row" style="margin-top: 20px;">
-        @foreach (IProject project in chunk)
-        {
-            <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-                <div class="card border-success project-card">
-                    <div class="card-header text-bg-success">In Active Development</div>
-                    <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@project.Name</h5>
-                        <p class="card-text">@Html.Raw(ProjectService.GetDescription(project))</p>
-                        @if (!string.IsNullOrWhiteSpace(project.RemoteUrl))
-                        {
-                            <a href="@project.RemoteUrl" class="btn btn-primary">
-                                @if (string.IsNullOrWhiteSpace(project.RemoteTarget))
-                                {
-                                    <span>View website</span>
-                                }
-                                else
-                                {
-                                    <span>View on @project.RemoteTarget</span>
-                                }
-                            </a>
-                        }
+    @foreach (IProject[] chunk in ProjectService.GetProjects(ProjectStatus.Ongoing).OrderBy(p => p.Rank).Chunk(2))
+    {
+        <div class="card-group row" style="margin-top: 20px;">
+            @foreach (IProject project in chunk)
+            {
+                <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
+                    <div class="card border-success project-card">
+                        <div class="card-header text-bg-success">In Active Development</div>
+                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@project.Name</h5>
+                            <p class="card-text">@Html.Raw(ProjectService.GetDescription(project))</p>
+                            @if (!string.IsNullOrWhiteSpace(project.RemoteUrl))
+                            {
+                                <a href="@project.RemoteUrl" class="btn btn-primary">
+                                    @if (string.IsNullOrWhiteSpace(project.RemoteTarget))
+                                    {
+                                        <span>View website</span>
+                                    }
+                                    else
+                                    {
+                                        <span>View on @project.RemoteTarget</span>
+                                    }
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
 
-@foreach (IProject[] chunk in ProjectService.GetProjects(ProjectStatus.Past).Chunk(2))
-{
-    <div class="card-group row" style="margin-top: 20px;">
-        @foreach (IProject project in chunk)
-        {
-            <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-                <div class="card border-info project-card">
-                    <div class="card-header text-bg-info">Past Work</div>
-                    <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@project.Name</h5>
-                        <p class="card-text">@Html.Raw(ProjectService.GetDescription(project))</p>
-                        @if (!string.IsNullOrWhiteSpace(project.RemoteUrl))
-                        {
-                            <a href="@project.RemoteUrl" class="btn btn-primary">
-                                @if (string.IsNullOrWhiteSpace(project.RemoteTarget))
-                                {
-                                    <span>View website</span>
-                                }
-                                else
-                                {
-                                    <span>View on @project.RemoteTarget</span>
-                                }
-                            </a>
-                        }
+    @foreach (IProject[] chunk in ProjectService.GetProjects(ProjectStatus.Past).Chunk(2))
+    {
+        <div class="card-group row" style="margin-top: 20px;">
+            @foreach (IProject project in chunk)
+            {
+                <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
+                    <div class="card border-info project-card">
+                        <div class="card-header text-bg-info">Past Work</div>
+                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@project.Name</h5>
+                            <p class="card-text">@Html.Raw(ProjectService.GetDescription(project))</p>
+                            @if (!string.IsNullOrWhiteSpace(project.RemoteUrl))
+                            {
+                                <a href="@project.RemoteUrl" class="btn btn-primary">
+                                    @if (string.IsNullOrWhiteSpace(project.RemoteTarget))
+                                    {
+                                        <span>View website</span>
+                                    }
+                                    else
+                                    {
+                                        <span>View on @project.RemoteTarget</span>
+                                    }
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
 
-@foreach (IProject[] chunk in ProjectService.GetProjects(ProjectStatus.Hiatus).Chunk(2))
-{
-    <div class="card-group row" style="margin-top: 20px;">
-        @foreach (IProject project in chunk)
-        {
-            <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-                <div class="card border-dark project-card">
-                    <div class="card-header text-bg-dark">On Hiatus</div>
-                    <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@project.Name</h5>
-                        <p class="card-text">@Html.Raw(ProjectService.GetDescription(project))</p>
-                        @if (!string.IsNullOrWhiteSpace(project.RemoteUrl))
-                        {
-                            <a href="@project.RemoteUrl" class="btn btn-primary">
-                                @if (string.IsNullOrWhiteSpace(project.RemoteTarget))
-                                {
-                                    <span>View website</span>
-                                }
-                                else
-                                {
-                                    <span>View on @project.RemoteTarget</span>
-                                }
-                            </a>
-                        }
+    @foreach (IProject[] chunk in ProjectService.GetProjects(ProjectStatus.Hiatus).Chunk(2))
+    {
+        <div class="card-group row" style="margin-top: 20px;">
+            @foreach (IProject project in chunk)
+            {
+                <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
+                    <div class="card border-dark project-card">
+                        <div class="card-header text-bg-dark">On Hiatus</div>
+                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@project.Name</h5>
+                            <p class="card-text">@Html.Raw(ProjectService.GetDescription(project))</p>
+                            @if (!string.IsNullOrWhiteSpace(project.RemoteUrl))
+                            {
+                                <a href="@project.RemoteUrl" class="btn btn-primary">
+                                    @if (string.IsNullOrWhiteSpace(project.RemoteTarget))
+                                    {
+                                        <span>View website</span>
+                                    }
+                                    else
+                                    {
+                                        <span>View on @project.RemoteTarget</span>
+                                    }
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</main>

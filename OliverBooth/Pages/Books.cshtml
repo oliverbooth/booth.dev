@@ -10,86 +10,94 @@
     ViewData["Title"] = "Reading List";
 }
 
-<h1 class="display-4">Reading List</h1>
-<p>
-    This is a list of the books I've read, I'm currently reading, or that I plan to read. Not every book is listed here,
-    but I will update this list as I try to remember what it is I've read in the past.
-</p>
-<p>
-    This list is also available on <a href="https://www.goodreads.com/review/list/145592619">Goodreads</a>.
-</p>
+<main class="container">
+    <h1 class="display-4">Reading List</h1>
+    <p>
+        This is a list of the books I've read, I'm currently reading, or that I plan to read. Not every book is listed
+        here, but I will update this list as I try to remember what it is I've read in the past.
+    </p>
+    <p>
+        This list is also available on <a href="https://www.goodreads.com/review/list/145592619">Goodreads</a>.
+    </p>
 
-<p class="lead">Currently Reading</p>
-<table class="table reading-list">
-    <thead>
-    <tr>
-        <th style="width: 50%">Title</th>
-        <th style="width: 25%">Author</th>
-        <th style="width: 25%">ISBN</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    @foreach (IBook book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
-    {
+    <p class="lead">Currently Reading</p>
+    <table class="table reading-list">
+        <thead>
         <tr>
-            <td>
-                <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                @book.Title.Trim()
-            </td>
-            <td>@book.Author.Trim()</td>
-            <td style="font-family: monospace">@book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn"></td>
+            <th style="width: 50%">Title</th>
+            <th style="width: 25%">Author</th>
+            <th style="width: 25%">ISBN</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
 
-<p class="lead">Plan to Read</p>
-<table class="table reading-list">
-    <thead>
-    <tr>
-        <th style="width: 50%">Title</th>
-        <th style="width: 25%">Author</th>
-        <th style="width: 25%">ISBN</th>
-    </tr>
-    </thead>
+        <tbody>
+        @foreach (IBook book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
+        {
+            <tr>
+                <td>
+                    <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
+                    @book.Title.Trim()
+                </td>
+                <td>@book.Author.Trim()</td>
+                <td style="font-family: monospace">
+                    @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 
-    <tbody>
-    @foreach (IBook book in Model.PlanToRead.OrderBy(b => b.Author).ThenBy(b => b.Title))
-    {
+    <p class="lead">Plan to Read</p>
+    <table class="table reading-list">
+        <thead>
         <tr>
-            <td>
-                <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                @book.Title.Trim()
-            </td>
-            <td>@book.Author.Trim()</td>
-            <td style="font-family: monospace">@book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn"></td>
+            <th style="width: 50%">Title</th>
+            <th style="width: 25%">Author</th>
+            <th style="width: 25%">ISBN</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
 
-<p class="lead">Read</p>
-<table class="table reading-list">
-    <thead>
-    <tr>
-        <th style="width: 50%">Title</th>
-        <th style="width: 25%">Author</th>
-        <th style="width: 25%">ISBN</th>
-    </tr>
-    </thead>
+        <tbody>
+        @foreach (IBook book in Model.PlanToRead.OrderBy(b => b.Author).ThenBy(b => b.Title))
+        {
+            <tr>
+                <td>
+                    <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
+                    @book.Title.Trim()
+                </td>
+                <td>@book.Author.Trim()</td>
+                <td style="font-family: monospace">
+                    @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 
-    <tbody>
-    @foreach (IBook book in Model.Read.OrderBy(b => b.Author).ThenBy(b => b.Title))
-    {
+    <p class="lead">Read</p>
+    <table class="table reading-list">
+        <thead>
         <tr>
-            <td>
-                <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                @book.Title.Trim()
-            </td>
-            <td>@book.Author.Trim()</td>
-            <td style="font-family: monospace">@book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn"></td>
+            <th style="width: 50%">Title</th>
+            <th style="width: 25%">Author</th>
+            <th style="width: 25%">ISBN</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+
+        <tbody>
+        @foreach (IBook book in Model.Read.OrderBy(b => b.Author).ThenBy(b => b.Title))
+        {
+            <tr>
+                <td>
+                    <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
+                    @book.Title.Trim()
+                </td>
+                <td>@book.Author.Trim()</td>
+                <td style="font-family: monospace">
+                    @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</main>
