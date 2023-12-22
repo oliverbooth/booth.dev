@@ -19,7 +19,7 @@
     <table class="table reading-list">
         <thead>
         <tr>
-            <th style="width: 50%">Title</th>
+            <th colspan="2" style="width: 50%">Title</th>
             <th style="width: 25%">Author</th>
             <th style="width: 25%">ISBN</th>
         </tr>
@@ -31,8 +31,8 @@
             <tr>
                 <td>
                     <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                    @book.Title.Trim()
                 </td>
+                <td>@book.Title.Trim()</td>
                 <td>@book.Author.Trim()</td>
                 <td style="font-family: monospace">
                     @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
@@ -46,7 +46,7 @@
     <table class="table reading-list">
         <thead>
         <tr>
-            <th style="width: 50%">Title</th>
+            <th colspan="2" style="width: 50%">Title</th>
             <th style="width: 25%">Author</th>
             <th style="width: 25%">ISBN</th>
         </tr>
@@ -58,8 +58,8 @@
             <tr>
                 <td>
                     <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                    @book.Title.Trim()
                 </td>
+                <td>@book.Title.Trim()</td>
                 <td>@book.Author.Trim()</td>
                 <td style="font-family: monospace">
                     @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
@@ -73,7 +73,7 @@
     <table class="table reading-list">
         <thead>
         <tr>
-            <th style="width: 50%">Title</th>
+            <th colspan="2" style="width: 50%">Title</th>
             <th style="width: 25%">Author</th>
             <th style="width: 25%">ISBN</th>
         </tr>
@@ -85,8 +85,8 @@
             <tr>
                 <td>
                     <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                    @book.Title.Trim()
                 </td>
+                <td>@book.Title.Trim()</td>
                 <td>@book.Author.Trim()</td>
                 <td style="font-family: monospace">
                     @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
