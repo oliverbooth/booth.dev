@@ -26,6 +26,12 @@ internal sealed class WebContext : DbContext
     public DbSet<Book> Books { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the collection of blacklist entries in the database.
+    /// </summary>
+    /// <value>The collection of blacklist entries.</value>
+    public DbSet<BlacklistEntry> ContactBlacklist { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -53,6 +59,7 @@ internal sealed class WebContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new BlacklistEntryConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
