@@ -7,11 +7,12 @@
 @inject MarkdownPipeline MarkdownPipeline
 
 @{
-    ViewData["Title"] = "Projects";
+    IProject? project = Model.SelectedProject;
+    ViewData["Title"] = project is null ? "Projects" : project.Name;
 }
 
 <main class="container">
-    @if (Model.SelectedProject is not { } project)
+    @if (project is null)
     {
         <h1>Project Not Found</h1>
         return;
