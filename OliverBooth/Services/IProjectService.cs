@@ -23,6 +23,13 @@ public interface IProjectService
     IReadOnlyList<IProject> GetAllProjects();
 
     /// <summary>
+    ///     Gets the programming languages used in the specified project.
+    /// </summary>
+    /// <param name="project">The project whose languages to return.</param>
+    /// <returns>A read only view of the languages.</returns>
+    IReadOnlyList<IProgrammingLanguage> GetProgrammingLanguages(IProject project);
+
+    /// <summary>
     ///     Gets all projects with the specified status.
     /// </summary>
     /// <param name="status">The status of the projects to get.</param>

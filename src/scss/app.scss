@@ -179,11 +179,9 @@ article {
 }
 
 .project-card {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.05);
-  }
+  position: relative;
+  background: #000;
+  box-shadow: 0 0 15px rgba(0, 0, 0, .1);
 }
 
 .blog-card {
@@ -315,4 +313,8 @@ table.reading-list {
 .book-cover {
   width: 50px;
   vertical-align: middle;
+}
+
+td.trim-p p:last-child {
+  margin-bottom: 0;
 }

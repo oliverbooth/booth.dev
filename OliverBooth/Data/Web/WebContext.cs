@@ -32,6 +32,12 @@ internal sealed class WebContext : DbContext
     public DbSet<BlacklistEntry> ContactBlacklist { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the collection of programming languages in the database.
+    /// </summary>
+    /// <value>The collection of programming languages.</value>
+    public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -57,10 +63,12 @@ internal sealed class WebContext : DbContext
         optionsBuilder.UseMySql(connectionString, serverVersion);
     }
 
+    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new BlacklistEntryConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
+        modelBuilder.ApplyConfiguration(new ProgrammingLanguageConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());

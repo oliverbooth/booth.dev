@@ -12,6 +12,12 @@ public interface IProject
     string Description { get; }
 
     /// <summary>
+    ///     Gets the details of the project.
+    /// </summary>
+    /// <value>The details.</value>
+    string Details { get; }
+
+    /// <summary>
     ///     Gets the URL of the hero image.
     /// </summary>
     /// <value>The URL of the hero image.</value>
@@ -22,6 +28,12 @@ public interface IProject
     /// </summary>
     /// <value>The ID of the project.</value>
     Guid Id { get; }
+
+    /// <summary>
+    ///     Gets the set of languages used for this project.
+    /// </summary>
+    /// <value>The languages.</value>
+    IReadOnlyList<string> Languages { get; }
 
     /// <summary>
     ///     Gets the name of the project.
@@ -58,4 +70,10 @@ public interface IProject
     /// </summary>
     /// <value>The status of the project.</value>
     ProjectStatus Status { get; }
+
+    /// <summary>
+    ///     Gets the tagline of the project.
+    /// </summary>
+    /// <value>The tagline.</value>
+    string? Tagline { get; }
 }

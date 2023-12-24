@@ -1,0 +1,177 @@
+.ribbon {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  position: absolute;
+
+  &::before, &::after {
+    position: absolute;
+    z-index: -1;
+    content: '';
+    display: block;
+  }
+
+  span {
+    position: absolute;
+    display: block;
+    width: 225px;
+    padding: 15px 0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+    font: 700 18px/1 'Lato', sans-serif;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  &.ribbon-top-left {
+    top: -10px;
+    left: -10px;
+
+    &::before, &::after {
+      border-top-color: transparent;
+      border-left-color: transparent;
+    }
+
+    &::before {
+      top: 0;
+      right: 0;
+    }
+
+    &::after {
+      bottom: 0;
+      left: 0;
+    }
+
+    span {
+      right: -25px;
+      top: 30px;
+      transform: rotate(-45deg);
+    }
+  }
+
+  &.ribbon-top-right {
+    top: -10px;
+    right: -10px;
+
+    &::before, &::after {
+      border-top-color: transparent;
+      border-right-color: transparent;
+    }
+
+    &::before {
+      top: 0;
+      left: 0;
+    }
+
+    &::after {
+      bottom: 0;
+      right: 0;
+    }
+
+    span {
+      left: -25px;
+      top: 30px;
+      transform: rotate(45deg);
+    }
+  }
+
+  &.ribbon-bottom-left {
+    bottom: -10px;
+    left: -10px;
+
+    &::before, &::after {
+      border-bottom-color: transparent;
+      border-left-color: transparent;
+    }
+
+    &::before {
+      bottom: 0;
+      right: 0;
+    }
+
+    &::after {
+      top: 0;
+      left: 0;
+    }
+
+    span {
+      right: -25px;
+      bottom: 30px;
+      transform: rotate(225deg);
+    }
+  }
+
+  &.ribbon-bottom-right {
+    bottom: -10px;
+    right: -10px;
+
+    &::before, &::after {
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+    }
+
+    &::before {
+      bottom: 0;
+      left: 0;
+    }
+
+    &::after {
+      top: 0;
+      right: 0;
+    }
+
+    span {
+      left: -25px;
+      bottom: 30px;
+      transform: rotate(-225deg);
+    }
+  }
+
+  &.red {
+    $bg: #db3434;
+    $fg: #fff;
+
+    &::before, &::after {
+      border: 5px solid darken($bg, 20%);
+    }
+
+    span {
+      background-color: $bg;
+      color: $fg;
+    }
+  }
+
+  &.green {
+    $bg: #34db34;
+    $fg: #fff;
+
+    &::before, &::after {
+      border: 5px solid darken($bg, 20%);
+    }
+
+    span {
+      background-color: $bg;
+      color: $fg;
+    }
+  }
+
+  &.blue {
+    $bg: #3498db;
+    $fg: #fff;
+
+    &::before, &::after {
+      border: 5px solid darken($bg, 20%);
+    }
+
+    span {
+      background-color: $bg;
+      color: $fg;
+    }
+  }
+}
+
+.project-card .ribbon {
+  transform: scale(75%);
+  left: -26px;
+  top: -26px;
+}

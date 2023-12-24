@@ -9,10 +9,16 @@ internal sealed class Project : IEquatable<Project>, IProject
     public string Description { get; private set; } = string.Empty;
 
     /// <inheritdoc />
+    public string Details { get; private set; } = string.Empty;
+
+    /// <inheritdoc />
     public string HeroUrl { get; private set; } = string.Empty;
 
     /// <inheritdoc />
     public Guid Id { get; private set; } = Guid.NewGuid();
+
+    /// <inheritdoc />
+    public IReadOnlyList<string> Languages { get; private set; } = ArraySegment<string>.Empty;
 
     /// <inheritdoc />
     public string Name { get; private set; } = string.Empty;
@@ -31,6 +37,9 @@ internal sealed class Project : IEquatable<Project>, IProject
 
     /// <inheritdoc />
     public ProjectStatus Status { get; private set; } = ProjectStatus.Ongoing;
+
+    /// <inheritdoc />
+    public string? Tagline { get; private set; }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="Project" /> are equal.

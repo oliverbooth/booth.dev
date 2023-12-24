@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data.Web;
@@ -35,6 +36,15 @@ internal sealed class ProjectService : IProjectService
     {
         using WebContext context = _dbContextFactory.CreateDbContext();
         return context.Projects.OrderBy(p => p.Rank).ThenBy(p => p.Name).ToArray();
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<IProgrammingLanguage> GetProgrammingLanguages(IProject project)
+    {
+        using WebContext context = _dbContextFactory.CreateDbContext();
+        return project.Languages
+            .Select(l => context.ProgrammingLanguages.Find(l) ?? new ProgrammingLanguage { Name = l.Titleize() })
+            .ToArray();
     }
 
     /// <inheritdoc />
