@@ -7,6 +7,7 @@
 
     IEnumerable<IProject> projects = ProjectService.GetProjects(ProjectStatus.Ongoing).OrderBy(p => p.Rank)
         .Concat(ProjectService.GetProjects(ProjectStatus.Past).OrderBy(p => p.Rank))
+        .Concat(ProjectService.GetProjects(ProjectStatus.Retired).OrderBy(p => p.Rank))
         .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus).OrderBy(p => p.Rank));
 }
 
