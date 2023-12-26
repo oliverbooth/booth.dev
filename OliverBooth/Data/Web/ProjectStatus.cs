@@ -14,5 +14,8 @@ public enum ProjectStatus
     Hiatus,
 
     [Description("The project is no longer being worked on.")]
-    Past
+    Past,
+
+    [Description("The project has been retired with no plans for completion.")]
+    Retired,
 }

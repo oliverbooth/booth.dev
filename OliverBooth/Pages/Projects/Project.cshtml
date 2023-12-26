@@ -57,11 +57,15 @@
                         break;
 
                     case ProjectStatus.Past:
-                        <span class="badge rounded-pill text-bg-primary">Completed / Retired</span>
+                        <span class="badge rounded-pill text-bg-primary">Completed</span>
                         break;
 
                     case ProjectStatus.Hiatus:
-                        <span class="badge rounded-pill text-bg-danger">On Hiatus</span>
+                        <span class="badge rounded-pill text-bg-warning">On Hiatus</span>
+                        break;
+
+                    case ProjectStatus.Retired:
+                        <span class="badge rounded-pill text-bg-danger">Retired</span>
                         break;
                 }
             </td>
