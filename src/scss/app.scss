@@ -183,19 +183,45 @@ article {
   background: #000;
   box-shadow: 0 0 15px rgba(0, 0, 0, .1);
 
-  .project-image a {
-    &:link, &:visited, &:hover &:active {
-      color: #fff;
+  &:hover {
+    .project-image {
+      img {
+        transform: scale(110%);
+      }
+      
+      p.project-title {
+        font-size: 1.2em;
+        margin: calc(-35px - .2em) 0 0;
+      }
     }
   }
-  
-  .project-image p.project-title {
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    margin: -34px 0 0;
-    padding: 5px;
-    background-color: rgba(#000, 50%);
+
+  .project-image {
+    overflow: hidden;
+
+    img {
+      z-index: -2;
+      transform: scale(100%);
+
+      transition: transform 500ms;
+    }
+
+    a {
+      &:link, &:visited, &:hover &:active {
+        color: #fff;
+      }
+    }
+
+    p.project-title {
+      font-size: 1em;
+      transition: font-size 500ms, margin 500ms;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      margin: -34px 0 0;
+      padding: 5px;
+      background-color: rgba(#000, 50%);
+    }
   }
 }
 
@@ -320,7 +346,7 @@ a.brand-linkedin {
 }
 
 table.reading-list {
-  th,td {
+  th, td {
     vertical-align: middle;
   }
 }
