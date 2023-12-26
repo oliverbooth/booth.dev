@@ -24,40 +24,48 @@
                         case ProjectStatus.Ongoing:
                             <div class="project-card">
                                 <div class="ribbon ribbon-top-left green">
+                                    <span>Ongoing</span>
+                                </div>
+                                <div class="project-image">
                                     <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <span>Ongoing</span>
+                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                                    </a>
+                                    <a asp-page="Project" asp-route-slug="@project.Slug">
+                                        <p class="project-title">@project.Name</p>
                                     </a>
                                 </div>
-                                <a asp-page="Project" asp-route-slug="@project.Slug">
-                                    <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                </a>
                             </div>
                             break;
 
                         case ProjectStatus.Past:
                             <div class="border-info project-card">
                                 <div class="ribbon ribbon-top-left blue">
+                                    <span>Past Work</span>
+                                </div>
+                                <div class="project-image">
                                     <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <span>Past Work</span>
+                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                                    </a>
+                                    <a asp-page="Project" asp-route-slug="@project.Slug">
+                                        <p class="project-title">@project.Name</p>
                                     </a>
                                 </div>
-                                <a asp-page="Project" asp-route-slug="@project.Slug">
-                                    <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                </a>
                             </div>
                             break;
 
                         case ProjectStatus.Hiatus:
                             <div class="border-danger project-card">
                                 <div class="ribbon ribbon-top-left red">
-
+                                    <span>On Hiatus</span>
+                                </div>
+                                <div class="project-image">
                                     <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <span>On Hiatus</span>
+                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                                    </a>
+                                    <a asp-page="Project" asp-route-slug="@project.Slug">
+                                        <p class="project-title">@project.Name</p>
                                     </a>
                                 </div>
-                                <a asp-page="Project" asp-route-slug="@project.Slug">
-                                    <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                </a>
                             </div>
                             break;
                     }
