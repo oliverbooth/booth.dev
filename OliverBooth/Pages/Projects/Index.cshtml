@@ -47,8 +47,21 @@
                             </div>
                             break;
 
-                        case ProjectStatus.Hiatus:
+                        case ProjectStatus.Retired:
                             <div class="border-danger project-card">
+                                <div class="project-image">
+                                    <a asp-page="Project" asp-route-slug="@project.Slug">
+                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
+                                    </a>
+                                    <a asp-page="Project" asp-route-slug="@project.Slug">
+                                        <p class="project-title">@project.Name</p>
+                                    </a>
+                                </div>
+                            </div>
+                            break;
+
+                        case ProjectStatus.Hiatus:
+                            <div class="border-warning project-card">
                                 <div class="project-image">
                                     <a asp-page="Project" asp-route-slug="@project.Slug">
                                         <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
