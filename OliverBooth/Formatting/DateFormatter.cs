@@ -27,7 +27,7 @@ public sealed class DateFormatter : IFormatter
             return false;
 
 
-        formattingInfo.Write(date.ToString(formattingInfo.Format?.ToString()));
+        formattingInfo.Write(date.ToString(formattingInfo.Format?.ToString(), CultureInfo.InvariantCulture));
         return true;
     }
 }
