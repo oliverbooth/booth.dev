@@ -80,7 +80,7 @@
         <a href="#disqus_thread" data-disqus-identifier="@post.GetDisqusIdentifier()">0 Comments</a>
     }
 </p>
-<div>
+<div class="post-tags">
     @foreach (string tag in post.Tags)
     {
         <a asp-page="Index" asp-route-tag="@tag" class="badge bg-secondary">@tag</a>

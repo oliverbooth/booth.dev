@@ -371,5 +371,18 @@ td.trim-p p:last-child {
     font-size: 3em;
     margin: 0;
     padding: 0;
+}
+
+.post-tags a.badge {
+  transition: color 250ms, background-color 250ms;
+  
+  &:link, &:visited, &:active {
+    background-color: #2D2D2D !important;
+    color: #fff;
+  }
+
+  &:hover {
+    color: #03A9F4;
+    background-color: #1E1E1E !important;
   }
 }
