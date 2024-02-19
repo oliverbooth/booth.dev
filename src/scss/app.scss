@@ -188,7 +188,7 @@ article {
       img {
         transform: scale(110%);
       }
-      
+
       p.project-title {
         font-size: 1.2em;
         margin: calc(-35px - .2em) 0 0;
@@ -358,4 +358,18 @@ table.reading-list {
 
 td.trim-p p:last-child {
   margin-bottom: 0;
+}
+
+#usa-countdown {
+  background-image: url('/img/us-flag-cover_512x166.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+  p {
+    text-align: center;
+    font-size: 3em;
+    margin: 0;
+    padding: 0;
+  }
 }
