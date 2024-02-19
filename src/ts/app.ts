@@ -113,6 +113,11 @@ declare const Prism: any;
         if (minutes < 0) minutes = 0;
         if (seconds < 0) seconds = 0;
         
-        countdown.innerHTML = `${days.toString().padStart(2, '0')} : ${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+        const blogUrl = '/blog/2024/02/19/the-american';
+        const dayStr = days.toString().padStart(2, '0');
+        const hourStr = hours.toString().padStart(2, '0');
+        const minuteStr = minutes.toString().padStart(2, '0');
+        const secondStr = seconds.toString().padStart(2, '0');
+        countdown.innerHTML = `<a href="${blogUrl}">${dayStr} : ${hourStr} : ${minuteStr} : ${secondStr}</a>`;
     }, 1000);
 })();
