@@ -1,0 +1,88 @@
+@page "/tutorial/{**slug}"
+@using Humanizer
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OliverBooth.Data.Blog
+@using OliverBooth.Data.Web
+@using OliverBooth.Services
+@inject ITutorialService TutorialService
+@model Article
+
+@if (Model.CurrentArticle is not { } article)
+{
+    return;
+}
+
+@{
+    ViewData["Post"] = article;
+    ViewData["Title"] = article.Title;
+    DateTimeOffset published = article.Published;
+}
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        </li>
+        @{
+            int? parentId = Model.CurrentArticle.Folder;
+            while (parentId is not null)
+            {
+                ITutorialFolder thisFolder = TutorialService.GetFolder(parentId.Value)!;
+                <li class="breadcrumb-item">
+                    <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(thisFolder)">
+                        @thisFolder.Title
+                    </a>
+                </li>
+                parentId = thisFolder.Parent;
+            }
+        }
+        <li class="breadcrumb-item actove" aria-current="page">@Model.CurrentArticle.Title</li>
+    </ol>
+</nav>
+
+<h1>@article.Title</h1>
+<p class="text-muted">
+    <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("dddd, d MMMM yyyy HH:mm")">
+        Published @published.Humanize()
+    </abbr>
+
+    @if (article.Updated is { } updated)
+    {
+        <span>&bull;</span>
+        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("dddd, d MMMM yyyy HH:mm")">
+            Updated @updated.Humanize()
+        </abbr>
+    }
+</p>
+<hr>
+
+<article>
+    @Html.Raw(TutorialService.RenderArticle(article))
+</article>
+
+<hr>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        @if (article.PreviousPart is { } previousPartId && TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart))
+        {
+            <small>Previous Part</small>
+            <p class="lead">
+                <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(previousPart)">
+                    @previousPart.Title
+                </a>
+            </p>
+        }
+    </div>
+    <div class="col-sm-12 col-md-6" style="text-align: right;">
+        @if (article.NextPart is { } nextPartId && TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart))
+        {
+            <small>Next Part</small>
+            <p class="lead">
+                <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(nextPart)">
+                    @nextPart.Title
+                </a>
+            </p>
+        }
+    </div>
+</div>

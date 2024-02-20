@@ -55,6 +55,18 @@ internal sealed class WebContext : DbContext
     /// <value>The collection of templates.</value>
     public DbSet<Template> Templates { get; private set; } = null!;
 
+    /// <summary>
+    ///     Gets the collection of tutorial articles in the database.
+    /// </summary>
+    /// <value>The collection of tutorial articles.</value>
+    public DbSet<TutorialArticle> TutorialArticles { get; private set; } = null!;
+
+    /// <summary>
+    ///     Gets the collection of tutorial folders in the database.
+    /// </summary>
+    /// <value>The collection of tutorial folders.</value>
+    public DbSet<TutorialFolder> TutorialFolders { get; private set; } = null!;
+
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -71,6 +83,8 @@ internal sealed class WebContext : DbContext
         modelBuilder.ApplyConfiguration(new ProgrammingLanguageConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
+        modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
+        modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
     }
 }
