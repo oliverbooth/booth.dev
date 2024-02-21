@@ -97,27 +97,9 @@ declare const Prism: any;
     }
 
     UI.updateUI();
-    
-    setInterval(() => {
-        const countdown = document.querySelector("#usa-countdown p");
-        const start = new Date().getTime();
-        const end = Date.UTC(2024, 2, 7, 13, 20);
-        const diff = end - start;
-        let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        if (days < 0) days = 0
-        if (hours < 0) hours = 0;
-        if (minutes < 0) minutes = 0;
-        if (seconds < 0) seconds = 0;
-        
-        const blogUrl = '/blog/2024/02/19/the-american';
-        const dayStr = days.toString().padStart(2, '0');
-        const hourStr = hours.toString().padStart(2, '0');
-        const minuteStr = minutes.toString().padStart(2, '0');
-        const secondStr = seconds.toString().padStart(2, '0');
-        countdown.innerHTML = `<a href="${blogUrl}">${dayStr} : ${hourStr} : ${minuteStr} : ${secondStr}</a>`;
-    }, 1000);
+    const usaCountdown = document.getElementById("usa-countdown");
+    usaCountdown.addEventListener("click", () => window.location.href = "/blog/2024/02/19/the-american");
+    UI.updateUsaCountdown(usaCountdown);
+    setInterval(() => UI.updateUsaCountdown(usaCountdown), 1000);
 })();
