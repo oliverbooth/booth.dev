@@ -16,8 +16,8 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
 
         builder.Property(e => e.Id).IsRequired();
         builder.Property(e => e.Parent);
-        builder.Property(e => e.Slug).IsRequired();
-        builder.Property(e => e.Title).IsRequired();
+        builder.Property(e => e.Slug).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.PreviewImageUrl).HasConversion<UriToStringConverter>();
     }
 }
