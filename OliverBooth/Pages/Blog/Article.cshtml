@@ -1,5 +1,6 @@
 @page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
 @using Humanizer
+@using OliverBooth.Data
 @using OliverBooth.Data.Blog
 @using OliverBooth.Services
 @inject IBlogPostService BlogPostService
@@ -44,13 +45,13 @@
 
 @switch (post.Visibility)
 {
-    case BlogPostVisibility.Private:
+    case Visibility.Private:
         <div class="alert alert-danger" role="alert">
             This post is private and can only be viewed by those with the password.
         </div>
         break;
 
-    case BlogPostVisibility.Unlisted:
+    case Visibility.Unlisted:
         <div class="alert alert-warning" role="alert">
             This post is unlisted and can only be viewed by those with the link.
         </div>

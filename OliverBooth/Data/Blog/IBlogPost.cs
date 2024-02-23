@@ -85,7 +85,7 @@ public interface IBlogPost
     ///     Gets the visibility of the post.
     /// </summary>
     /// <value>The visibility of the post.</value>
-    BlogPostVisibility Visibility { get; }
+    Visibility Visibility { get; }
 
     /// <summary>
     ///     Gets the WordPress ID of the post.

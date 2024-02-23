@@ -44,7 +44,7 @@ internal sealed class BlogPost : IBlogPost
     public DateTimeOffset? Updated { get; internal set; }
 
     /// <inheritdoc />
-    public BlogPostVisibility Visibility { get; internal set; }
+    public Visibility Visibility { get; internal set; }
 
     /// <inheritdoc />
     public int? WordPressId { get; set; }
