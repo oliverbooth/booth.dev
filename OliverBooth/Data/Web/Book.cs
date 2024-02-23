@@ -2,7 +2,6 @@ using NetBarcode;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
-using Type = System.Type;
 
 namespace OliverBooth.Data.Web;
 
