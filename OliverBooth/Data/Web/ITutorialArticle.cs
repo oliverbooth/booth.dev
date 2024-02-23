@@ -64,4 +64,10 @@ public interface ITutorialArticle
     /// </summary>
     /// <value>The update timestamp, or <see langword="null" /> if this article has not been updated.</value>
     DateTimeOffset? Updated { get; }
+
+    /// <summary>
+    ///     Gets the visibility of this article.
+    /// </summary>
+    /// <value>The visibility of the article.</value>
+    Visibility Visibility { get; }
 }

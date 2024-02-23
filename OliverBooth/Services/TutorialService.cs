@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Cysharp.Text;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
+using OliverBooth.Data;
 using OliverBooth.Data.Web;
 
 namespace OliverBooth.Services;
@@ -23,20 +24,28 @@ internal sealed class TutorialService : ITutorialService
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<ITutorialArticle> GetArticles(ITutorialFolder folder)
+    public IReadOnlyCollection<ITutorialArticle> GetArticles(ITutorialFolder folder,
+        Visibility visibility = Visibility.None)
     {
         if (folder is null) throw new ArgumentNullException(nameof(folder));
 
         using WebContext context = _dbContextFactory.CreateDbContext();
-        return context.TutorialArticles.Where(a => a.Folder == folder.Id).ToArray();
+        IQueryable<TutorialArticle> articles = context.TutorialArticles.Where(a => a.Folder == folder.Id);
+
+        if (visibility != Visibility.None) articles = articles.Where(a => a.Visibility == visibility);
+        return articles.ToArray();
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<ITutorialFolder> GetFolders(ITutorialFolder? parent = null)
+    public IReadOnlyCollection<ITutorialFolder> GetFolders(ITutorialFolder? parent = null,
+        Visibility visibility = Visibility.None)
     {
         using WebContext context = _dbContextFactory.CreateDbContext();
-        if (parent is null) return context.TutorialFolders.Where(f => f.Parent == null).ToArray();
-        return context.TutorialFolders.Where(a => a.Parent == parent.Id).ToArray();
+        IQueryable<TutorialFolder> folders = context.TutorialFolders;
+
+        folders = parent is null ? folders.Where(f => f.Parent == null) : folders.Where(f => f.Parent == parent.Id);
+        if (visibility != Visibility.None) folders = folders.Where(a => a.Visibility == visibility);
+        return folders.ToArray();
     }
 
     /// <inheritdoc />

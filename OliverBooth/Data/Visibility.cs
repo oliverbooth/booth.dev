@@ -6,6 +6,11 @@ namespace OliverBooth.Data;
 public enum Visibility
 {
     /// <summary>
+    ///     Used for filtering results. Represents all visibilities.
+    /// </summary>
+    None = -1,
+
+    /// <summary>
     ///     The post is private and only visible to the author, or those with the password.
     /// </summary>
     Private,

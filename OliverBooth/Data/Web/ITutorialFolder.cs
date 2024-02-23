@@ -34,4 +34,10 @@ public interface ITutorialFolder
     /// </summary>
     /// <value>The title.</value>
     string Title { get; }
+
+    /// <summary>
+    ///     Gets the visibility of this article.
+    /// </summary>
+    /// <value>The visibility of the article.</value>
+    Visibility Visibility { get; }
 }

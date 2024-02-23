@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using OliverBooth.Data;
 using OliverBooth.Data.Web;
 
 namespace OliverBooth.Services;
@@ -12,14 +13,17 @@ public interface ITutorialService
     ///     Gets the articles within a tutorial folder.
     /// </summary>
     /// <param name="folder">The folder whose articles to retrieve.</param>
+    /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
     /// <returns>A read-only view of the articles in the folder.</returns>
-    IReadOnlyCollection<ITutorialArticle> GetArticles(ITutorialFolder folder);
+    IReadOnlyCollection<ITutorialArticle> GetArticles(ITutorialFolder folder, Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Gets the tutorial folders within a specified folder.
     /// </summary>
+    /// <param name="parent">The parent folder.</param>
+    /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
     /// <returns>A read-only view of the subfolders in the folder.</returns>
-    IReadOnlyCollection<ITutorialFolder> GetFolders(ITutorialFolder? parent = null);
+    IReadOnlyCollection<ITutorialFolder> GetFolders(ITutorialFolder? parent = null, Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Gets a folder by its ID.

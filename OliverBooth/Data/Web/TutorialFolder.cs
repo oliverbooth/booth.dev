@@ -20,6 +20,9 @@ internal sealed class TutorialFolder : IEquatable<TutorialFolder>, ITutorialFold
     /// <inheritdoc />
     public string Title { get; private set; } = string.Empty;
 
+    /// <inheritdoc />
+    public Visibility Visibility { get; private set; }
+
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="TutorialFolder" /> are equal.
     /// </summary>

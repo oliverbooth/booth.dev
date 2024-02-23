@@ -35,6 +35,9 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     /// <inheritdoc />
     public DateTimeOffset? Updated { get; private set; }
 
+    /// <inheritdoc />
+    public Visibility Visibility { get; private set; }
+
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="TutorialArticle" /> are equal.
     /// </summary>
