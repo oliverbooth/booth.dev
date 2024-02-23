@@ -1,5 +1,3 @@
-using SixLabors.ImageSharp;
-
 namespace OliverBooth.Data.Web;
 
 /// <summary>

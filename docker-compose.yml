@@ -19,3 +19,5 @@ services:
     environment:
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - SSL_KEY_PATH=${SSL_KEY_PATH}
+      - MASTODON_TOKEN=${MASTODON_TOKEN}
+      - MASTODON_ACCOUNT=${MASTODON_ACCOUNT}
