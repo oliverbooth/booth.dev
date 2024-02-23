@@ -99,7 +99,9 @@ declare const Prism: any;
     UI.updateUI();
 
     const usaCountdown = document.getElementById("usa-countdown");
-    usaCountdown.addEventListener("click", () => window.location.href = "/blog/2024/02/19/the-american");
-    UI.updateUsaCountdown(usaCountdown);
-    setInterval(() => UI.updateUsaCountdown(usaCountdown), 1000);
+    if (usaCountdown) {
+        usaCountdown.addEventListener("click", () => window.location.href = "/blog/2024/02/19/the-american");
+        UI.updateUsaCountdown(usaCountdown);
+        setInterval(() => UI.updateUsaCountdown(usaCountdown), 1000);
+    }
 })();

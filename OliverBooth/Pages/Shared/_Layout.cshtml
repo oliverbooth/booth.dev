@@ -94,14 +94,17 @@
 
 <div style="margin:50px 0;"></div>
 
-<div id="usa-countdown" class="container">
-    <div class="row">
-        <div class="col-3 usa-countdown-element" id="usa-countdown-days">00</div>
-        <div class="col-3 usa-countdown-element" id="usa-countdown-hours">00</div>
-        <div class="col-3 usa-countdown-element" id="usa-countdown-minutes">00</div>
-        <div class="col-3 usa-countdown-element" id="usa-countdown-seconds">00</div>
+@if (DateTimeOffset.UtcNow < new DateTime(2024, 03, 08))
+{
+    <div id="usa-countdown" class="container">
+        <div class="row">
+            <div class="col-3 usa-countdown-element" id="usa-countdown-days">00</div>
+            <div class="col-3 usa-countdown-element" id="usa-countdown-hours">00</div>
+            <div class="col-3 usa-countdown-element" id="usa-countdown-minutes">00</div>
+            <div class="col-3 usa-countdown-element" id="usa-countdown-seconds">00</div>
+        </div>
     </div>
-</div>
+}
 
 <div style="margin:50px 0;"></div>
 
