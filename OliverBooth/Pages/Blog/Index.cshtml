@@ -1,9 +1,25 @@
 @page
+@using Humanizer
+@using OliverBooth.Data
+@using OliverBooth.Services
 @model Index
+@inject IMastodonService MastodonService
 
 @{
     ViewData["Title"] = "Blog";
+    IMastodonStatus latestStatus = MastodonService.GetLatestStatus();
 }
+
+<div class="card text-center mastodon-update-card">
+    <div class="card-body">
+        @Html.Raw(latestStatus.Content)
+    </div>
+    <div class="card-footer text-muted">
+        <abbr title="@latestStatus.CreatedAt.ToString("F")">@latestStatus.CreatedAt.Humanize()</abbr>
+        &bull;
+        <a href="@latestStatus.OriginalUri" target="_blank">View on Mastodon</a>
+    </div>
+</div>
 
 <div id="all-blog-posts">
     @await Html.PartialAsync("_LoadingSpinner")
