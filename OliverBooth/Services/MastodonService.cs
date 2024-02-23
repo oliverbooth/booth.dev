@@ -1,10 +1,17 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using OliverBooth.Data;
+using OliverBooth.Data.Mastodon;
 
 namespace OliverBooth.Services;
 
 internal sealed class MastodonService : IMastodonService
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        Converters = { new JsonStringEnumConverter() },
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+    };
     private readonly HttpClient _httpClient;
 
     public MastodonService(HttpClient httpClient)
@@ -13,7 +20,7 @@ internal sealed class MastodonService : IMastodonService
     }
 
     /// <inheritdoc />
-    public IMastodonStatus GetLatestStatus()
+    public MastodonStatus GetLatestStatus()
     {
         string token = Environment.GetEnvironmentVariable("MASTODON_TOKEN") ?? string.Empty;
         string account = Environment.GetEnvironmentVariable("MASTODON_ACCOUNT") ?? string.Empty;
@@ -23,7 +30,7 @@ internal sealed class MastodonService : IMastodonService
 
         using HttpResponseMessage response = _httpClient.Send(request);
         using var stream = response.Content.ReadAsStream();
-        var statuses = JsonSerializer.Deserialize<MastodonStatus[]>(stream) ?? Array.Empty<MastodonStatus>();
-        return statuses[0];
+        var statuses = JsonSerializer.Deserialize<MastodonStatus[]>(stream, JsonSerializerOptions);
+        return statuses?[0]!;
     }
 }

@@ -1,18 +1,36 @@
 @page
 @using Humanizer
-@using OliverBooth.Data
+@using OliverBooth.Data.Mastodon
 @using OliverBooth.Services
 @model Index
 @inject IMastodonService MastodonService
 
 @{
     ViewData["Title"] = "Blog";
-    IMastodonStatus latestStatus = MastodonService.GetLatestStatus();
+    MastodonStatus latestStatus = MastodonService.GetLatestStatus();
 }
 
 <div class="card text-center mastodon-update-card">
     <div class="card-body">
         @Html.Raw(latestStatus.Content)
+        @foreach (MediaAttachment attachment in latestStatus.MediaAttachments)
+        {
+            switch (attachment.Type)
+            {
+                case AttachmentType.Audio:
+                    <p><audio controls="controls" src="@attachment.Url"></audio></p>
+                    break;
+
+                case AttachmentType.Video:
+                    <p><video controls="controls" class="figure-img img-fluid" src="@attachment.Url"></video></p>
+                    break;
+
+                case AttachmentType.Image:
+                case AttachmentType.GifV:
+                    <p><img class="figure-img img-fluid" src="@attachment.Url"></p>
+                    break;
+            }
+        }
     </div>
     <div class="card-footer text-muted">
         <abbr title="@latestStatus.CreatedAt.ToString("F")">@latestStatus.CreatedAt.Humanize()</abbr>

@@ -1,4 +1,4 @@
-using OliverBooth.Data;
+using OliverBooth.Data.Mastodon;
 
 namespace OliverBooth.Services;
 
@@ -8,5 +8,5 @@ public interface IMastodonService
     ///     Gets the latest status posted to Mastodon.
     /// </summary>
     /// <returns>The latest status.</returns>
-    IMastodonStatus GetLatestStatus();
+    MastodonStatus GetLatestStatus();
 }
