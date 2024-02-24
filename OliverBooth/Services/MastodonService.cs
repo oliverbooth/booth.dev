@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using HtmlAgilityPack;
 using OliverBooth.Data.Mastodon;
 
 namespace OliverBooth.Services;
@@ -11,6 +12,7 @@ internal sealed class MastodonService : IMastodonService
         Converters = { new JsonStringEnumConverter() },
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
     };
+
     private readonly HttpClient _httpClient;
 
     public MastodonService(HttpClient httpClient)
@@ -30,6 +32,15 @@ internal sealed class MastodonService : IMastodonService
         using HttpResponseMessage response = _httpClient.Send(request);
         using var stream = response.Content.ReadAsStream();
         var statuses = JsonSerializer.Deserialize<MastodonStatus[]>(stream, JsonSerializerOptions);
-        return statuses?[0]!;
+
+        MastodonStatus status = statuses?[0]!;
+        var document = new HtmlDocument();
+        document.LoadHtml(status.Content);
+
+        HtmlNodeCollection links = document.DocumentNode.SelectNodes("//a");
+        foreach (HtmlNode link in links) link.InnerHtml = link.InnerText;
+
+        status.Content = document.DocumentNode.OuterHtml;
+        return status;
     }
 }
