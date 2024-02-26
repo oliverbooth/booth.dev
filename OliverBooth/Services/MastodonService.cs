@@ -37,8 +37,14 @@ internal sealed class MastodonService : IMastodonService
         var document = new HtmlDocument();
         document.LoadHtml(status.Content);
 
-        HtmlNodeCollection links = document.DocumentNode.SelectNodes("//a");
-        foreach (HtmlNode link in links) link.InnerHtml = link.InnerText;
+        HtmlNodeCollection? links = document.DocumentNode.SelectNodes("//a");
+        if (links is not null)
+        {
+            foreach (HtmlNode link in links)
+            {
+                link.InnerHtml = link.InnerText;
+            }
+        }
 
         status.Content = document.DocumentNode.OuterHtml;
         return status;
