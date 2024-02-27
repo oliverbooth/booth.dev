@@ -367,6 +367,7 @@ td.trim-p p:last-child {
   background-size: cover;
   border-radius: 10px;
   cursor: pointer;
+
   * {
     cursor: pointer;
   }
@@ -384,6 +385,7 @@ td.trim-p p:last-child {
     &:first-child {
       border-left: none;
     }
+
     &:last-child {
       border-right: none;
     }
@@ -392,7 +394,7 @@ td.trim-p p:last-child {
 
 .post-tags a.badge {
   transition: color 250ms, background-color 250ms;
-  
+
   &:link, &:visited, &:active {
     background-color: #2D2D2D !important;
     color: #fff;
@@ -407,12 +409,38 @@ td.trim-p p:last-child {
 .mastodon-update-card.card {
   background-color: desaturate(darken(#6364FF, 50%), 50%);
   margin-bottom: 50px;
-  
+
   p:last-child {
     margin-bottom: 0;
   }
-  
+
   button.btn.btn-mastodon {
     background-color: #6364FF;
+  }
+}
+
+#landing-page-intro {
+  text-align: left;
+}
+
+#landing-page-headshot {
+  text-align: right;
+
+  img {
+    transition: border-radius .4s;
+
+    &:hover {
+      border-radius: 5px !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  #landing-page-intro {
+    text-align: center;
+  }
+
+  #landing-page-headshot {
+    text-align: center;
   }
 }
