@@ -104,4 +104,34 @@ declare const Prism: any;
         UI.updateUsaCountdown(usaCountdown);
         setInterval(() => UI.updateUsaCountdown(usaCountdown), 1000);
     }
+
+    let avatarType = 0;
+    const headshot = document.getElementById("index-headshot") as HTMLImageElement;
+    headshot.addEventListener("click", (ev: MouseEvent) => {
+        if (avatarType === 0) {
+            headshot.classList.add("headshot-spin", "headshot-spin-start");
+            setTimeout(() => {
+                headshot.classList.remove("headshot-spin-start");
+                headshot.src = "/img/avatar_512x512.jpg"
+                headshot.classList.add("headshot-spin", "headshot-spin-end");
+
+                setTimeout(() => {
+                    headshot.classList.remove("headshot-spin", "headshot-spin-end");
+                    avatarType = 1;
+                }, 800);
+            }, 400);
+        } else if (avatarType === 1) {
+            headshot.classList.add("headshot-spin", "headshot-spin-start");
+            setTimeout(() => {
+                headshot.classList.remove("headshot-spin-start");
+                headshot.src = "/img/headshot_512x512_2023.jpg"
+                headshot.classList.add("headshot-spin", "headshot-spin-end");
+
+                setTimeout(() => {
+                    headshot.classList.remove("headshot-spin", "headshot-spin-end");
+                    avatarType = 0;
+                }, 800);
+            }, 400);
+        }
+    });
 })();
