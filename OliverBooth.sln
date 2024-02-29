@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliverBooth", "OliverBooth\OliverBooth.csproj", "{A58A6FA3-480C-400B-822A-3786741BF39C}"
 EndProject
@@ -13,37 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8A323E64-E41E-4780-99FD-17BF58961FB5}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scss", "scss", "{822F528E-3CA7-4B7D-9250-BD248ADA7BAE}"
-	ProjectSection(SolutionItems) = preProject
-		src\scss\app.scss = src\scss\app.scss
-		src\scss\prism.vs.scss = src\scss\prism.vs.scss
-		src\scss\prism.css = src\scss\prism.css
-		src\scss\ribbon.scss = src\scss\ribbon.scss
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ts", "ts", "{BB9F76AC-292A-4F47-809D-8BBBA6E0A048}"
-	ProjectSection(SolutionItems) = preProject
-		src\ts\app.ts = src\ts\app.ts
-		src\ts\prism.js = src\ts\prism.js
-		src\ts\API.ts = src\ts\API.ts
-		src\ts\BlogPost.ts = src\ts\BlogPost.ts
-		src\ts\Author.ts = src\ts\Author.ts
-		src\ts\TimeUtility.ts = src\ts\TimeUtility.ts
-		src\ts\UI.ts = src\ts\UI.ts
-		src\ts\Input.ts = src\ts\Input.ts
-		src\ts\BlogUrl.ts = src\ts\BlogUrl.ts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{8996BEBA-0D9C-4D76-9117-8E4E89148A1A}"
-	ProjectSection(SolutionItems) = preProject
-		src\img\favicon.png = src\img\favicon.png
-		src\img\headshot_512x512_2023.jpg = src\img\headshot_512x512_2023.jpg
-		src\img\ob-256x256.png = src\img\ob-256x256.png
-		src\img\oliverbooth-704x330.png = src\img\oliverbooth-704x330.png
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,8 +25,5 @@ Global
 		{A58A6FA3-480C-400B-822A-3786741BF39C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{822F528E-3CA7-4B7D-9250-BD248ADA7BAE} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
-		{BB9F76AC-292A-4F47-809D-8BBBA6E0A048} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
-		{8996BEBA-0D9C-4D76-9117-8E4E89148A1A} = {8A323E64-E41E-4780-99FD-17BF58961FB5}
 	EndGlobalSection
 EndGlobal
