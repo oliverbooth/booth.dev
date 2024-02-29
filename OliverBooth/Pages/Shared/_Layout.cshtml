@@ -151,7 +151,7 @@
         </ul>
 
         <ul class="footer-nav" style="margin-top: 20px;">
-            <li>@(doAprilFools ? "(C) 2003" : $"&copy; {DateTime.UtcNow.Year}")</li>
+            <li>@(doAprilFools ? "(C) 2003" : Html.Raw($"&copy; {DateTime.UtcNow.Year}"))</li>
             <li><a asp-page="/privacy/index">Privacy</a></li>
         </ul>
     </div>
