@@ -47,5 +47,8 @@ function copyImages() {
         .pipe(gulp.dest(`${destDir}/img`));
 }
 
-exports.default = compileSCSS;
-exports.default = gulp.parallel(compileSCSS, gulp.series(compileTS, bundleJS), copyCSS, copyJS, copyImages);
+exports.assets = copyImages;
+exports.styles = gulp.parallel(compileSCSS, copyCSS);
+exports.scripts = gulp.parallel(copyJS, gulp.series(compileTS, bundleJS));
+
+exports.default = gulp.parallel(exports.styles, exports.scripts, exports.assets);
