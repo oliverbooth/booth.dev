@@ -4,6 +4,7 @@
 @{
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
+    bool doAprilFools = DateOnly.FromDateTime(DateTime.UtcNow) == new DateOnly(2024, 04, 01) || Environment.GetEnvironmentVariable("DO_AF") == "1";
 }
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
@@ -61,12 +62,28 @@
     <link rel="stylesheet" href="~/css/prism.vs.min.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/app.min.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/ribbon.min.css" asp-append-version="true">
+    @if (doAprilFools)
+    {
+        <link rel="stylesheet" href="~/css/af-app.min.css" asp-append-version="true">
+    }
 </head>
 <body>
 <header class="container" style="margin-top: 20px;">
     <div id="site-title" class="text-center">
         <h1>
-            <a href="/"><img src="~/img/ob-256x256.png" alt="Oliver Booth" height="128"> Oliver Booth</a>
+            @if (doAprilFools)
+            {
+                <marquee>
+                    <a href="/">
+                        <img src="~/img/ob-af-256x256.png" alt="Oliver Booth" height="128">
+                        <img src="~/img/af-oliverbooth-1236x293.png" alt="Oliver Booth" height="128">
+                    </a>
+                </marquee>
+            }
+            else
+            {
+                <a href="/"><img src="~/img/ob-256x256.png" alt="Oliver Booth" height="128"> Oliver Booth</a>
+            }
         </h1>
     </div>
 </header>
@@ -95,7 +112,7 @@
 
 <div style="margin:50px 0;"></div>
 
-@if (DateTimeOffset.UtcNow < new DateTime(2024, 03, 08))
+@if (!doAprilFools && DateTimeOffset.UtcNow < new DateTime(2024, 03, 08))
 {
     <div id="usa-countdown" class="container">
         <div class="row">
@@ -110,6 +127,13 @@
 <div style="margin:50px 0;"></div>
 
 <div class="container">
+    @if (doAprilFools)
+    {
+        <h1 style="text-decoration: underline; color: #0f0 !important; margin: 20px 0;">
+            <img src="~/img/af-homepage_500x383.jpg" alt="WELCOME TO MY HOMEPAGE!!!!111SHIFT+1">
+        </h1>
+    }
+
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
@@ -127,7 +151,7 @@
         </ul>
 
         <ul class="footer-nav" style="margin-top: 20px;">
-            <li>&copy; @DateTime.UtcNow.Year</li>
+            <li>@(doAprilFools ? "(C) 2003" : $"&copy; {DateTime.UtcNow.Year}")</li>
             <li><a asp-page="/privacy/index">Privacy</a></li>
         </ul>
     </div>
