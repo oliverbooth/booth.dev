@@ -98,13 +98,6 @@ declare const Prism: any;
 
     UI.updateUI();
 
-    const usaCountdown = document.getElementById("usa-countdown");
-    if (usaCountdown) {
-        usaCountdown.addEventListener("click", () => window.location.href = "/blog/2024/02/19/the-american");
-        UI.updateUsaCountdown(usaCountdown);
-        setInterval(() => UI.updateUsaCountdown(usaCountdown), 1000);
-    }
-
     let avatarType = 0;
     const headshot = document.getElementById("index-headshot") as HTMLImageElement;
     if (headshot) {

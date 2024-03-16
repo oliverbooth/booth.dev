@@ -82,33 +82,6 @@ class UI {
         UI.updateProjectCards(element);
     }
 
-    public static updateUsaCountdown(element?: Element){
-        element = element || document.getElementById("usa-countdown");
-        
-        const daysElement = element.querySelector("#usa-countdown-days");
-        const hoursElement = element.querySelector("#usa-countdown-hours");
-        const minutesElement = element.querySelector("#usa-countdown-minutes");
-        const secondsElement = element.querySelector("#usa-countdown-seconds");
-
-        const start = new Date().getTime();
-        const end = Date.UTC(2024, 2, 7, 13, 20);
-        const diff = end - start;
-        let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        if (days < 0) days = 0
-        if (hours < 0) hours = 0;
-        if (minutes < 0) minutes = 0;
-        if (seconds < 0) seconds = 0;
-
-        daysElement.innerHTML = days.toString().padStart(2, '0');
-        hoursElement.innerHTML = hours.toString().padStart(2, '0');
-        minutesElement.innerHTML = minutes.toString().padStart(2, '0');
-        secondsElement.innerHTML = seconds.toString().padStart(2, '0');
-    }
-
     /**
      * Adds Bootstrap tooltips to all elements with a title attribute.
      * @param element The element to search for elements with a title attribute in.
