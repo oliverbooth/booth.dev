@@ -63,10 +63,10 @@ public sealed class BadgeController : ControllerBase
                 _ => "unknown"
             };
 
-            return Ok(new { color, message });
+            return Ok(new { schemaVersion = 1, label = "build", color, message });
         }
 
-        return Ok(new { color = "lightgray", message = "unknown" });
+        return Ok(new { schemaVersion = 1, label = "build", color = "lightgray", message = "unknown" });
     }
 
     private class WorkflowRunSchema
