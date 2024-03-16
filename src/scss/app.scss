@@ -26,6 +26,7 @@ body {
 main.container {
   background: #333;
   padding: 20px;
+  border-radius: 5px;
 }
 
 a {
@@ -142,6 +143,7 @@ nav {
 article {
   background: #333333;
   padding: 20px;
+  border-radius: 5px;
 
   *:last-child {
     margin-bottom: 0;
