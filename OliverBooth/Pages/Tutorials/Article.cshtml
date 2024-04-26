@@ -1,7 +1,7 @@
 @page "/tutorial/{**slug}"
 @using Humanizer
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using OliverBooth.Data.Blog
+@using OliverBooth.Data
 @using OliverBooth.Data.Web
 @using OliverBooth.Services
 @inject ITutorialService TutorialService
@@ -64,7 +64,9 @@
 
 <div class="row">
     <div class="col-sm-12 col-md-6">
-        @if (article.PreviousPart is { } previousPartId && TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart))
+        @if (article.PreviousPart is { } previousPartId &&
+             TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart) &&
+             previousPart.Visibility == Visibility.Published)
         {
             <small>Previous Part</small>
             <p class="lead">
@@ -75,7 +77,9 @@
         }
     </div>
     <div class="col-sm-12 col-md-6" style="text-align: right;">
-        @if (article.NextPart is { } nextPartId && TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart))
+        @if (article.NextPart is { } nextPartId &&
+             TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart) &&
+             nextPart.Visibility == Visibility.Published)
         {
             <small>Next Part</small>
             <p class="lead">

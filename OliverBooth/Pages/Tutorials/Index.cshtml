@@ -1,5 +1,6 @@
 @page "/tutorials/{**slug}"
 @using System.Text
+@using OliverBooth.Data
 @using OliverBooth.Data.Web
 @using OliverBooth.Services
 @model Index
@@ -31,11 +32,16 @@
     }
 
     <h1 class="display-4">@(currentFolder?.Title ?? "Tutorials")</h1>
-    @foreach (ITutorialFolder[] folders in TutorialService.GetFolders(currentFolder).Chunk(2))
+    @foreach (ITutorialFolder[] folders in TutorialService.GetFolders(currentFolder, Visibility.Published).Chunk(2))
     {
         <div class="card-group row" style="margin-top: 20px;">
             @foreach (ITutorialFolder folder in folders)
             {
+                if (folder.Visibility != Visibility.Published)
+                {
+                    continue;
+                }
+
                 <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
                     <div class="project-card">
                         <div class="project-image">
@@ -54,7 +60,7 @@
 
     @if (currentFolder is not null)
     {
-        foreach (ITutorialArticle[] articles in TutorialService.GetArticles(currentFolder).Chunk(2))
+        foreach (ITutorialArticle[] articles in TutorialService.GetArticles(currentFolder, Visibility.Published).Chunk(2))
         {
             <div class="card-group row" style="margin-top: 20px;">
                 @foreach (ITutorialArticle article in articles)
