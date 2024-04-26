@@ -136,6 +136,11 @@ class UI {
     public static addLineNumbers(element?: Element) {
         element = element || document.body;
         element.querySelectorAll("pre code").forEach((block) => {
+            if (block.className.indexOf("|nolinenumbers") > 0) {
+                block.className = block.className.replaceAll("|nolinenumbers", "");
+                return;
+            }
+
             let content = block.textContent;
             if (content.trim().split("\n").length > 1) {
                 block.parentElement.classList.add("line-numbers");
