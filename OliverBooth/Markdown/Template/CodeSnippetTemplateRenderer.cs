@@ -87,7 +87,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
                                       data-tab-init
                                       class="nav-link{classList}"
                                       id="snp-{snippetId}-{identifier:N}-{language}-l"
-                                      href="#snp-{snippetId}-{identifier:N}-{language}"
+                                      href="#"
                                       role="tab"
                                       data-tabs="snp-{snippetId}-{identifier:N}"
                                       aria-controls="snp-{snippetId}-{identifier:N}-{language}"

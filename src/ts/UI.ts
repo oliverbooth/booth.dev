@@ -159,7 +159,9 @@ class UI {
             const tabPanes = element.querySelectorAll(`.tab-pane[data-identifier="${identifier}"]`);
 
             tabLinks.forEach(function (tabLink: Element) {
-                tabLink.addEventListener("click", () => {
+                tabLink.addEventListener("click", (ev: Event) => {
+                    ev.preventDefault();
+
                     const controls = document.getElementById(tabLink.getAttribute("aria-controls"));
 
                     // switch "active" tab link
