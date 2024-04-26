@@ -45,7 +45,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         IQueryable<BlogPost> ordered = context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published)
+            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published);
         if (limit > -1)
         {
@@ -60,7 +60,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published)
+            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
             .Skip(page * pageSize)
             .Take(pageSize)
@@ -72,7 +72,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published)
+            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderBy(post => post.Published)
             .FirstOrDefault(post => post.Published > blogPost.Published);
     }
@@ -82,7 +82,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published)
+            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < blogPost.Published);
     }
