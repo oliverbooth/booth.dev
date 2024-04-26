@@ -1,10 +1,15 @@
-namespace OliverBooth.Data.Blog;
+namespace OliverBooth.Data;
 
 /// <summary>
 ///     An enumeration of the possible visibilities of a blog post.
 /// </summary>
-public enum BlogPostVisibility
+public enum Visibility
 {
+    /// <summary>
+    ///     Used for filtering results. Represents all visibilities.
+    /// </summary>
+    None = -1,
+
     /// <summary>
     ///     The post is private and only visible to the author, or those with the password.
     /// </summary>

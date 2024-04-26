@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
+using OliverBooth.Data;
 using OliverBooth.Data.Blog;
 
 namespace OliverBooth.Services;
@@ -44,7 +45,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         IQueryable<BlogPost> ordered = context.BlogPosts
-            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .Where(p => p.Visibility == Visibility.Published)
             .OrderByDescending(post => post.Published);
         if (limit > -1)
         {
@@ -59,7 +60,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .Where(p => p.Visibility == Visibility.Published)
             .OrderByDescending(post => post.Published)
             .Skip(page * pageSize)
             .Take(pageSize)
@@ -71,7 +72,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .Where(p => p.Visibility == Visibility.Published)
             .OrderBy(post => post.Published)
             .FirstOrDefault(post => post.Published > blogPost.Published);
     }
@@ -81,7 +82,7 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == BlogPostVisibility.Published)
+            .Where(p => p.Visibility == Visibility.Published)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < blogPost.Published);
     }

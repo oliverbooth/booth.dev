@@ -1,23 +1,104 @@
-@page "/tutorials"
+@page "/tutorials/{**slug}"
+@using System.Text
+@using OliverBooth.Data
+@using OliverBooth.Data.Web
+@using OliverBooth.Services
+@model Index
+@inject ITutorialService TutorialService
 @{
     ViewData["Title"] = "Tutorials";
+    ITutorialFolder? currentFolder = Model.CurrentFolder;
 }
 
 <main class="container">
-    <h1 class="display-4">Tutorials</h1>
-    <p class="lead">Coming Soon</p>
-    <p>
-        Due to Unity's poor corporate decision-making, I'm left in a position where I find it infeasible to write Unity
-        tutorials. I plan to write tutorials for things like Unreal and MonoGame as I learn them, and C# tutorials are
-        still on the table for sure. But tutorials take a lot of time and effort, so unfortunately it may be a while
-        before I can get around to publishing them.
-    </p>
-    <p>
-        However, in the meantime, I do have various blog posts that contain some tutorials and guides. You can find them
-        <a asp-page="/Blog/Index">here</a>!
-    </p>
-    <p>
-        I'm sorry for the inconvenience, but I hope you understand my position. Watch this space! New tutorials will be
-        coming. If you have any questions or requests, please feel free to <a asp-page="/Contact/Index">contact me</a>.
-    </p>
+    @if (currentFolder is not null)
+    {
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-page="/Tutorials/Index" asp-route-slug="">Tutorials</a>
+                </li>
+                @{
+                    int? parentId = currentFolder.Id;
+                    while (parentId is not null)
+                    {
+                        ITutorialFolder thisFolder = TutorialService.GetFolder(parentId.Value)!;
+                        <li class="breadcrumb-item active" aria-current="page">@thisFolder.Title</li>
+                        parentId = thisFolder.Parent;
+                    }
+                }
+            </ol>
+        </nav>
+    }
+
+    <h1 class="display-4">@(currentFolder?.Title ?? "Tutorials")</h1>
+    @foreach (ITutorialFolder[] folders in TutorialService.GetFolders(currentFolder, Visibility.Published).Chunk(2))
+    {
+        <div class="card-group row" style="margin-top: 20px;">
+            @foreach (ITutorialFolder folder in folders)
+            {
+                if (folder.Visibility != Visibility.Published)
+                {
+                    continue;
+                }
+
+                <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
+                    <div class="project-card">
+                        <div class="project-image">
+                            <a asp-page="Index" asp-route-slug="@folder.Slug">
+                                <img src="@folder.PreviewImageUrl" class="card-img-top" alt="@folder.Title">
+                            </a>
+                            <a asp-page="Index" asp-route-slug="@folder.Slug">
+                                <p class="project-title">@folder.Title</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (currentFolder is not null)
+    {
+        foreach (ITutorialArticle[] articles in TutorialService.GetArticles(currentFolder, Visibility.Published).Chunk(2))
+        {
+            <div class="card-group row" style="margin-top: 20px;">
+                @foreach (ITutorialArticle article in articles)
+                {
+                    var slugBuilder = new StringBuilder();
+                    ITutorialFolder? folder = TutorialService.GetFolder(article.Folder);
+                    if (folder is not null)
+                    {
+                        slugBuilder.Append(folder.Slug);
+                        slugBuilder.Append('/');
+                    }
+
+                    while (folder?.Parent is { } parentId)
+                    {
+                        folder = TutorialService.GetFolder(parentId);
+                        if (folder is not null)
+                        {
+                            slugBuilder.Append(folder.Slug);
+                            slugBuilder.Append('/');
+                        }
+                    }
+
+                    string slug = slugBuilder + article.Slug;
+
+                    <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
+                        <div class="project-card">
+                            <div class="project-image">
+                                <a asp-page="Article" asp-route-slug="@slug">
+                                    <img src="@article.PreviewImageUrl" class="card-img-top" alt="@article.Title">
+                                </a>
+                                <a asp-page="Article" asp-route-slug="@slug">
+                                    <p class="project-title">@article.Title</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
 </main>
