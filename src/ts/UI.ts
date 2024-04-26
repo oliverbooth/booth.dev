@@ -77,6 +77,7 @@ class UI {
         UI.addHighlighting(element);
         UI.addBootstrapTooltips(element);
         UI.renderSpoilers(element);
+        UI.renderTabs(element);
         UI.renderTeX(element);
         UI.renderTimestamps(element);
         UI.updateProjectCards(element);
@@ -142,6 +143,33 @@ class UI {
         spoilers.forEach((spoiler) => {
             spoiler.addEventListener("click", () => {
                 spoiler.classList.add("spoiler-revealed");
+            });
+        });
+    }
+
+    /**
+     * Renders tabs in the document.
+     * @param element The element to search for tabs in.
+     */
+    public static renderTabs(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("[role=\"tablist\"]").forEach(function (tabList: HTMLElement) {
+            const identifier = tabList.dataset.identifier;
+            const tabLinks = tabList.querySelectorAll(".nav-link");
+            const tabPanes = element.querySelectorAll(`.tab-pane[data-identifier="${identifier}"]`);
+
+            tabLinks.forEach(function (tabLink: Element) {
+                tabLink.addEventListener("click", () => {
+                    const controls = document.getElementById(tabLink.getAttribute("aria-controls"));
+
+                    // switch "active" tab link
+                    tabLinks.forEach(e => e.classList.remove("active"));
+                    tabLink.classList.add("active");
+
+                    // switch active tab itself
+                    tabPanes.forEach(e => e.classList.remove("show", "active"));
+                    controls.classList.add("show", "active");
+                });
             });
         });
     }

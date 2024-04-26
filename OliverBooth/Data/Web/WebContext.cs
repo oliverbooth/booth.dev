@@ -26,6 +26,12 @@ internal sealed class WebContext : DbContext
     public DbSet<Book> Books { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the collection of code snippets in the database.
+    /// </summary>
+    /// <value>The collection of code snippets.</value>
+    public DbSet<CodeSnippet> CodeSnippets { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the collection of blacklist entries in the database.
     /// </summary>
     /// <value>The collection of blacklist entries.</value>
@@ -80,6 +86,7 @@ internal sealed class WebContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new BlacklistEntryConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
+        modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new ProgrammingLanguageConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());

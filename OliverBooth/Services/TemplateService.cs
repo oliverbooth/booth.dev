@@ -1,5 +1,7 @@
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using Markdig;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data.Web;
 using OliverBooth.Formatting;
@@ -14,23 +16,32 @@ namespace OliverBooth.Services;
 /// </summary>
 internal sealed class TemplateService : ITemplateService
 {
+    private readonly Dictionary<string, CustomTemplateRenderer> _customTemplateRendererOverrides = new();
     private static readonly Random Random = new();
+    private readonly ILogger<TemplateService> _logger;
     private readonly IDbContextFactory<WebContext> _webContextFactory;
     private readonly SmartFormatter _formatter;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TemplateService" /> class.
     /// </summary>
+    /// <param name="logger">The logger.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" />.</param>
     /// <param name="webContextFactory">The <see cref="WebContext" /> factory.</param>
-    public TemplateService(IServiceProvider serviceProvider,
+    public TemplateService(ILogger<TemplateService> logger,
+        IServiceProvider serviceProvider,
         IDbContextFactory<WebContext> webContextFactory)
     {
+        _logger = logger;
+
         _formatter = Smart.CreateDefaultSmartFormat();
         _formatter.AddExtensions(new DefaultSource());
         _formatter.AddExtensions(new ReflectionSource());
         _formatter.AddExtensions(new DateFormatter());
         _formatter.AddExtensions(new MarkdownFormatter(serviceProvider));
+
+        _logger.LogDebug("Registering template override Snippet to CodeSnippetTemplateRenderer");
+        AddRendererOverride("Snippet", new CodeSnippetTemplateRenderer(serviceProvider));
 
         _webContextFactory = webContextFactory;
     }
@@ -38,7 +49,18 @@ internal sealed class TemplateService : ITemplateService
     /// <inheritdoc />
     public string RenderGlobalTemplate(TemplateInline templateInline)
     {
-        if (templateInline is null) throw new ArgumentNullException(nameof(templateInline));
+        if (templateInline is null)
+        {
+            _logger.LogWarning("Attempting to render null inline template!");
+            throw new ArgumentNullException(nameof(templateInline));
+        }
+
+        _logger.LogDebug("Inline name is {Name}", templateInline.Name);
+        if (_customTemplateRendererOverrides.TryGetValue(templateInline.Name, out CustomTemplateRenderer? renderer))
+        {
+            _logger.LogDebug("This matches renderer {Name}", renderer.GetType().Name);
+            return renderer.Render(templateInline);
+        }
 
         return TryGetTemplate(templateInline.Name, templateInline.Variant, out ITemplate? template)
             ? RenderTemplate(templateInline, template)
@@ -87,6 +109,12 @@ internal sealed class TemplateService : ITemplateService
         using WebContext context = _webContextFactory.CreateDbContext();
         template = context.Templates.FirstOrDefault(t => t.Name == name && t.Variant == variant);
         return template is not null;
+    }
+
+    private void AddRendererOverride(string templateName, CustomTemplateRenderer renderer)
+    {
+        _logger.LogDebug("Registering template override {Name} to {Renderer}", templateName, renderer.GetType().Name);
+        _customTemplateRendererOverrides[templateName] = renderer;
     }
 
     private static string GetDefaultRender(TemplateInline templateInline)
