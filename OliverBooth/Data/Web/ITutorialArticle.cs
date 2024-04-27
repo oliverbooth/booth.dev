@@ -12,6 +12,12 @@ public interface ITutorialArticle
     string Body { get; }
 
     /// <summary>
+    ///     Gets the excerpt of this article, if it has one.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if this article has no excerpt.</value>
+    string? Excerpt { get; }
+
+    /// <summary>
     ///     Gets the ID of the folder this article is contained within.
     /// </summary>
     /// <value>The ID of the folder.</value>

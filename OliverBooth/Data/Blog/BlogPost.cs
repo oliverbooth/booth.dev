@@ -17,6 +17,9 @@ internal sealed class BlogPost : IBlogPost
     public bool EnableComments { get; internal set; }
 
     /// <inheritdoc />
+    public string? Excerpt { get; internal set; }
+
+    /// <inheritdoc />
     public Guid Id { get; private set; } = Guid.NewGuid();
 
     /// <inheritdoc />

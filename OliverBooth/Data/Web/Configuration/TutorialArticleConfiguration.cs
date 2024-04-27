@@ -16,6 +16,7 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
 
         builder.Property(e => e.Id).IsRequired();
         builder.Property(e => e.Folder).IsRequired();
+        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false);
         builder.Property(e => e.Published).IsRequired();
         builder.Property(e => e.Updated);
         builder.Property(e => e.Slug).IsRequired();

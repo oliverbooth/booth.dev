@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Cysharp.Text;
+using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
@@ -106,6 +107,29 @@ internal sealed class TutorialService : ITutorialService
     public string RenderArticle(ITutorialArticle article)
     {
         return Markdig.Markdown.ToHtml(article.Body, _markdownPipeline);
+    }
+
+    /// <inheritdoc />
+    public string RenderExcerpt(ITutorialArticle article, out bool wasTrimmed)
+    {
+        if (!string.IsNullOrWhiteSpace(article.Excerpt))
+        {
+            wasTrimmed = false;
+            return Markdig.Markdown.ToHtml(article.Excerpt, _markdownPipeline);
+        }
+
+        string body = article.Body;
+        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
+
+        if (moreIndex == -1)
+        {
+            string excerpt = body.Truncate(255, "...");
+            wasTrimmed = body.Length > 255;
+            return Markdig.Markdown.ToHtml(excerpt, _markdownPipeline);
+        }
+
+        wasTrimmed = true;
+        return Markdig.Markdown.ToHtml(body[..moreIndex], _markdownPipeline);
     }
 
     /// <inheritdoc />

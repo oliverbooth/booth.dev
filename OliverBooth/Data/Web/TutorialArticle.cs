@@ -9,13 +9,16 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     public string Body { get; private set; } = string.Empty;
 
     /// <inheritdoc />
+    public string? Excerpt { get; private set; }
+
+    /// <inheritdoc />
     public int Folder { get; private set; }
 
     /// <inheritdoc />
     public int Id { get; private set; }
 
     /// <inheritdoc />
-    public int? NextPart { get; }
+    public int? NextPart { get; private set; }
 
     /// <inheritdoc />
     public Uri? PreviewImageUrl { get; private set; }

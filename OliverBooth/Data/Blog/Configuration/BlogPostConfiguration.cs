@@ -20,6 +20,7 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.Updated).IsRequired(false);
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.Body).IsRequired();
+        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false);
         builder.Property(e => e.IsRedirect).IsRequired();
         builder.Property(e => e.RedirectUrl).HasConversion<UriToStringConverter>().HasMaxLength(255).IsRequired(false);
         builder.Property(e => e.EnableComments).IsRequired();

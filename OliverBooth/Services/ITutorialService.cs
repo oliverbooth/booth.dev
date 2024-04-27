@@ -68,6 +68,17 @@ public interface ITutorialService
     string RenderArticle(ITutorialArticle article);
 
     /// <summary>
+    ///     Renders the excerpt of the specified article.
+    /// </summary>
+    /// <param name="article">The article whose excerpt to render.</param>
+    /// <param name="wasTrimmed">
+    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
+    ///     <see langword="false" />.
+    /// </param>
+    /// <returns>The rendered HTML of the article's excerpt.</returns>
+    string RenderExcerpt(ITutorialArticle article, out bool wasTrimmed);
+
+    /// <summary>
     ///     Attempts to find an article by its ID.
     /// </summary>
     /// <param name="id">The ID of the article.</param>

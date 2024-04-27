@@ -26,6 +26,12 @@ public interface IBlogPost
     bool EnableComments { get; }
 
     /// <summary>
+    ///     Gets the excerpt of this post, if it has one.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if this post has no excerpt.</value>
+    string? Excerpt { get; }
+
+    /// <summary>
     ///     Gets the ID of the post.
     /// </summary>
     /// <value>The ID of the post.</value>

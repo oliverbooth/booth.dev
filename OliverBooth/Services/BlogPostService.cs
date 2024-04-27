@@ -90,6 +90,12 @@ internal sealed class BlogPostService : IBlogPostService
     /// <inheritdoc />
     public string RenderExcerpt(IBlogPost post, out bool wasTrimmed)
     {
+        if (!string.IsNullOrWhiteSpace(post.Excerpt))
+        {
+            wasTrimmed = false;
+            return Markdig.Markdown.ToHtml(post.Excerpt, _markdownPipeline);
+        }
+
         string body = post.Body;
         int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
 
