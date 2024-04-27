@@ -132,31 +132,25 @@
 
 @if (post.EnableComments)
 {
-    <div id="disqus_thread"></div>
-    <script>
-         var disqus_config = function () {
-             this.page.url = "@post.GetDisqusUrl()";
-             this.page.identifier = "@post.GetDisqusIdentifier()";
-             this.page.title = "@post.Title";
-             this.page.postId = "@post.GetDisqusPostId()";
-         };
-        
-        (function() {
-            const d = document, s = d.createElement("script");
-            s.async = true;
-            s.type = "text/javascript";
-            s.src = "https://oliverbooth-dev.disqus.com/embed.js";
-            s.setAttribute("data-timestamp", (+ new Date()).toString());
-            (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    <script id="dsq-count-scr" src="https://oliverbooth-dev.disqus.com/count.js" async></script>
-    <noscript>
-        Please enable JavaScript to view the
-        <a href="https://disqus.com/?ref_noscript" rel="nofollow">
-            comments powered by Disqus.
-        </a>
-    </noscript>
+    <div class="giscus"></div>
+    @section Scripts
+    {
+        <script src="https://giscus.app/client.js"
+                data-repo="oliverbooth/oliverbooth.dev"
+                data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
+                data-category="Comments"
+                data-category-id="DIC_kwDODp0rOs4Ce_Nj"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="preferred_color_scheme"
+                data-lang="en"
+                crossorigin="anonymous"
+                async>
+</script>
+    }
 }
 else
 {

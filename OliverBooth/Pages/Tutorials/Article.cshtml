@@ -90,3 +90,32 @@
         }
     </div>
 </div>
+
+<hr/>
+
+@if (article.EnableComments)
+{
+    <div class="giscus"></div>
+    @section Scripts
+    {
+        <script src="https://giscus.app/client.js"
+                data-repo="oliverbooth/oliverbooth.dev"
+                data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
+                data-category="Comments"
+                data-category-id="DIC_kwDODp0rOs4Ce_Nj"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="preferred_color_scheme"
+                data-lang="en"
+                crossorigin="anonymous"
+                async>
+</script>
+    }
+}
+else
+{
+    <p class="text-center text-muted">Comments are not enabled for this post.</p>
+}
