@@ -74,12 +74,6 @@
             Updated @updated.Humanize()
         </abbr>
     }
-
-    @if (post.EnableComments)
-    {
-        <span>&bull;</span>
-        <a href="#disqus_thread" data-disqus-identifier="@post.GetDisqusIdentifier()">0 Comments</a>
-    }
 </p>
 <div class="post-tags">
     @foreach (string tag in post.Tags)
