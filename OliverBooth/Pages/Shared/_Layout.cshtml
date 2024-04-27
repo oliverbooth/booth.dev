@@ -1,4 +1,5 @@
 @using OliverBooth.Data.Blog
+@using OliverBooth.Extensions
 @using OliverBooth.Services
 @inject IBlogPostService BlogPostService
 @{
@@ -28,15 +29,7 @@
     }
     @if (ViewData["Post"] is IBlogPost post)
     {
-        string excerpt = BlogPostService.RenderExcerpt(post, out bool trimmed);
-        <meta name="title" content="@post.Title">
-        <meta name="description" content="@excerpt">
-        <meta property="og:title" content="@post.Title">
-        <meta property="og:description" content="@excerpt">
-        <meta property="og:type" content="article">
-        <meta property="twitter:title" content="@post.Title">
-        <meta property="twitter:creator" content="@post.Author.DisplayName">
-        <meta property="twitter:description" content="@excerpt">
+        @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
     }
     else
     {
