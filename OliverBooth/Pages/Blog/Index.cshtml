@@ -8,88 +8,74 @@
 @{
     ViewData["Title"] = "Blog";
     MastodonStatus latestStatus = MastodonService.GetLatestStatus();
-    bool doAprilFools = DateOnly.FromDateTime(DateTime.UtcNow) == new DateOnly(2024, 04, 01) || Environment.GetEnvironmentVariable("DO_AF") == "1";
 }
 
-@if (doAprilFools)
-{
-    <h1>UNDER CONSTRUCTION</h1>
-    <div style="text-align: center">
-        <img src="~/img/construction_90x85.gif">
-        <img src="~/img/underconstruction_323x118.gif">
-        <img src="~/img/construction_90x85.gif">
-        <p>Coming soon WATCH THIS SPACE</p>
-    </div>
-}
-else
-{
-    <div class="card text-center mastodon-update-card">
-        <div class="card-body">
-            @Html.Raw(latestStatus.Content)
-            @foreach (MediaAttachment attachment in latestStatus.MediaAttachments)
+<div class="card text-center mastodon-update-card">
+    <div class="card-body">
+        @Html.Raw(latestStatus.Content)
+        @foreach (MediaAttachment attachment in latestStatus.MediaAttachments)
+        {
+            switch (attachment.Type)
             {
-                switch (attachment.Type)
-                {
-                    case AttachmentType.Audio:
-                        <p><audio controls="controls" src="@attachment.Url"></audio></p>
-                        break;
+                case AttachmentType.Audio:
+                    <p><audio controls="controls" src="@attachment.Url"></audio></p>
+                    break;
 
-                    case AttachmentType.Video:
-                        <p><video controls="controls" class="figure-img img-fluid" src="@attachment.Url"></video></p>
-                        break;
+                case AttachmentType.Video:
+                    <p><video controls="controls" class="figure-img img-fluid" src="@attachment.Url"></video></p>
+                    break;
 
-                    case AttachmentType.Image:
-                    case AttachmentType.GifV:
-                        <p><img class="figure-img img-fluid" src="@attachment.Url"></p>
-                        break;
-                }
+                case AttachmentType.Image:
+                case AttachmentType.GifV:
+                    <p><img class="figure-img img-fluid" src="@attachment.Url"></p>
+                    break;
             }
-        </div>
-        <div class="card-footer text-muted">
-            <abbr title="@latestStatus.CreatedAt.ToString("F")">@latestStatus.CreatedAt.Humanize()</abbr>
-            &bull;
-            <a href="@latestStatus.OriginalUri" target="_blank">View on Mastodon</a>
-        </div>
+        }
     </div>
-
-    <div id="all-blog-posts">
-        @await Html.PartialAsync("_LoadingSpinner")
+    <div class="card-footer text-muted">
+        <abbr title="@latestStatus.CreatedAt.ToString("F")">@latestStatus.CreatedAt.Humanize()</abbr>
+        &bull;
+        <a href="@latestStatus.OriginalUri" target="_blank">View on Mastodon</a>
     </div>
+</div>
 
-    <script id="blog-post-template" type="text/x-handlebars-template">
-        <div class="card-header">
-            <span class="text-muted">
-                <img class="blog-author-icon" src="{{author.avatar}}" alt="{{author.name}}">
-                <span>{{author.name}}<span>
+<div id="all-blog-posts">
+    @await Html.PartialAsync("_LoadingSpinner")
+</div>
+
+<script id="blog-post-template" type="text/x-handlebars-template">
+    <div class="card-header">
+        <span class="text-muted">
+            <img class="blog-author-icon" src="{{author.avatar}}" alt="{{author.name}}">
+            <span>{{author.name}}<span>
+            <span> &bull; </span>
+            <abbr title="{{ post.formattedDate }}">{{ post.date_humanized }}</abbr>
+            {{#if post.enable_comments}}
                 <span> &bull; </span>
-                <abbr title="{{ post.formattedDate }}">{{ post.date_humanized }}</abbr>
-                {{#if post.enable_comments}}
-                    <span> &bull; </span>
-                    <a href="{{post.url}}#disqus_thread" data-disqus-identifier="{{post.disqus_identifier}}">
-                        Loading comment count &hellip;
-                    </a>
-                {{/if}}
-            </span>
-        </div>
-        <div class="card-body">
-            <h2>
-                <a href="{{post.url}}"> {{post.title}}</a>
-            </h2>
-
-            <p>{{{post.excerpt}}}</p>
-
-            {{#if post.trimmed}}
-                <p>
-                    <a href="{{post.url}}">
-                        Read more...
-                    </a>
-                </p>
+                <a href="{{post.url}}#disqus_thread" data-disqus-identifier="{{post.disqus_identifier}}">
+                    Loading comment count &hellip;
+                </a>
             {{/if}}
-        </div>
-        <div class="card-footer">
-            {{#each post.tags}}
-                <a href="?tag={{urlEncode this}}" class="badge text-bg-dark">{{this}}</a>
-            {{/each}}
-        </div>
-    </script>
-}
+        </span>
+    </div>
+    <div class="card-body">
+        <h2>
+            <a href="{{post.url}}"> {{post.title}}</a>
+        </h2>
+
+        <p>{{{post.excerpt}}}</p>
+
+        {{#if post.trimmed}}
+            <p>
+                <a href="{{post.url}}">
+                    Read more...
+                </a>
+            </p>
+        {{/if}}
+    </div>
+    <div class="card-footer">
+        {{#each post.tags}}
+            <a href="?tag={{urlEncode this}}" class="badge text-bg-dark">{{this}}</a>
+        {{/each}}
+    </div>
+</script>
