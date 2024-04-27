@@ -53,7 +53,6 @@ class UI {
                 formattedDate: post.updated ? post.formattedUpdateDate : post.formattedPublishDate,
                 date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
                 enable_comments: post.commentsEnabled,
-                disqus_identifier: post.identifier,
                 trimmed: post.trimmed,
                 tags: post.tags
             },

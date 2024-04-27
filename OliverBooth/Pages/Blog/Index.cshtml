@@ -50,12 +50,6 @@
             <span>{{author.name}}<span>
             <span> &bull; </span>
             <abbr title="{{ post.formattedDate }}">{{ post.date_humanized }}</abbr>
-            {{#if post.enable_comments}}
-                <span> &bull; </span>
-                <a href="{{post.url}}#disqus_thread" data-disqus-identifier="{{post.disqus_identifier}}">
-                    Loading comment count &hellip;
-                </a>
-            {{/if}}
         </span>
     </div>
     <div class="card-body">
