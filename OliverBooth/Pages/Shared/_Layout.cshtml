@@ -1,7 +1,9 @@
 @using OliverBooth.Data.Blog
+@using OliverBooth.Data.Web
 @using OliverBooth.Extensions
 @using OliverBooth.Services
 @inject IBlogPostService BlogPostService
+@inject ITutorialService TutorialService
 @{
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
@@ -30,6 +32,10 @@
     @if (ViewData["Post"] is IBlogPost post)
     {
         @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
+    }
+    else if (ViewData["Post"] is ITutorialArticle article)
+    {
+        @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
     }
     else
     {

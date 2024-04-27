@@ -1,6 +1,7 @@
 using System.Web;
 using Cysharp.Text;
 using OliverBooth.Data.Blog;
+using OliverBooth.Data.Web;
 using OliverBooth.Services;
 
 namespace OliverBooth.Extensions;
@@ -40,6 +41,40 @@ public static class HtmlUtility
             ["title"] = post.Title,
             ["description"] = excerpt,
             ["author"] = post.Author.DisplayName
+        };
+        return CreateMetaTags(tags);
+    }
+
+    /// <summary>
+    ///     Creates <c>&lt;meta&gt;</c> embed tags by pulling data from the specified article.
+    /// </summary>
+    /// <param name="article">The article whose metadata should be retrieved.</param>
+    /// <param name="tutorialService">The <see cref="ITutorialService" /> injected by the page.</param>
+    /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <para><paramref name="article" /> is <see langword="null" />.</para>
+    ///     -or-
+    ///     <para><paramref name="tutorialService" /> is <see langword="null" />.</para>
+    /// </exception>
+    public static string CreateMetaTagsFromTutorialArticle(ITutorialArticle article, ITutorialService tutorialService)
+    {
+        if (article is null)
+        {
+            throw new ArgumentNullException(nameof(article));
+        }
+
+        if (tutorialService is null)
+        {
+            throw new ArgumentNullException(nameof(tutorialService));
+        }
+
+
+        string excerpt = tutorialService.RenderExcerpt(article, out _);
+        var tags = new Dictionary<string, string>
+        {
+            ["title"] = article.Title,
+            ["description"] = excerpt,
+            ["author"] = "Oliver Booth" // TODO add article author support?
         };
         return CreateMetaTags(tags);
     }
