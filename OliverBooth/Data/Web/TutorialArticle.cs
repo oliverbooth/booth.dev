@@ -9,6 +9,9 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     public string Body { get; private set; } = string.Empty;
 
     /// <inheritdoc />
+    public bool EnableComments { get; internal set; }
+
+    /// <inheritdoc />
     public string? Excerpt { get; private set; }
 
     /// <inheritdoc />

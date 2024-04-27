@@ -25,5 +25,6 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
         builder.Property(e => e.NextPart);
         builder.Property(e => e.PreviousPart);
         builder.Property(e => e.Visibility).HasConversion<EnumToStringConverter<Visibility>>();
+        builder.Property(e => e.EnableComments).IsRequired();
     }
 }

@@ -12,6 +12,14 @@ public interface ITutorialArticle
     string Body { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether comments are enabled for the article.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if comments are enabled for the article; otherwise, <see langword="false" />.
+    /// </value>
+    bool EnableComments { get; }
+
+    /// <summary>
     ///     Gets the excerpt of this article, if it has one.
     /// </summary>
     /// <value>The excerpt, or <see langword="null" /> if this article has no excerpt.</value>
