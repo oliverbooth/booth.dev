@@ -60,36 +60,39 @@
     @Html.Raw(TutorialService.RenderArticle(article))
 </article>
 
-<hr>
+@if (article.HasOtherParts)
+{
+    <hr>
 
-<div class="row">
-    <div class="col-sm-12 col-md-6">
-        @if (article.PreviousPart is { } previousPartId &&
-             TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart) &&
-             previousPart.Visibility == Visibility.Published)
-        {
-            <small>Previous Part</small>
-            <p class="lead">
-                <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(previousPart)">
-                    @previousPart.Title
-                </a>
-            </p>
-        }
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            @if (article.PreviousPart is { } previousPartId &&
+                 TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart) &&
+                 previousPart.Visibility == Visibility.Published)
+            {
+                <small>Previous Part</small>
+                <p class="lead">
+                    <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(previousPart)">
+                        @previousPart.Title
+                    </a>
+                </p>
+            }
+        </div>
+        <div class="col-sm-12 col-md-6" style="text-align: right;">
+            @if (article.NextPart is { } nextPartId &&
+                 TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart) &&
+                 nextPart.Visibility == Visibility.Published)
+            {
+                <small>Next Part</small>
+                <p class="lead">
+                    <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(nextPart)">
+                        @nextPart.Title
+                    </a>
+                </p>
+            }
+        </div>
     </div>
-    <div class="col-sm-12 col-md-6" style="text-align: right;">
-        @if (article.NextPart is { } nextPartId &&
-             TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart) &&
-             nextPart.Visibility == Visibility.Published)
-        {
-            <small>Next Part</small>
-            <p class="lead">
-                <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(nextPart)">
-                    @nextPart.Title
-                </a>
-            </p>
-        }
-    </div>
-</div>
+}
 
 <hr/>
 

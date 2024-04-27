@@ -32,6 +32,12 @@ public interface ITutorialArticle
     int Folder { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether this article is part of a multi-part series.
+    /// </summary>
+    /// <value><see langword="true" /> if this article has additional parts; otherwise, <see langword="false" />.</value>
+    bool HasOtherParts { get; }
+
+    /// <summary>
     ///     Gets the ID of this article.
     /// </summary>
     /// <value>The ID.</value>

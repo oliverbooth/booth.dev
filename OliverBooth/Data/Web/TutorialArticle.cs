@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OliverBooth.Data.Web;
 
 /// <summary>
@@ -16,6 +18,10 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
 
     /// <inheritdoc />
     public int Folder { get; private set; }
+
+    /// <inheritdoc />
+    [NotMapped]
+    public bool HasOtherParts => NextPart is not null || PreviousPart is not null;
 
     /// <inheritdoc />
     public int Id { get; private set; }
