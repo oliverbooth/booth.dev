@@ -241,7 +241,9 @@ article {
 }
 
 pre {
-  background: #1e1e1e;
+  background: #1e1e1e !important;
+  border-radius: 5px;
+  font-size: 0.9em !important;
 
   code mark, code mark span {
     background: #d8ba76 !important;

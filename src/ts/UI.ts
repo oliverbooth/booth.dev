@@ -114,10 +114,10 @@ class UI {
                 return;
             }
 
-            let content = block.textContent;
+            /*let content = block.textContent;
             if (content.trim().split("\n").length > 1) {
                 block.parentElement.classList.add("line-numbers");
-            }
+            }*/
         });
     }
 
