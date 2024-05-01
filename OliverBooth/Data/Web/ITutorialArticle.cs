@@ -68,6 +68,12 @@ public interface ITutorialArticle
     DateTimeOffset Published { get; }
 
     /// <summary>
+    ///     Gets the ID of the post that was redirected to this article.
+    /// </summary>
+    /// <value>The source redirect post ID.</value>
+    Guid? RedirectFrom { get; }
+
+    /// <summary>
     ///     Gets the slug of this article.
     /// </summary>
     /// <value>The slug.</value>

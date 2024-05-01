@@ -68,6 +68,27 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
+    public int GetLegacyCommentCount(IBlogPost post)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        return context.LegacyComments.Count(c => c.PostId == post.Id);
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<ILegacyComment> GetLegacyComments(IBlogPost post)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        return context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null).ToArray();
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
+    }
+
+    /// <inheritdoc />
     public IBlogPost? GetNextPost(IBlogPost blogPost)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();

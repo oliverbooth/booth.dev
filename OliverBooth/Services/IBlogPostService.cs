@@ -35,6 +35,27 @@ public interface IBlogPostService
     IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10);
 
     /// <summary>
+    ///     Returns the number of legacy comments for the specified post.
+    /// </summary>
+    /// <param name="post">The post whose legacy comments to count.</param>
+    /// <returns>The total number of legacy comments.</returns>
+    int GetLegacyCommentCount(IBlogPost post);
+
+    /// <summary>
+    ///     Returns the collection of legacy comments for the specified post.
+    /// </summary>
+    /// <param name="post">The post whose legacy comments to retrieve.</param>
+    /// <returns>A read-only view of the legacy comments.</returns>
+    IReadOnlyList<ILegacyComment> GetLegacyComments(IBlogPost post);
+
+    /// <summary>
+    ///     Returns the collection of replies to the specified legacy comment.
+    /// </summary>
+    /// <param name="comment">The comment whose replies to retrieve.</param>
+    /// <returns>A read-only view of the replies.</returns>
+    IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment);
+
+    /// <summary>
     ///     Returns the next blog post from the specified blog post.
     /// </summary>
     /// <param name="blogPost">The blog post whose next post to return.</param>

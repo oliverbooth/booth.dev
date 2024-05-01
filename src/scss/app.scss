@@ -429,6 +429,38 @@ td.trim-p p:last-child {
   }
 }
 
+.legacy-comment {
+  font-size: 14px !important;
+
+  .blog-author-icon {
+    height: 28px;
+  }
+
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .comment {
+    font-size: 14px !important;
+    margin-left: 30px;
+    background: #1d1d1d;
+    padding: 10px;
+    border-radius: 5px;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    blockquote.blockquote {
+      font-size: 14px !important;
+      border-left: 3px solid #687a86;
+      padding-left: 15px;
+    }
+  }
+}
+
 .mastodon-update-card.card {
   background-color: desaturate(darken(#6364FF, 50%), 50%);
   margin-bottom: 50px;

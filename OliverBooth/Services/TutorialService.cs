@@ -4,24 +4,30 @@ using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data;
+using OliverBooth.Data.Blog;
 using OliverBooth.Data.Web;
 
 namespace OliverBooth.Services;
 
 internal sealed class TutorialService : ITutorialService
 {
+    private readonly IDbContextFactory<BlogContext> _blogContextFactory;
     private readonly IDbContextFactory<WebContext> _dbContextFactory;
     private readonly MarkdownPipeline _markdownPipeline;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TutorialService" /> class.
     /// </summary>
-    /// <param name="dbContextFactory">The <see cref="IDbContextFactory{TContext}" />.</param>
+    /// <param name="dbContextFactory">The <see cref="WebContext" /> factory.</param>
+    /// <param name="blogContextFactory">The <see cref="BlogContext" /> factory.</param>
     /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
-    public TutorialService(IDbContextFactory<WebContext> dbContextFactory, MarkdownPipeline markdownPipeline)
+    public TutorialService(IDbContextFactory<WebContext> dbContextFactory,
+        IDbContextFactory<BlogContext> blogContextFactory,
+        MarkdownPipeline markdownPipeline)
     {
         _dbContextFactory = dbContextFactory;
         _markdownPipeline = markdownPipeline;
+        _blogContextFactory = blogContextFactory;
     }
 
     /// <inheritdoc />
@@ -101,6 +107,37 @@ internal sealed class TutorialService : ITutorialService
         ITutorialFolder? folder = GetFolder(article.Folder);
         if (folder is null) return article.Slug;
         return $"{GetFullSlug(folder)}/{article.Slug}";
+    }
+
+    /// <inheritdoc />
+    public int GetLegacyCommentCount(ITutorialArticle article)
+    {
+        if (article.RedirectFrom is not { } postId)
+        {
+            return 0;
+        }
+
+        using BlogContext context = _blogContextFactory.CreateDbContext();
+        return context.LegacyComments.Count(c => c.PostId == postId);
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<ILegacyComment> GetLegacyComments(ITutorialArticle article)
+    {
+        if (article.RedirectFrom is not { } postId)
+        {
+            return ArraySegment<ILegacyComment>.Empty;
+        }
+
+        using BlogContext context = _blogContextFactory.CreateDbContext();
+        return context.LegacyComments.Where(c => c.PostId == postId && c.ParentComment == null).ToArray();
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
+    {
+        using BlogContext context = _blogContextFactory.CreateDbContext();
+        return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
     }
 
     /// <inheritdoc />

@@ -39,6 +39,9 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     public DateTimeOffset Published { get; private set; }
 
     /// <inheritdoc />
+    public Guid? RedirectFrom { get; private set; }
+
+    /// <inheritdoc />
     public string Slug { get; private set; } = string.Empty;
 
     /// <inheritdoc />
