@@ -240,7 +240,7 @@ article {
   }
 }
 
-code {
+code:not([class*="language-"]) {
   background: #1e1e1e !important;
   color: #dcdcda !important;
   font-size: inherit !important;
