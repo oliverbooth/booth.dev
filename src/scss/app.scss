@@ -247,6 +247,18 @@ code:not([class*="language-"]) {
   padding: 3px;
 }
 
+a:link, a:visited, a:hover, a:active {
+  code:not([class*="language-"]) {
+    color: #03a9f4 !important;
+  }
+}
+
+a:hover {
+  code:not([class*="language-"]) {
+    color: #fff !important;
+  }
+}
+
 pre {
   background: #1e1e1e !important;
   border-radius: 5px;
