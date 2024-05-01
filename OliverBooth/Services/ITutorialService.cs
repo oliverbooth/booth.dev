@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using OliverBooth.Data;
+using OliverBooth.Data.Blog;
 using OliverBooth.Data.Web;
 
 namespace OliverBooth.Services;
@@ -59,6 +60,27 @@ public interface ITutorialService
     /// <returns>The full slug of the article.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="article" /> is <see langword="null" />.</exception>
     string GetFullSlug(ITutorialArticle article);
+
+    /// <summary>
+    ///     Returns the number of legacy comments for the specified article.
+    /// </summary>
+    /// <param name="article">The article whose legacy comments to count.</param>
+    /// <returns>The total number of legacy comments.</returns>
+    int GetLegacyCommentCount(ITutorialArticle article);
+
+    /// <summary>
+    ///     Returns the collection of legacy comments for the specified article.
+    /// </summary>
+    /// <param name="article">The article whose legacy comments to retrieve.</param>
+    /// <returns>A read-only view of the legacy comments.</returns>
+    IReadOnlyList<ILegacyComment> GetLegacyComments(ITutorialArticle article);
+
+    /// <summary>
+    ///     Returns the collection of replies to the specified legacy comment.
+    /// </summary>
+    /// <param name="comment">The comment whose replies to retrieve.</param>
+    /// <returns>A read-only view of the replies.</returns>
+    IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment);
 
     /// <summary>
     ///     Renders the body of the specified article.
