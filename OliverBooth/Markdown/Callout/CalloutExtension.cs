@@ -26,7 +26,7 @@ internal sealed class CalloutExtension : IMarkdownExtension
         var blockRenderer = renderer.ObjectRenderers.FindExact<CalloutRenderer>();
         if (blockRenderer is null)
         {
-            renderer.ObjectRenderers.InsertBefore<QuoteBlockRenderer>(new CalloutRenderer());
+            renderer.ObjectRenderers.InsertBefore<QuoteBlockRenderer>(new CalloutRenderer(pipeline));
         }
     }
 }
