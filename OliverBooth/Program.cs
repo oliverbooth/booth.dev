@@ -3,6 +3,8 @@ using Markdig;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Web;
 using OliverBooth.Extensions;
+using OliverBooth.Markdown;
+using OliverBooth.Markdown.Callout;
 using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
@@ -24,7 +26,31 @@ builder.Logging.AddSerilog();
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use<TimestampExtension>()
     .Use(new TemplateExtension(provider.GetRequiredService<ITemplateService>()))
-    .UseAdvancedExtensions()
+
+    // we have our own "alert blocks"
+    .UseCallouts()
+
+    // advanced extensions. add explicitly to avoid UseAlertBlocks
+    .UseAbbreviations()
+    .UseAutoIdentifiers()
+    .UseCitations()
+    .UseCustomContainers()
+    .UseDefinitionLists()
+    .UseEmphasisExtras()
+    .UseFigures()
+    .UseFooters()
+    .UseFootnotes()
+    .UseGridTables()
+    .UseMathematics()
+    .UseMediaLinks()
+    .UsePipeTables()
+    .UseListExtras()
+    .UseTaskLists()
+    .UseDiagrams()
+    .UseAutoLinks()
+    .UseGenericAttributes() // must be last as it is one parser that is modifying other parsers
+
+    // no more advanced extensions
     .UseBootstrap()
     .UseEmojiAndSmiley()
     .UseSmartyPants()

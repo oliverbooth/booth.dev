@@ -6,8 +6,11 @@ import BlogPost from "./BlogPost";
 
 declare const Handlebars: any;
 declare const Prism: any;
+declare const lucide: any;
 
 (() => {
+    lucide.createIcons();
+
     Prism.languages.extend('markup', {});
     Prism.languages.hex = {
         'number': {
