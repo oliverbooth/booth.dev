@@ -1,15 +1,15 @@
 @page "/psa/binaryformatter"
 
-<div class="alert alert-danger">
-    <h2 class="alert-heading">⚠️ Stop! This application is unsafe!</h2>
+<div class="callout" data-callout="danger">
+    <div class="callout-title"><h2>⚠️ Stop! This application is unsafe!</h2></div>
     <p>
         This application is using an insecure method to read and write data, and needs to be updated
         <em>immediately</em>.
     </p>
 </div>
 
-<div class="alert alert-warning">
-    <h4 class="alert-heading">I'm a user, what does this mean?</h4>
+<div class="callout" data-callout="warning">
+    <div class="callout-title">I'm a user, what does this mean?</div>
     <p>
         If you are seeing this message, it means you loaded a payload that I crafted to exploit this vulnerability. Be
         fortunate, because I could have done much worse including stealing your data or installing malware on your
@@ -26,8 +26,8 @@
     </p>
 </div>
 
-<div class="alert alert-info">
-    <h4 class="alert-heading">I'm a developer, can you explain more?</h4>
+<div class="callout" data-callout="info">
+    <div class="callout-title">I'm a developer, can you explain more?</div>
     <p>
         <code>BinaryFormatter</code> is a .NET class that is used to serialize and deserialize data such as game saves
         or configuration files. However, it was discovered that this class is vulnerable to remote code execution when

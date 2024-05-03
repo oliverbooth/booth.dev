@@ -10,7 +10,7 @@
 
 @if (Model.ShowPasswordPrompt)
 {
-    <div class="alert alert-danger" role="alert">
+    <div class="callout" data-callout="danger">
         This post is private and can only be viewed by those with the password.
     </div>
 
@@ -48,13 +48,13 @@
 @switch (post.Visibility)
 {
     case Visibility.Private:
-        <div class="alert alert-danger" role="alert">
+        <div class="callout" data-callout="danger">
             This post is private and can only be viewed by those with the password.
         </div>
         break;
 
     case Visibility.Unlisted:
-        <div class="alert alert-warning" role="alert">
+        <div class="callout" data-callout="warning">
             This post is unlisted and can only be viewed by those with the link.
         </div>
         break;
