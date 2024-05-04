@@ -1,3 +1,5 @@
+declare const bootstrap: any;
+
 class Callout {
     private readonly _callout: HTMLElement;
     private readonly _title: HTMLElement;
@@ -45,6 +47,7 @@ class Callout {
         }
 
         const callout: HTMLElement = this._callout;
+        const content: HTMLElement = this._content;
 
         if (callout === null) {
             console.error("Callout element for ", this, " is null!");
@@ -52,8 +55,13 @@ class Callout {
         }
 
         callout.classList.add("collapsible", "collapsed");
+        content.classList.add("collapse");
+        const bsCollapse = new bootstrap.Collapse(content, {toggle: false});
+
         this._title.addEventListener("click", () => {
             callout.classList.toggle("collapsed");
+
+            bsCollapse.toggle();
         });
 
         this._foldEnabled = true;

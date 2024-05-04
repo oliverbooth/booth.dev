@@ -46,12 +46,6 @@ $callout-fg-grey: #9e9e9e;
       transition: margin-bottom 500ms;
     }
 
-    .callout-content {
-      opacity: 1;
-      max-height: 500px;
-      transition: opacity 500ms, max-height 500ms;
-    }
-
     &.collapsed {
       .callout-title {
         margin-bottom: 0;
@@ -59,11 +53,6 @@ $callout-fg-grey: #9e9e9e;
 
       .callout-fold svg {
         transform: rotate(0deg);
-      }
-
-      .callout-content {
-        opacity: 0;
-        max-height: 0;
       }
     }
   }
