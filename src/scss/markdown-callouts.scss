@@ -69,6 +69,14 @@ $callout-fg-grey: #9e9e9e;
     }
   }
 
+  &[data-callout="important"] {
+    background-color: $callout-bg-cyan;
+
+    .callout-title {
+      color: $callout-fg-cyan;
+    }
+  }
+
   &[data-callout="success"] {
     background-color: $callout-bg-green;
 

@@ -20,6 +20,7 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
         ["INFO"] = "info",
         ["TODO"] = "circle-check",
         ["TIP"] = "flame",
+        ["IMPORTANT"] = "flame",
         ["SUCCESS"] = "check",
         ["QUESTION"] = "circle-help",
         ["WARNING"] = "triangle-alert",
