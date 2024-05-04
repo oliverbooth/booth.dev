@@ -18,6 +18,12 @@ internal sealed class CalloutBlock : QuoteBlock
     }
 
     /// <summary>
+    ///     Gets or sets a value indicating whether this callout is foldable.
+    /// </summary>
+    /// <value><see langword="true" /> if this callout is foldable; otherwise, <see langword="false" />.</value>
+    public bool Foldable { get; set; }
+
+    /// <summary>
     ///     Gets or sets the title of the callout.
     /// </summary>
     /// <value>The title of the callout.</value>

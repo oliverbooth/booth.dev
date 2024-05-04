@@ -3,12 +3,14 @@ import UI from "./UI";
 import Input from "./Input";
 import Author from "./Author";
 import BlogPost from "./BlogPost";
+import Callout from "./Callout";
 
 declare const Handlebars: any;
 declare const Prism: any;
 declare const lucide: any;
 
 (() => {
+    Callout.foldAll();
     lucide.createIcons();
 
     Prism.languages.extend('markup', {});

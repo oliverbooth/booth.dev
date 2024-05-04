@@ -67,7 +67,13 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
 
         var typeString = type.ToString().ToLowerInvariant();
 
-        renderer.Write($"<div class=\"callout\" data-callout=\"{typeString}\">");
+        renderer.Write($"<div class=\"callout\" data-callout=\"{typeString}\"");
+        if (block.Foldable)
+        {
+            renderer.Write(" data-callout-fold=\"true\"");
+        }
+
+        renderer.Write('>');
         renderer.Write("<div class=\"callout-title\"><i data-lucide=\"");
         renderer.Write(lucideClass);
         renderer.Write("\"></i> ");
@@ -75,8 +81,15 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
         string calloutTitle = title.Length == 0 ? typeString.Humanize(LetterCasing.Sentence) : title;
         WriteTitle(renderer, pipeline, calloutTitle);
 
+        if (block.Foldable)
+        {
+            renderer.Write("<span class=\"callout-fold\"><i data-lucide=\"chevron-down\"></i></span>");
+        }
+
         renderer.WriteLine("</div>");
+        renderer.Write("<div class=\"callout-content\">");
         renderer.WriteChildren(block);
+        renderer.WriteLine("</div>");
         renderer.WriteLine("</div>");
         renderer.EnsureLine();
     }

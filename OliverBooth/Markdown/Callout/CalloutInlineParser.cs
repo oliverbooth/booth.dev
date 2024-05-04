@@ -16,10 +16,6 @@ internal sealed class CalloutInlineParser : InlineParser
     private static readonly MethodInfo ReplaceParentContainerMethod =
         typeof(InlineProcessor).GetMethod("ReplaceParentContainer", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
-    // but we can at least make it a bit nicer to access
-    private static readonly Action<InlineProcessor, ContainerBlock, ContainerBlock> ReplaceParentContainer =
-        (processor, before, after) => ReplaceParentContainerMethod.Invoke(processor, [before, after]);
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="CalloutInlineParser" /> class.
     /// </summary>
@@ -70,10 +66,19 @@ internal sealed class CalloutInlineParser : InlineParser
         current = slice.NextChar(); // skip ]
         start = slice.Start;
 
-        ReadTitle(current, ref slice, out StringSlice title, start, out end);
+        bool fold = false;
+        if (current == '-')
+        {
+            fold = true;
+            current = slice.NextChar(); // skip -
+            start = slice.Start;
+        }
+
+        ReadTitle(current, ref slice, out StringSlice title, out end);
 
         var callout = new CalloutBlock(type)
         {
+            Foldable = fold,
             Span = quoteBlock.Span,
             TrailingWhitespaceTrivia = new StringSlice(slice.Text, start, end),
             Line = quoteBlock.Line,
@@ -86,7 +91,7 @@ internal sealed class CalloutInlineParser : InlineParser
         return true;
     }
 
-    private static void ReadTitle(char startChar, ref StringSlice slice, out StringSlice title, int start, out int end)
+    private static void ReadTitle(char startChar, ref StringSlice slice, out StringSlice title, out int end)
     {
         using Utf16ValueStringBuilder builder = ZString.CreateStringBuilder();
 
