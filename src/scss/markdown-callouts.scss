@@ -109,10 +109,10 @@ $callout-fg-grey: #9e9e9e;
   }
 
   &[data-callout="important"] {
-    background-color: $callout-bg-orange;
+    background-color: $callout-bg-cyan;
 
     .callout-title {
-      color: $callout-fg-orange;
+      color: $callout-fg-cyan;
     }
   }
 
@@ -125,10 +125,10 @@ $callout-fg-grey: #9e9e9e;
   }
 
   &[data-callout="question"] {
-    background-color: $callout-bg-cyan;
+    background-color: $callout-bg-orange;
 
     .callout-title {
-      color: $callout-fg-cyan;
+      color: $callout-fg-orange;
     }
   }
 
