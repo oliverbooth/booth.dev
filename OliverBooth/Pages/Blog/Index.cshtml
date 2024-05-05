@@ -21,6 +21,6 @@
 @await Html.PartialAsync("Partials/_PageTabs", new ViewDataDictionary(ViewData)
 {
     ["UrlRoot"] = "/blog",
-    ["Page"] = 0,
+    ["Page"] = 1,
     ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published)
 })
