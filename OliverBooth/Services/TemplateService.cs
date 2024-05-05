@@ -5,7 +5,7 @@ using OliverBooth.Common.Data.Web;
 using OliverBooth.Data.Web;
 using OliverBooth.Extensions.Markdig.Markdown.Template;
 using OliverBooth.Extensions.Markdig.Services;
-using OliverBooth.Formatting;
+using OliverBooth.Extensions.SmartFormat;
 using OliverBooth.Markdown.Template;
 using SmartFormat;
 using SmartFormat.Extensions;

@@ -42,7 +42,6 @@
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0"/>
         <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1"/>
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
-        <PackageReference Include="SmartFormat.NET" Version="3.3.2"/>
         <PackageReference Include="X10D" Version="3.3.1"/>
         <PackageReference Include="X10D.Hosting" Version="3.3.1"/>
     </ItemGroup>
@@ -50,6 +49,7 @@
     <ItemGroup>
         <ProjectReference Include="..\OliverBooth.Common\OliverBooth.Common.csproj"/>
         <ProjectReference Include="..\OliverBooth.Extensions.Markdig\OliverBooth.Extensions.Markdig.csproj"/>
+        <ProjectReference Include="..\OliverBooth.Extensions.SmartFormat\OliverBooth.Extensions.SmartFormat.csproj" />
     </ItemGroup>
 
 </Project>
