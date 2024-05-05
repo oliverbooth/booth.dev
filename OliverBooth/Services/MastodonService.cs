@@ -15,18 +15,20 @@ internal sealed class MastodonService : IMastodonService
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
     };
 
+    private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
-    public MastodonService(HttpClient httpClient)
+    public MastodonService(IConfiguration configuration, HttpClient httpClient)
     {
+        _configuration = configuration;
         _httpClient = httpClient;
     }
 
     /// <inheritdoc />
     public IMastodonStatus GetLatestStatus()
     {
-        string token = Environment.GetEnvironmentVariable("MASTODON_TOKEN") ?? string.Empty;
-        string account = Environment.GetEnvironmentVariable("MASTODON_ACCOUNT") ?? string.Empty;
+        string token = _configuration.GetSection("Mastodon:Token").Value ?? string.Empty;
+        string account = _configuration.GetSection("Mastodon:Account").Value ?? string.Empty;
         using var request = new HttpRequestMessage();
         request.Headers.Add("Authorization", $"Bearer {token}");
         request.RequestUri = new Uri($"https://mastodon.olivr.me/api/v1/accounts/{account}/statuses");

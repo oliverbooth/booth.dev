@@ -69,7 +69,7 @@ builder.Services.AddSingleton<IProjectService, ProjectService>();
 builder.Services.AddSingleton<IMastodonService, MastodonService>();
 builder.Services.AddSingleton<ITutorialService, TutorialService>();
 builder.Services.AddSingleton<IReadingListService, ReadingListService>();
-builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));

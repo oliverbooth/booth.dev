@@ -33,7 +33,6 @@
         <PackageReference Include="MailKit" Version="4.4.0"/>
         <PackageReference Include="MailKitSimplified.Sender" Version="2.9.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.3"/>
         <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.3"/>
         <PackageReference Include="NetBarcode" Version="1.7.0"/>
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2"/>
