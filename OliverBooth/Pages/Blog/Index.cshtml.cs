@@ -36,7 +36,7 @@ public class Index : PageModel
         return _blogPostService.TryGetPost(wpPostId, out IBlogPost? post) ? RedirectToPost(post) : NotFound();
     }
 
-    private IActionResult RedirectToPost(IBlogPost post)
+    private RedirectResult RedirectToPost(IBlogPost post)
     {
         var route = new
         {

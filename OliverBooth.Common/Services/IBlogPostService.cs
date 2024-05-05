@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using OliverBooth.Common.Data;
 using OliverBooth.Common.Data.Blog;
 
 namespace OliverBooth.Common.Services;
@@ -22,8 +23,9 @@ public interface IBlogPostService
     /// <summary>
     ///     Returns the total number of blog posts.
     /// </summary>
+    /// <param name="visibility">The post visibility filter.</param>
     /// <returns>The total number of blog posts.</returns>
-    int GetBlogPostCount();
+    int GetBlogPostCount(Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Returns a collection of blog posts from the specified page, optionally limiting the number of posts
@@ -61,6 +63,15 @@ public interface IBlogPostService
     /// <param name="blogPost">The blog post whose next post to return.</param>
     /// <returns>The next blog post from the specified blog post.</returns>
     IBlogPost? GetNextPost(IBlogPost blogPost);
+
+    /// <summary>
+    ///     Returns the number of pages needed to render all blog posts, using the specified <paramref name="pageSize" /> as an
+    ///     indicator of how many posts are allowed per page.
+    /// </summary>
+    /// <param name="pageSize">The page size. Defaults to 10.</param>
+    /// <param name="visibility">The post visibility filter.</param>
+    /// <returns>The page count.</returns>
+    int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Returns the previous blog post from the specified blog post.

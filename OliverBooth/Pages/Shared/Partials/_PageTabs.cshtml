@@ -1,0 +1,21 @@
+@{
+    var urlRoot = ViewData["UrlRoot"]?.ToString() ?? string.Empty;
+    var page = (int)(ViewData["Page"] ?? 1);
+    var pageCount = (int)(ViewData["PageCount"] ?? 1);
+
+    var utility = new PageTabsUtility
+    {
+        CurrentPage = page,
+        PageCount = pageCount,
+        UrlRoot = urlRoot
+    };
+}
+<nav>
+    <ul class="pagination justify-content-center">
+        @Html.Raw(utility.ShowBounds(PageTabsUtility.BoundsType.Lower))
+        @Html.Raw(utility.ShowTab(1)) @* always visible *@
+        @Html.Raw(utility.ShowTabWindow())
+        @Html.Raw(utility.ShowTab(pageCount)) @* always visible *@
+        @Html.Raw(utility.ShowBounds(PageTabsUtility.BoundsType.Upper))
+    </ul>
+</nav>

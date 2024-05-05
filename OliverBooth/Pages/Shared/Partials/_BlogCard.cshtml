@@ -1,0 +1,56 @@
+@using Humanizer
+@using OliverBooth.Common.Data.Blog
+@using OliverBooth.Common.Services
+@model IBlogPost
+@inject IBlogPostService BlogPostService
+
+@{
+    IBlogAuthor author = Model.Author;
+    DateTimeOffset published = Model.Published;
+    DateTimeOffset? updated = Model.Updated;
+    DateTimeOffset time = updated ?? published;
+    string verb = updated is null ? "Published" : "Updated";
+}
+
+<div class="blog-card">
+    <h4>
+        <a asp-page="/Blog/Article"
+           asp-route-year="@published.Year"
+           asp-route-month="@published.Month.ToString("00")"
+           asp-route-day="@published.Day.ToString("00")"
+           asp-route-slug="@Model.Slug">
+            @Model.Title
+        </a>
+    </h4>
+
+    <p>
+        <img class="blog-author-icon" src="@author.GetAvatarUrl()" alt="@author.DisplayName">
+        @author.DisplayName
+        &bull;
+        <span class="text-muted" title="@time.ToString("F")">@verb @time.Humanize()</span>
+    </p>
+
+    <article>
+        @Html.Raw(BlogPostService.RenderExcerpt(Model, out bool trimmed))
+    </article>
+
+    @if (trimmed || Model.Excerpt is not null)
+    {
+        <p>
+            <a asp-page="/Blog/Article"
+               asp-route-year="@published.Year"
+               asp-route-month="@published.Month.ToString("00")"
+               asp-route-day="@published.Day.ToString("00")"
+               asp-route-slug="@Model.Slug">
+                Read more...
+            </a>
+        </p>
+    }
+
+    <hr/>
+
+    @foreach (string tag in Model.Tags)
+    {
+        <a href="?tag=@Html.UrlEncoder.Encode(tag)" class="badge text-bg-dark">@tag</a>
+    }
+</div>

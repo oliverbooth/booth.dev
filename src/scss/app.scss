@@ -1,4 +1,5 @@
 @import "markdown";
+@import "blog";
 
 html, body {
   background: #121212;
@@ -226,19 +227,6 @@ article {
       padding: 5px;
       background-color: rgba(#000, 50%);
     }
-  }
-}
-
-.blog-card {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  article {
-    background: none;
-    padding: 0;
   }
 }
 

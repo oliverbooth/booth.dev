@@ -1,0 +1,49 @@
+$blog-card-bg: #333333;
+$blog-card-gutter: 20px;
+$border-radius: 3px;
+
+div.blog-card {
+  background: $blog-card-bg;
+  margin-bottom: $blog-card-gutter;
+  padding: $blog-card-gutter;
+  border-radius: $border-radius;
+
+  :last-child {
+    margin-bottom: 0;
+  }
+  
+  article {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+
+ul.pagination {
+  border: none;
+
+  li {
+    a, span {
+      border-radius: $border-radius !important;
+      border: none;
+      
+      &:link, &:visited, &:active {
+        color: #007ec6;
+      }
+    }
+    
+    &.active a, &.active span {
+      background: #007ec6;
+    }
+
+    &:not(.active) a, &:not(.active) span {
+      background: none;
+    }
+
+    &:hover {
+      a {
+        color: #ffffff !important;
+      }
+    }
+  }
+}

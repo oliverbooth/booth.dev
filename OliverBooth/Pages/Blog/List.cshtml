@@ -1,18 +1,15 @@
-@page
+@page "/blog/page/{pageNumber:int}"
+@model List
 @using OliverBooth.Common.Data
 @using OliverBooth.Common.Data.Blog
 @using OliverBooth.Common.Services
-@model Index
-@inject IBlogPostService BlogPostService
 
-@{
-    ViewData["Title"] = "Blog";
-}
+@inject IBlogPostService BlogPostService
 
 @await Html.PartialAsync("Partials/_MastodonStatus")
 
 <div id="all-blog-posts">
-    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(0))
+    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber))
     {
         @await Html.PartialAsync("Partials/_BlogCard", post)
     }
@@ -21,6 +18,6 @@
 @await Html.PartialAsync("Partials/_PageTabs", new ViewDataDictionary(ViewData)
 {
     ["UrlRoot"] = "/blog",
-    ["Page"] = 0,
+    ["Page"] = Model.PageNumber,
     ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published)
 })
