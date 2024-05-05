@@ -1,9 +1,10 @@
 @page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
 @using Humanizer
 @using Markdig
-@using OliverBooth.Data
-@using OliverBooth.Data.Blog
-@using OliverBooth.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OliverBooth.Common.Data
+@using OliverBooth.Common.Data.Blog
+@using OliverBooth.Common.Services
 @inject IBlogPostService BlogPostService
 @inject MarkdownPipeline MarkdownPipeline
 @model Article

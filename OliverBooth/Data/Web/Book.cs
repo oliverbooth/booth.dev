@@ -1,4 +1,5 @@
 using NetBarcode;
+using OliverBooth.Common.Data.Web;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;

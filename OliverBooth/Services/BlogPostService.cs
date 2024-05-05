@@ -2,7 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data;
+using OliverBooth.Common.Data;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 using OliverBooth.Data.Blog;
 
 namespace OliverBooth.Services;

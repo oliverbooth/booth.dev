@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Primitives;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 using BC = BCrypt.Net.BCrypt;
 
 namespace OliverBooth.Pages.Blog;

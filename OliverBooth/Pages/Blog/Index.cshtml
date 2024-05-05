@@ -1,13 +1,13 @@
 @page
 @using Humanizer
-@using OliverBooth.Data.Mastodon
-@using OliverBooth.Services
+@using OliverBooth.Common.Data.Mastodon
+@using OliverBooth.Common.Services
 @model Index
 @inject IMastodonService MastodonService
 
 @{
     ViewData["Title"] = "Blog";
-    MastodonStatus latestStatus = MastodonService.GetLatestStatus();
+    IMastodonStatus latestStatus = MastodonService.GetLatestStatus();
 }
 
 <div class="card text-center mastodon-update-card">
@@ -18,16 +18,22 @@
             switch (attachment.Type)
             {
                 case AttachmentType.Audio:
-                    <p><audio controls="controls" src="@attachment.Url"></audio></p>
+                    <p>
+                        <audio controls="controls" src="@attachment.Url"></audio>
+                    </p>
                     break;
 
                 case AttachmentType.Video:
-                    <p><video controls="controls" class="figure-img img-fluid" src="@attachment.Url"></video></p>
+                    <p>
+                        <video controls="controls" class="figure-img img-fluid" src="@attachment.Url"></video>
+                    </p>
                     break;
 
                 case AttachmentType.Image:
                 case AttachmentType.GifV:
-                    <p><img class="figure-img img-fluid" src="@attachment.Url"></p>
+                    <p>
+                        <img class="figure-img img-fluid" src="@attachment.Url">
+                    </p>
                     break;
             }
         }

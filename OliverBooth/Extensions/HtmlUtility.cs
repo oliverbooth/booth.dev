@@ -1,8 +1,8 @@
 using System.Web;
 using Cysharp.Text;
-using OliverBooth.Data.Blog;
-using OliverBooth.Data.Web;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Data.Web;
+using OliverBooth.Common.Services;
 
 namespace OliverBooth.Extensions;
 

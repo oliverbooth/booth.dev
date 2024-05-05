@@ -1,11 +1,12 @@
 using AspNetCore.ReCaptcha;
 using Markdig;
+using OliverBooth.Common.Services;
 using OliverBooth.Data.Blog;
 using OliverBooth.Data.Web;
 using OliverBooth.Extensions;
+using OliverBooth.Extensions.Markdig;
+using OliverBooth.Extensions.Markdig.Services;
 using OliverBooth.Markdown;
-using OliverBooth.Markdown.Callout;
-using OliverBooth.Markdown.Template;
 using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
 using Serilog;
@@ -25,7 +26,7 @@ builder.Logging.AddSerilog();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use<TimestampExtension>()
-    .Use(new TemplateExtension(provider.GetRequiredService<ITemplateService>()))
+    .UseTemplates(provider.GetRequiredService<ITemplateService>())
 
     // we have our own "alert blocks"
     .UseCallouts()

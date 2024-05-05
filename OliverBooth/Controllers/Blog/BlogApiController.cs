@@ -1,7 +1,7 @@
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 
 namespace OliverBooth.Controllers.Blog;
 

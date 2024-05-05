@@ -1,8 +1,8 @@
 ﻿using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using OliverBooth.Data.Blog;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 using OliverBooth.Data.Blog.Rss;
-using OliverBooth.Services;
 
 namespace OliverBooth.Controllers.Blog;
 

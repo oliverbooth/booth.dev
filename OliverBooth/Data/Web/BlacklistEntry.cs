@@ -1,3 +1,5 @@
+using OliverBooth.Common.Data.Web;
+
 namespace OliverBooth.Data.Web;
 
 /// <inheritdoc cref="IBlacklistEntry"/>

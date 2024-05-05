@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using HtmlAgilityPack;
+using OliverBooth.Common.Data.Mastodon;
+using OliverBooth.Common.Services;
 using OliverBooth.Data.Mastodon;
 
 namespace OliverBooth.Services;
@@ -21,7 +23,7 @@ internal sealed class MastodonService : IMastodonService
     }
 
     /// <inheritdoc />
-    public MastodonStatus GetLatestStatus()
+    public IMastodonStatus GetLatestStatus()
     {
         string token = Environment.GetEnvironmentVariable("MASTODON_TOKEN") ?? string.Empty;
         string account = Environment.GetEnvironmentVariable("MASTODON_ACCOUNT") ?? string.Empty;
