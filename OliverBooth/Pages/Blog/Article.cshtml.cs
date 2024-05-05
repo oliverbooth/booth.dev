@@ -79,7 +79,6 @@ public class Article : PageModel
         var date = new DateOnly(year, month, day);
         if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
         {
-            Response.StatusCode = 404;
             return NotFound();
         }
 
