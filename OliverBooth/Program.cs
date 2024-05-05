@@ -5,9 +5,8 @@ using OliverBooth.Data.Blog;
 using OliverBooth.Data.Web;
 using OliverBooth.Extensions;
 using OliverBooth.Extensions.Markdig;
+using OliverBooth.Extensions.Markdig.Markdown.Timestamp;
 using OliverBooth.Extensions.Markdig.Services;
-using OliverBooth.Markdown;
-using OliverBooth.Markdown.Timestamp;
 using OliverBooth.Services;
 using Serilog;
 

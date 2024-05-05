@@ -1,4 +1,5 @@
 ﻿using Markdig;
+using OliverBooth.Extensions.Markdig.Markdown.Callout;
 using OliverBooth.Extensions.Markdig.Markdown.Template;
 using OliverBooth.Extensions.Markdig.Services;
 
@@ -9,6 +10,23 @@ namespace OliverBooth.Extensions.Markdig;
 /// </summary>
 public static class MarkdownPipelineExtensions
 {
+    /// <summary>
+    ///     Enables the use of Obsidian-style callouts in this pipeline.
+    /// </summary>
+    /// <param name="builder">The Markdig markdown pipeline builder.</param>
+    /// <returns>The modified Markdig markdown pipeline builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder" /> is <see langword="null" />.</exception>
+    public static MarkdownPipelineBuilder UseCallouts(this MarkdownPipelineBuilder builder)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        builder.Extensions.AddIfNotAlready<CalloutExtension>();
+        return builder;
+    }
+
     /// <summary>
     ///     Enables the use of Wiki-style templates in this pipeline.
     /// </summary>
