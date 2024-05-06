@@ -1,7 +1,8 @@
 @page "/project/{slug}"
 @using Markdig
-@using OliverBooth.Data.Web
-@using OliverBooth.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OliverBooth.Common.Data.Web
+@using OliverBooth.Common.Services
 @model Project
 @inject IProjectService ProjectService
 @inject MarkdownPipeline MarkdownPipeline

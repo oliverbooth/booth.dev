@@ -1,5 +1,3 @@
-import BlogPost from "./BlogPost";
-import Author from "./Author";
 import TimeUtility from "./TimeUtility";
 
 declare const bootstrap: any;
@@ -7,18 +5,6 @@ declare const katex: any;
 declare const Prism: any;
 
 class UI {
-    public static get blogPost(): HTMLDivElement {
-        return document.querySelector("article[data-blog-post='true']");
-    }
-    
-    public static get blogPostContainer(): HTMLDivElement {
-        return document.querySelector("#all-blog-posts");
-    }
-
-    public static get blogPostTemplate(): HTMLDivElement {
-        return document.querySelector("#blog-post-template");
-    }
-
     /**
      * Creates a <script> element that loads the Disqus comment counter.
      */
@@ -28,41 +14,6 @@ class UI {
         script.src = "https://oliverbooth-dev.disqus.com/count.js";
         script.async = true;
         return script;
-    }
-
-    /**
-     * Creates a blog post card from the given template, post, and author.
-     * @param template The Handlebars template to use.
-     * @param post The blog post to use.
-     * @param author The author of the blog post.
-     */
-    public static createBlogPostCard(template: any, post: BlogPost, author: Author): HTMLDivElement {
-        const card = document.createElement("div") as HTMLDivElement;
-        card.classList.add("card");
-        card.classList.add("blog-card");
-        card.classList.add("animate__animated");
-        card.classList.add("animate__fadeIn");
-        card.style.marginBottom = "50px";
-
-        const body = template({
-            post: {
-                title: post.title,
-                excerpt: post.excerpt,
-                url: `/blog/${post.url.year}/${post.url.month}/${post.url.day}/${post.url.slug}`,
-                date: TimeUtility.formatRelativeTimestamp(post.published),
-                formattedDate: post.updated ? post.formattedUpdateDate : post.formattedPublishDate,
-                date_humanized: `${post.updated ? "Updated" : "Published"} ${post.humanizedTimestamp}`,
-                enable_comments: post.commentsEnabled,
-                trimmed: post.trimmed,
-                tags: post.tags
-            },
-            author: {
-                name: author.name,
-                avatar: author.avatarUrl
-            }
-        });
-        card.innerHTML = body.trim();
-        return card;
     }
 
     /**

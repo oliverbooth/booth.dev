@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using OliverBooth.Data.Web;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Web;
+using OliverBooth.Common.Services;
 
 namespace OliverBooth.Controllers;
 

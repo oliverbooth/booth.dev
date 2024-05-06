@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using Cysharp.Text;
+using OliverBooth.Common.Data.Blog;
 
 namespace OliverBooth.Data.Blog;
 

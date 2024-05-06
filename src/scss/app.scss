@@ -1,4 +1,5 @@
 @import "markdown";
+@import "blog";
 
 html, body {
   background: #121212;
@@ -229,19 +230,6 @@ article {
   }
 }
 
-.blog-card {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  article {
-    background: none;
-    padding: 0;
-  }
-}
-
 code:not([class*="language-"]) {
   background: #1e1e1e !important;
   color: #dcdcda !important;
@@ -465,7 +453,13 @@ td.trim-p p:last-child {
 
 .mastodon-update-card.card {
   background-color: desaturate(darken(#6364FF, 50%), 50%);
-  margin-bottom: 50px;
+  margin-bottom: 20px;
+  border-radius: 3px;
+  border: none;
+
+  .card-body, .card-footer {
+    border: none;
+  }
 
   p:last-child {
     margin-bottom: 0;

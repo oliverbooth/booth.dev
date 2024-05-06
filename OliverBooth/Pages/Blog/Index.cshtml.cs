@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 
 namespace OliverBooth.Pages.Blog;
 
@@ -36,7 +36,7 @@ public class Index : PageModel
         return _blogPostService.TryGetPost(wpPostId, out IBlogPost? post) ? RedirectToPost(post) : NotFound();
     }
 
-    private IActionResult RedirectToPost(IBlogPost post)
+    private RedirectResult RedirectToPost(IBlogPost post)
     {
         var route = new
         {

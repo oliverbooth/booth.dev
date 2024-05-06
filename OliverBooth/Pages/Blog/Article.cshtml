@@ -1,9 +1,10 @@
 @page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
 @using Humanizer
 @using Markdig
-@using OliverBooth.Data
-@using OliverBooth.Data.Blog
-@using OliverBooth.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OliverBooth.Common.Data
+@using OliverBooth.Common.Data.Blog
+@using OliverBooth.Common.Services
 @inject IBlogPostService BlogPostService
 @inject MarkdownPipeline MarkdownPipeline
 @model Article
@@ -77,12 +78,7 @@
         </abbr>
     }
 </p>
-<div class="post-tags">
-    @foreach (string tag in post.Tags)
-    {
-        <a asp-page="Index" asp-route-tag="@tag" class="badge bg-secondary">@tag</a>
-    }
-</div>
+
 <hr>
 
 <article>
@@ -90,6 +86,18 @@
 </article>
 
 <hr>
+
+<div class="d-flex align-items-center mb-3">
+    <i data-lucide="tag"></i>
+    <ul class="ms-2 post-tags">
+        @foreach (string tag in post.Tags)
+        {
+            <li class="post-tag">
+                <a asp-page="Index" asp-route-tag="@Html.UrlEncoder.Encode(tag)">@tag</a>
+            </li>
+        }
+    </ul>
+</div>
 
 <div class="row">
     <div class="col-sm-12 col-md-6">

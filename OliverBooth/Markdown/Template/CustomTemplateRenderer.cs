@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OliverBooth.Data.Web;
+using OliverBooth.Extensions.Markdig.Markdown.Template;
 
 namespace OliverBooth.Markdown.Template;
 

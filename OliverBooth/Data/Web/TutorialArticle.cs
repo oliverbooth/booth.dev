@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using OliverBooth.Common.Data;
+using OliverBooth.Common.Data.Web;
 
 namespace OliverBooth.Data.Web;
 

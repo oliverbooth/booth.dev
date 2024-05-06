@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Primitives;
-using OliverBooth.Data.Blog;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 using BC = BCrypt.Net.BCrypt;
 
 namespace OliverBooth.Pages.Blog;
@@ -79,7 +79,6 @@ public class Article : PageModel
         var date = new DateOnly(year, month, day);
         if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
         {
-            Response.StatusCode = 404;
             return NotFound();
         }
 

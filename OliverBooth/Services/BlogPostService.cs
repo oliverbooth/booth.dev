@@ -2,7 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
-using OliverBooth.Data;
+using OliverBooth.Common.Data;
+using OliverBooth.Common.Data.Blog;
+using OliverBooth.Common.Services;
 using OliverBooth.Data.Blog;
 
 namespace OliverBooth.Services;
@@ -34,10 +36,12 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
-    public int GetBlogPostCount()
+    public int GetBlogPostCount(Visibility visibility = Visibility.None)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
-        return context.BlogPosts.Count();
+        return visibility == Visibility.None
+            ? context.BlogPosts.Count()
+            : context.BlogPosts.Count(p => p.Visibility == visibility);
     }
 
     /// <inheritdoc />
@@ -96,6 +100,13 @@ internal sealed class BlogPostService : IBlogPostService
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderBy(post => post.Published)
             .FirstOrDefault(post => post.Published > blogPost.Published);
+    }
+
+    /// <inheritdoc />
+    public int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None)
+    {
+        float postCount = GetBlogPostCount(visibility);
+        return (int)MathF.Ceiling(postCount / pageSize);
     }
 
     /// <inheritdoc />

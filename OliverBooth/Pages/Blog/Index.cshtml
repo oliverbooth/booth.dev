@@ -1,75 +1,26 @@
 @page
-@using Humanizer
-@using OliverBooth.Data.Mastodon
-@using OliverBooth.Services
+@using OliverBooth.Common.Data
+@using OliverBooth.Common.Data.Blog
+@using OliverBooth.Common.Services
 @model Index
-@inject IMastodonService MastodonService
+@inject IBlogPostService BlogPostService
 
 @{
     ViewData["Title"] = "Blog";
-    MastodonStatus latestStatus = MastodonService.GetLatestStatus();
 }
 
-<div class="card text-center mastodon-update-card">
-    <div class="card-body">
-        @Html.Raw(latestStatus.Content)
-        @foreach (MediaAttachment attachment in latestStatus.MediaAttachments)
-        {
-            switch (attachment.Type)
-            {
-                case AttachmentType.Audio:
-                    <p><audio controls="controls" src="@attachment.Url"></audio></p>
-                    break;
-
-                case AttachmentType.Video:
-                    <p><video controls="controls" class="figure-img img-fluid" src="@attachment.Url"></video></p>
-                    break;
-
-                case AttachmentType.Image:
-                case AttachmentType.GifV:
-                    <p><img class="figure-img img-fluid" src="@attachment.Url"></p>
-                    break;
-            }
-        }
-    </div>
-    <div class="card-footer text-muted">
-        <abbr title="@latestStatus.CreatedAt.ToString("F")">@latestStatus.CreatedAt.Humanize()</abbr>
-        &bull;
-        <a href="@latestStatus.OriginalUri" target="_blank">View on Mastodon</a>
-    </div>
-</div>
+@await Html.PartialAsync("Partials/_MastodonStatus")
 
 <div id="all-blog-posts">
-    @await Html.PartialAsync("_LoadingSpinner")
+    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(0))
+    {
+        @await Html.PartialAsync("Partials/_BlogCard", post)
+    }
 </div>
 
-<script id="blog-post-template" type="text/x-handlebars-template">
-    <div class="card-header">
-        <span class="text-muted">
-            <img class="blog-author-icon" src="{{author.avatar}}" alt="{{author.name}}">
-            <span>{{author.name}}<span>
-            <span> &bull; </span>
-            <abbr title="{{ post.formattedDate }}">{{ post.date_humanized }}</abbr>
-        </span>
-    </div>
-    <div class="card-body">
-        <h2>
-            <a href="{{post.url}}"> {{post.title}}</a>
-        </h2>
-
-        <p>{{{post.excerpt}}}</p>
-
-        {{#if post.trimmed}}
-            <p>
-                <a href="{{post.url}}">
-                    Read more...
-                </a>
-            </p>
-        {{/if}}
-    </div>
-    <div class="card-footer">
-        {{#each post.tags}}
-            <a href="?tag={{urlEncode this}}" class="badge text-bg-dark">{{this}}</a>
-        {{/each}}
-    </div>
-</script>
+@await Html.PartialAsync("Partials/_PageTabs", new ViewDataDictionary(ViewData)
+{
+    ["UrlRoot"] = "/blog",
+    ["Page"] = 1,
+    ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published)
+})

@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using System.Text;
 using Markdig;
-using OliverBooth.Data.Web;
-using OliverBooth.Services;
+using OliverBooth.Common.Data.Web;
+using OliverBooth.Common.Services;
+using OliverBooth.Extensions.Markdig.Markdown.Template;
 
 namespace OliverBooth.Markdown.Template;
 

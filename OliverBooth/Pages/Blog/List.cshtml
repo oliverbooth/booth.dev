@@ -1,0 +1,23 @@
+@page "/blog/page/{pageNumber:int}"
+@model List
+@using OliverBooth.Common.Data
+@using OliverBooth.Common.Data.Blog
+@using OliverBooth.Common.Services
+
+@inject IBlogPostService BlogPostService
+
+@await Html.PartialAsync("Partials/_MastodonStatus")
+
+<div id="all-blog-posts">
+    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber))
+    {
+        @await Html.PartialAsync("Partials/_BlogCard", post)
+    }
+</div>
+
+@await Html.PartialAsync("Partials/_PageTabs", new ViewDataDictionary(ViewData)
+{
+    ["UrlRoot"] = "/blog",
+    ["Page"] = Model.PageNumber,
+    ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published)
+})
