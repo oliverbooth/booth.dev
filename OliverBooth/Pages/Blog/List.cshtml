@@ -9,7 +9,7 @@
 @await Html.PartialAsync("Partials/_MastodonStatus")
 
 <div id="all-blog-posts">
-    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber))
+    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber - 1))
     {
         @await Html.PartialAsync("Partials/_BlogCard", post)
     }
