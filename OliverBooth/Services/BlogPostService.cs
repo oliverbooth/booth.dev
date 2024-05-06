@@ -40,8 +40,8 @@ internal sealed class BlogPostService : IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         return visibility == Visibility.None
-            ? context.BlogPosts.Count()
-            : context.BlogPosts.Count(p => p.Visibility == visibility);
+            ? context.BlogPosts.Count(p => !p.IsRedirect)
+            : context.BlogPosts.Count(p => !p.IsRedirect && p.Visibility == visibility);
     }
 
     /// <inheritdoc />
