@@ -11,13 +11,12 @@ div.blog-card {
   :last-child {
     margin-bottom: 0;
   }
-  
+
   article {
     padding: 0;
     margin: 0;
   }
 }
-
 
 ul.pagination {
   border: none;
@@ -26,12 +25,12 @@ ul.pagination {
     a, span {
       border-radius: $border-radius !important;
       border: none;
-      
+
       &:link, &:visited, &:active {
         color: #007ec6;
       }
     }
-    
+
     &.active a, &.active span {
       background: #007ec6;
     }
@@ -43,6 +42,32 @@ ul.pagination {
     &:hover {
       a {
         color: #ffffff !important;
+      }
+    }
+  }
+}
+
+ul.post-tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li.post-tag {
+    display: inline-block;
+    margin: 0 5px;
+
+    a {
+      border-radius: 5px;
+      border: 1px solid #007ec6;
+      padding: 5px;
+
+      &:link, &:active, &:visited {
+        color: #007ec6;
+      }
+
+      &:hover {
+        border-color: #ffffff;
+        color: #ffffff;
       }
     }
   }

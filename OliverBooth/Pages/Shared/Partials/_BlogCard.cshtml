@@ -1,4 +1,5 @@
 @using Humanizer
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OliverBooth.Common.Data.Blog
 @using OliverBooth.Common.Services
 @model IBlogPost
@@ -49,8 +50,16 @@
 
     <hr/>
 
-    @foreach (string tag in Model.Tags)
-    {
-        <a href="?tag=@Html.UrlEncoder.Encode(tag)" class="badge text-bg-dark">@tag</a>
-    }
+    <div class="d-flex align-items-center">
+        <i data-lucide="tag"></i>
+        <ul class="ms-2 post-tags">
+            @foreach (string tag in Model.Tags)
+            {
+                <li class="post-tag">
+                    <a asp-page="Index" asp-route-tag="@Html.UrlEncoder.Encode(tag)">@tag</a>
+                </li>
+            }
+        </ul>
+    </div>
+
 </div>
