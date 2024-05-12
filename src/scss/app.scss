@@ -15,6 +15,16 @@ html, body {
   }
 }
 
+.keystroke {
+  background: color.adjust($foreground, $lightness: -20%);
+  color: $background;
+  border-radius: 2px;
+  border: color.adjust($foreground, $lightness: -30%);
+  box-shadow: #2b2b2b 2px 2px;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem $ui-foreground, 0 0 0 0.25rem #258cfb;
 }
