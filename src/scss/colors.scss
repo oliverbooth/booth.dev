@@ -1,0 +1,12 @@
+@use "sass:color";
+
+$background: #121212;
+$foreground: #f5f5f5;
+$accent: #03a9f4;
+$ui-foreground: #ffffff;
+$content-background: #333333;
+$blockquote: #ff0033;
+$project-background: #000000;
+
+$link-text: $accent;
+$link-hover: lighten($link-text, 50%);

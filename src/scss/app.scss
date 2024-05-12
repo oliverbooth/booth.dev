@@ -1,9 +1,11 @@
+@use "sass:color";
+@import "colors";
 @import "markdown";
 @import "blog";
 
 html, body {
-  background: #121212;
-  color: #f5f5f5;
+  background: $background;
+  color: $foreground;
   font-size: 16px;
 }
 
@@ -14,7 +16,7 @@ html, body {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem $ui-foreground, 0 0 0 0.25rem #258cfb;
 }
 
 html {
@@ -35,11 +37,11 @@ main.container {
 a {
   &:link, &:visited, &:hover, &:active {
     text-decoration: none;
-    color: #03A9F4;
+    color: $link-text;
   }
 
   &:hover {
-    color: #ffffff;
+    color: $link-hover;
   }
 }
 
@@ -47,19 +49,19 @@ a {
   a {
     &:link, &:visited, &:hover, &:active {
       text-decoration: none;
-      color: white;
+      color: $ui-foreground;
 
       * {
         font-family: 'Roboto Mono', monospace;
         text-decoration: none;
-        color: white;
+        color: $ui-foreground;
       }
     }
   }
 }
 
 hr.page-separator {
-  border-top: 5px dashed #ffffff;
+  border-top: 5px dashed $ui-foreground;
   opacity: 1;
   margin: 50px 0;
 }
@@ -86,7 +88,7 @@ ul.contact-reasons {
     a {
       &:link, &:visited, &:hover, &:active {
         text-decoration: none;
-        color: white;
+        color: $ui-foreground;
       }
 
       &:hover {
@@ -98,10 +100,10 @@ ul.contact-reasons {
 
 .card {
   background: #212121;
-  color: #ffffff;
+  color: $ui-foreground;
 
   a.btn, button {
-    color: #ffffff;
+    color: $ui-foreground;
   }
 }
 
@@ -128,7 +130,7 @@ nav {
 
         &:link, &:visited, &:hover, &:active {
           text-decoration: none;
-          color: white;
+          color: $ui-foreground;
         }
 
         &:hover {
@@ -144,7 +146,7 @@ nav {
 }
 
 article {
-  background: #333333;
+  background: $content-background;
   padding: 20px;
   border-radius: 5px;
 
@@ -153,7 +155,7 @@ article {
   }
 
   blockquote {
-    border-left: 2px solid #f03;
+    border-left: 2px solid $blockquote;
     padding-left: 10px;
   }
 
@@ -173,7 +175,7 @@ article {
 
   abbr {
     text-decoration: none;
-    border-bottom: 1px dotted #ffffff;
+    border-bottom: 1px dotted $link-hover;
   }
 
   span.timestamp {
@@ -185,7 +187,7 @@ article {
 
 .project-card {
   position: relative;
-  background: #000;
+  background: $project-background;
   box-shadow: 0 0 15px rgba(0, 0, 0, .1);
 
   &:hover {
@@ -213,7 +215,7 @@ article {
 
     a {
       &:link, &:visited, &:hover &:active {
-        color: #fff;
+        color: $ui-foreground;
       }
     }
 
@@ -225,7 +227,7 @@ article {
       width: 100%;
       margin: -34px 0 0;
       padding: 5px;
-      background-color: rgba(#000, 50%);
+      background-color: rgba($project-background, 50%);
     }
   }
 }
@@ -414,7 +416,7 @@ td.trim-p p:last-child {
   }
 
   &:hover {
-    color: #03A9F4;
+    color: $accent;
     background-color: #1E1E1E !important;
   }
 }
