@@ -27,11 +27,13 @@ internal sealed class MastodonService : IMastodonService
     /// <inheritdoc />
     public IMastodonStatus GetLatestStatus()
     {
+        string domain = _configuration.GetSection("Mastodon:Domain").Value ?? string.Empty;
         string token = _configuration.GetSection("Mastodon:Token").Value ?? string.Empty;
         string account = _configuration.GetSection("Mastodon:Account").Value ?? string.Empty;
+
         using var request = new HttpRequestMessage();
         request.Headers.Add("Authorization", $"Bearer {token}");
-        request.RequestUri = new Uri($"https://mastodon.olivr.me/api/v1/accounts/{account}/statuses");
+        request.RequestUri = new Uri($"https://{domain}/api/v1/accounts/{account}/statuses");
 
         using HttpResponseMessage response = _httpClient.Send(request);
         using var stream = response.Content.ReadAsStream();
