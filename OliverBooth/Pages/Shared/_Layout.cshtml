@@ -5,6 +5,7 @@
 @using OliverBooth.Extensions
 @inject IBlogPostService BlogPostService
 @inject ITutorialService TutorialService
+@inject IConfiguration Configuration
 @{
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
@@ -106,7 +107,11 @@
         <hr>
 
         <ul class="footer-nav">
-            <li><a title="@("@oliverbooth@mastodon.social")" href="https://mastodon.social/@@oliverbooth" rel="me" class="brand-mastodon"><i class="fa-brands fa-mastodon"></i></a></li>
+            @{
+                string domain = Configuration.GetSection("Mastodon:Domain").Value ?? string.Empty;
+                string username = Configuration.GetSection("Mastodon:Username").Value ?? string.Empty;
+            }
+            <li><a title="@($"@{username}@{domain}")" href="https://@domain/@@@username" rel="me" class="brand-mastodon"><i class="fa-brands fa-mastodon"></i></a></li>
             <li><a title="LinkedIn/oliverlukebooth" href="https://www.linkedin.com/in/oliverlukebooth/" class="brand-linkedin"><i class="fa-brands fa-linkedin"></i></a></li>
             <li><a title="Blog RSS Feed" asp-controller="Rss" asp-action="OnGet"><i class="fa-solid fa-rss text-orange"></i></a></li>
             <li><a title="View Source" href="https://git.oliverbooth.dev/oliverbooth/oliverbooth.dev"><i class="fa-solid fa-code"></i></a></li>
