@@ -12,10 +12,17 @@
 }
 <nav>
     <ul class="pagination justify-content-center">
-        @Html.Raw(utility.ShowBounds(PageTabsUtility.BoundsType.Lower))
-        @Html.Raw(utility.ShowTab(1)) @* always visible *@
-        @Html.Raw(utility.ShowTabWindow())
-        @Html.Raw(utility.ShowTab(pageCount)) @* always visible *@
-        @Html.Raw(utility.ShowBounds(PageTabsUtility.BoundsType.Upper))
+        @if (pageCount == 1)
+        {
+            @Html.Raw(utility.ShowTab(1)) @* always visible *@
+        }
+        else
+        {
+            @Html.Raw(utility.ShowBounds(PageTabsUtility.BoundsType.Lower))
+            @Html.Raw(utility.ShowTab(1)) @* always visible *@
+            @Html.Raw(utility.ShowTabWindow())
+            @Html.Raw(utility.ShowTab(pageCount)) @* always visible *@
+            @Html.Raw(utility.ShowBounds(PageTabsUtility.BoundsType.Upper))
+        }
     </ul>
 </nav>
