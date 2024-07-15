@@ -1,3 +1,4 @@
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -30,7 +31,7 @@ public class List : PageModel
         }
 
         PageNumber = page;
-        Tag = tag?.Split('+').Select(t => t.Replace("%20", " ")).ToArray() ?? [];
+        Tag = (tag?.Split('+').Select(HttpUtility.UrlDecode).ToArray() ?? [])!;
         return Page();
     }
 }

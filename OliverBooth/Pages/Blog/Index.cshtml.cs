@@ -1,3 +1,4 @@
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OliverBooth.Common.Data.Blog;
@@ -23,7 +24,7 @@ public class Index : PageModel
     {
         if (postId.HasValue == wpPostId.HasValue)
         {
-            Tag = tag?.Split('+').Select(t => t.Replace("%20", " ")).ToArray() ?? [];
+            Tag = (tag?.Split('+').Select(HttpUtility.UrlDecode).ToArray() ?? [])!;
             return Page();
         }
 
