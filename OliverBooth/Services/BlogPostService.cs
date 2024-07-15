@@ -36,9 +36,16 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
-    public int GetBlogPostCount(Visibility visibility = Visibility.None)
+    public int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
+        if (tags is { Length: > 0 })
+        {
+            return visibility == Visibility.None
+                ? context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Tags.Intersect(tags).Any())
+                : context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Visibility == visibility && p.Tags.Intersect(tags).Any());
+        }
+
         return visibility == Visibility.None
             ? context.BlogPosts.Count(p => !p.IsRedirect)
             : context.BlogPosts.Count(p => !p.IsRedirect && p.Visibility == visibility);
@@ -60,13 +67,20 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10)
+    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10, string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
-        return context.BlogPosts
+        IEnumerable<BlogPost> posts = context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
-            .Skip(page * pageSize)
+            .AsEnumerable();
+
+        if (tags is { Length: > 0 })
+        {
+            posts = posts.Where(p => p.Tags.Intersect(tags).Any());
+        }
+
+        return posts.Skip(page * pageSize)
             .Take(pageSize)
             .ToArray().Select(CacheAuthor).ToArray();
     }
@@ -103,9 +117,9 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
-    public int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None)
+    public int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None, string[]? tags = null)
     {
-        float postCount = GetBlogPostCount(visibility);
+        float postCount = GetBlogPostCount(visibility, tags);
         return (int)MathF.Ceiling(postCount / pageSize);
     }
 

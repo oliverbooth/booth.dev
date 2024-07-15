@@ -14,12 +14,15 @@ public class List : PageModel
     /// <value>The requested page number.</value>
     public int PageNumber { get; private set; }
 
+    public string[] Tag { get; private set; } = [];
+
     /// <summary>
     ///     Handles the incoming GET request to the page.
     /// </summary>
     /// <param name="page">The requested page number, starting from 1.</param>
+    /// <param name="tag">The tag by which to filter results.</param>
     /// <returns></returns>
-    public IActionResult OnGet([FromRoute(Name = "pageNumber")] int page = 1)
+    public IActionResult OnGet([FromRoute(Name = "pageNumber")] int page = 1, [FromQuery(Name = "tag")] string? tag = null)
     {
         if (page < 2)
         {
@@ -27,6 +30,7 @@ public class List : PageModel
         }
 
         PageNumber = page;
+        Tag = tag?.Split('+').Select(t => t.Replace("%20", " ")).ToArray() ?? [];
         return Page();
     }
 }

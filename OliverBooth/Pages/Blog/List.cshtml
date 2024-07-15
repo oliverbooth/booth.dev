@@ -9,7 +9,7 @@
 @await Html.PartialAsync("Partials/_MastodonStatus")
 
 <div id="all-blog-posts">
-    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber - 1))
+    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber - 1, tags: Model.Tag))
     {
         @await Html.PartialAsync("Partials/_BlogCard", post)
     }
@@ -19,5 +19,6 @@
 {
     ["UrlRoot"] = "/blog",
     ["Page"] = Model.PageNumber,
-    ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published)
+    ["Tags"] = Model.Tag,
+    ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published, tags: Model.Tag)
 })

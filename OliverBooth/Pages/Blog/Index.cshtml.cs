@@ -15,11 +15,15 @@ public class Index : PageModel
         _blogPostService = blogPostService;
     }
 
+    public string[] Tag { get; private set; } = [];
+
     public IActionResult OnGet([FromQuery(Name = "pid")] Guid? postId = null,
-        [FromQuery(Name = "p")] int? wpPostId = null)
+        [FromQuery(Name = "p")] int? wpPostId = null,
+        [FromQuery(Name = "tag")] string? tag = null)
     {
         if (postId.HasValue == wpPostId.HasValue)
         {
+            Tag = tag?.Split('+').Select(t => t.Replace("%20", " ")).ToArray() ?? [];
             return Page();
         }
 

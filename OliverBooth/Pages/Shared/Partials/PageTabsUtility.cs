@@ -32,6 +32,8 @@ public class PageTabsUtility
         set => _urlRoot = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
     }
 
+    public string[]? Tags { get; set; } = [];
+
     /// <summary>
     ///     Shows the bound chevrons for the specified bounds type.
     /// </summary>
@@ -129,7 +131,9 @@ public class PageTabsUtility
     private string GetLinkForPage(int page)
     {
         // page 1 doesn't use /page/n route
-        return page == 1 ? _urlRoot : $"{_urlRoot}/page/{page}";
+        return page == 1
+            ? $"{_urlRoot}{(Tags is { Length: > 0 } ? $"?tag={string.Join('+', Tags)}" : "")}"
+            : $"{_urlRoot}/page/{page}{(Tags is { Length: > 0 } ? $"?tag={string.Join('+', Tags)}" : "")}";
     }
 
     private string ShowLowerBound()

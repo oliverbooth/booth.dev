@@ -24,8 +24,9 @@ public interface IBlogPostService
     ///     Returns the total number of blog posts.
     /// </summary>
     /// <param name="visibility">The post visibility filter.</param>
+    /// <param name="tags">The tags of the posts to return.</param>
     /// <returns>The total number of blog posts.</returns>
-    int GetBlogPostCount(Visibility visibility = Visibility.None);
+    int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null);
 
     /// <summary>
     ///     Returns a collection of blog posts from the specified page, optionally limiting the number of posts
@@ -33,8 +34,9 @@ public interface IBlogPostService
     /// </summary>
     /// <param name="page">The zero-based index of the page to return.</param>
     /// <param name="pageSize">The maximum number of posts to return per page.</param>
+    /// <param name="tags">The tags of the posts to return.</param>
     /// <returns>A collection of blog posts.</returns>
-    IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10);
+    IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10, string[]? tags = null);
 
     /// <summary>
     ///     Returns the number of legacy comments for the specified post.
@@ -70,8 +72,9 @@ public interface IBlogPostService
     /// </summary>
     /// <param name="pageSize">The page size. Defaults to 10.</param>
     /// <param name="visibility">The post visibility filter.</param>
+    /// <param name="tags">The tags of the posts to return.</param>
     /// <returns>The page count.</returns>
-    int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None);
+    int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None, string[]? tags = null);
 
     /// <summary>
     ///     Returns the previous blog post from the specified blog post.
