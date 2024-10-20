@@ -22,7 +22,7 @@ public class ContactController : Controller
     {
         _logger = logger;
         _configuration = configuration;
-        
+
         IConfigurationSection mailConfiguration = configuration.GetSection("Mail");
         _destination = mailConfiguration.GetSection("Destination");
         _sender = mailConfiguration.GetSection("Sender");
@@ -61,9 +61,9 @@ public class ContactController : Controller
         {
             await sender.WriteEmail
                 .To("Oliver Booth", _destination.Get<string>())
-                .From(name, _sender.Get<string>())
-                .ReplyTo(email)
-                .Subject($"[Contact via Website] {subject}")
+                .From("Contact via Website", _sender.Get<string>())
+                .ReplyTo(name, email)
+                .Subject(subject)
                 .BodyText(message)
                 .SendAsync();
         }
