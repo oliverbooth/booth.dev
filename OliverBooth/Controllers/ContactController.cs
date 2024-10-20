@@ -11,6 +11,7 @@ public class ContactController : Controller
     private readonly ILogger<ContactController> _logger;
     private readonly IConfiguration _configuration;
     private readonly IConfigurationSection _destination;
+    private readonly IConfigurationSection _sender;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ContactController" /> class.
@@ -21,7 +22,10 @@ public class ContactController : Controller
     {
         _logger = logger;
         _configuration = configuration;
-        _destination = configuration.GetSection("Mail").GetSection("Destination");
+        
+        IConfigurationSection mailConfiguration = configuration.GetSection("Mail");
+        _destination = mailConfiguration.GetSection("Destination");
+        _sender = mailConfiguration.GetSection("Sender");
     }
 
     [HttpGet("{_?}")]
@@ -57,7 +61,8 @@ public class ContactController : Controller
         {
             await sender.WriteEmail
                 .To("Oliver Booth", _destination.Get<string>())
-                .From(name, email)
+                .From(name, _sender.Get<string>())
+                .ReplyTo(email)
                 .Subject($"[Contact via Website] {subject}")
                 .BodyText(message)
                 .SendAsync();
@@ -79,8 +84,9 @@ public class ContactController : Controller
         string? mailServer = mailSection.GetSection("Server").Value;
         string? mailUsername = mailSection.GetSection("Username").Value;
         string? mailPassword = mailSection.GetSection("Password").Value;
+        ushort port = mailSection.GetSection("Port").Get<ushort>();
 
-        var sender = SmtpSender.Create(mailServer);
+        var sender = SmtpSender.Create(mailServer, port);
         sender.SetCredential(mailUsername, mailPassword);
         return sender;
     }
