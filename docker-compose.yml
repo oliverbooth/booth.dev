@@ -20,3 +20,7 @@ services:
       - SSL_KEY_PATH=${SSL_KEY_PATH}
       - MASTODON_TOKEN=${MASTODON_TOKEN}
       - MASTODON_ACCOUNT=${MASTODON_ACCOUNT}
+
+networks:
+  default:
+    driver: bridge
