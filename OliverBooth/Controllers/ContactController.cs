@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using System.Security.Authentication;
 using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -95,6 +96,7 @@ public class ContactController : Controller
         destination = mailSection.GetSection("Destination").Value ?? string.Empty;
 
         var client = new SmtpClient();
+        client.SslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
         client.ServerCertificateValidationCallback = (s, c, h, e) => true;
         client.Connect(mailServer, port, SecureSocketOptions.SslOnConnect);
         client.Authenticate(mailUsername, mailPassword);
