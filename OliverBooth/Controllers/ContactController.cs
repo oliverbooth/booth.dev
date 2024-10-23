@@ -95,6 +95,7 @@ public class ContactController : Controller
         destination = mailSection.GetSection("Destination").Value ?? string.Empty;
 
         var client = new SmtpClient();
+        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
         client.Connect(mailServer, port, SecureSocketOptions.SslOnConnect);
         client.Authenticate(mailUsername, mailPassword);
         return client;
