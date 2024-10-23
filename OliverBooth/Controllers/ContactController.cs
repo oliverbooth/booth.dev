@@ -1,6 +1,9 @@
-using MailKitSimplified.Sender.Services;
+using System.Net.Mail;
+using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using MimeKit;
+using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace OliverBooth.Controllers;
 
@@ -56,16 +59,20 @@ public class ContactController : Controller
         StringValues subject = form["subject"];
         StringValues message = form["message"];
 
-        await using SmtpSender sender = CreateSender();
+        using SmtpClient client = CreateSmtpClient(out string destination);
         try
         {
-            await sender.WriteEmail
-                .To("Oliver Booth", _destination.Get<string>())
-                .From("Contact via Website", _sender.Get<string>())
-                .ReplyTo(name, email)
-                .Subject(subject)
-                .BodyText(message)
-                .SendAsync();
+            var emailAddress = email.ToString();
+            var mailMessage = new MailMessage();
+
+            mailMessage.From = new MailAddress(emailAddress, name);
+            mailMessage.ReplyToList.Add(new MailAddress(emailAddress, name));
+            mailMessage.To.Add(destination);
+            mailMessage.Subject = subject;
+            mailMessage.Body = message;
+            mailMessage.IsBodyHtml = false;
+
+            await client.SendAsync(MimeMessage.CreateFromMailMessage(mailMessage));
         }
         catch (Exception e)
         {
@@ -78,16 +85,18 @@ public class ContactController : Controller
         return RedirectToPage("/Contact/Result");
     }
 
-    private SmtpSender CreateSender()
+    private SmtpClient CreateSmtpClient(out string destination)
     {
         IConfigurationSection mailSection = _configuration.GetSection("Mail");
         string? mailServer = mailSection.GetSection("Server").Value;
         string? mailUsername = mailSection.GetSection("Username").Value;
         string? mailPassword = mailSection.GetSection("Password").Value;
         ushort port = mailSection.GetSection("Port").Get<ushort>();
+        destination = mailSection.GetSection("Destination").Value ?? string.Empty;
 
-        var sender = SmtpSender.Create(mailServer, port);
-        sender.SetCredential(mailUsername, mailPassword);
-        return sender;
+        var client = new SmtpClient();
+        client.Connect(mailServer, port, SecureSocketOptions.SslOnConnect);
+        client.Authenticate(mailUsername, mailPassword);
+        return client;
     }
 }
