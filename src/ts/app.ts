@@ -74,7 +74,7 @@ declare const lucide: any;
         const darkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
         const favicon = document.querySelector("link[rel~=\"icon\"]");
         // @ts-ignore
-        favicon.href = `/img/${darkMode ? "favicon-dark.png" : "favicon.png"}`;
+        favicon.href = `/img/${darkMode ? "favicon.png" : "favicon-dark.png"}`;
     }
 
     setFavicon();
