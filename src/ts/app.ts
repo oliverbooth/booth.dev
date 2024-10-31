@@ -69,4 +69,14 @@ declare const lucide: any;
             }
         });
     }
+
+    function setFavicon() {
+        const darkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const favicon = document.querySelector("link[rel~=\"icon\"]");
+        // @ts-ignore
+        favicon.href = `/img/${darkMode ? "favicon-dark.png" : "favicon.png"}`;
+    }
+
+    setFavicon();
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
 })();
