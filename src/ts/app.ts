@@ -75,6 +75,10 @@ declare const lucide: any;
         const favicon = document.querySelector("link[rel~=\"icon\"]");
         // @ts-ignore
         favicon.href = `/img/${darkMode ? "favicon.png" : "favicon-dark.png"}`;
+        document.querySelector("html").dataset.bsTheme = darkMode ? "dark" : "light";
+
+        const siteLogo = document.getElementById("site-logo") as HTMLImageElement;
+        siteLogo.src = darkMode ? "/img/ob-256x256.png" : "/img/ob-256x256-dark.png";
     }
 
     setFavicon();

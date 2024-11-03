@@ -4,9 +4,15 @@
 @import "blog";
 
 html, body {
-  background: $background;
-  color: $foreground;
   font-size: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  @import "app.dark";
+}
+
+@media (prefers-color-scheme: light) {
+  @import "app.light";
 }
 
 @media (min-width: 768px) {
@@ -16,17 +22,10 @@ html, body {
 }
 
 .keystroke {
-  background: color.adjust($foreground, $lightness: -20%);
-  color: $background;
   border-radius: 2px;
-  border: color.adjust($foreground, $lightness: -30%);
   box-shadow: #2b2b2b 2px 2px;
   font-size: 12px;
   padding: 2px 4px;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem $ui-foreground, 0 0 0 0.25rem #258cfb;
 }
 
 html {
@@ -39,7 +38,6 @@ body {
 }
 
 main.container {
-  background: #333;
   padding: 20px;
   border-radius: 5px;
 }
@@ -47,11 +45,6 @@ main.container {
 a {
   &:link, &:visited, &:hover, &:active {
     text-decoration: none;
-    color: $link-text;
-  }
-
-  &:hover {
-    color: $link-hover;
   }
 }
 
@@ -59,19 +52,16 @@ a {
   a {
     &:link, &:visited, &:hover, &:active {
       text-decoration: none;
-      color: $ui-foreground;
 
       * {
         font-family: 'Roboto Mono', monospace;
         text-decoration: none;
-        color: $ui-foreground;
       }
     }
   }
 }
 
 hr.page-separator {
-  border-top: 5px dashed $ui-foreground;
   opacity: 1;
   margin: 50px 0;
 }
@@ -98,22 +88,12 @@ ul.contact-reasons {
     a {
       &:link, &:visited, &:hover, &:active {
         text-decoration: none;
-        color: $ui-foreground;
       }
 
       &:hover {
         text-decoration: underline;
       }
     }
-  }
-}
-
-.card {
-  background: #212121;
-  color: $ui-foreground;
-
-  a.btn, button {
-    color: $ui-foreground;
   }
 }
 
@@ -140,7 +120,6 @@ nav {
 
         &:link, &:visited, &:hover, &:active {
           text-decoration: none;
-          color: $ui-foreground;
         }
 
         &:hover {
@@ -156,7 +135,6 @@ nav {
 }
 
 article {
-  background: $content-background;
   padding: 20px;
   border-radius: 5px;
 
@@ -165,7 +143,6 @@ article {
   }
 
   blockquote {
-    border-left: 2px solid $blockquote;
     padding-left: 10px;
   }
 
@@ -185,7 +162,7 @@ article {
 
   abbr {
     text-decoration: none;
-    border-bottom: 1px dotted $link-hover;
+    border-bottom: 1px dotted $link-hover-dark;
   }
 
   span.timestamp {
@@ -197,7 +174,6 @@ article {
 
 .project-card {
   position: relative;
-  background: $project-background;
   box-shadow: 0 0 15px rgba(0, 0, 0, .1);
 
   &:hover {
@@ -223,12 +199,6 @@ article {
       transition: transform 500ms;
     }
 
-    a {
-      &:link, &:visited, &:hover &:active {
-        color: $ui-foreground;
-      }
-    }
-
     p.project-title {
       font-size: 1em;
       transition: font-size 500ms, margin 500ms;
@@ -237,37 +207,20 @@ article {
       width: 100%;
       margin: -34px 0 0;
       padding: 5px;
-      background-color: rgba($project-background, 50%);
     }
   }
 }
 
 code:not([class*="language-"]) {
-  background: #1e1e1e !important;
-  color: #dcdcda !important;
   font-size: inherit !important;
   padding: 3px;
 }
 
-a:link, a:visited, a:hover, a:active {
-  code:not([class*="language-"]) {
-    color: #03a9f4 !important;
-  }
-}
-
-a:hover {
-  code:not([class*="language-"]) {
-    color: #fff !important;
-  }
-}
-
 pre {
-  background: #1e1e1e !important;
   border-radius: 5px;
   font-size: 0.9em !important;
 
   code mark, code mark span {
-    background: #d8ba76 !important;
     color: #000 !important;
   }
 }
@@ -351,22 +304,12 @@ a.bmc-btn {
 a.brand-mastodon {
   &:link, &:visited, &:hover, &:active {
     text-decoration: none;
-    color: #5a48dd;
-  }
-
-  &:hover {
-    color: #fff;
   }
 }
 
 a.brand-linkedin {
   &:link, &:visited, &:hover, &:active {
     text-decoration: none;
-    color: #0077b5;
-  }
-
-  &:hover {
-    color: #fff;
   }
 }
 
@@ -385,38 +328,6 @@ td.trim-p p:last-child {
   margin-bottom: 0;
 }
 
-#usa-countdown {
-  background-image: url('/img/us-flag-cover_512x166.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 10px;
-  cursor: pointer;
-
-  * {
-    cursor: pointer;
-  }
-
-  .usa-countdown-element {
-    margin: 10px 0;
-    padding: 5px;
-    font-family: "Gabarito", sans-serif;
-    font-weight: 500;
-    text-align: center;
-    font-size: 3em;
-    border-right: 2px solid #fff;
-    border-left: 2px solid #fff;
-
-    &:first-child {
-      border-left: none;
-    }
-
-    &:last-child {
-      border-right: none;
-    }
-  }
-}
-
 .post-tags a.badge {
   transition: color 250ms, background-color 250ms;
 
@@ -426,7 +337,7 @@ td.trim-p p:last-child {
   }
 
   &:hover {
-    color: $accent;
+    color: $accent-dark;
     background-color: #1E1E1E !important;
   }
 }
@@ -463,8 +374,13 @@ td.trim-p p:last-child {
   }
 }
 
+@media (prefers-color-scheme: dark) {
+}
+
+@media (prefers-color-scheme: light) {
+}
+
 .mastodon-update-card.card {
-  background-color: desaturate(darken(#6364FF, 50%), 50%);
   margin-bottom: 20px;
   border-radius: 3px;
   border: none;
@@ -541,6 +457,11 @@ td.trim-p p:last-child {
     animation-timing-function: ease-out;
     animation-name: headshot-spin-end;
   }
+}
+
+button#theme-switch {
+  width: 42pt;
+  height: 42pt;
 }
 
 @keyframes headshot-spin-start {

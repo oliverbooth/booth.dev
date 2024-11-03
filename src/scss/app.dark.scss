@@ -1,0 +1,132 @@
+@use "sass:color";
+@import "colors";
+
+html, body {
+  background: $background-dark;
+  color: $foreground-dark;
+}
+
+#site-title {
+  a {
+    &:link, &:visited, &:hover, &:active {
+      color: $ui-foreground-dark;
+
+      * {
+        color: $ui-foreground-dark;
+      }
+    }
+  }
+}
+
+nav ul.site-nav li a {
+  &:link, &:visited, &:hover, &:active {
+    color: $ui-foreground-dark;
+  }
+}
+
+ul.contact-reasons li a {
+  &:link, &:visited, &:hover, &:active {
+    color: $ui-foreground-dark;
+  }
+}
+
+.card {
+  background: $card-background-dark;
+  color: $ui-foreground-dark;
+
+  a.btn, button {
+    color: $ui-foreground-dark;
+  }
+}
+
+article {
+  background: $content-background-dark;
+}
+
+main.container {
+  background: $content-background-dark;
+}
+
+a {
+  &:link, &:visited, &:hover, &:active {
+    color: $link-text-dark;
+  }
+
+  &:hover {
+    color: $link-hover-dark;
+  }
+}
+
+a.brand-mastodon {
+  &:hover {
+    color: $ui-foreground-dark;
+  }
+}
+
+hr.page-separator {
+  border-top: 5px dashed $ui-foreground-dark;
+}
+
+article blockquote {
+  border-left: 2px solid $blockquote-dark;
+}
+
+.project-card {
+  background: $project-background-dark;
+
+  a {
+    &:link, &:visited, &:hover &:active {
+      color: $ui-foreground-dark;
+    }
+  }
+
+  p.project-title {
+    background-color: rgba($project-background-dark, 50%);
+  }
+}
+
+code:not([class*="language-"]) {
+  background: #1e1e1e !important;
+  color: #dcdcda !important;
+}
+
+a:link, a:visited, a:active {
+  code:not([class*="language-"]) {
+    color: $link-text-dark !important;
+  }
+}
+
+a:hover {
+  code:not([class*="language-"]) {
+    color: $link-hover-dark !important;
+  }
+}
+
+a.brand-linkedin {
+  &:hover {
+    color: $ui-foreground-dark;
+  }
+}
+
+pre {
+  background: #1e1e1e !important;
+
+  code mark, code mark span {
+    background: #d8ba76 !important;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem $ui-foreground-dark, 0 0 0 0.25rem #258cfb;
+}
+
+.keystroke {
+  background: color.adjust($foreground-dark, $lightness: -20%);
+  color: $background-dark;
+  border: color.adjust($foreground-dark, $lightness: -30%);
+}
+
+.mastodon-update-card.card {
+  background-color: desaturate(darken(#6364FF, 50%), 50%);
+  color: #fff;
+}

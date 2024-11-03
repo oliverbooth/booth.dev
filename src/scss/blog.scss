@@ -1,9 +1,21 @@
-$blog-card-bg: #333333;
+$blog-card-bg-dark: #333333;
+$blog-card-bg-light: #ffffff;
 $blog-card-gutter: 20px;
 $border-radius: 3px;
 
+@media (prefers-color-scheme: dark) {
+  div.blog-card {
+    background-color: $blog-card-bg-dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  div.blog-card {
+    background-color: $blog-card-bg-light;
+  }
+}
+
 div.blog-card {
-  background: $blog-card-bg;
   margin-bottom: $blog-card-gutter;
   padding: $blog-card-gutter;
   border-radius: $border-radius;

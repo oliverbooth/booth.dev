@@ -2,6 +2,7 @@
 @using OliverBooth.Common.Data.Blog
 @using OliverBooth.Common.Data.Web
 @using OliverBooth.Common.Services
+@using OliverBooth.Data
 @using OliverBooth.Extensions
 @inject IBlogPostService BlogPostService
 @inject ITutorialService TutorialService
@@ -9,9 +10,15 @@
 @{
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
+    SiteTheme siteTheme = request.Cookies["_theme"] switch
+    {
+        "dark" => SiteTheme.Dark,
+        "light" => SiteTheme.Light,
+        _ => SiteTheme.Auto
+    };
 }
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="@(siteTheme switch { SiteTheme.Light => "light", _ => "dark" })">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,7 +68,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/prism.min.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/prism.vs.min.css" asp-append-version="true">
+    @switch (siteTheme)
+    {
+        case SiteTheme.Dark:
+            <link rel="stylesheet" href="~/css/prism-vs-dark.min.css" asp-append-version="true">
+            break;
+
+        case SiteTheme.Light:
+            <link rel="stylesheet" href="~/css/prism-vs-light.min.css" asp-append-version="true">
+            break;
+
+        default:
+            <link rel="stylesheet" href="~/css/prism-vs-dark.min.css" asp-append-version="true" media="(prefers-color-scheme: dark)">
+            <link rel="stylesheet" href="~/css/prism-vs-light.min.css" asp-append-version="true" media="(prefers-color-scheme: light)">
+            break;
+    }
     <link rel="stylesheet" href="~/css/app.min.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/ribbon.min.css" asp-append-version="true">
 </head>
@@ -69,7 +90,7 @@
 <header class="container" style="margin-top: 20px;">
     <div id="site-title" class="text-center">
         <h1>
-            <a href="/"><img src="~/img/ob-256x256.png" alt="Oliver Booth" height="128"> Oliver Booth</a>
+            <a href="/"><img id="site-logo" src="~/img/ob-256x256.png" alt="Oliver Booth" height="128"> Oliver Booth</a>
         </h1>
     </div>
 </header>
