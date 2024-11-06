@@ -22,10 +22,10 @@ public class RssController : Controller
     }
 
     [HttpGet]
-    [Produces("application/rss+xml")]
+    [Produces("application/xml")]
     public IActionResult OnGet()
     {
-        Response.ContentType = "application/rss+xml";
+        Response.ContentType = "application/xml";
 
         var baseUrl = $"https://{Request.Host}/blog";
         var blogItems = new List<BlogItem>();
