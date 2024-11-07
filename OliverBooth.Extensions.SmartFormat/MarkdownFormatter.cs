@@ -33,7 +33,7 @@ public sealed class MarkdownFormatter : IFormatter
             return false;
 
         var pipeline = _serviceProvider.GetService<MarkdownPipeline>();
-        formattingInfo.Write(Markdig.Markdown.ToHtml(value, pipeline));
+        formattingInfo.Write(Markdown.ToHtml(value, pipeline));
         return true;
     }
 }
