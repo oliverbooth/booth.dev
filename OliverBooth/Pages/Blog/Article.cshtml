@@ -155,7 +155,13 @@
                 async>
 </script>
     }
+}
+else
+{
+    <p class="text-center text-muted">Comments are not enabled for this post.</p>
+}
 
+@{
     int commentCount = BlogPostService.GetLegacyCommentCount(post);
     if (commentCount > 0)
     {
@@ -206,8 +212,4 @@
             </div>
         }
     }
-}
-else
-{
-    <p class="text-center text-muted">Comments are not enabled for this post.</p>
 }
