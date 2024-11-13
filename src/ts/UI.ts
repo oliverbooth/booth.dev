@@ -1,5 +1,4 @@
 import TimeUtility from "./TimeUtility";
-import SiteTheme from "./SiteTheme";
 
 declare const bootstrap: any;
 declare const katex: any;
@@ -15,68 +14,6 @@ class UI {
         script.src = "https://oliverbooth-dev.disqus.com/count.js";
         script.async = true;
         return script;
-    }
-
-    /**
-     * Gets the user's current-requested site theme.
-     */
-    public static getSiteTheme(): SiteTheme {
-        const theme = getCookie("_theme");
-        switch (theme) {
-            case "dark":
-                return SiteTheme.DARK;
-            case "light":
-                return SiteTheme.LIGHT;
-            default:
-                return SiteTheme.AUTO;
-        }
-
-        function getCookie(name: string): string {
-            name = `${name}=`;
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookies = decodedCookie.split(';');
-
-            for (let index = 0; index < cookies.length; index++) {
-                let current = cookies[index];
-
-                while (current.charAt(0) == ' ') {
-                    current = current.substring(1);
-                }
-                if (current.indexOf(name) == 0) {
-                    return current.substring(name.length, current.length);
-                }
-            }
-
-            return "";
-        }
-    }
-
-    /**
-     * Gets the user's current-requested site theme.
-     */
-    public static setSiteTheme(theme: SiteTheme) {
-        const cookieName = "_theme";
-        const expiryDays = 30;
-
-        switch (theme) {
-            case SiteTheme.DARK:
-                setCookie(cookieName, "dark", expiryDays);
-                break;
-            case SiteTheme.LIGHT:
-                setCookie(cookieName, "light", expiryDays);
-                break;
-            case SiteTheme.AUTO:
-                setCookie(cookieName, "auto", expiryDays);
-                break;
-        }
-
-        function setCookie(name: string, value: any, expiryDays: number) {
-            const date = new Date();
-            date.setTime(date.getTime() + (expiryDays * 24 * 60 * 60 * 1000));
-
-            const expires = "expires=" + date.toUTCString();
-            document.cookie = `${name}=${value};${expires};path=/`;
-        }
     }
 
     /**

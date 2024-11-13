@@ -1,23 +1,12 @@
 @use "sass:color";
 
-$background-dark: #121212;
-$foreground-dark: #f5f5f5;
-$accent-dark: #03a9f4;
-$ui-foreground-dark: #ffffff;
-$content-background-dark: #333333;
-$blockquote-dark: #ff0033;
-$project-background-dark: #000000;
-$card-background-dark: #212121;
-$link-text-dark: $accent-dark;
-$link-hover-dark: lighten($link-text-dark, 50%);
+$background: #121212;
+$foreground: #f5f5f5;
+$accent: #03a9f4;
+$ui-foreground: #ffffff;
+$content-background: #333333;
+$blockquote: #ff0033;
+$project-background: #000000;
 
-$background-light: #dddddd;
-$foreground-light: #0a0a0a;
-$accent-light: #007ab1;
-$ui-foreground-light: #000000;
-$content-background-light: #ffffff;
-$blockquote-light: #ff0033;
-$project-background-light: #ffffff;
-$card-background-light: #dedede;
-$link-text-light: $accent-light;
-$link-hover-light: lighten($link-text-light, 50%);
+$link-text: $accent;
+$link-hover: lighten($link-text, 50%);
