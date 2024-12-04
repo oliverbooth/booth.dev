@@ -1,0 +1,44 @@
+@page
+
+@{
+    ViewData["Title"] = "About";
+    ViewData["Page"] = "About";
+}
+
+<article class="post-single">
+    <header class="post-header">
+        <div class="breadcrumbs"><a asp-page="/Index">Home</a></div>
+        <h1 class="post-title entry-hint-parent">About me</h1>
+    </header>
+    <div class="post-content">
+        <p class="pfp-headshot"><img src="~/img/headshot_512x512_2023.jpg" alt="Headshot of me"></p>
+        <p>
+            I'm a passionate developer with a strong background in C#, although I have experimented with many languages
+            and frameworks over the years. I'm always pushing myself to learn more and explore every aspect technology
+            has to offer. I'm currently studying for my Bachelor's in Computer Science at University of South Wales. I
+            enjoy playing video games, piano, guitar, programming, reading, and drinking copious amounts of coffee.
+        </p>
+        <p>
+            My two most active projects right now are <a href="https://github.com/oliverbooth/X10D">X10D</a> and
+            <a href="https://github.com/BrackeysBot">BrackeysBot</a>.
+        </p>
+        <p>
+            I've also written a few <a asp-page="/Tutorials/Index">tutorials on various topics</a>, usually involving
+            information not readily available elsewhere. I hope you find them useful.
+        </p>
+        <ul>
+            <li>
+                Mastodon: <a href="https://mastodon.olivr.me/@@oliver">https://mastodon.olivr.me/@@oliver</a>
+            </li>
+            <li>
+                BlueSky: <a href="https://bsky.app/profile/oliverbooth.dev">https://bsky.app/profile/oliverbooth.dev</a>
+            </li>
+            <li>
+                GitHub: <a href="https://github.com/oliverbooth">https://github.com/oliverbooth</a>
+            </li>
+            <li>
+                LinkedIn: <a href="https://www.linkedin.com/in/oliverlukebooth">https://www.linkedin.com/in/oliverlukebooth</a>
+            </li>
+        </ul>
+    </div>
+</article>

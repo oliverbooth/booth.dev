@@ -1,5 +1,3 @@
-declare const bootstrap: any;
-
 class Callout {
     private readonly _callout: HTMLElement;
     private readonly _title: HTMLElement;
@@ -46,7 +44,7 @@ class Callout {
             return;
         }
 
-        const callout: HTMLElement = this._callout;
+        /*const callout: HTMLElement = this._callout;
         const content: HTMLElement = this._content;
 
         if (callout === null) {
@@ -64,7 +62,7 @@ class Callout {
             bsCollapse.toggle();
         });
 
-        this._foldEnabled = true;
+        this._foldEnabled = true;*/
     }
 }
 

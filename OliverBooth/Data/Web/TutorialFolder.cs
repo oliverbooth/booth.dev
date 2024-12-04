@@ -9,6 +9,9 @@ namespace OliverBooth.Data.Web;
 internal sealed class TutorialFolder : IEquatable<TutorialFolder>, ITutorialFolder
 {
     /// <inheritdoc />
+    public string? Description { get; private set; }
+
+    /// <inheritdoc />
     public int Id { get; private set; }
 
     /// <inheritdoc />

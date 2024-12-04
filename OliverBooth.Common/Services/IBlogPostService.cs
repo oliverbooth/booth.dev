@@ -9,6 +9,8 @@ namespace OliverBooth.Common.Services;
 /// </summary>
 public interface IBlogPostService
 {
+    public const int DefaultPageSize = 5;
+
     /// <summary>
     ///     Returns a collection of all blog posts.
     /// </summary>
@@ -36,7 +38,7 @@ public interface IBlogPostService
     /// <param name="pageSize">The maximum number of posts to return per page.</param>
     /// <param name="tags">The tags of the posts to return.</param>
     /// <returns>A collection of blog posts.</returns>
-    IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10, string[]? tags = null);
+    IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = DefaultPageSize, string[]? tags = null);
 
     /// <summary>
     ///     Returns the number of legacy comments for the specified post.
@@ -74,7 +76,7 @@ public interface IBlogPostService
     /// <param name="visibility">The post visibility filter.</param>
     /// <param name="tags">The tags of the posts to return.</param>
     /// <returns>The page count.</returns>
-    int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None, string[]? tags = null);
+    int GetPageCount(int pageSize = DefaultPageSize, Visibility visibility = Visibility.None, string[]? tags = null);
 
     /// <summary>
     ///     Returns the previous blog post from the specified blog post.

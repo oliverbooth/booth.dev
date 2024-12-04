@@ -12,26 +12,25 @@
     ViewData["Title"] = project is null ? "Projects" : project.Name;
 }
 
-<main class="container">
+<article class="post-single">
     @if (project is null)
     {
         <h1>Project Not Found</h1>
         return;
     }
 
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a asp-page="/Projects/Index">Projects</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">@project.Name</li>
-        </ol>
-    </nav>
+    <header class="post-header">
+        <div class="breadcrumbs">
+            <a asp-page="/Index">Home</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Projects/Index">Projects</a>
+        </div>
+        <h1 class="post-title entry-hint-parent">@project.Name</h1>
+        <p class="lead">@project.Tagline</p>
+    </header>
 
-    <h1>@project.Name</h1>
     @if (!string.IsNullOrWhiteSpace(project.Tagline))
     {
-        <p class="lead">@project.Tagline</p>
     }
 
     <p class="text-center">
@@ -54,19 +53,19 @@
                 @switch (project.Status)
                 {
                     case ProjectStatus.Ongoing:
-                        <span class="badge rounded-pill text-bg-success">In Active Development</span>
+                        <span class="badge green">In Active Development</span>
                         break;
 
                     case ProjectStatus.Past:
-                        <span class="badge rounded-pill text-bg-primary">Completed</span>
-                        break;
-
-                    case ProjectStatus.Hiatus:
-                        <span class="badge rounded-pill text-bg-warning">On Hiatus</span>
+                        <span class="badge blue">Completed</span>
                         break;
 
                     case ProjectStatus.Retired:
-                        <span class="badge rounded-pill text-bg-danger">Retired</span>
+                        <span class="badge red">Retired</span>
+                        break;
+
+                    case ProjectStatus.Hiatus:
+                        <span class="badge">On Hiatus</span>
                         break;
                 }
             </td>
@@ -87,4 +86,4 @@
             <td class="trim-p">@Html.Raw(Markdown.ToHtml(project.Details, MarkdownPipeline))</td>
         </tr>
     </table>
-</main>
+</article>

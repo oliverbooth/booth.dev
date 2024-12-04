@@ -1,4 +1,5 @@
 @page "/tutorial/{**slug}"
+@using System.Diagnostics
 @using Humanizer
 @using Markdig
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -18,86 +19,78 @@
 @{
     ViewData["Post"] = article;
     ViewData["Title"] = article.Title;
+    ViewData["Page"] = "Tutorials";
     DateTimeOffset published = article.Published;
-}
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a asp-page="/Tutorials/Index" asp-route-slug="">Tutorials</a>
-        </li>
-        @{
-            int? parentId = Model.CurrentArticle.Folder;
-            while (parentId is not null)
-            {
-                ITutorialFolder thisFolder = TutorialService.GetFolder(parentId.Value)!;
-                <li class="breadcrumb-item">
-                    <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(thisFolder)">
-                        @thisFolder.Title
-                    </a>
-                </li>
-                parentId = thisFolder.Parent;
-            }
-        }
-        <li class="breadcrumb-item actove" aria-current="page">@Model.CurrentArticle.Title</li>
-    </ol>
-</nav>
-
-<h1>@article.Title</h1>
-<p class="text-muted">
-    <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("dddd, d MMMM yyyy HH:mm")">
-        Published @published.Humanize()
-    </abbr>
-
-    @if (article.Updated is { } updated)
+    var parents = new Stack<ITutorialFolder>();
+    int? parent = article.Folder;
+    while (parent is not null)
     {
-        <span>&bull;</span>
-        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("dddd, d MMMM yyyy HH:mm")">
-            Updated @updated.Humanize()
-        </abbr>
+        ITutorialFolder? folder = TutorialService.GetFolder(parent.Value);
+        Debug.Assert(folder is not null);
+        parents.Push(folder);
+
+        parent = folder.Parent;
     }
-</p>
-<hr>
-
-<article>
-    @Html.Raw(TutorialService.RenderArticle(article))
-</article>
-
-@if (article.HasOtherParts)
-{
-    <hr>
-
-    <div class="row">
-        <div class="col-sm-12 col-md-6">
-            @if (article.PreviousPart is { } previousPartId &&
-                 TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart) &&
-                 previousPart.Visibility == Visibility.Published)
-            {
-                <small>Previous Part</small>
-                <p class="lead">
-                    <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(previousPart)">
-                        @previousPart.Title
-                    </a>
-                </p>
-            }
-        </div>
-        <div class="col-sm-12 col-md-6" style="text-align: right;">
-            @if (article.NextPart is { } nextPartId &&
-                 TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart) &&
-                 nextPart.Visibility == Visibility.Published)
-            {
-                <small>Next Part</small>
-                <p class="lead">
-                    <a asp-page="Article" asp-route-slug="@TutorialService.GetFullSlug(nextPart)">
-                        @nextPart.Title
-                    </a>
-                </p>
-            }
-        </div>
-    </div>
 }
 
-<hr/>
+<article class="post-single">
+    <header class="post-header">
+        <div class="breadcrumbs">
+            <a asp-page="/Index">Home</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Tutorials/Index">Tutorials</a>
+            @while (parents.Count > 0)
+            {
+                <span>&nbsp;»&nbsp;</span>
+                ITutorialFolder current = parents.Pop();
+                <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a>
+            }
+            <span>&nbsp;»&nbsp;</span>
+            <a asp-page="/Tutorials/Article" asp-route-slug="@TutorialService.GetFullSlug(article)">@article.Title</a>
+        </div>
+        <h1 class="post-title entry-hint-parent">@article.Title</h1>
+        <div class="post-meta">
+            <span title="@(published.ToString("s"))">@published.ToString("D")</span>
+            &nbsp;·
+            @Math.Max(1, article.Body.Split().Length / 275) min
+        </div>
+    </header>
+
+    <div class="post-content">
+        @Html.Raw(TutorialService.RenderArticle(article))
+    </div>
+
+    @if (article.HasOtherParts)
+    {
+        <footer class="post-footer">
+            <nav class="paginav">
+                @if (article.PreviousPart is { } previousPartId &&
+                     TutorialService.TryGetArticle(previousPartId, out ITutorialArticle? previousPart) &&
+                     previousPart.Visibility == Visibility.Published)
+                {
+                    <a class="prev" asp-page="Article"
+                       asp-route-slug="@TutorialService.GetFullSlug(previousPart)">
+                        <span class="title">« Prev</span>
+                        <br>
+                        <span>@previousPart.Title</span>
+                    </a>
+                }
+                @if (article.NextPart is { } nextPartId &&
+                     TutorialService.TryGetArticle(nextPartId, out ITutorialArticle? nextPart) &&
+                     nextPart.Visibility == Visibility.Published)
+                {
+                    <a class="next" asp-page="Article"
+                       asp-route-slug="@TutorialService.GetFullSlug(nextPart)">
+                        <span class="title">Next »</span>
+                        <br>
+                        <span>@nextPart.Title</span>
+                    </a>
+                }
+            </nav>
+        </footer>
+    }
+</article>
 
 @if (article.EnableComments)
 {
@@ -129,10 +122,10 @@
         var nestLevelMap = new Dictionary<ILegacyComment, int>();
         IReadOnlyList<ILegacyComment> legacyComments = TutorialService.GetLegacyComments(article);
         var commentStack = new Stack<ILegacyComment>(legacyComments.OrderByDescending(c => c.CreatedAt));
-        <p class="text-center">
+        <p class="legacy-comment-counter">
             <strong>@("legacy comment".ToQuantity(commentCount))</strong>
         </p>
-        <p class="text-center">
+        <p class="legacy-comment-subtitle">
             <sub>Legacy comments are comments that were posted using a commenting system that I no longer use. This exists for posterity.</sub>
         </p>
 
@@ -161,9 +154,9 @@
 
             <div class="legacy-comment" style="margin-left: @(padding)px;">
                 <img class="blog-author-icon" src="@comment.GetAvatarUrl()" alt="@comment.Author">
-                @comment.Author &bull;
+                @comment.Author ·
 
-                <abbr class="text-muted" data-bs-toggle="tooltip" data-bs-title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
+                <abbr class="text-muted" title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
                     @comment.CreatedAt.Humanize()
                 </abbr>
 

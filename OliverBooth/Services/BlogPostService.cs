@@ -67,7 +67,7 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = 10, string[]? tags = null)
+    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize, string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         IEnumerable<BlogPost> posts = context.BlogPosts
@@ -117,7 +117,7 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
-    public int GetPageCount(int pageSize = 10, Visibility visibility = Visibility.None, string[]? tags = null)
+    public int GetPageCount(int pageSize = IBlogPostService.DefaultPageSize, Visibility visibility = Visibility.None, string[]? tags = null)
     {
         float postCount = GetBlogPostCount(visibility, tags);
         return (int)MathF.Ceiling(postCount / pageSize);

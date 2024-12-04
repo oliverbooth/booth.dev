@@ -3,22 +3,30 @@
 @using OliverBooth.Common.Data
 @using OliverBooth.Common.Data.Blog
 @using OliverBooth.Common.Services
-
 @inject IBlogPostService BlogPostService
 
-@await Html.PartialAsync("Partials/_MastodonStatus")
+@{
+    ViewData["Title"] = "Blog";
+    ViewData["Page"] = "Blog";
+    int pageCount = BlogPostService.GetPageCount(visibility: Visibility.Published);
+    int previousPage = Model.PageNumber - 1;
+    int nextPage = Model.PageNumber + 1;
+}
 
-<div id="all-blog-posts">
-    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(Model.PageNumber - 1, tags: Model.Tag))
-    {
-        @await Html.PartialAsync("Partials/_BlogCard", post)
-    }
-</div>
-
-@await Html.PartialAsync("Partials/_PageTabs", new ViewDataDictionary(ViewData)
+@await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")
+@await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
 {
-    ["UrlRoot"] = "/blog",
-    ["Page"] = Model.PageNumber,
-    ["Tags"] = Model.Tag,
-    ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published, tags: Model.Tag)
+    ["CurrentPage"] = previousPage // -1 for zero based
 })
+
+@{
+<footer class="page-footer">
+    <nav class="pagination">
+        <a class="previous" asp-page="/Blog/List" asp-route-pageNumber="@previousPage">«&nbsp;Previous&nbsp;@previousPage/@pageCount</a>
+        @if (Model.PageNumber < pageCount)
+        {
+            <a class="next" asp-page="/Blog/List" asp-route-pageNumber="@nextPage">Next&nbsp;@nextPage/@pageCount&nbsp;»</a>
+        }
+    </nav>
+</footer>
+}

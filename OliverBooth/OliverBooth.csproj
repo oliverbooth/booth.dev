@@ -51,10 +51,4 @@
         <ProjectReference Include="..\OliverBooth.Extensions.SmartFormat\OliverBooth.Extensions.SmartFormat.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Compile Update="Pages\Shared\Partials\PageTabsUtility.cs">
-            <DependentUpon>_PageTabs.cshtml</DependentUpon>
-        </Compile>
-    </ItemGroup>
-
 </Project>

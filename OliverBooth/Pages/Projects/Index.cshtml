@@ -1,10 +1,13 @@
 @page
+@using Markdig
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OliverBooth.Common.Data.Web
 @using OliverBooth.Common.Services
+@inject MarkdownPipeline MarkdownPipeline
 @inject IProjectService ProjectService
 @{
     ViewData["Title"] = "Projects";
+    ViewData["Page"] = "Projects";
 
     IEnumerable<IProject> projects = ProjectService.GetProjects(ProjectStatus.Ongoing).OrderBy(p => p.Rank)
         .Concat(ProjectService.GetProjects(ProjectStatus.Past).OrderBy(p => p.Rank))
@@ -12,71 +15,45 @@
         .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus).OrderBy(p => p.Rank));
 }
 
-<main class="container">
-    <h1 class="display-4">Projects</h1>
 
-    @foreach (IProject[] chunk in projects.Chunk(2))
-    {
-        <div class="card-group row" style="margin-top: 20px;">
-            @foreach (IProject project in chunk)
-            {
-                <div class="col-xs-1 col-md-6 col-lg-6 d-flex align-items-stretch">
-                    @switch (project.Status)
-                    {
-                        case ProjectStatus.Ongoing:
-                            <div class="project-card">
-                                <div class="project-image">
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                    </a>
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <p class="project-title">@project.Name</p>
-                                    </a>
-                                </div>
-                            </div>
-                            break;
+<header class="page-header">
+    <h1>Projects</h1>
+</header>
 
-                        case ProjectStatus.Past:
-                            <div class="border-info project-card">
-                                <div class="project-image">
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                    </a>
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <p class="project-title">@project.Name</p>
-                                    </a>
-                                </div>
-                            </div>
-                            break;
-
-                        case ProjectStatus.Retired:
-                            <div class="border-danger project-card">
-                                <div class="project-image">
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                    </a>
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <p class="project-title">@project.Name</p>
-                                    </a>
-                                </div>
-                            </div>
-                            break;
-
-                        case ProjectStatus.Hiatus:
-                            <div class="border-warning project-card">
-                                <div class="project-image">
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="card-img-top" alt="@project.Name">
-                                    </a>
-                                    <a asp-page="Project" asp-route-slug="@project.Slug">
-                                        <p class="project-title">@project.Name</p>
-                                    </a>
-                                </div>
-                            </div>
-                            break;
-                    }
-                </div>
-            }
+@foreach (IProject project in projects)
+{
+    <article class="post-entry">
+        <figure class="entry-cover">
+            <img loading="lazy" src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" alt="">
+        </figure>
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @project.Name
+            </h2>
+        </header>
+        <div class="entry-content">
+            <p>@Html.Raw(Markdown.ToHtml(project.Description, MarkdownPipeline))</p>
         </div>
-    }
-</main>
+        <footer class="entry-footer">
+            @switch (project.Status)
+            {
+                case ProjectStatus.Ongoing:
+                    <span class="badge green">In Active Development</span>
+                    break;
+
+                case ProjectStatus.Past:
+                    <span class="badge blue">Completed</span>
+                    break;
+
+                case ProjectStatus.Retired:
+                    <span class="badge red">Retired</span>
+                    break;
+
+                case ProjectStatus.Hiatus:
+                    <span class="badge">On Hiatus</span>
+                    break;
+            }
+        </footer>
+        <a class="entry-link" aria-label="link to subfolder @project.Name" asp-page="Project" asp-route-slug="@project.Slug"></a>
+    </article>
+}

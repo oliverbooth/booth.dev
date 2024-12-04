@@ -6,6 +6,12 @@ namespace OliverBooth.Common.Data.Web;
 public interface ITutorialFolder
 {
     /// <summary>
+    ///     Gets the description of this folder.
+    /// </summary>
+    /// <value>The description of this folder.</value>
+    string? Description { get; }
+
+    /// <summary>
     ///     Gets the ID of this folder.
     /// </summary>
     /// <value>The ID of the folder.</value>
