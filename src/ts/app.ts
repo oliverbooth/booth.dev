@@ -48,7 +48,8 @@ declare const lucide: any;
         if (getCookie("theme") !== "light") {
             setCookie("theme", "light", 30);
         } else {
-            setCookie("theme", "", -1);
+            setCookie("theme", "", -100);
+            setCookie("theme", "dark", 30);
         }
     });
 
