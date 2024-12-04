@@ -5,94 +5,84 @@
     ViewData["Title"] = "Reading List";
 }
 
-<main class="container">
-    <h1 class="display-4">Reading List</h1>
-    <p>
-        This is a list of the books I've read, I'm currently reading, or that I plan to read. Not every book is listed
-        here, but I will update this list as I try to remember what it is I've read in the past.
-    </p>
-    <p>
-        This list is also available on <a href="https://www.goodreads.com/review/list/145592619">Goodreads</a>.
-    </p>
+<article class="first-entry home-info">
+    <header class="page-header">
+        <div class="breadcrumbs"><a asp-page="/Index">Home</a></div>
+        <h1 class="post-title entry-hint-parent">Reading List</h1>
+        <div class="entry-content">
+            <p>
+                This is a list of the books I've read, I'm currently reading, or that I plan to read. Not every book is listed
+                here, but I will update this list as I try to remember what it is I've read in the past.
+            </p>
+            <p>
+                This list is also available on <a href="https://www.goodreads.com/review/list/145592619">Goodreads</a>.
+            </p>
+        </div>
+    </header>
+</article>
 
-    <p class="lead">Currently Reading</p>
-    <table class="table reading-list">
-        <thead>
-        <tr>
-            <th colspan="2" style="width: 50%">Title</th>
-            <th style="width: 25%">Author</th>
-            <th style="width: 25%">ISBN</th>
-        </tr>
-        </thead>
+@foreach (IBook book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
+{
+    <article class="post-entry">
+        <figure class="entry-cover">
+            <img loading="lazy" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
+        </figure>
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @book.Title.Trim()
+            </h2>
+            <p>by @book.Author.Trim()</p>
+        </header>
+        <div class="entry-content">
+            <p class="badge green">Currently Reading</p>
+        </div>
+        <footer class="entry-footer">
+            <p>ISBN: @book.Isbn.Trim()</p>
+            <p><img src="@book.GetBarcode()" alt="@book.Isbn"></p>
+        </footer>
+    </article>
+}
 
-        <tbody>
-        @foreach (IBook book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
-        {
-            <tr>
-                <td>
-                    <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                </td>
-                <td>@book.Title.Trim()</td>
-                <td>@book.Author.Trim()</td>
-                <td style="font-family: monospace">
-                    @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+@foreach (IBook book in Model.PlanToRead.OrderBy(b => b.Author).ThenBy(b => b.Title))
+{
+    <article class="post-entry">
+        <figure class="entry-cover">
+            <img loading="lazy" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
+        </figure>
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @book.Title.Trim()
+            </h2>
+            <p>by @book.Author.Trim()</p>
+        </header>
+        <div class="entry-content">
+            <p class="badge yellow">Plan to Read</p>
+        </div>
+        <footer class="entry-footer">
+            <p>ISBN: @book.Isbn.Trim()</p>
+            <p><img src="@book.GetBarcode()" alt="@book.Isbn"></p>
+        </footer>
+    </article>
+}
 
-    <p class="lead">Plan to Read</p>
-    <table class="table reading-list">
-        <thead>
-        <tr>
-            <th colspan="2" style="width: 50%">Title</th>
-            <th style="width: 25%">Author</th>
-            <th style="width: 25%">ISBN</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach (IBook book in Model.PlanToRead.OrderBy(b => b.Author).ThenBy(b => b.Title))
-        {
-            <tr>
-                <td>
-                    <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                </td>
-                <td>@book.Title.Trim()</td>
-                <td>@book.Author.Trim()</td>
-                <td style="font-family: monospace">
-                    @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-
-    <p class="lead">Read</p>
-    <table class="table reading-list">
-        <thead>
-        <tr>
-            <th colspan="2" style="width: 50%">Title</th>
-            <th style="width: 25%">Author</th>
-            <th style="width: 25%">ISBN</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach (IBook book in Model.Read.OrderBy(b => b.Author).ThenBy(b => b.Title))
-        {
-            <tr>
-                <td>
-                    <img class="book-cover" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
-                </td>
-                <td>@book.Title.Trim()</td>
-                <td>@book.Author.Trim()</td>
-                <td style="font-family: monospace">
-                    @book.Isbn.Trim()<br><img src="@book.GetBarcode()" alt="@book.Isbn">
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</main>
+@foreach (IBook book in Model.Read.OrderBy(b => b.Author).ThenBy(b => b.Title))
+{
+    <article class="post-entry">
+        <figure class="entry-cover">
+            <img loading="lazy" src="https://cdn.olivr.me/img/books/@(book.Isbn.Trim()).jpg" alt="Book Cover">
+        </figure>
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @book.Title.Trim()
+            </h2>
+            <p>by @book.Author.Trim()</p>
+        </header>
+        <div class="entry-content">
+            <p class="badge blue">Read</p>
+        </div>
+        <footer class="entry-footer">
+            <p>ISBN: @book.Isbn.Trim()</p>
+            <p><img src="@book.GetBarcode()" alt="@book.Isbn"></p>
+        </footer>
+    </article>
+}

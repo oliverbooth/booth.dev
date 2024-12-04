@@ -1,21 +1,9 @@
 import TimeUtility from "./TimeUtility";
 
-declare const bootstrap: any;
 declare const katex: any;
 declare const Prism: any;
 
 class UI {
-    /**
-     * Creates a <script> element that loads the Disqus comment counter.
-     */
-    public static createDisqusCounterScript(): HTMLScriptElement {
-        const script = document.createElement("script");
-        script.id = "dsq-count-scr";
-        script.src = "https://oliverbooth-dev.disqus.com/count.js";
-        script.async = true;
-        return script;
-    }
-
     /**
      * Forces all UI elements under the given element to update their rendering.
      * @param element The element to search for UI elements in.
@@ -25,32 +13,11 @@ class UI {
         UI.unescapeMarkTags(element);
         UI.addLineNumbers(element);
         UI.addHighlighting(element);
-        UI.addBootstrapTooltips(element);
         UI.renderSpoilers(element);
         UI.renderTabs(element);
         UI.renderTeX(element);
         UI.renderTimestamps(element);
         UI.updateProjectCards(element);
-    }
-
-    /**
-     * Adds Bootstrap tooltips to all elements with a title attribute.
-     * @param element The element to search for elements with a title attribute in.
-     */
-    public static addBootstrapTooltips(element?: Element) {
-        element = element || document.body;
-
-        const list = element.querySelectorAll('[data-bs-toggle="tooltip"]');
-        list.forEach((el: Element) => new bootstrap.Tooltip(el));
-
-        element.querySelectorAll("[title]").forEach((el) => {
-            el.setAttribute("data-bs-toggle", "tooltip");
-            el.setAttribute("data-bs-placement", "bottom");
-            el.setAttribute("data-bs-html", "true");
-            el.setAttribute("data-bs-title", el.getAttribute("title"));
-
-            new bootstrap.Tooltip(el);
-        });
     }
 
     /**

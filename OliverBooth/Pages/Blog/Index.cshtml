@@ -1,27 +1,28 @@
 @page
 @using OliverBooth.Common.Data
-@using OliverBooth.Common.Data.Blog
 @using OliverBooth.Common.Services
 @model Index
 @inject IBlogPostService BlogPostService
 
 @{
     ViewData["Title"] = "Blog";
+    ViewData["Page"] = "Blog";
 }
 
-@await Html.PartialAsync("Partials/_MastodonStatus")
-
-<div id="all-blog-posts">
-    @foreach (IBlogPost post in BlogPostService.GetBlogPosts(0, tags: Model.Tag))
-    {
-        @await Html.PartialAsync("Partials/_BlogCard", post)
-    }
-</div>
-
-@await Html.PartialAsync("Partials/_PageTabs", new ViewDataDictionary(ViewData)
+@await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")
+@await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
 {
-    ["UrlRoot"] = "/blog",
-    ["Page"] = 1,
-    ["Tags"] = Model.Tag,
-    ["PageCount"] = BlogPostService.GetPageCount(visibility: Visibility.Published, tags: Model.Tag)
+    ["CurrentPage"] = 0
 })
+
+@{
+    int pageCount = BlogPostService.GetPageCount(visibility: Visibility.Published);
+    if (pageCount > 1)
+    {
+        <footer class="page-footer">
+            <nav class="pagination">
+                <a class="next" asp-page="/Blog/List" asp-route-pageNumber="2">Next&nbsp;2/@pageCount&nbsp;»</a>
+            </nav>
+        </footer>
+    }
+}

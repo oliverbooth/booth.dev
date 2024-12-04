@@ -31,108 +31,101 @@
 }
 
 @{
+    ViewData["Page"] = "Blog";
     ViewData["Post"] = post;
     ViewData["Title"] = post.Title;
     IBlogAuthor author = post.Author;
     DateTimeOffset published = post.Published;
 }
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a asp-page="Index">Blog</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">@post.Title</li>
-    </ol>
-</nav>
-
-@switch (post.Visibility)
-{
-    case Visibility.Private:
-        <div class="callout" data-callout="danger">
-            This post is private and can only be viewed by those with the password.
+<article class="post-single">
+    <header class="post-header">
+        <div class="breadcrumbs">
+            <a asp-page="/Index">Home</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Blog/Posts">Posts</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Blog/Article"
+               asp-route-year="@published.Year"
+               asp-route-month="@published.Month.ToString("00")"
+               asp-route-day="@published.Day.ToString("00")"
+               asp-route-slug="@post.Slug">
+                @post.Title
+            </a>
         </div>
-        break;
-
-    case Visibility.Unlisted:
-        <div class="callout" data-callout="warning">
-            This post is unlisted and can only be viewed by those with the link.
+        <h1 class="post-title entry-hint-parent">@post.Title</h1>
+        <div class="post-meta">
+            <span title="@(published.ToString("s"))">@published.ToString("D")</span>
+            &nbsp;·
+            @Math.Max(1, post.Body.Split().Length / 275) min
+            ·
+            @author.DisplayName
         </div>
-        break;
-}
+    </header>
 
-<h1>@post.Title</h1>
-<p class="text-muted">
-    <img class="blog-author-icon" src="@author.AvatarUrl" alt="@author.DisplayName">
-    @author.DisplayName &bull;
-
-    <abbr data-bs-toggle="tooltip" data-bs-title="@published.ToString("dddd, d MMMM yyyy HH:mm")">
-        Published @published.Humanize()
-    </abbr>
-
-    @if (post.Updated is { } updated)
+    @switch (post.Visibility)
     {
-        <span>&bull;</span>
-        <abbr data-bs-toggle="tooltip" data-bs-title="@updated.ToString("dddd, d MMMM yyyy HH:mm")">
-            Updated @updated.Humanize()
-        </abbr>
+        case Visibility.Private:
+            <div class="callout" data-callout="danger">
+                This post is private and can only be viewed by those with the password.
+            </div>
+            break;
+
+        case Visibility.Unlisted:
+            <div class="callout" data-callout="warning">
+                This post is unlisted and can only be viewed by those with the link.
+            </div>
+            break;
     }
-</p>
 
-<hr>
+    <div class="post-content">
+        @Html.Raw(BlogPostService.RenderPost(post))
+    </div>
 
-<article>
-    @Html.Raw(BlogPostService.RenderPost(post))
-</article>
-
-<hr>
-
-<div class="d-flex align-items-center mb-3">
-    <i data-lucide="tag"></i>
-    <ul class="ms-2 post-tags">
-        @foreach (string tag in post.Tags)
-        {
-            <li class="post-tag">
-                <a asp-page="Index" asp-route-tag="@Html.UrlEncoder.Encode(tag)">@tag</a>
+    <footer class="post-footer">
+        <ul class="post-tags">
+            <li>
+                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/markdown/">Markdown</a>
             </li>
-        }
-    </ul>
-</div>
-
-<div class="row">
-    <div class="col-sm-12 col-md-6">
-        @if (BlogPostService.GetPreviousPost(post) is { } previousPost)
-        {
-            <small>Previous Post</small>
-            <p class="lead">
-                <a asp-page="Article"
+            <li>
+                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/css/">Css</a>
+            </li>
+            <li>
+                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/html/">Html</a>
+            </li>
+            <li>
+                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/themes/">Themes</a>
+            </li>
+        </ul>
+        <nav class="paginav">
+            @if (BlogPostService.GetPreviousPost(post) is { } previousPost)
+            {
+                <a class="prev" asp-page="Article"
                    asp-route-year="@previousPost.Published.Year.ToString("0000")"
                    asp-route-month="@previousPost.Published.Month.ToString("00")"
                    asp-route-day="@previousPost.Published.Day.ToString("00")"
                    asp-route-slug="@previousPost.Slug">
-                    @previousPost.Title
+                    <span class="title">« Prev</span>
+                    <br>
+                    <span>@previousPost.Title</span>
                 </a>
-            </p>
-        }
-    </div>
-    <div class="col-sm-12 col-md-6" style="text-align: right;">
-        @if (BlogPostService.GetNextPost(post) is { } nextPost)
-        {
-            <small>Next Post</small>
-            <p class="lead">
-                <a asp-page="Article"
+            }
+            @if (BlogPostService.GetNextPost(post) is { } nextPost)
+            {
+                <a class="next" asp-page="Article"
                    asp-route-year="@nextPost.Published.Year.ToString("0000")"
                    asp-route-month="@nextPost.Published.Month.ToString("00")"
                    asp-route-day="@nextPost.Published.Day.ToString("00")"
                    asp-route-slug="@nextPost.Slug">
-                    @nextPost.Title
+                    <span class="title">Next »</span>
+                    <br>
+                    <span>@nextPost.Title</span>
                 </a>
-            </p>
-        }
-    </div>
-</div>
+            }
+        </nav>
+    </footer>
+</article>
 
-<hr>
 
 @if (post.EnableComments)
 {
@@ -153,12 +146,12 @@
                 data-lang="en"
                 crossorigin="anonymous"
                 async>
-</script>
+    </script>
     }
 }
 else
 {
-    <p class="text-center text-muted">Comments are not enabled for this post.</p>
+    <p class="no-comment">Comments are not enabled for this post.</p>
 }
 
 @{
@@ -170,10 +163,10 @@ else
         var nestLevelMap = new Dictionary<ILegacyComment, int>();
         IReadOnlyList<ILegacyComment> legacyComments = BlogPostService.GetLegacyComments(post);
         var commentStack = new Stack<ILegacyComment>(legacyComments.OrderByDescending(c => c.CreatedAt));
-        <p class="text-center">
+        <p class="legacy-comment-counter">
             <strong>@("legacy comment".ToQuantity(commentCount))</strong>
         </p>
-        <p class="text-center">
+        <p class="legacy-comment-subtitle">
             <sub>Legacy comments are comments that were posted using a commenting system that I no longer use. This exists for posterity.</sub>
         </p>
 
@@ -202,9 +195,9 @@ else
 
             <div class="legacy-comment" style="margin-left: @(padding)px;">
                 <img class="blog-author-icon" src="@comment.GetAvatarUrl()" alt="@comment.Author">
-                @comment.Author &bull;
+                @comment.Author ·
 
-                <abbr class="text-muted" data-bs-toggle="tooltip" data-bs-title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
+                <abbr class="text-muted" title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
                     @comment.CreatedAt.Humanize()
                 </abbr>
 

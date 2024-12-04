@@ -21,5 +21,6 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.PreviewImageUrl).HasConversion<UriToStringConverter>();
         builder.Property(e => e.Visibility).HasConversion<EnumToStringConverter<Visibility>>();
+        builder.Property(e => e.Description).HasMaxLength(255);
     }
 }
