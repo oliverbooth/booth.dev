@@ -59,7 +59,7 @@ declare const lucide: any;
         const d = new Date();
         d.setTime(d.getTime() + (expiry * 24 * 60 * 60 * 1000));
         const expires = `expires=${d.toUTCString()}`;
-        document.cookie = `${name}=${value};${expires};SameSite=None;path=/`;
+        document.cookie = `${name}=${value};${expires};SameSite=None;secure;path=/`;
     }
 
     function getCookie(name: string) {
