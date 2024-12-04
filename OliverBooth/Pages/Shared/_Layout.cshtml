@@ -2,6 +2,8 @@
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
     string title = ViewData["Title"] is null ? "Oliver Booth" : $"{ViewData["Title"]} - Oliver Booth";
+
+    bool lightTheme = request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +29,7 @@
     <link rel="stylesheet" href="~/css/markdown-callouts.min.css" asp-append-version="true">
 </head>
 
-<body class="dark">
+<body class="@(lightTheme ? "" : "dark")">
 <header class="header">
     <nav class="nav">
         <div class="logo">
