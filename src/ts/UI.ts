@@ -18,6 +18,7 @@ class UI {
         UI.renderTeX(element);
         UI.renderTimestamps(element);
         UI.updateProjectCards(element);
+        UI.applyAnsi(element);
     }
 
     /**
@@ -183,6 +184,60 @@ class UI {
         element.querySelectorAll(".project-card .card-body p").forEach((p: HTMLParagraphElement) => {
             p.classList.add("card-text");
         });
+    }
+
+    private static applyAnsi(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("pre code.language-ansi").forEach((child: HTMLElement) => {
+            const originalHtml: string = child.innerHTML || "";
+            child.innerHTML = ansiToHtml(originalHtml);
+        });
+
+        element.querySelectorAll(".code-toolbar .toolbar").forEach((toolbar: HTMLDivElement) => {
+            const prevSibling = toolbar.previousElementSibling;
+            const nextSibling = toolbar.nextElementSibling;
+
+            if (!prevSibling && !nextSibling) {
+                return;
+            }
+
+            if ((prevSibling && prevSibling.classList.contains("language-ansi")) ||
+                (nextSibling && nextSibling.classList.contains("language-ansi"))) {
+                toolbar.remove();
+            }
+        });
+
+        function ansiToHtml(input: string): string {
+            const ansiColorMap: { [key: string]: string } = {
+                "0": "unset",
+                "30": "#0c0c0c",
+                "31": "#c50f1f",
+                "32": "#13a10e",
+                "33": "#c19c00",
+                "34": "#0037da",
+                "35": "#881798",
+                "36": "#3a96dd",
+                "37": "#cccccc",
+                "90": "#767676"
+            };
+
+            let wasOpen = false;
+            return input
+                .replace(/\x1b\[(\d+?)m/g, (_, code) => {
+                    if (code == "0") return `</span>`;
+                    const color: string = ansiColorMap[code];
+                    const prefix = wasOpen ? `</span>` : ``;
+                    if (wasOpen) {
+                        wasOpen = false;
+                    }
+                    if (color) {
+                        wasOpen = true;
+                    }
+                    return color ? `${prefix}<span style="color:${color};">` : `</span>`;
+                })
+                .concat("</span>") // Close any open tags at the end
+                .replace(/<\/span>(?=<\/span>)/g, ""); // Remove redundant closing tags
+        }
     }
 }
 
