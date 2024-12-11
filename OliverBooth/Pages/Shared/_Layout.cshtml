@@ -1,3 +1,10 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OliverBooth.Common.Data.Blog
+@using OliverBooth.Common.Data.Web
+@using OliverBooth.Common.Services
+@using OliverBooth.Extensions
+@inject IBlogPostService BlogPostService
+@inject ITutorialService TutorialService
 @{
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
@@ -16,6 +23,34 @@
     <meta property="twitter:title" content="@title">
     <meta property="og:url" content="@url">
     <meta property="twitter:url" content="@url">
+    <meta name="theme-color" content="#007EC6">
+    <meta property="og:image" content="@Url.Content("~/img/favicon.png")">
+    <meta property="twitter:image" content="@Url.Content("~/img/favicon.png")">
+    @if (ViewData["Title"] != null)
+    {
+        <title>@ViewData["Title"] - Oliver Booth</title>
+    }
+    else
+    {
+        <title>Oliver Booth</title>
+    }
+    @if (ViewData["Post"] is IBlogPost post)
+    {
+        @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
+    }
+    else if (ViewData["Post"] is ITutorialArticle article)
+    {
+        @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
+    }
+    else
+    {
+        <meta name="title" content="@(ViewData["Title"] != null ? $"{ViewData["Title"]} - Oliver Booth" : "Oliver Booth")">
+        <meta name="description" content="Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.">
+        <meta property="og:title" content="@(ViewData["Title"] != null ? $"{ViewData["Title"]} - Oliver Booth" : "Oliver Booth")">
+        <meta property="og:description" content="Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.">
+        <meta property="twitter:title" content="@(ViewData["Title"] != null ? $"{ViewData["Title"]} - Oliver Booth" : "Oliver Booth")">
+        <meta property="twitter:description" content="Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.">
+    }
     <title>@title</title>
     <link rel="shortcut icon" href="/img/favicon.png" asp-append-version="true">
     <link rel="shortcut icon" href="/img/favicon-dark.png" asp-append-version="true" media="(prefers-color-scheme: light)">
