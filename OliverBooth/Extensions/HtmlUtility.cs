@@ -35,7 +35,7 @@ public static class HtmlUtility
         }
 
 
-        string excerpt = blogPostService.RenderExcerpt(post, out _);
+        string excerpt = blogPostService.RenderPlainTextExcerpt(post, out _).Trim();
         var tags = new Dictionary<string, string>
         {
             ["title"] = post.Title,
@@ -69,7 +69,7 @@ public static class HtmlUtility
         }
 
 
-        string excerpt = tutorialService.RenderExcerpt(article, out _);
+        string excerpt = tutorialService.RenderPlainTextExcerpt(article, out _).Trim();
         var tags = new Dictionary<string, string>
         {
             ["title"] = article.Title,
