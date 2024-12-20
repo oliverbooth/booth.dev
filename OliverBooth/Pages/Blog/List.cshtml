@@ -8,7 +8,7 @@
 @{
     ViewData["Title"] = "Blog";
     ViewData["Page"] = "Blog";
-    int pageCount = BlogPostService.GetPageCount(visibility: Visibility.Published);
+    int pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
     int previousPage = Model.PageNumber - 1;
     int nextPage = Model.PageNumber + 1;
 }

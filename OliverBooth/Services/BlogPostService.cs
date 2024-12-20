@@ -41,6 +41,12 @@ internal sealed class BlogPostService : IBlogPostService
         using BlogContext context = _dbContextFactory.CreateDbContext();
         if (tags is { Length: > 0 })
         {
+            for (var index = 0; index < tags.Length; index++)
+            {
+                string tag = tags[index];
+                tags[index] = tag.Replace('+', '-');
+            }
+
             return visibility == Visibility.None
                 ? context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Tags.Intersect(tags).Any())
                 : context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Visibility == visibility && p.Tags.Intersect(tags).Any());
@@ -77,6 +83,12 @@ internal sealed class BlogPostService : IBlogPostService
 
         if (tags is { Length: > 0 })
         {
+            for (var index = 0; index < tags.Length; index++)
+            {
+                string tag = tags[index];
+                tags[index] = tag.Replace('+', '-');
+            }
+
             posts = posts.Where(p => p.Tags.Intersect(tags).Any());
         }
 

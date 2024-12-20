@@ -12,11 +12,12 @@
 @await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")
 @await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
 {
-    ["CurrentPage"] = 0
+    ["CurrentPage"] = 0,
+    ["Tags"] = Model.Tag
 })
 
 @{
-    int pageCount = BlogPostService.GetPageCount(visibility: Visibility.Published);
+    int pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
     if (pageCount > 1)
     {
         <footer class="page-footer">

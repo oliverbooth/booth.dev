@@ -5,9 +5,10 @@
 
 @{
     var currentPage = (int)(ViewData["CurrentPage"] ?? 0);
+    var tags = ViewData["Tags"] as string[];
 }
 
-@foreach (IBlogPost post in BlogPostService.GetBlogPosts(currentPage))
+@foreach (IBlogPost post in BlogPostService.GetBlogPosts(currentPage, tags: tags))
 {
     bool hasExcerpt = string.IsNullOrWhiteSpace(post.Excerpt);
     DateTimeOffset published = post.Published;

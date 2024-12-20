@@ -22,9 +22,10 @@ public class Index : PageModel
         [FromQuery(Name = "p")] int? wpPostId = null,
         [FromQuery(Name = "tag")] string? tag = null)
     {
+        Tag = tag?.Split('+') ?? [];
+
         if (postId.HasValue == wpPostId.HasValue)
         {
-            Tag = (tag?.Split('+').Select(HttpUtility.UrlDecode).ToArray() ?? [])!;
             return Page();
         }
 

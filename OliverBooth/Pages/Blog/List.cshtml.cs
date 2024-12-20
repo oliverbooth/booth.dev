@@ -31,7 +31,7 @@ public class List : PageModel
         }
 
         PageNumber = page;
-        Tag = (tag?.Split('+').Select(HttpUtility.UrlDecode).ToArray() ?? [])!;
+        Tag = tag?.Split('+') ?? [];
         return Page();
     }
 }

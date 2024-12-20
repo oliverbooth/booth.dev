@@ -84,18 +84,12 @@
 
     <footer class="post-footer">
         <ul class="post-tags">
-            <li>
-                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/markdown/">Markdown</a>
-            </li>
-            <li>
-                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/css/">Css</a>
-            </li>
-            <li>
-                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/html/">Html</a>
-            </li>
-            <li>
-                <a href="https://adityatelange.github.io/hugo-PaperMod/tags/themes/">Themes</a>
-            </li>
+            @foreach (string tag in post.Tags)
+            {
+                <li>
+                    <a asp-page="/Blog/Index" asp-route-tag="@tag">@tag.Replace('-', ' ')</a>
+                </li>
+            }
         </ul>
         <nav class="paginav">
             @if (BlogPostService.GetPreviousPost(post) is { } previousPost)
