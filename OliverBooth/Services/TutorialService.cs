@@ -173,6 +173,29 @@ internal sealed class TutorialService : ITutorialService
     }
 
     /// <inheritdoc />
+    public string RenderPlainTextExcerpt(ITutorialArticle article, out bool wasTrimmed)
+    {
+        if (!string.IsNullOrWhiteSpace(article.Excerpt))
+        {
+            wasTrimmed = false;
+            return Markdig.Markdown.ToPlainText(article.Excerpt, _markdownPipeline);
+        }
+
+        string body = article.Body;
+        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
+
+        if (moreIndex == -1)
+        {
+            string excerpt = body.Truncate(255, "...");
+            wasTrimmed = body.Length > 255;
+            return Markdig.Markdown.ToPlainText(excerpt, _markdownPipeline);
+        }
+
+        wasTrimmed = true;
+        return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
+    }
+
+    /// <inheritdoc />
     public bool TryGetArticle(int id, [NotNullWhen(true)] out ITutorialArticle? article)
     {
         using WebContext context = _dbContextFactory.CreateDbContext();

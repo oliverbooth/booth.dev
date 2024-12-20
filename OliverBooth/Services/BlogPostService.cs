@@ -146,6 +146,29 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
+    public string RenderPlainTextExcerpt(IBlogPost post, out bool wasTrimmed)
+    {
+        if (!string.IsNullOrWhiteSpace(post.Excerpt))
+        {
+            wasTrimmed = false;
+            return Markdig.Markdown.ToPlainText(post.Excerpt, _markdownPipeline);
+        }
+
+        string body = post.Body;
+        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
+
+        if (moreIndex == -1)
+        {
+            string excerpt = body.Truncate(255, "...");
+            wasTrimmed = body.Length > 255;
+            return Markdig.Markdown.ToPlainText(excerpt, _markdownPipeline);
+        }
+
+        wasTrimmed = true;
+        return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
+    }
+
+    /// <inheritdoc />
     public string RenderExcerpt(IBlogPost post, out bool wasTrimmed)
     {
         if (!string.IsNullOrWhiteSpace(post.Excerpt))

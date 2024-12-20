@@ -97,6 +97,17 @@ public interface IBlogPostService
     string RenderExcerpt(IBlogPost post, out bool wasTrimmed);
 
     /// <summary>
+    ///     Renders the excerpt of the specified blog post as plain text.
+    /// </summary>
+    /// <param name="post">The blog post whose excerpt to render.</param>
+    /// <param name="wasTrimmed">
+    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
+    ///     <see langword="false" />.
+    /// </param>
+    /// <returns>The rendered plain text of the blog post's excerpt.</returns>
+    string RenderPlainTextExcerpt(IBlogPost post, out bool wasTrimmed);
+
+    /// <summary>
     ///     Renders the body of the specified blog post.
     /// </summary>
     /// <param name="post">The blog post to render.</param>
