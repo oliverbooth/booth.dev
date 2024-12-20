@@ -94,7 +94,7 @@ internal sealed class BlogPostService : IBlogPostService
 
         return posts.Skip(page * pageSize)
             .Take(pageSize)
-            .ToArray().Select(CacheAuthor).ToArray();
+            .AsEnumerable().Select(CacheAuthor).ToArray();
     }
 
     /// <inheritdoc />
