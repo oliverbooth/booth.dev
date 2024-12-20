@@ -103,10 +103,21 @@ class UI {
         const tex = element.getElementsByClassName("math");
         Array.from(tex).forEach(function (el: Element) {
             let content = el.textContent.trim();
-            if (content.startsWith("\\[")) content = content.slice(2);
-            if (content.endsWith("\\]")) content = content.slice(0, -2);
+            if (content.startsWith("\\(")) {
+                content = content.slice(2);
+                if (content.endsWith("\\)")) {
+                    content = content.slice(0, -2);
+                }
+            } else if (content.startsWith("\\[")) {
+                content = content.slice(2);
+                if (content.endsWith("\\]")) {
+                    content = content.slice(0, -2);
+                }
+            }
 
-            katex.render(content, el);
+            katex.render(content, el, {
+                throwOnError: false
+            });
         });
     }
 
