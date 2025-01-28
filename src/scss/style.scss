@@ -1585,6 +1585,15 @@ iframe {
   border: 1px solid var(--border)
 }
 
+.jsxgraph-container {
+  background: #fff;
+  border-radius: 5px;
+
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+}
+
 div.math {
   font-size: 1.5em !important;
 }

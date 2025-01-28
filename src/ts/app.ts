@@ -4,10 +4,12 @@ import Callout from "./Callout";
 
 declare const Prism: any;
 declare const lucide: any;
+declare const JXG: any;
 
 (() => {
     Callout.foldAll();
     lucide.createIcons();
+    JXG.Options.text.useMathJax = true;
 
     Prism.languages.extend('markup', {});
     Prism.languages.hex = {
