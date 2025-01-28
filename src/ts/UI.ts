@@ -1,6 +1,5 @@
 import TimeUtility from "./TimeUtility";
 
-declare const katex: any;
 declare const Prism: any;
 
 class UI {
@@ -15,7 +14,6 @@ class UI {
         UI.addHighlighting(element);
         UI.renderSpoilers(element);
         UI.renderTabs(element);
-        UI.renderTeX(element);
         UI.renderTimestamps(element);
         UI.updateProjectCards(element);
         UI.applyAnsi(element);
@@ -90,33 +88,6 @@ class UI {
                     tabPanes.forEach(e => e.classList.remove("show", "active"));
                     controls.classList.add("show", "active");
                 });
-            });
-        });
-    }
-
-    /**
-     * Renders all TeX in the document.
-     * @param element The element to search for TeX in.
-     */
-    public static renderTeX(element?: Element) {
-        element = element || document.body;
-        const tex = element.getElementsByClassName("math");
-        Array.from(tex).forEach(function (el: Element) {
-            let content = el.textContent.trim();
-            if (content.startsWith("\\(")) {
-                content = content.slice(2);
-                if (content.endsWith("\\)")) {
-                    content = content.slice(0, -2);
-                }
-            } else if (content.startsWith("\\[")) {
-                content = content.slice(2);
-                if (content.endsWith("\\]")) {
-                    content = content.slice(0, -2);
-                }
-            }
-
-            katex.render(content, el, {
-                throwOnError: false
             });
         });
     }
