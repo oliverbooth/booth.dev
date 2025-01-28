@@ -25,7 +25,7 @@ builder.Logging.AddSerilog();
 
 builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
     .Use<TimestampExtension>()
-    .UseTemplates(provider.GetRequiredService<ITemplateService>())
+    .UseTemplates(provider)
 
     // we have our own "alert blocks"
     .UseCallouts()

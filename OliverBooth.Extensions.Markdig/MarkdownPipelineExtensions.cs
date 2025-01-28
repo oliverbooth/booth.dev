@@ -1,7 +1,6 @@
 ﻿using Markdig;
 using OliverBooth.Extensions.Markdig.Markdown.Callout;
 using OliverBooth.Extensions.Markdig.Markdown.Template;
-using OliverBooth.Extensions.Markdig.Services;
 
 namespace OliverBooth.Extensions.Markdig;
 
@@ -31,26 +30,26 @@ public static class MarkdownPipelineExtensions
     ///     Enables the use of Wiki-style templates in this pipeline.
     /// </summary>
     /// <param name="builder">The Markdig markdown pipeline builder.</param>
-    /// <param name="templateService">The template service responsible for fetching and rendering templates.</param>
+    /// <param name="serviceProvider">The service provider responsible for fetching services.</param>
     /// <returns>The modified Markdig markdown pipeline builder.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="builder" /> is <see langword="null" />.</para>
     ///     -or-
-    ///     <para><paramref name="templateService" /> is <see langword="null" />.</para>
+    ///     <para><paramref name="serviceProvider" /> is <see langword="null" />.</para>
     /// </exception>
-    public static MarkdownPipelineBuilder UseTemplates(this MarkdownPipelineBuilder builder, ITemplateService templateService)
+    public static MarkdownPipelineBuilder UseTemplates(this MarkdownPipelineBuilder builder, IServiceProvider serviceProvider)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        if (templateService is null)
+        if (serviceProvider is null)
         {
-            throw new ArgumentNullException(nameof(templateService));
+            throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        builder.Use(new TemplateExtension(templateService));
+        builder.Use(new TemplateExtension(serviceProvider));
         return builder;
     }
 }
