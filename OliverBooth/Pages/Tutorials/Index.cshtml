@@ -1,6 +1,7 @@
 @page "/tutorials/{**slug}"
 @using System.Diagnostics
 @using System.Text
+@using Humanizer
 @using Markdig
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OliverBooth.Common.Data
@@ -67,7 +68,7 @@
             <p>@Html.Raw(Markdown.ToHtml(folder.Description ?? string.Empty, MarkdownPipeline))</p>
         </div>
         <footer class="entry-footer">
-            @TutorialService.GetArticles(folder, Visibility.Published).Count tutorials
+            @("tutorial".ToQuantity(TutorialService.GetArticles(folder, Visibility.Published).Count))
         </footer>
         <a class="entry-link" aria-label="link to subfolder @folder.Title" asp-page="/Tutorials/Index" asp-route-slug="@folder.Slug"></a>
     </article>
