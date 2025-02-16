@@ -66,7 +66,6 @@ builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
 builder.Services.AddSingleton<IBlogUserService, BlogUserService>();
 builder.Services.AddSingleton<IProgrammingLanguageService, ProgrammingLanguageService>();
 builder.Services.AddSingleton<IProjectService, ProjectService>();
-builder.Services.AddSingleton<IMastodonService, MastodonService>();
 builder.Services.AddSingleton<ITutorialService, TutorialService>();
 builder.Services.AddSingleton<IReadingListService, ReadingListService>();
 builder.Services.AddRazorPages();
