@@ -1,12 +1,12 @@
 <h1 align="center"><img src="icon.png"></h1>
-<h1 align="center">oliverbooth.dev</h1>
+<h1 align="center">booth.dev</h1>
 <p align="center">
-<a href="https://github.com/oliverbooth/oliverbooth.dev/actions/workflows/dotnet.yml"><img src="https://img.shields.io/github/actions/workflow/status/oliverbooth/oliverbooth.dev/dotnet.yml?style=flat-square" alt="GitHub Workflow Status" title="GitHub Workflow Status"></a>
-<a href="https://github.com/oliverbooth/oliverbooth.dev/issues"><img src="https://img.shields.io/github/issues/oliverbooth/oliverbooth.dev?style=flat-square" alt="GitHub Issues" title="GitHub Issues"></a>
-<a href="https://github.com/oliverbooth/oliverbooth.dev/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/oliverbooth/oliverbooth.dev?style=flat-square" alt="MIT License" title="MIT License"></a>
+<a href="https://github.com/oliverbooth/booth.dev/actions/workflows/dotnet.yml"><img src="https://img.shields.io/github/actions/workflow/status/oliverbooth/booth.dev/dotnet.yml?style=flat-square" alt="GitHub Workflow Status" title="GitHub Workflow Status"></a>
+<a href="https://github.com/oliverbooth/booth.dev/issues"><img src="https://img.shields.io/github/issues/oliverbooth/booth.dev?style=flat-square" alt="GitHub Issues" title="GitHub Issues"></a>
+<a href="https://github.com/oliverbooth/booth.dev/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/oliverbooth/booth.dev?style=flat-square" alt="MIT License" title="MIT License"></a>
 </p>
 
-Source code for my website https://oliverbooth.dev.
+Source code for my website https://booth.dev.
 
 ## About
 My site was formerly just a landing card which linked to various socials and two separate blogs: one code blog, one
@@ -33,4 +33,4 @@ time-being, that the rights to all assets and code are reserved. You may use the
 directly copying my website for your own purposes is strictly forbidden at this current time.
 
 ## Contact
-For questions or support, feel free to each out to me at https://oliverbooth.dev/contact.
+For questions or support, feel free to each out to me at https://booth.dev/contact.

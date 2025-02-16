@@ -1,14 +1,14 @@
 {
-  "name": "oliverbooth.dev",
-  "version": "1.0.0",
-  "description": "Source code for https://oliverbooth.dev",
+  "name": "booth.dev",
+  "version": "1.1.0",
+  "description": "Source code for https://booth.dev",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://git.oliverbooth.dev/oliverbooth/oliverbooth.dev"
+    "url": "https://git.booth.dev/oliver/booth.dev"
   },
   "keywords": [
     "asp-net-core",

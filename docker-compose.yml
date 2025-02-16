@@ -1,16 +1,16 @@
 services:
-  oliverbooth:
-    container_name: oliverbooth.dev
+  boothdotdev:
+    container_name: booth.dev
     pull_policy: build
     build:
       context: .
-      dockerfile: OliverBooth/Dockerfile
+      dockerfile: BoothDotDev/Dockerfile
     volumes:
       - type: bind
-        source: /var/log/oliverbooth/site
+        source: /var/log/boothdotdev/site
         target: /app/logs
       - type: bind
-        source: /etc/oliverbooth/site
+        source: /etc/boothdotdev/site
         target: /app/data
     ports:
       - "2845:2845"

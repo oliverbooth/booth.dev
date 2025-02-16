@@ -1,0 +1,39 @@
+@using BoothDotDev.Common.Data.Blog
+@using BoothDotDev.Common.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IBlogPostService BlogPostService
+
+@{
+    var currentPage = (int)(ViewData["CurrentPage"] ?? 0);
+    var tags = ViewData["Tags"] as string[];
+}
+
+@foreach (IBlogPost post in BlogPostService.GetBlogPosts(currentPage, tags: tags))
+{
+    bool hasExcerpt = string.IsNullOrWhiteSpace(post.Excerpt);
+    DateTimeOffset published = post.Published;
+    <article class="post-entry">
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @post.Title
+            </h2>
+        </header>
+        <div class="entry-content@(hasExcerpt ? " no-trim" : "")">
+            @Html.Raw(BlogPostService.RenderExcerpt(post, out bool trimmed))
+        </div>
+        <footer class="entry-footer">
+            <span title="@(published.ToString("s"))">@published.ToString("D")</span>
+            ·
+            @Math.Max(1, post.Body.Split().Length / 275) min
+            ·
+            @post.Author.DisplayName
+        </footer>
+        <a class="entry-link" aria-label="post link to @post.Title"
+           asp-page="/Blog/Article"
+           asp-route-year="@published.Year"
+           asp-route-month="@published.Month.ToString("00")"
+           asp-route-day="@published.Day.ToString("00")"
+           asp-route-slug="@post.Slug">
+        </a>
+    </article>
+}

@@ -1,0 +1,65 @@
+@using BoothDotDev.Common.Data.Blog
+@using BoothDotDev.Common.Services
+@using Humanizer
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model BoothDotDev.Common.Data.Blog.IBlogPost
+@inject IBlogPostService BlogPostService
+
+@{
+    IBlogAuthor author = Model.Author;
+    DateTimeOffset published = Model.Published;
+    DateTimeOffset? updated = Model.Updated;
+    DateTimeOffset time = updated ?? published;
+    string verb = updated is null ? "Published" : "Updated";
+}
+
+<div class="blog-card">
+    <h4>
+        <a asp-page="/Blog/Article"
+           asp-route-year="@published.Year"
+           asp-route-month="@published.Month.ToString("00")"
+           asp-route-day="@published.Day.ToString("00")"
+           asp-route-slug="@Model.Slug">
+            @Model.Title
+        </a>
+    </h4>
+
+    <p>
+        <img class="blog-author-icon" src="@author.GetAvatarUrl()" alt="@author.DisplayName">
+        @author.DisplayName
+        &bull;
+        <span class="text-muted" title="@time.ToString("F")">@verb @time.Humanize()</span>
+    </p>
+
+    <article>
+        @Html.Raw(BlogPostService.RenderExcerpt(Model, out bool trimmed))
+    </article>
+
+    @if (trimmed || Model.Excerpt is not null)
+    {
+        <p>
+            <a asp-page="/Blog/Article"
+               asp-route-year="@published.Year"
+               asp-route-month="@published.Month.ToString("00")"
+               asp-route-day="@published.Day.ToString("00")"
+               asp-route-slug="@Model.Slug">
+                Read more...
+            </a>
+        </p>
+    }
+
+    <hr/>
+
+    <div class="d-flex align-items-center">
+        <i data-lucide="tag"></i>
+        <ul class="ms-2 post-tags">
+            @foreach (string tag in Model.Tags)
+            {
+                <li class="post-tag">
+                    <a asp-page="Index" asp-route-tag="@Html.UrlEncoder.Encode(tag)">@tag</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+</div>

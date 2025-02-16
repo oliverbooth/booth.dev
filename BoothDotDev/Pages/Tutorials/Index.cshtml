@@ -1,0 +1,119 @@
+@page "/tutorials/{**slug}"
+@using System.Diagnostics
+@using System.Text
+@using BoothDotDev.Common.Data
+@using BoothDotDev.Common.Data.Web
+@using BoothDotDev.Common.Services
+@using Humanizer
+@using Markdig
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Index
+@inject ITutorialService TutorialService
+@inject MarkdownPipeline MarkdownPipeline
+@{
+    ViewData["Title"] = "Tutorials";
+    ViewData["Page"] = "Tutorials";
+    ITutorialFolder? currentFolder = Model.CurrentFolder;
+
+    var parents = new Stack<ITutorialFolder>();
+    int? parent = currentFolder?.Parent;
+    while (parent is not null)
+    {
+        ITutorialFolder? folder = TutorialService.GetFolder(parent.Value);
+        Debug.Assert(folder is not null);
+        parents.Push(folder);
+
+        parent = folder.Parent;
+    }
+}
+
+<header class="page-header">
+    @if (currentFolder is not null)
+    {
+        <div class="breadcrumbs">
+            <a asp-page="/Index">Home</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Tutorials/Index" asp-route-slug="">Tutorials</a>
+            @while (parents.Count > 0)
+            {
+                <span>&nbsp;»&nbsp;</span>
+                ITutorialFolder current = parents.Pop();
+                <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a>
+            }
+            <span>&nbsp;»&nbsp;</span>
+            <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(currentFolder)">@currentFolder.Title</a>
+        </div>
+    }
+
+    <h1>@(currentFolder?.Title ?? "Tutorials")</h1>
+</header>
+
+@foreach (ITutorialFolder folder in TutorialService.GetFolders(currentFolder, Visibility.Published))
+{
+    if (folder.Visibility != Visibility.Published)
+    {
+        continue;
+    }
+
+    <article class="post-entry">
+        <figure class="entry-cover">
+            <img loading="lazy" src="@folder.PreviewImageUrl" alt="">
+        </figure>
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @folder.Title
+            </h2>
+        </header>
+        <div class="entry-content">
+            <p>@Html.Raw(Markdown.ToHtml(folder.Description ?? string.Empty, MarkdownPipeline))</p>
+        </div>
+        <footer class="entry-footer">
+            @("tutorial".ToQuantity(TutorialService.GetArticles(folder, Visibility.Published).Count))
+        </footer>
+        <a class="entry-link" aria-label="link to subfolder @folder.Title" asp-page="/Tutorials/Index" asp-route-slug="@folder.Slug"></a>
+    </article>
+}
+
+@if (currentFolder is not null)
+{
+    foreach (ITutorialArticle article in TutorialService.GetArticles(currentFolder, Visibility.Published))
+    {
+        var slugBuilder = new StringBuilder();
+        ITutorialFolder? folder = TutorialService.GetFolder(article.Folder);
+        if (folder is not null)
+        {
+            slugBuilder.Append(folder.Slug);
+            slugBuilder.Append('/');
+        }
+
+        while (folder?.Parent is { } parentId)
+        {
+            folder = TutorialService.GetFolder(parentId);
+            if (folder is not null)
+            {
+                slugBuilder.Append(folder.Slug);
+                slugBuilder.Append('/');
+            }
+        }
+
+        slugBuilder.Append(article.Slug);
+
+        <article class="post-entry">
+            <figure class="entry-cover">
+                <img loading="lazy" src="@article.PreviewImageUrl" alt="">
+            </figure>
+            <header class="entry-header">
+                <h2 class="entry-hint-parent">
+                    @article.Title
+                </h2>
+            </header>
+            <div class="entry-content">
+                <p>@Html.Raw(TutorialService.RenderExcerpt(article, out _))</p>
+            </div>
+            <footer class="entry-footer">
+                @Math.Max(1, article.Body.Split().Length / 275) min
+            </footer>
+            <a class="entry-link" aria-label="link to subfolder @article.Title" asp-page="/Tutorials/Article" asp-route-slug="@slugBuilder.ToString()"></a>
+        </article>
+    }
+}

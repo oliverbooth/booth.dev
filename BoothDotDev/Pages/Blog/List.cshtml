@@ -1,0 +1,31 @@
+@page "/blog/page/{pageNumber:int}"
+@using BoothDotDev.Common.Data
+@using BoothDotDev.Common.Services
+@model List
+@inject IBlogPostService BlogPostService
+
+@{
+    ViewData["Title"] = "Blog";
+    ViewData["Page"] = "Blog";
+    int pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
+    int previousPage = Model.PageNumber - 1;
+    int nextPage = Model.PageNumber + 1;
+}
+
+@await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")
+@await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
+{
+    ["CurrentPage"] = previousPage // -1 for zero based
+})
+
+@{
+<footer class="page-footer">
+    <nav class="pagination">
+        <a class="previous" asp-page="/Blog/List" asp-route-pageNumber="@previousPage">«&nbsp;Previous&nbsp;@previousPage/@pageCount</a>
+        @if (Model.PageNumber < pageCount)
+        {
+            <a class="next" asp-page="/Blog/List" asp-route-pageNumber="@nextPage">Next&nbsp;@nextPage/@pageCount&nbsp;»</a>
+        }
+    </nav>
+</footer>
+}
