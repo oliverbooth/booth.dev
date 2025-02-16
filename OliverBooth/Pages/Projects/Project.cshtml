@@ -34,7 +34,7 @@
     }
 
     <p class="text-center">
-        <img src="https://cdn.olivr.me/projects/hero/@project.HeroUrl" class="img-fluid" alt="@project.Name">
+        <img src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" class="img-fluid" alt="@project.Name">
     </p>
 
     <table class="table">
@@ -43,7 +43,7 @@
             <td>
                 @foreach (IProgrammingLanguage language in ProjectService.GetProgrammingLanguages(project))
                 {
-                    <img src="https://cdn.olivr.me/img/assets/p/@(language.Key).svg" alt="@language.Name" title="@language.Name" style="height: 2em">
+                    <img src="https://cdn.booth.dev/img/assets/p/@(language.Key).svg" alt="@language.Name" title="@language.Name" style="height: 2em">
                 }
             </td>
         </tr>
