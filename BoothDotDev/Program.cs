@@ -59,7 +59,6 @@ builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ICodeSnippetService, CodeSnippetService>();
-builder.Services.AddSingleton<IContactService, ContactService>();
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
 builder.Services.AddSingleton<IBlogUserService, BlogUserService>();

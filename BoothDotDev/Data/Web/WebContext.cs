@@ -32,12 +32,6 @@ internal sealed class WebContext : DbContext
     public DbSet<CodeSnippet> CodeSnippets { get; private set; } = null!;
 
     /// <summary>
-    ///     Gets the collection of blacklist entries in the database.
-    /// </summary>
-    /// <value>The collection of blacklist entries.</value>
-    public DbSet<BlacklistEntry> ContactBlacklist { get; private set; } = null!;
-
-    /// <summary>
     ///     Gets the collection of programming languages in the database.
     /// </summary>
     /// <value>The collection of programming languages.</value>
@@ -84,7 +78,6 @@ internal sealed class WebContext : DbContext
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new BlacklistEntryConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new ProgrammingLanguageConfiguration());
