@@ -28,7 +28,6 @@
 
     <ItemGroup>
         <PackageReference Include="Alexinea.Extensions.Configuration.Toml" Version="7.0.0"/>
-        <PackageReference Include="AspNetCore.ReCaptcha" Version="1.8.2"/>
         <PackageReference Include="BCrypt.Net-Core" Version="1.6.0"/>
         <PackageReference Include="MailKit" Version="4.8.0"/>
         <PackageReference Include="MailKitSimplified.Sender" Version="2.11.13"/>
@@ -49,8 +48,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\BoothDotDev.Common\BoothDotDev.Common.csproj"/>
-        <ProjectReference Include="..\BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj" />
-        <ProjectReference Include="..\BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj" />
+        <ProjectReference Include="..\BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj"/>
+        <ProjectReference Include="..\BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj"/>
     </ItemGroup>
 
 </Project>

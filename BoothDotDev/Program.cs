@@ -1,4 +1,3 @@
-using AspNetCore.ReCaptcha;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data.Blog;
 using BoothDotDev.Data.Web;
@@ -71,7 +70,6 @@ builder.Services.AddSingleton<IReadingListService, ReadingListService>();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 
 if (builder.Environment.IsProduction())
 {

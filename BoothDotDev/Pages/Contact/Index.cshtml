@@ -13,44 +13,18 @@
 
     <div class="post-content">
         <p>
-            Thanks for getting in touch! While I do my best to read to all inquiries, I cannot guarantee that I will be
-            able to respond to your message. Nevertheless, I appreciate you taking the time to reach out to me and I
-            will respond if I can.
+            After much consideration, I've decided to terminate the contact form on this website.
+            I've been receiving a lot of spam (mostly from SEO scammers), with seldom legitimate correspondence, and I
+            don't have the time nor the patience to deal with it.
         </p>
 
-        <div class="callout" data-callout="warning">
-            <div class="callout-title"><i data-lucide="triangle-alert"></i> Spam Warning</div>
-            <div class="callout-content">
-                I am politely asking that you respect my inbox and keep your unsolicited advertising away. This is a
-                simple request. If you send me any kind of spam after this, you have demonstrated that you do not have
-                the basic human decency to respect my wishes or my privacy, and you have lost the privilege for me to
-                respect yours. I <strong>will</strong> block your email address, and I will add your name to my public
-                blacklist of spammers, which you can find <a asp-page="/Contact/Blacklist">here</a>.
-            </div>
-        </div>
+        <p>
+            If you'd like to reach out you can find me on <a href="https://bsky.app/profile/booth.dev">BlueSky</a> or in
+            the <a href="https://discord.gg/brackeys">Brackeys Community Discord Server</a>.
+        </p>
 
-        <form method="post" asp-controller="Contact" asp-action="HandleForm">
-            <input type="hidden" name="contact-type" value="other">
-            
-            <div class="form-group">
-                <input class="form-control" type="text" name="name" placeholder="Your name" required>
-            </div>
-
-            <div class="form-group">
-                <input class="form-control" type="email" name="email" placeholder="Your email address" required>
-            </div>
-
-            <div class="form-group">
-                <input class="form-control" type="text" name="subject" placeholder="Subject" required>
-            </div>
-
-            <div class="form-group">
-                <textarea class="form-control" name="message" rows="5" required placeholder="Message"></textarea>
-            </div>
-
-            <recaptcha/>
-
-            <button class="button green" style="margin-top: 10px;">Submit</button>
-        </form>
+        <p>
+            I apologise for the inconvenience, and thank you for your understanding.
+        </p>
     </div>
 </article>
