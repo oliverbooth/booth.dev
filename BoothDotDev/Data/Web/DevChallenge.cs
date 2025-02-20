@@ -1,3 +1,4 @@
+using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Web;
 
 namespace BoothDotDev.Data.Web;
@@ -15,7 +16,7 @@ internal class DevChallenge : IDevChallenge
     public int Id { get; internal set; }
 
     /// <inheritdoc />
-    public bool Published { get; internal set; }
+    public string? Password { get; internal set; }
 
     /// <inheritdoc />
     public bool ShowSolution { get; internal set; }
@@ -25,4 +26,7 @@ internal class DevChallenge : IDevChallenge
 
     /// <inheritdoc />
     public string Title { get; internal set; } = string.Empty;
+
+    /// <inheritdoc />
+    public Visibility Visibility { get; internal set; }
 }

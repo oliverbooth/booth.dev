@@ -1,4 +1,5 @@
 @page
+@using BoothDotDev.Common.Data
 @using BoothDotDev.Common.Data.Web
 @using BoothDotDev.Common.Services
 @model BoothDotDev.Pages.Challenges.Index
@@ -20,7 +21,7 @@
     </header>
 </article>
 
-@foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges().Where(c => c.Published))
+@foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges().Where(c => c.Visibility == Visibility.Published))
 {
     <article class="post-entry">
         <header class="entry-header">

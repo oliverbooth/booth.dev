@@ -1,5 +1,7 @@
+using BoothDotDev.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoothDotDev.Data.Web.Configuration;
 
@@ -20,6 +22,7 @@ internal sealed class DevChallengeConfiguration : IEntityTypeConfiguration<DevCh
         builder.Property(e => e.Description).IsRequired();
         builder.Property(e => e.Solution).IsRequired(false);
         builder.Property(e => e.ShowSolution).IsRequired();
-        builder.Property(e => e.Published).IsRequired();
+        builder.Property(e => e.Visibility).HasConversion<EnumToStringConverter<Visibility>>().IsRequired();
+        builder.Property(e => e.Password).IsRequired(false);
     }
 }

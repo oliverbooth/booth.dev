@@ -8,6 +8,14 @@ namespace BoothDotDev.Common.Services;
 public interface IDevChallengeService
 {
     /// <summary>
+    ///     Authenticates the challenge with the specified ID and password.
+    /// </summary>
+    /// <param name="id">The ID of the challenge.</param>
+    /// <param name="password">The password of the challenge.</param>
+    /// <returns><see langword="true" /> if the challenge is authenticated; otherwise, <see langword="false" />.</returns>
+    bool AuthenticateChallenge(int id, string? password);
+
+    /// <summary>
     ///     Gets a read-only collection of dev challenges.
     /// </summary>
     /// <returns>A read-only collection of dev challenges.</returns>

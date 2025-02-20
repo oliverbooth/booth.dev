@@ -14,14 +14,19 @@ public class Challenge : PageModel
         _devChallengeService = devChallengeService;
     }
 
-    public IDevChallenge DevChallenge { get; private set; }
+    public IDevChallenge DevChallenge { get; private set; } = null!;
 
-    public IActionResult OnGet()
+    public IActionResult OnGet([FromQuery] string? password = null)
     {
         var challenge = _devChallengeService.GetDevChallenges().FirstOrDefault();
-        if (challenge is null || !challenge.Published)
+        if (challenge is null)
         {
             return NotFound();
+        }
+
+        if (!_devChallengeService.AuthenticateChallenge(challenge.Id, password))
+        {
+            return Unauthorized();
         }
 
         DevChallenge = challenge;

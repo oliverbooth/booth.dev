@@ -24,10 +24,10 @@ public interface IDevChallenge
     int Id { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether the challenge has been published.
+    ///     Gets the password of the challenge.
     /// </summary>
-    /// <value><see langword="true" /> if the challenge has been published; otherwise, <see langword="false" />.</value>
-    bool Published { get; }
+    /// <value>The password of the challenge.</value>
+    string? Password { get; }
 
     /// <summary>
     ///     Gets a value indicating whether to show the solution to the challenge.
@@ -46,4 +46,10 @@ public interface IDevChallenge
     /// </summary>
     /// <value>The title of the challenge.</value>
     string Title { get; }
+
+    /// <summary>
+    ///     Gets the visibility of the challenge.
+    /// </summary>
+    /// <value>The visibility of the challenge.</value>
+    Visibility Visibility { get; }
 }

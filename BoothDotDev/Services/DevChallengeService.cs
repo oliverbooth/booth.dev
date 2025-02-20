@@ -2,6 +2,7 @@ using BoothDotDev.Common.Data.Web;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data.Web;
 using Microsoft.EntityFrameworkCore;
+using BC = BCrypt.Net.BCrypt;
 
 namespace BoothDotDev.Services;
 
@@ -17,6 +18,25 @@ internal sealed class DevChallengeService : IDevChallengeService
     public DevChallengeService(IDbContextFactory<WebContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
+    }
+
+    /// <inheritdoc />
+    public bool AuthenticateChallenge(int id, string? password)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var challenge = context.DevChallenges.Find(id);
+
+        if (challenge is null)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(challenge.Password))
+        {
+            return true;
+        }
+
+        return password is not null && BC.Verify(password, challenge.Password);
     }
 
     /// <inheritdoc />
