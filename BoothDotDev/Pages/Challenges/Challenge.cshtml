@@ -1,0 +1,40 @@
+@page "/challenge/{id:int}"
+@using Markdig
+@model BoothDotDev.Pages.Challenges.Challenge
+@inject MarkdownPipeline MarkdownPipeline
+@{
+    ViewData["Title"] = Model.DevChallenge.Title;
+}
+
+<article class="post-single">
+    <header class="post-header">
+        <div class="breadcrumbs">
+            <a asp-page="/Index">Home</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Challenges/Index">Challenges</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Challenges/Challenge"
+               asp-route-id="@Model.DevChallenge.Id">
+                @Model.DevChallenge.Title
+            </a>
+        </div>
+        <h1 class="post-title entry-hint-parent">@Model.DevChallenge.Title</h1>
+    </header>
+
+    <div class="post-content">
+        @Html.Raw(Markdown.ToHtml(Model.DevChallenge.Description, MarkdownPipeline))
+        @if (Model.DevChallenge is { ShowSolution: true, Solution: not null })
+        {
+            <details class="callout" data-callout="success">
+                <summary>Solution</summary>
+                @Html.Raw(Markdown.ToHtml(Model.DevChallenge.Solution, MarkdownPipeline))
+            </details>
+        }
+        else
+        {
+            <div class="callout" data-callout="warning">
+                The solution for this challenge has not been provided yet. Check back later!
+            </div>
+        }
+    </div>
+</article>

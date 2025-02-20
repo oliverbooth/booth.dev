@@ -1,0 +1,36 @@
+@page
+@using BoothDotDev.Common.Data.Web
+@using BoothDotDev.Common.Services
+@model BoothDotDev.Pages.Challenges.Index
+@inject IDevChallengeService DevChallengeService
+@{
+    ViewData["Title"] = "Dev Challenges";
+}
+
+<article class="first-entry home-info">
+    <header class="page-header">
+        <div class="breadcrumbs"><a asp-page="/Index">Home</a></div>
+        <h1 class="post-title entry-hint-parent">Dev Challenges</h1>
+        <div class="entry-content">
+            <p>
+                These are a collection of challenges I've written to help you improve your skills as a developer.
+                They're designed to be fun, challenging, and educational. I hope you enjoy them!
+            </p>
+        </div>
+    </header>
+</article>
+
+@foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges().Where(c => c.Published))
+{
+    <article class="post-entry">
+        <header class="entry-header">
+            <h2 class="entry-hint-parent">
+                @challenge.Title
+            </h2>
+        </header>
+        <a class="entry-link" aria-label="post link to @challenge.Title"
+           asp-page="/Challenges/Challenge"
+           asp-route-id="@challenge.Id">
+        </a>
+    </article>
+}

@@ -32,6 +32,12 @@ internal sealed class WebContext : DbContext
     public DbSet<CodeSnippet> CodeSnippets { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the collection of dev challenges in the database.
+    /// </summary>
+    /// <value>The collection of dev challenges.</value>
+    public DbSet<DevChallenge> DevChallenges { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets the collection of programming languages in the database.
     /// </summary>
     /// <value>The collection of programming languages.</value>
@@ -80,6 +86,7 @@ internal sealed class WebContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
+        modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new ProgrammingLanguageConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
