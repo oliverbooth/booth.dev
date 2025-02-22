@@ -29,9 +29,6 @@
                 @challenge.Title
             </h2>
         </header>
-        <a class="entry-link" aria-label="post link to @challenge.Title"
-           asp-page="/Challenges/Challenge"
-           asp-route-id="@challenge.Id">
-        </a>
+        <a class="entry-link" aria-label="post link to @challenge.Title" href="/challenge/@challenge.Id"></a>
     </article>
 }

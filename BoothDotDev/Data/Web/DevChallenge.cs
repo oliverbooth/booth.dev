@@ -1,5 +1,6 @@
 using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Web;
+using DEDrake;
 
 namespace BoothDotDev.Data.Web;
 
@@ -13,7 +14,10 @@ internal class DevChallenge : IDevChallenge
     public string Description { get; internal set; } = string.Empty;
 
     /// <inheritdoc />
-    public int Id { get; internal set; }
+    public ShortGuid Id { get; internal set; }
+
+    /// <inheritdoc />
+    public int? OldId { get; internal set; }
 
     /// <inheritdoc />
     public string? Password { get; internal set; }

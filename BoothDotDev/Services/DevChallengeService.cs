@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data.Web;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data.Web;
+using DEDrake;
 using Microsoft.EntityFrameworkCore;
 using BC = BCrypt.Net.BCrypt;
 
@@ -21,12 +23,9 @@ internal sealed class DevChallengeService : IDevChallengeService
     }
 
     /// <inheritdoc />
-    public bool AuthenticateChallenge(int id, string? password)
+    public bool AuthenticateChallenge(string id, string? password)
     {
-        using var context = _dbContextFactory.CreateDbContext();
-        var challenge = context.DevChallenges.Find(id);
-
-        if (challenge is null)
+        if (!TryGetDevChallenge(id, out var challenge, out _))
         {
             return false;
         }
@@ -47,10 +46,40 @@ internal sealed class DevChallengeService : IDevChallengeService
     }
 
     /// <inheritdoc />
-    public bool TryGetDevChallenge(int id, out IDevChallenge? devChallenge)
+    public bool TryGetDevChallenge(string id,
+        [NotNullWhen(true)] out IDevChallenge? devChallenge,
+        out bool shouldRedirect)
     {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            devChallenge = null;
+            shouldRedirect = false;
+            return false;
+        }
+
         using var context = _dbContextFactory.CreateDbContext();
-        devChallenge = context.DevChallenges.Find(id);
+        if (int.TryParse(id, out int oldId))
+        {
+            devChallenge = context.DevChallenges.FirstOrDefault(c => c.OldId == oldId);
+            shouldRedirect = devChallenge is not null;
+            return devChallenge is not null;
+        }
+
+        ShortGuid guid;
+
+        try
+        {
+            guid = ShortGuid.Parse(id);
+        }
+        catch (FormatException)
+        {
+            devChallenge = null;
+            shouldRedirect = false;
+            return false;
+        }
+
+        devChallenge = context.DevChallenges.Find(guid);
+        shouldRedirect = false;
         return devChallenge is not null;
     }
 }

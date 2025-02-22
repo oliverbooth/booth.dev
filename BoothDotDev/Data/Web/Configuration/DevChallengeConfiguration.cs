@@ -1,4 +1,5 @@
 using BoothDotDev.Common.Data;
+using BoothDotDev.Data.Web.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -16,7 +17,8 @@ internal sealed class DevChallengeConfiguration : IEntityTypeConfiguration<DevCh
         builder.ToTable("DevChallenge");
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Property(e => e.Id).HasConversion<ShortGuidToStringConverter>().IsRequired();
+        builder.Property(e => e.OldId).IsRequired(false);
         builder.Property(e => e.Date).IsRequired();
         builder.Property(e => e.Title).IsRequired();
         builder.Property(e => e.Description).IsRequired();

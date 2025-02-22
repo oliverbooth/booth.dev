@@ -1,3 +1,5 @@
+using DEDrake;
+
 namespace BoothDotDev.Common.Data.Web;
 
 /// <summary>
@@ -21,7 +23,13 @@ public interface IDevChallenge
     ///     Gets the ID of the challenge.
     /// </summary>
     /// <value>The ID of the challenge.</value>
-    int Id { get; }
+    ShortGuid Id { get; }
+
+    /// <summary>
+    ///     Gets the old ID of the challenge.
+    /// </summary>
+    /// <value>The old ID of the challenge.</value>
+    int? OldId { get; }
 
     /// <summary>
     ///     Gets the password of the challenge.

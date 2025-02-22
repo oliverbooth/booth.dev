@@ -16,14 +16,9 @@ public class Challenge : PageModel
 
     public IDevChallenge DevChallenge { get; private set; } = null!;
 
-    public IActionResult OnGet([FromQuery] string? password = null, [FromRoute] int id = 0)
+    public IActionResult OnGet([FromRoute] string id, [FromQuery] string? password = null)
     {
-        if (!_devChallengeService.TryGetDevChallenge(id, out var challenge))
-        {
-            return NotFound();
-        }
-
-        if (challenge is null)
+        if (!_devChallengeService.TryGetDevChallenge(id, out var challenge, out bool shouldRedirect))
         {
             return NotFound();
         }
@@ -31,6 +26,13 @@ public class Challenge : PageModel
         if (!_devChallengeService.AuthenticateChallenge(challenge.Id, password))
         {
             return Unauthorized();
+        }
+
+        if (shouldRedirect)
+        {
+            return RedirectPermanent(password is not null
+                ? $"/challenge/{challenge.Id}?password={password}"
+                : $"/challenge/{challenge.Id}");
         }
 
         DevChallenge = challenge;

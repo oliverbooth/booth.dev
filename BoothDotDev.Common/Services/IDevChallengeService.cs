@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data.Web;
 
 namespace BoothDotDev.Common.Services;
@@ -13,7 +14,7 @@ public interface IDevChallengeService
     /// <param name="id">The ID of the challenge.</param>
     /// <param name="password">The password of the challenge.</param>
     /// <returns><see langword="true" /> if the challenge is authenticated; otherwise, <see langword="false" />.</returns>
-    bool AuthenticateChallenge(int id, string? password);
+    bool AuthenticateChallenge(string id, string? password);
 
     /// <summary>
     ///     Gets a read-only collection of dev challenges.
@@ -29,6 +30,10 @@ public interface IDevChallengeService
     ///     When this method returns, contains the dev challenge associated with the specified id, if the id is found;
     ///     otherwise, the default value for the type will be returned. This parameter is passed uninitialized.
     /// </param>
+    /// <param name="shouldRedirect">
+    ///     When this method returns, contains a value indicating whether the user should be redirected to the new URL.
+    ///     This parameter is passed uninitialized.
+    /// </param>
     /// <returns>A read-only collection of dev challenges.</returns>
-    bool TryGetDevChallenge(int id, out IDevChallenge? devChallenge);
+    bool TryGetDevChallenge(string id, [NotNullWhen(true)] out IDevChallenge? devChallenge, out bool shouldRedirect);
 }
