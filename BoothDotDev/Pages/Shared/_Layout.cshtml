@@ -110,6 +110,11 @@
                 </a>
             </li>
             <li>
+                <a asp-page="/Challenges/Index" asp-route-slug="">
+                    <span class="@(ViewData["Page"]?.ToString() == "Challenges" ? " active" : "")">Challenges</span>
+                </a>
+            </li>
+            <li>
                 <a asp-page="/Projects/Index">
                     <span class="@(ViewData["Page"]?.ToString() == "Projects" ? " active" : "")">Projects</span>
                 </a>
