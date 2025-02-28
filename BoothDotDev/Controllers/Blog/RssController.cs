@@ -33,7 +33,7 @@ public class RssController : Controller
         foreach (IBlogPost post in _blogPostService.GetAllBlogPosts())
         {
             var url = $"{baseUrl}/{post.Published:yyyy/MM/dd}/{post.Slug}";
-            string excerpt = _blogPostService.RenderPost(post);
+            string excerpt = _blogPostService.RenderExcerpt(post, out _);
             var description = $"{excerpt}<p><a href=\"{url}\">Read more...</a></p>";
 
             var item = new BlogItem
