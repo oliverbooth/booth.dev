@@ -37,17 +37,21 @@
             </h2>
         </header>
 
+        <div class="entry-content">
+            @* nothing here, just padding *@
+        </div>
+
         <footer class="entry-footer">
             <p>
                 <span class="text-muted" title="@date.ToString("F")">Published @date.Humanize()</span>
                 &bull;
                 @if (challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution))
                 {
-                    <span class="text-muted">✅ Solution released</span>
+                    <span class="badge green">✅ Solution released</span>
                 }
                 else
                 {
-                    <span class="text-muted">❌ Solution not released yet</span>
+                    <span class="badge red">❌ Solution not released yet</span>
                 }
             </p>
         </footer>
