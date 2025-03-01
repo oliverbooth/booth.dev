@@ -2,6 +2,7 @@
 @using BoothDotDev.Common.Data
 @using BoothDotDev.Common.Data.Web
 @using BoothDotDev.Common.Services
+@using Humanizer
 @model BoothDotDev.Pages.Challenges.Index
 @inject IDevChallengeService DevChallengeService
 @{
@@ -24,12 +25,21 @@
 
 @foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges().Where(c => c.Visibility == Visibility.Published))
 {
+    DateTimeOffset date = challenge.Date;
+
     <article class="post-entry">
         <header class="entry-header">
             <h2 class="entry-hint-parent">
                 @challenge.Title
             </h2>
         </header>
+
+        <footer class="entry-footer">
+            <p>
+                <span class="text-muted" title="@date.ToString("F")">Published @date.Humanize()</span>
+            </p>
+        </footer>
+
         <a class="entry-link" aria-label="post link to @challenge.Title" href="/challenge/@challenge.Id"></a>
     </article>
 }
