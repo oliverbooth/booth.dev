@@ -40,6 +40,15 @@
         <footer class="entry-footer">
             <p>
                 <span class="text-muted" title="@date.ToString("F")">Published @date.Humanize()</span>
+                &bull;
+                @if (challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution))
+                {
+                    <span class="text-muted">✅ Solution released</span>
+                }
+                else
+                {
+                    <span class="text-muted">❌ Solution not released yet</span>
+                }
             </p>
         </footer>
 
