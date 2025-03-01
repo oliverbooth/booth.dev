@@ -264,3 +264,11 @@ table.table {
 pre code.language-ansi {
   background: #0c0c0c !important;
 }
+
+img.inline {
+  display: unset !important;
+}
+
+img.project-lang {
+  height: 2em;
+}
