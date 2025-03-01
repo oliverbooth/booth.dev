@@ -27,14 +27,14 @@
         @if (Model.DevChallenge is { ShowSolution: true, Solution: not null })
         {
             <details class="callout" data-callout="success">
-                <summary>Solution</summary>
+                <summary><i data-lucide="star"></i> Solution</summary>
                 @Html.Raw(Markdown.ToHtml(Model.DevChallenge.Solution, MarkdownPipeline))
             </details>
         }
         else
         {
             <div class="callout" data-callout="warning">
-                The solution for this challenge has not been provided yet. Check back later!
+                <i data-lucide="timer"></i> The solution for this challenge has not been provided yet. Check back later!
             </div>
         }
     </div>
