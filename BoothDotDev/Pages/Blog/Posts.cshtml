@@ -24,7 +24,7 @@
 
 @await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
 {
-    ["CurrentPage"] = 0
+    ["CurrentPage"] = Model.PageNumber - 1
 })
 
 @{
@@ -38,11 +38,11 @@
             <nav class="pagination">
                 @if (Model.PageNumber > 1)
                 {
-                    <a class="previous" asp-page="/Blog/List" asp-route-pageNumber="@previousPage">«&nbsp;Previous&nbsp;@previousPage/@pageCount</a>
+                    <a class="previous" asp-page="/Blog/Posts" asp-route-pageNumber="@previousPage">«&nbsp;Previous&nbsp;@previousPage/@pageCount</a>
                 }
-                else if (Model.PageNumber < pageCount)
+                @if (Model.PageNumber < pageCount)
                 {
-                    <a class="next" asp-page="/Blog/List" asp-route-pageNumber="@nextPage">Next&nbsp;@nextPage/@pageCount&nbsp;»</a>
+                    <a class="next" asp-page="/Blog/Posts" asp-route-pageNumber="@nextPage">Next&nbsp;@nextPage/@pageCount&nbsp;»</a>
                 }
             </nav>
         </footer>
