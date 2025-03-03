@@ -47,12 +47,13 @@ declare const JXG: any;
 
     document.getElementById("theme-toggle").addEventListener("click", () => {
         document.body.classList.toggle("dark");
-        if (getCookie("theme") !== "light") {
-            setCookie("theme", "light", 30);
-        } else {
-            setCookie("theme", "", -100);
-            setCookie("theme", "dark", 30);
-        }
+
+        const newTheme: string = getCookie("theme") === "light" ? "dark" : "light";
+        const iframe = document.querySelector(".giscus iframe.giscus-frame") as HTMLIFrameElement;
+        iframe.contentWindow.postMessage({giscus: {setConfig: {theme: newTheme}}}, "https://giscus.app");
+
+        setCookie("theme", "", -100);
+        setCookie("theme", newTheme, 30);
     });
 
     UI.updateUI();

@@ -10,6 +10,9 @@
 @inject ITutorialService TutorialService
 @inject MarkdownPipeline MarkdownPipeline
 @model Article
+@{
+    bool lightTheme = Request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
+}
 
 @if (Model.CurrentArticle is not { } article)
 {
@@ -107,7 +110,7 @@
                 data-reactions-enabled="1"
                 data-emit-metadata="0"
                 data-input-position="bottom"
-                data-theme="preferred_color_scheme"
+                data-theme="@(lightTheme ? "light" : "dark")"
                 data-lang="en"
                 crossorigin="anonymous"
                 async>
