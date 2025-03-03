@@ -49,11 +49,13 @@ declare const JXG: any;
         document.body.classList.toggle("dark");
 
         const newTheme: string = getCookie("theme") === "light" ? "dark" : "light";
-        const iframe = document.querySelector(".giscus iframe.giscus-frame") as HTMLIFrameElement;
-        iframe.contentWindow.postMessage({giscus: {setConfig: {theme: newTheme}}}, "https://giscus.app");
-
         setCookie("theme", "", -100);
         setCookie("theme", newTheme, 30);
+
+        const iframe = document.querySelector(".giscus iframe.giscus-frame") as HTMLIFrameElement;
+        if (iframe) {
+            iframe.contentWindow.postMessage({giscus: {setConfig: {theme: newTheme}}}, "https://giscus.app");
+        }
     });
 
     UI.updateUI();
