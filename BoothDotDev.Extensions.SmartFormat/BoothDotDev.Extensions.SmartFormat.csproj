@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Markdig" Version="0.38.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0"/>
-        <PackageReference Include="SmartFormat.NET" Version="3.5.1"/>
+        <PackageReference Include="Markdig" Version="0.40.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3"/>
+        <PackageReference Include="SmartFormat.NET" Version="3.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
