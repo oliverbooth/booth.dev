@@ -1,0 +1,15 @@
+﻿<Solution>
+    <Folder Name="/Solution Items/">
+        <File Path="README.md"/>
+        <File Path="package.json"/>
+        <File Path="Gulpfile.js"/>
+        <File Path="tsconfig.json"/>
+        <File Path=".dockerignore"/>
+        <File Path="docker-compose.yml"/>
+        <File Path="global.json"/>
+    </Folder>
+    <Project Path="BoothDotDev.Common\BoothDotDev.Common.csproj" Type="Classic C#"/>
+    <Project Path="BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj" Type="Classic C#"/>
+    <Project Path="BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj" Type="Classic C#"/>
+    <Project Path="BoothDotDev\BoothDotDev.csproj" Type="Classic C#"/>
+</Solution>
