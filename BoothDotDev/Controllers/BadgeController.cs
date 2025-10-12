@@ -33,9 +33,8 @@ public sealed class BadgeController : ControllerBase
     public async Task<IActionResult> GitHubStatusAsync(string repo, string workflow, string owner = "oliverbooth")
     {
         string? githubToken = _configuration.GetSection("GitHub:Token").Value;
-
         var url = $"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow}/runs";
-        Console.WriteLine(url);
+
         using HttpClient client = _httpClientFactory.CreateClient();
         using var request = new HttpRequestMessage();
         request.RequestUri = new Uri(url);
@@ -45,7 +44,11 @@ public sealed class BadgeController : ControllerBase
         request.Headers.UserAgent.Add(new ProductInfoHeaderValue("booth.dev", _version));
 
         using HttpResponseMessage response = await client.SendAsync(request);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        if (!response.IsSuccessStatusCode)
+        {
+            return StatusCode((int)response.StatusCode, new { schemaVersion = 1, label = "build", color = "lightgray", message = "error" });
+        }
+
         WorkflowRunSchema? body = await response.Content.ReadFromJsonAsync<WorkflowRunSchema>();
         WorkflowRun? run = body?.WorkflowRuns.FirstOrDefault(r => r.Status == WorkflowRunStatus.Completed);
         if (run is null)
