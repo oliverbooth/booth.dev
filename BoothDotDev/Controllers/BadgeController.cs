@@ -28,9 +28,9 @@ public sealed class BadgeController : ControllerBase
         _version = attribute?.InformationalVersion ?? "1.0.0";
     }
 
-    [HttpGet("status/{repo}/{workflow}")]
-    [HttpGet("status/{owner}/{repo}/{workflow}")]
-    public async Task<IActionResult> StatusAsync(string repo, string workflow, string owner = "oliverbooth")
+    [HttpGet("github/{repo}/{workflow}")]
+    [HttpGet("github/{owner}/{repo}/{workflow}")]
+    public async Task<IActionResult> GitHubStatusAsync(string repo, string workflow, string owner = "oliverbooth")
     {
         string? githubToken = _configuration.GetSection("GitHub:Token").Value;
 
@@ -46,56 +46,56 @@ public sealed class BadgeController : ControllerBase
 
         using HttpResponseMessage response = await client.SendAsync(request);
         Console.WriteLine(await response.Content.ReadAsStringAsync());
-        var body = await response.Content.ReadFromJsonAsync<WorkflowRunSchema>();
+        WorkflowRunSchema? body = await response.Content.ReadFromJsonAsync<WorkflowRunSchema>();
         WorkflowRun? run = body?.WorkflowRuns.FirstOrDefault(r => r.Status == WorkflowRunStatus.Completed);
-        if (run is not null)
+        if (run is null)
         {
-            var color = run.Conclusion switch
-            {
-                WorkflowRunConclusion.Failure => "e05d44",
-                WorkflowRunConclusion.Success => "44cc11",
-                _ => "lightgray"
-            };
-            var message = run.Conclusion switch
-            {
-                WorkflowRunConclusion.Failure => "failing",
-                WorkflowRunConclusion.Success => "passing",
-                _ => "unknown"
-            };
-
-            return Ok(new { schemaVersion = 1, label = "build", color, message });
+            return Ok(new { schemaVersion = 1, label = "build", color = "lightgray", message = "unknown" });
         }
 
-        return Ok(new { schemaVersion = 1, label = "build", color = "lightgray", message = "unknown" });
-    }
+        string color = run.Conclusion switch
+        {
+            WorkflowRunConclusion.Failure => "e05d44",
+            WorkflowRunConclusion.Success => "44cc11",
+            _ => "lightgray"
+        };
+        string message = run.Conclusion switch
+        {
+            WorkflowRunConclusion.Failure => "failing",
+            WorkflowRunConclusion.Success => "passing",
+            _ => "unknown"
+        };
 
-    private class WorkflowRunSchema
-    {
-        [JsonPropertyName("workflow_runs"), JsonInclude]
-        public WorkflowRun[] WorkflowRuns { get; set; } = Array.Empty<WorkflowRun>();
+        return Ok(new { schemaVersion = 1, label = "build", color, message });
     }
+}
 
-    private class WorkflowRun
-    {
-        [JsonPropertyName("conclusion"), JsonInclude]
-        [JsonConverter(typeof(JsonStringEnumConverter<WorkflowRunConclusion>))]
-        public WorkflowRunConclusion Conclusion { get; set; } = WorkflowRunConclusion.Unknown;
+file class WorkflowRunSchema
+{
+    [JsonPropertyName("workflow_runs"), JsonInclude]
+    public WorkflowRun[] WorkflowRuns { get; set; } = [];
+}
 
-        [JsonPropertyName("status"), JsonInclude]
-        [JsonConverter(typeof(JsonStringEnumConverter<WorkflowRunStatus>))]
-        public WorkflowRunStatus Status { get; set; } = WorkflowRunStatus.Unknown;
-    }
+file class WorkflowRun
+{
+    [JsonPropertyName("conclusion"), JsonInclude]
+    [JsonConverter(typeof(JsonStringEnumConverter<WorkflowRunConclusion>))]
+    public WorkflowRunConclusion Conclusion { get; set; } = WorkflowRunConclusion.Unknown;
 
-    private enum WorkflowRunStatus
-    {
-        Unknown = -1,
-        Completed
-    }
+    [JsonPropertyName("status"), JsonInclude]
+    [JsonConverter(typeof(JsonStringEnumConverter<WorkflowRunStatus>))]
+    public WorkflowRunStatus Status { get; set; } = WorkflowRunStatus.Unknown;
+}
 
-    private enum WorkflowRunConclusion
-    {
-        Unknown = -1,
-        Success,
-        Failure
-    }
+file enum WorkflowRunStatus
+{
+    Unknown = -1,
+    Completed
+}
+
+file enum WorkflowRunConclusion
+{
+    Unknown = -1,
+    Success,
+    Failure
 }
