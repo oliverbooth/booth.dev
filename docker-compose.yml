@@ -14,7 +14,7 @@ services:
         target: /app/data
     ports:
       - "2845:2845"
-    restart: always
+    restart: unless-stopped
     environment:
       - SSL_CERT_PATH=${SSL_CERT_PATH}
       - SSL_KEY_PATH=${SSL_KEY_PATH}
