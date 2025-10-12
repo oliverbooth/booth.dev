@@ -53,20 +53,15 @@ public sealed class BadgeController : ControllerBase
             return Ok(new { schemaVersion = 1, label = "build", color = "lightgray", message = "unknown" });
         }
 
-        string color = run.Conclusion switch
+        (string message, string color, bool isError) = run.Conclusion switch
         {
-            WorkflowRunConclusion.Failure => "e05d44",
-            WorkflowRunConclusion.Success => "44cc11",
-            _ => "lightgray"
-        };
-        string message = run.Conclusion switch
-        {
-            WorkflowRunConclusion.Failure => "failing",
-            WorkflowRunConclusion.Success => "passing",
-            _ => "unknown"
+            WorkflowRunConclusion.Failure => ("failing", "red", true),
+            WorkflowRunConclusion.Success => ("passing", "brightgreen", false),
+            WorkflowRunConclusion.Cancelled or WorkflowRunConclusion.Neutral => ("neutral", "yellow", false),
+            _ => ("unknown", "lightgrey", false)
         };
 
-        return Ok(new { schemaVersion = 1, label = "build", color, message });
+        return Ok(new { schemaVersion = 1, label = "build", color, message, isError });
     }
 }
 
@@ -97,5 +92,7 @@ file enum WorkflowRunConclusion
 {
     Unknown = -1,
     Success,
-    Failure
+    Failure,
+    Cancelled,
+    Neutral
 }
