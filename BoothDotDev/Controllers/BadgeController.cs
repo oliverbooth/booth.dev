@@ -32,7 +32,21 @@ public sealed class BadgeController : ControllerBase
     [HttpGet("github/{owner}/{repo}/{workflow}")]
     public async Task<IActionResult> GitHubStatusAsync(string repo, string workflow, string owner = "oliverbooth")
     {
-        string? githubToken = _configuration.GetSection("GitHub:Token").Value;
+        string githubToken;
+        if (Request.Headers.Authorization.Count == 0)
+        {
+            githubToken = _configuration.GetSection("GitHub:Token").Value ?? string.Empty;
+        }
+        else
+        {
+            githubToken = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+        }
+
+        if (string.IsNullOrEmpty(githubToken))
+        {
+            return StatusCode(500, new { schemaVersion = 1, label = "build", color = "lightgray", message = "no token" });
+        }
+
         var url = $"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow}/runs";
 
         using HttpClient client = _httpClientFactory.CreateClient();
