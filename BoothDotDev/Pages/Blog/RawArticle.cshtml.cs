@@ -31,7 +31,7 @@ public class RawArticle : PageModel
             return NotFound();
         }
 
-        Response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+        Response.Headers.Append("Content-Type", "text/plain; charset=utf-8");
 
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("# " + post.Title);

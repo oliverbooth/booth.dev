@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -11,7 +11,7 @@ RUN npm i
 COPY . ./
 RUN gulp
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY --from=build-deps /src/BoothDotDev/wwwroot /src/BoothDotDev/wwwroot
 WORKDIR /src
 COPY ["BoothDotDev/BoothDotDev.csproj", "BoothDotDev/"]
