@@ -1,4 +1,3 @@
-using BoothDotDev.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -10,11 +9,11 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<BlogPost> builder)
     {
-        builder.ToTable("BlogPost");
+        builder.ToTable("blog_post");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id);
-        builder.Property(e => e.WordPressId).IsRequired(false);
+        builder.Property(e => e.WordPressId).HasColumnName("wordpress_id").IsRequired(false);
         builder.Property(e => e.Slug).HasMaxLength(100).IsRequired();
         builder.Property(e => e.AuthorId).IsRequired();
         builder.Property(e => e.Published).IsRequired();
@@ -28,12 +27,8 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.DisqusDomain).IsRequired(false);
         builder.Property(e => e.DisqusIdentifier).IsRequired(false);
         builder.Property(e => e.DisqusPath).IsRequired(false);
-        builder.Property(e => e.Visibility).HasConversion(new EnumToStringConverter<Visibility>()).IsRequired();
+        builder.Property(e => e.Visibility).HasColumnType("visibility").IsRequired();
         builder.Property(e => e.Password).HasMaxLength(255).IsRequired(false);
-        builder.Property(e => e.Tags).IsRequired()
-            .HasConversion(
-                tags => string.Join(' ', tags.Select(t => t.Replace(' ', '-'))),
-                tags => tags.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(t => t.Replace('-', ' ')).ToArray());
+        builder.Property(e => e.Tags).IsRequired();
     }
 }

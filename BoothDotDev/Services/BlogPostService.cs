@@ -76,10 +76,9 @@ internal sealed class BlogPostService : IBlogPostService
     public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize, string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
-        IEnumerable<BlogPost> posts = context.BlogPosts
+        IQueryable<BlogPost> posts = context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
-            .OrderByDescending(post => post.Published)
-            .AsEnumerable();
+            .OrderByDescending(post => post.Published);
 
         if (tags is { Length: > 0 })
         {
@@ -92,9 +91,8 @@ internal sealed class BlogPostService : IBlogPostService
             posts = posts.Where(p => p.Tags.Intersect(tags).Any());
         }
 
-        return posts.Skip(page * pageSize)
-            .Take(pageSize)
-            .AsEnumerable().Select(CacheAuthor).ToArray();
+        posts = posts.Skip(page * pageSize).Take(pageSize);
+        return posts.AsEnumerable().Select(CacheAuthor).ToArray();
     }
 
     /// <inheritdoc />

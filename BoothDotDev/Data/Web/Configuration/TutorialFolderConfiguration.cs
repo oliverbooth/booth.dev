@@ -1,4 +1,3 @@
-using BoothDotDev.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -12,7 +11,7 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
 {
     public void Configure(EntityTypeBuilder<TutorialFolder> builder)
     {
-        builder.ToTable("TutorialFolder");
+        builder.ToTable("folder", "tutorials");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
@@ -20,7 +19,7 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
         builder.Property(e => e.Slug).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.PreviewImageUrl).HasConversion<UriToStringConverter>();
-        builder.Property(e => e.Visibility).HasConversion<EnumToStringConverter<Visibility>>();
+        builder.Property(e => e.Visibility).HasColumnType("visibility").IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
     }
 }

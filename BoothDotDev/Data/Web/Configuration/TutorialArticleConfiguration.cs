@@ -1,4 +1,3 @@
-using BoothDotDev.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -12,7 +11,7 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
 {
     public void Configure(EntityTypeBuilder<TutorialArticle> builder)
     {
-        builder.ToTable("TutorialArticle");
+        builder.ToTable("article", "tutorials");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
@@ -26,7 +25,7 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
         builder.Property(e => e.NextPart);
         builder.Property(e => e.PreviousPart);
         builder.Property(e => e.RedirectFrom).IsRequired(false);
-        builder.Property(e => e.Visibility).HasConversion<EnumToStringConverter<Visibility>>();
+        builder.Property(e => e.Visibility).HasColumnType("visibility").IsRequired();
         builder.Property(e => e.EnableComments).IsRequired();
     }
 }

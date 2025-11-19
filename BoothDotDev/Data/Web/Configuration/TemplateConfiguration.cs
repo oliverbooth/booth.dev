@@ -10,7 +10,7 @@ internal sealed class TemplateConfiguration : IEntityTypeConfiguration<Template>
 {
     public void Configure(EntityTypeBuilder<Template> builder)
     {
-        builder.ToTable("Template");
+        builder.ToTable("template");
         builder.HasKey(e => new { e.Name, e.Variant });
 
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();

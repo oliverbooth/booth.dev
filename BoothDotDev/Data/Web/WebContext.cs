@@ -1,5 +1,8 @@
+using BoothDotDev.Common.Data;
+using BoothDotDev.Common.Data.Web;
 using BoothDotDev.Data.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.NameTranslation;
 
 namespace BoothDotDev.Data.Web;
 
@@ -77,13 +80,23 @@ internal sealed class WebContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         string connectionString = _configuration.GetConnectionString("Web") ?? string.Empty;
-        ServerVersion serverVersion = ServerVersion.AutoDetect(connectionString);
-        optionsBuilder.UseMySql(connectionString, serverVersion);
+        optionsBuilder.UseNpgsql(connectionString, o =>
+        {
+            o.MapEnum<BookState>("book_state");
+            o.MapEnum<ProjectStatus>("project_status");
+            o.MapEnum<Visibility>("visibility");
+        });
+        optionsBuilder.UseSnakeCaseNamingConvention();
     }
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("public");
+        modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
+
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());

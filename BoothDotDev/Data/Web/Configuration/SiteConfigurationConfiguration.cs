@@ -11,7 +11,7 @@ internal sealed class SiteConfigurationConfiguration : IEntityTypeConfiguration<
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<SiteConfiguration> builder)
     {
-        builder.ToTable("SiteConfig");
+        builder.ToTable("site_config");
         builder.HasKey(x => x.Key);
 
         builder.Property(x => x.Key).HasMaxLength(50).IsRequired();

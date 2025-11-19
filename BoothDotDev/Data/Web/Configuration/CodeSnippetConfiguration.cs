@@ -11,7 +11,7 @@ internal sealed class CodeSnippetConfiguration : IEntityTypeConfiguration<CodeSn
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<CodeSnippet> builder)
     {
-        builder.ToTable("CodeSnippet");
+        builder.ToTable("code_snippet");
         builder.HasKey(e => new { e.Id, e.Language });
 
         builder.Property(e => e.Id);

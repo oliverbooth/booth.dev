@@ -9,6 +9,9 @@ namespace BoothDotDev.Common.Services;
 /// </summary>
 public interface IBlogPostService
 {
+    /// <summary>
+    ///     The default page size for blog post pagination.
+    /// </summary>
     public const int DefaultPageSize = 5;
 
     /// <summary>

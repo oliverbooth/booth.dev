@@ -11,7 +11,7 @@ internal sealed class ProgrammingLanguageConfiguration : IEntityTypeConfiguratio
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<ProgrammingLanguage> builder)
     {
-        builder.ToTable("ProgrammingLanguage");
+        builder.ToTable("programming_language");
         builder.HasKey(e => e.Key);
 
         builder.Property(e => e.Key).IsRequired();

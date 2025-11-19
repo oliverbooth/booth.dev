@@ -8,7 +8,7 @@ internal sealed class LegacyCommentConfiguration : IEntityTypeConfiguration<Lega
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<LegacyComment> builder)
     {
-        builder.ToTable("LegacyComment");
+        builder.ToTable("legacy_comment");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
