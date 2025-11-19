@@ -50,11 +50,6 @@
 
 @foreach (ITutorialFolder folder in TutorialService.GetFolders(currentFolder, Visibility.Published))
 {
-    if (folder.Visibility != Visibility.Published)
-    {
-        continue;
-    }
-
     <article class="post-entry">
         <figure class="entry-cover">
             <img loading="lazy" src="@folder.PreviewImageUrl" alt="">
