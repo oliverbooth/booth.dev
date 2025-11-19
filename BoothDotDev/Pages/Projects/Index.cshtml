@@ -9,10 +9,10 @@
     ViewData["Title"] = "Projects";
     ViewData["Page"] = "Projects";
 
-    IEnumerable<IProject> projects = ProjectService.GetProjects(ProjectStatus.Ongoing).OrderBy(p => p.Rank)
-        .Concat(ProjectService.GetProjects(ProjectStatus.Past).OrderBy(p => p.Rank))
-        .Concat(ProjectService.GetProjects(ProjectStatus.Retired).OrderBy(p => p.Rank))
-        .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus).OrderBy(p => p.Rank));
+    IEnumerable<IProject> projects = ProjectService.GetProjects()
+        .Concat(ProjectService.GetProjects(ProjectStatus.Past))
+        .Concat(ProjectService.GetProjects(ProjectStatus.Retired))
+        .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus));
 }
 
 
