@@ -30,6 +30,12 @@ public interface ITutorialFolder
     Uri? PreviewImageUrl { get; }
 
     /// <summary>
+    ///     Gets the rank of this article within its folder.
+    /// </summary>
+    /// <value>The rank.</value>
+    int Rank { get; }
+
+    /// <summary>
     ///     Gets the slug of this folder.
     /// </summary>
     /// <value>The slug.</value>

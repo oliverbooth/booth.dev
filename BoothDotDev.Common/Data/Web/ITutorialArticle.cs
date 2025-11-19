@@ -68,6 +68,12 @@ public interface ITutorialArticle
     DateTimeOffset Published { get; }
 
     /// <summary>
+    ///     Gets the rank of this article within its folder.
+    /// </summary>
+    /// <value>The rank.</value>
+    int Rank { get; }
+
+    /// <summary>
     ///     Gets the ID of the post that was redirected to this article.
     /// </summary>
     /// <value>The source redirect post ID.</value>

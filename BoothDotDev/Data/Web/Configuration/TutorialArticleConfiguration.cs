@@ -27,5 +27,6 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
         builder.Property(e => e.RedirectFrom).IsRequired(false);
         builder.Property(e => e.Visibility).HasColumnType("visibility").IsRequired();
         builder.Property(e => e.EnableComments).IsRequired();
+        builder.Property(e => e.Rank).IsRequired();
     }
 }

@@ -21,6 +21,9 @@ internal sealed class TutorialFolder : IEquatable<TutorialFolder>, ITutorialFold
     public Uri? PreviewImageUrl { get; private set; }
 
     /// <inheritdoc />
+    public int Rank { get; private set; }
+
+    /// <inheritdoc />
     public string Slug { get; private set; } = string.Empty;
 
     /// <inheritdoc />

@@ -34,7 +34,7 @@ internal sealed class TutorialService : ITutorialService
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<ITutorialArticle> GetArticles(ITutorialFolder folder,
+    public IReadOnlyList<ITutorialArticle> GetArticles(ITutorialFolder folder,
         Visibility visibility = Visibility.None)
     {
         if (folder is null) throw new ArgumentNullException(nameof(folder));
@@ -43,11 +43,11 @@ internal sealed class TutorialService : ITutorialService
         IQueryable<TutorialArticle> articles = context.TutorialArticles.Where(a => a.Folder == folder.Id);
 
         if (visibility != Visibility.None) articles = articles.Where(a => a.Visibility == visibility);
-        return articles.ToArray();
+        return articles.OrderBy(a => a.Rank).ToArray();
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<ITutorialFolder> GetFolders(ITutorialFolder? parent = null,
+    public IReadOnlyList<ITutorialFolder> GetFolders(ITutorialFolder? parent = null,
         Visibility visibility = Visibility.None)
     {
         using WebContext context = _dbContextFactory.CreateDbContext();
@@ -55,7 +55,7 @@ internal sealed class TutorialService : ITutorialService
 
         folders = parent is null ? folders.Where(f => f.Parent == null) : folders.Where(f => f.Parent == parent.Id);
         if (visibility != Visibility.None) folders = folders.Where(a => a.Visibility == visibility);
-        return folders.ToArray();
+        return folders.OrderBy(f => f.Rank).ToArray();
     }
 
     /// <inheritdoc />

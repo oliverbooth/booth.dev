@@ -16,7 +16,7 @@ public interface ITutorialService
     /// <param name="folder">The folder whose articles to retrieve.</param>
     /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
     /// <returns>A read-only view of the articles in the folder.</returns>
-    IReadOnlyCollection<ITutorialArticle> GetArticles(ITutorialFolder folder, Visibility visibility = Visibility.None);
+    IReadOnlyList<ITutorialArticle> GetArticles(ITutorialFolder folder, Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Gets the tutorial folders within a specified folder.
@@ -24,7 +24,7 @@ public interface ITutorialService
     /// <param name="parent">The parent folder.</param>
     /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
     /// <returns>A read-only view of the subfolders in the folder.</returns>
-    IReadOnlyCollection<ITutorialFolder> GetFolders(ITutorialFolder? parent = null, Visibility visibility = Visibility.None);
+    IReadOnlyList<ITutorialFolder> GetFolders(ITutorialFolder? parent = null, Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Gets a folder by its ID.
