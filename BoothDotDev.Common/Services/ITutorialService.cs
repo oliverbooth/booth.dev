@@ -35,7 +35,7 @@ public interface ITutorialService
     ///     <see langword="null" /> if no such folder was found.
     /// </param>
     /// <returns><see langword="true" /></returns> 
-    ITutorialFolder? GetFolder(int id);
+    ITutorialFolder? GetFolder(Guid id);
 
     /// <summary>
     ///     Gets a folder by its slug.
@@ -120,7 +120,7 @@ public interface ITutorialService
     ///     <see langword="null" /> if no such article was found.
     /// </param>
     /// <returns><see langword="true" /> if a matching article was found; otherwise, <see langword="false" />.</returns>
-    bool TryGetArticle(int id, [NotNullWhen(true)] out ITutorialArticle? article);
+    bool TryGetArticle(Guid id, [NotNullWhen(true)] out ITutorialArticle? article);
 
     /// <summary>
     ///     Attempts to find an article by its slug.

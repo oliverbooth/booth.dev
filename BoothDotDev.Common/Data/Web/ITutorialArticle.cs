@@ -29,7 +29,7 @@ public interface ITutorialArticle
     ///     Gets the ID of the folder this article is contained within.
     /// </summary>
     /// <value>The ID of the folder.</value>
-    int Folder { get; }
+    Guid Folder { get; }
 
     /// <summary>
     ///     Gets a value indicating whether this article is part of a multi-part series.
@@ -41,13 +41,13 @@ public interface ITutorialArticle
     ///     Gets the ID of this article.
     /// </summary>
     /// <value>The ID.</value>
-    int Id { get; }
+    Guid Id { get; }
 
     /// <summary>
     ///     Gets the ID of the next article to this one.
     /// </summary>
     /// <value>The next part ID.</value>
-    int? NextPart { get; }
+    Guid? NextPart { get; }
 
     /// <summary>
     ///     Gets the URL of the article's preview image.
@@ -59,7 +59,7 @@ public interface ITutorialArticle
     ///     Gets the ID of the previous article to this one.
     /// </summary>
     /// <value>The previous part ID.</value>
-    int? PreviousPart { get; }
+    Guid? PreviousPart { get; }
 
     /// <summary>
     ///     Gets the date and time at which this article was published.

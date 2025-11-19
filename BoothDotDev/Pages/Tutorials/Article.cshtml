@@ -26,7 +26,7 @@
     DateTimeOffset published = article.Published;
 
     var parents = new Stack<ITutorialFolder>();
-    int? parent = article.Folder;
+    Guid? parent = article.Folder;
     while (parent is not null)
     {
         ITutorialFolder? folder = TutorialService.GetFolder(parent.Value);

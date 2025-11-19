@@ -19,23 +19,23 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     public string? Excerpt { get; private set; }
 
     /// <inheritdoc />
-    public int Folder { get; private set; }
+    public Guid Folder { get; private set; }
 
     /// <inheritdoc />
     [NotMapped]
     public bool HasOtherParts => NextPart is not null || PreviousPart is not null;
 
     /// <inheritdoc />
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <inheritdoc />
-    public int? NextPart { get; private set; }
+    public Guid? NextPart { get; private set; }
 
     /// <inheritdoc />
     public Uri? PreviewImageUrl { get; private set; }
 
     /// <inheritdoc />
-    public int? PreviousPart { get; private set; }
+    public Guid? PreviousPart { get; private set; }
 
     /// <inheritdoc />
     public DateTimeOffset Published { get; private set; }
@@ -113,6 +113,6 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     public override int GetHashCode()
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
-        return Id;
+        return Id.GetHashCode();
     }
 }

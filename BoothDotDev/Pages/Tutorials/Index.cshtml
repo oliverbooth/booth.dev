@@ -16,7 +16,7 @@
     ITutorialFolder? currentFolder = Model.CurrentFolder;
 
     var parents = new Stack<ITutorialFolder>();
-    int? parent = currentFolder?.Parent;
+    Guid? parent = currentFolder?.Parent;
     while (parent is not null)
     {
         ITutorialFolder? folder = TutorialService.GetFolder(parent.Value);

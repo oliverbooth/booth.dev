@@ -59,7 +59,7 @@ internal sealed class TutorialService : ITutorialService
     }
 
     /// <inheritdoc />
-    public ITutorialFolder? GetFolder(int id)
+    public ITutorialFolder? GetFolder(Guid id)
     {
         using WebContext context = _dbContextFactory.CreateDbContext();
         return context.TutorialFolders.FirstOrDefault(f => f.Id == id);
@@ -196,7 +196,7 @@ internal sealed class TutorialService : ITutorialService
     }
 
     /// <inheritdoc />
-    public bool TryGetArticle(int id, [NotNullWhen(true)] out ITutorialArticle? article)
+    public bool TryGetArticle(Guid id, [NotNullWhen(true)] out ITutorialArticle? article)
     {
         using WebContext context = _dbContextFactory.CreateDbContext();
         article = context.TutorialArticles.FirstOrDefault(a => a.Id == id);

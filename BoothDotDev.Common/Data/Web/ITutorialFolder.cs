@@ -15,13 +15,13 @@ public interface ITutorialFolder
     ///     Gets the ID of this folder.
     /// </summary>
     /// <value>The ID of the folder.</value>
-    int Id { get; }
+    Guid Id { get; }
 
     /// <summary>
     ///     Gets the ID of this folder's parent.
     /// </summary>
     /// <value>The ID of the parent, or <see langword="null" /> if this folder is at the root.</value>
-    int? Parent { get; }
+    Guid? Parent { get; }
 
     /// <summary>
     ///     Gets the URL of the folder's preview image.

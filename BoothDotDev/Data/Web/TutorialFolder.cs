@@ -12,10 +12,10 @@ internal sealed class TutorialFolder : IEquatable<TutorialFolder>, ITutorialFold
     public string? Description { get; private set; }
 
     /// <inheritdoc />
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <inheritdoc />
-    public int? Parent { get; private set; }
+    public Guid? Parent { get; private set; }
 
     /// <inheritdoc />
     public Uri? PreviewImageUrl { get; private set; }
@@ -87,6 +87,6 @@ internal sealed class TutorialFolder : IEquatable<TutorialFolder>, ITutorialFold
     public override int GetHashCode()
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
-        return Id;
+        return Id.GetHashCode();
     }
 }
