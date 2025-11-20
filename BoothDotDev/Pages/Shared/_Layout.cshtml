@@ -1,3 +1,4 @@
+@using System.Reflection
 @using BoothDotDev.Common.Data.Blog
 @using BoothDotDev.Common.Data.Web
 @using BoothDotDev.Common.Services
@@ -11,6 +12,9 @@
     string title = ViewData["Title"] is null ? "Oliver Booth" : $"{ViewData["Title"]} - Oliver Booth";
 
     bool lightTheme = request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
+
+    var attribute = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+    string? version = attribute?.InformationalVersion;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -149,6 +153,11 @@
         <li><a href="https://git.booth.dev/oliver/booth.dev">Source</a></li>
         <li><a asp-page="/Privacy/Index">Privacy</a></li>
     </ul>
+
+    @if (!string.IsNullOrEmpty(version))
+    {
+        <p class="align-center">Version @version</p>
+    }
 </footer>
 
 <script src="https://unpkg.com/lucide@latest"></script>
