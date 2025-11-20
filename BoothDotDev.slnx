@@ -9,8 +9,8 @@
         <File Path="docker-compose.yml"/>
         <File Path="global.json"/>
     </Folder>
-    <Project Path="BoothDotDev.Common\BoothDotDev.Common.csproj" Type="C#"/>
-    <Project Path="BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj" Type="C#"/>
-    <Project Path="BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj" Type="C#"/>
-    <Project Path="BoothDotDev\BoothDotDev.csproj" Type="C#"/>
+    <Project Path="BoothDotDev.Common\BoothDotDev.Common.csproj"/>
+    <Project Path="BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj"/>
+    <Project Path="BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj"/>
+    <Project Path="BoothDotDev\BoothDotDev.csproj"/>
 </Solution>
