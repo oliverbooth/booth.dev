@@ -272,3 +272,30 @@ img.inline {
 img.project-lang {
   height: 2em;
 }
+
+footer.site-footer {
+  ul.site-footer-links {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+    li {
+      display: inline-block;
+      margin: 0;
+
+      &::after {
+        content: "·";
+        padding: 0 0.5em;
+      }
+      
+      &::before {
+        padding: 0 0.5em;
+      }
+
+      &:last-child::after {
+        content: "";
+      }
+    }
+  }
+}

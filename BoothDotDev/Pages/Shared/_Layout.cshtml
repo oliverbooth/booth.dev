@@ -142,18 +142,13 @@
     @RenderBody()
 </main>
 
-<footer class="footer">
-    <span>&copy; @DateTime.Now.Year Oliver Booth ·</span>
-
-    <span>
-        Design based on
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-        for
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a>
-        ·
-    </span>
-
-    <span><a asp-page="/Privacy/Index">Privacy</a></span>
+<footer class="footer site-footer">
+    <ul class="site-footer-links">
+        <li>&copy; @DateTime.Now.Year Oliver Booth</li>
+        <li>Design based on <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a> for <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></li>
+        <li><a href="https://git.booth.dev/oliver/booth.dev">Source</a></li>
+        <li><a asp-page="/Privacy/Index">Privacy</a></li>
+    </ul>
 </footer>
 
 <script src="https://unpkg.com/lucide@latest"></script>
