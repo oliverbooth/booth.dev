@@ -23,7 +23,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Alexinea.Extensions.Configuration.Toml" Version="7.0.0"/>
+        <PackageReference Include="Alexinea.Extensions.Configuration.Yaml" Version="7.0.0"/>
         <PackageReference Include="BCrypt.Net-Core" Version="1.6.0"/>
         <PackageReference Include="EFCore.NamingConventions" Version="9.0.0"/>
         <PackageReference Include="MailKit" Version="4.14.0"/>

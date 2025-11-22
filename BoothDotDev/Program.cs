@@ -18,7 +18,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddTomlFile("data/config.toml", true, true);
+builder.Configuration.AddYamlFile("data/config.yaml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
