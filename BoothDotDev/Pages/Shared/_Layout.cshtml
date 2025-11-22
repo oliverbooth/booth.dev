@@ -19,6 +19,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <base href="~/"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -137,6 +138,11 @@
             <li>
                 <a asp-page="/Blog/Archive">
                     <span class="@(ViewData["Page"]?.ToString() == "Archive" ? " active" : "")">Archive</span>
+                </a>
+            </li>
+            <li>
+                <a asp-page="/Search">
+                    <span class="@(ViewData["Page"]?.ToString() == "Search" ? " active" : "")">Search</span>
                 </a>
             </li>
         </ul>

@@ -118,6 +118,14 @@ public interface IBlogPostService
     string RenderPost(IBlogPost post);
 
     /// <summary>
+    ///     Searches blog posts for the specified search text.
+    /// </summary>
+    /// <param name="searchText">The text to search for.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A collection of blog posts that match the search text.</returns>
+    Task<IReadOnlyCollection<IBlogPost>> SearchBlogPostsAsync(string searchText, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Attempts to find a blog post with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the blog post to find.</param>

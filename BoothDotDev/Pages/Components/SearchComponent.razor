@@ -1,0 +1,16 @@
+@using BoothDotDev.Common.Data
+
+<div id="searchbox">
+    <input id="searchInput" autofocus="" placeholder="Search keywords ..." aria-label="search" type="search"
+           autocomplete="off" maxlength="64" @bind="SearchText" @bind:event="oninput" @onkeyup="OnKeyUp"/>
+</div>
+
+<ul id="searchResults" aria-label="search results">
+    @foreach (SearchResult result in SearchResults)
+    {
+        <li class="post-entry">
+            <header class="entry-header">@result.Title &raquo;</header>
+            <a href="@result.Url" aria-label="@result.Title"></a>
+        </li>
+    }
+</ul>

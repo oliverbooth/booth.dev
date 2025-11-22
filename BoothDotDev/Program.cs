@@ -3,8 +3,10 @@ using BoothDotDev.Data.Blog;
 using BoothDotDev.Data.Web;
 using BoothDotDev.Extensions;
 using BoothDotDev.Extensions.Markdig.Services;
+using BoothDotDev.Pages.Components;
 using BoothDotDev.Services;
 using Serilog;
+using X10D.Hosting.DependencyInjection;
 
 Directory.CreateDirectory("data");
 Directory.CreateDirectory("logs");
@@ -29,13 +31,15 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ICodeSnippetService, CodeSnippetService>();
 builder.Services.AddSingleton<IDevChallengeService, DevChallengeService>();
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
-builder.Services.AddSingleton<IBlogPostService, BlogPostService>();
+builder.Services.AddHostedSingleton<IBlogPostService, BlogPostService>();
 builder.Services.AddSingleton<IBlogUserService, BlogUserService>();
 builder.Services.AddSingleton<IProgrammingLanguageService, ProgrammingLanguageService>();
 builder.Services.AddSingleton<IProjectService, ProjectService>();
 builder.Services.AddSingleton<ITutorialService, TutorialService>();
 builder.Services.AddSingleton<IReadingListService, ReadingListService>();
+builder.Services.AddSingleton<ISearchService, SearchService>();
 builder.Services.AddRazorPages();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -56,5 +60,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapRazorPages();
+app.MapRazorComponents<SearchComponent>().AddInteractiveServerRenderMode();
 
 app.Run();

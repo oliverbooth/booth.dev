@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Timers;
 using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Services;
@@ -6,30 +8,37 @@ using BoothDotDev.Data.Blog;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
+using Timer = System.Timers.Timer;
 
 namespace BoothDotDev.Services;
 
 /// <summary>
 ///     Represents an implementation of <see cref="IBlogPostService" />.
 /// </summary>
-internal sealed class BlogPostService : IBlogPostService
+internal sealed class BlogPostService : BackgroundService, IBlogPostService
 {
+    private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10).TotalMilliseconds);
+    private readonly ILogger<BlogPostService> _logger;
     private readonly IDbContextFactory<BlogContext> _dbContextFactory;
     private readonly IBlogUserService _blogUserService;
     private readonly MarkdownPipeline _markdownPipeline;
+    private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogPostService" /> class.
     /// </summary>
+    /// <param name="logger">The <see cref="ILogger{TCategoryName}" />.</param>
     /// <param name="dbContextFactory">
     ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="BlogContext" />.
     /// </param>
     /// <param name="blogUserService">The <see cref="IBlogUserService" />.</param>
     /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
-    public BlogPostService(IDbContextFactory<BlogContext> dbContextFactory,
+    public BlogPostService(ILogger<BlogPostService> logger,
+        IDbContextFactory<BlogContext> dbContextFactory,
         IBlogUserService blogUserService,
         MarkdownPipeline markdownPipeline)
     {
+        _logger = logger;
         _dbContextFactory = dbContextFactory;
         _blogUserService = blogUserService;
         _markdownPipeline = markdownPipeline;
@@ -196,6 +205,75 @@ internal sealed class BlogPostService : IBlogPostService
     }
 
     /// <inheritdoc />
+    public async Task<IReadOnlyCollection<IBlogPost>> SearchBlogPostsAsync(string searchText, CancellationToken cancellationToken)
+    {
+        const StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return [];
+        }
+
+        string[] terms = searchText
+            .Split(' ', splitOptions)
+            .Select(t => t.Trim())
+            .Where(t => t.Length > 0)
+            .ToArray();
+
+        if (terms.Length == 0)
+        {
+            return [];
+        }
+
+        const int maxResults = 50;
+        var results = new HashSet<BlogPost>(maxResults);
+
+        BlogPost[] posts = _postCache.Values.OrderByDescending(p => p.Published).ToArray();
+        foreach (BlogPost post in posts)
+        {
+            if (post.Visibility != Visibility.Published || post.IsRedirect)
+            {
+                continue;
+            }
+
+            bool matches = terms.All(term => post.Title.Contains(term, StringComparison.OrdinalIgnoreCase));
+
+            if (matches)
+            {
+                results.Add(post);
+            }
+
+            if (results.Count >= maxResults)
+            {
+                break;
+            }
+        }
+        
+        foreach (BlogPost post in posts)
+        {
+            if (post.Visibility != Visibility.Published || post.IsRedirect)
+            {
+                continue;
+            }
+
+            bool matches = terms.All(term =>
+                post.Body.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                (post.Excerpt != null && post.Excerpt.Contains(term, StringComparison.OrdinalIgnoreCase)));
+
+            if (matches)
+            {
+                results.Add(post);
+            }
+
+            if (results.Count >= maxResults)
+            {
+                break;
+            }
+        }
+
+        return results.AsReadOnly();
+    }
+
+    /// <inheritdoc />
     public bool TryGetPost(Guid id, [NotNullWhen(true)] out IBlogPost? post)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
@@ -239,6 +317,37 @@ internal sealed class BlogPostService : IBlogPostService
 
         CacheAuthor((BlogPost)post);
         return true;
+    }
+
+    /// <inheritdoc />
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        CacheInvalidationTimer.Elapsed += InvalidateCache;
+        CacheInvalidationTimer.Start();
+        InvalidateCache(this, new ElapsedEventArgs(DateTime.UtcNow));
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        CacheInvalidationTimer.Stop();
+        CacheInvalidationTimer.Elapsed -= InvalidateCache;
+        return base.StopAsync(cancellationToken);
+    }
+
+    private void InvalidateCache(object? sender, ElapsedEventArgs e)
+    {
+        _logger.LogInformation("Invalidating blog post cache...");
+        _postCache.Clear();
+
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        foreach (BlogPost post in context.BlogPosts)
+        {
+            _postCache[post.Id] = post;
+        }
+
+        _logger.LogInformation("Blog post cache invalidated. {PostCount} posts cached.", _postCache.Count);
     }
 
     private BlogPost CacheAuthor(BlogPost post)
