@@ -13,7 +13,7 @@ services:
         source: /etc/boothdotdev/site
         target: /app/data
     ports:
-      - "2845:2845"
+      - "2845:8080"
     restart: unless-stopped
     environment:
       - SSL_CERT_PATH=${SSL_CERT_PATH}
