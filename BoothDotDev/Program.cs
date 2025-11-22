@@ -2,11 +2,8 @@ using BoothDotDev.Common.Services;
 using BoothDotDev.Data.Blog;
 using BoothDotDev.Data.Web;
 using BoothDotDev.Extensions;
-using BoothDotDev.Extensions.Markdig;
-using BoothDotDev.Extensions.Markdig.Markdown.Timestamp;
 using BoothDotDev.Extensions.Markdig.Services;
 using BoothDotDev.Services;
-using Markdig;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
