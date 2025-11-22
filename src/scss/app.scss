@@ -1,11 +1,11 @@
 @use "sass:color";
-@import "colors";
-@import "markdown";
-@import "blog";
+@use "colors";
+@use "markdown" as *;
+@use "blog" as *;
 
 html, body {
-  background: $background;
-  color: $foreground;
+  background: colors.$background;
+  color: colors.$foreground;
   font-size: 16px;
 }
 
@@ -16,17 +16,17 @@ html, body {
 }
 
 .keystroke {
-  background: color.adjust($foreground, $lightness: -20%);
-  color: $background;
+  background: color.adjust(colors.$foreground, $lightness: -20%);
+  color: colors.$background;
   border-radius: 2px;
-  border: color.adjust($foreground, $lightness: -30%);
+  border: color.adjust(colors.$foreground, $lightness: -30%);
   box-shadow: #2b2b2b 2px 2px;
   font-size: 12px;
   padding: 2px 4px;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem $ui-foreground, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem colors.$ui-foreground, 0 0 0 0.25rem #258cfb;
 }
 
 html {
@@ -47,11 +47,11 @@ main.container {
 a {
   &:link, &:visited, &:hover, &:active {
     text-decoration: none;
-    color: $link-text;
+    color: colors.$link-text;
   }
 
   &:hover {
-    color: $link-hover;
+    color: colors.$link-hover;
   }
 }
 
@@ -59,19 +59,19 @@ a {
   a {
     &:link, &:visited, &:hover, &:active {
       text-decoration: none;
-      color: $ui-foreground;
+      color: colors.$ui-foreground;
 
       * {
         font-family: 'Roboto Mono', monospace;
         text-decoration: none;
-        color: $ui-foreground;
+        color: colors.$ui-foreground;
       }
     }
   }
 }
 
 hr.page-separator {
-  border-top: 5px dashed $ui-foreground;
+  border-top: 5px dashed colors.$ui-foreground;
   opacity: 1;
   margin: 50px 0;
 }
@@ -98,7 +98,7 @@ ul.contact-reasons {
     a {
       &:link, &:visited, &:hover, &:active {
         text-decoration: none;
-        color: $ui-foreground;
+        color: colors.$ui-foreground;
       }
 
       &:hover {
@@ -110,10 +110,10 @@ ul.contact-reasons {
 
 .card {
   background: #212121;
-  color: $ui-foreground;
+  color: colors.$ui-foreground;
 
   a.btn, button {
-    color: $ui-foreground;
+    color: colors.$ui-foreground;
   }
 }
 
@@ -140,7 +140,7 @@ nav {
 
         &:link, &:visited, &:hover, &:active {
           text-decoration: none;
-          color: $ui-foreground;
+          color: colors.$ui-foreground;
         }
 
         &:hover {
@@ -156,7 +156,7 @@ nav {
 }
 
 article {
-  background: $content-background;
+  background: colors.$content-background;
   padding: 20px;
   border-radius: 5px;
 
@@ -165,7 +165,7 @@ article {
   }
 
   blockquote {
-    border-left: 2px solid $blockquote;
+    border-left: 2px solid colors.$blockquote;
     padding-left: 10px;
   }
 
@@ -185,11 +185,11 @@ article {
 
   abbr {
     text-decoration: none;
-    border-bottom: 1px dotted $link-hover;
+    border-bottom: 1px dotted colors.$link-hover;
   }
 
   span.timestamp {
-    background: lighten(#333333, 12.5%);
+    background: color.scale(#333333, $lightness: 15.625%);
     border-radius: 2px;
     padding: 2px;
   }
@@ -197,7 +197,7 @@ article {
 
 .project-card {
   position: relative;
-  background: $project-background;
+  background: colors.$project-background;
   box-shadow: 0 0 15px rgba(0, 0, 0, .1);
 
   &:hover {
@@ -225,7 +225,7 @@ article {
 
     a {
       &:link, &:visited, &:hover &:active {
-        color: $ui-foreground;
+        color: colors.$ui-foreground;
       }
     }
 
@@ -237,7 +237,7 @@ article {
       width: 100%;
       margin: -34px 0 0;
       padding: 5px;
-      background-color: rgba($project-background, 50%);
+      background-color: rgba(colors.$project-background, 50%);
     }
   }
 }
@@ -297,7 +297,7 @@ div.alert *:last-child {
   margin: 10px 0;
 
   &.spoiler-revealed {
-    background: lighten(#333333, 12.5%);
+    background: color.scale(#333333, $lightness: 15.625%);
     color: #ffffff;
   }
 }
@@ -415,7 +415,7 @@ td.trim-p p:last-child {
   }
 
   &:hover {
-    color: $accent;
+    color: colors.$accent;
     background-color: #1E1E1E !important;
   }
 }

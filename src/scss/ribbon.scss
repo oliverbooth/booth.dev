@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .ribbon {
   width: 150px;
   height: 150px;
@@ -132,7 +134,7 @@
     $fg: #fff;
 
     &::before, &::after {
-      border: 5px solid darken($bg, 20%);
+      border: 5px solid color.adjust($bg, $lightness: 20%);
     }
 
     span {
@@ -146,7 +148,7 @@
     $fg: #fff;
 
     &::before, &::after {
-      border: 5px solid darken($bg, 20%);
+      border: 5px solid color.adjust($bg, $lightness: 20%);
     }
 
     span {
@@ -160,7 +162,7 @@
     $fg: #fff;
 
     &::before, &::after {
-      border: 5px solid darken($bg, 20%);
+      border: 5px solid color.adjust($bg, $lightness: 20%);
     }
 
     span {

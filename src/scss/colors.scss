@@ -9,4 +9,4 @@ $blockquote: #ff0033;
 $project-background: #000000;
 
 $link-text: $accent;
-$link-hover: lighten($link-text, 50%);
+$link-hover: color.scale($link-text, $lightness: 96.9581749049%);
