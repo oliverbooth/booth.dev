@@ -39,11 +39,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-if (builder.Environment.IsProduction())
-{
-    builder.WebHost.AddCertificateFromEnvironment(2845, 5049);
-}
-
 WebApplication app = builder.Build();
 
 app.Use(async (ctx, next) =>
