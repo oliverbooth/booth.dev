@@ -43,7 +43,7 @@ function copyCSS() {
 }
 
 function copyImages() {
-    return gulp.src(`${srcDir}/img/**/*.*`)
+    return gulp.src(`${srcDir}/img/**/*.*`, { encoding: false })
         .pipe(gulp.dest(`${destDir}/img`));
 }
 
