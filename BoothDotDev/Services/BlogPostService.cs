@@ -76,7 +76,7 @@ internal sealed class BlogPostService : IBlogPostService
     public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize, string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<BlogPost> posts = context.BlogPosts
+        IEnumerable<BlogPost> posts = context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published);
 
@@ -88,7 +88,7 @@ internal sealed class BlogPostService : IBlogPostService
                 tags[index] = tag.Replace('+', '-');
             }
 
-            posts = posts.Where(p => p.Tags.Intersect(tags).Any());
+            posts = posts.AsEnumerable().Where(p => p.Tags.Intersect(tags).Any());
         }
 
         posts = posts.Skip(page * pageSize).Take(pageSize);
