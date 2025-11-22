@@ -6,6 +6,9 @@ using BoothDotDev.Extensions.Markdig.Services;
 using BoothDotDev.Services;
 using Serilog;
 
+Directory.CreateDirectory("data");
+Directory.CreateDirectory("logs");
+
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/latest.log", rollingInterval: RollingInterval.Day)
