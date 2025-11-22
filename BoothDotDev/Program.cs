@@ -41,75 +41,6 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 WebApplication app = builder.Build();
 
-app.Use(async (ctx, next) =>
-{
-    await next();
-
-    if (ctx.Response.HasStarted)
-    {
-        return;
-    }
-
-    string? originalPath = ctx.Request.Path.Value;
-    ctx.Items["originalPath"] = originalPath;
-
-    bool matchedErrorPage = false;
-
-    switch (ctx.Response.StatusCode)
-    {
-        case 400:
-            ctx.Request.Path = "/error/401";
-            matchedErrorPage = true;
-            break;
-
-        case 403:
-            ctx.Request.Path = "/error/403";
-            matchedErrorPage = true;
-            break;
-
-        case 404:
-            ctx.Request.Path = "/error/404";
-            matchedErrorPage = true;
-            break;
-
-        case 410:
-            ctx.Request.Path = "/error/410";
-            matchedErrorPage = true;
-            break;
-
-        case 418:
-            ctx.Request.Path = "/error/418";
-            matchedErrorPage = true;
-            break;
-
-        case 429:
-            ctx.Request.Path = "/error/429";
-            matchedErrorPage = true;
-            break;
-
-        case 500:
-            ctx.Request.Path = "/error/500";
-            matchedErrorPage = true;
-            break;
-
-        case 503:
-            ctx.Request.Path = "/error/503";
-            matchedErrorPage = true;
-            break;
-
-        case 504:
-            ctx.Request.Path = "/error/504";
-            matchedErrorPage = true;
-            break;
-    }
-
-    if (matchedErrorPage)
-    {
-        await next();
-    }
-});
-app.UseStatusCodePagesWithReExecute("/error/{0}");
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error/500");
@@ -118,6 +49,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
