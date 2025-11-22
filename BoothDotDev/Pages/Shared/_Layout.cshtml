@@ -9,6 +9,7 @@
     HttpRequest request = Context.Request;
     var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
     string title = ViewData["Title"] is null ? "Oliver Booth" : $"{ViewData["Title"]} - Oliver Booth";
+    const string tagline = "Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.";
 
     bool lightTheme = request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
 
@@ -37,22 +38,23 @@
     {
         <title>Oliver Booth</title>
     }
-    @if (ViewData["Post"] is IBlogPost post)
+
+    @switch (ViewData["Post"])
     {
-        @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
-    }
-    else if (ViewData["Post"] is ITutorialArticle article)
-    {
-        @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
-    }
-    else
-    {
-        <meta name="title" content="@(ViewData["Title"] != null ? $"{ViewData["Title"]} - Oliver Booth" : "Oliver Booth")">
-        <meta name="description" content="Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.">
-        <meta property="og:title" content="@(ViewData["Title"] != null ? $"{ViewData["Title"]} - Oliver Booth" : "Oliver Booth")">
-        <meta property="og:description" content="Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.">
-        <meta property="twitter:title" content="@(ViewData["Title"] != null ? $"{ViewData["Title"]} - Oliver Booth" : "Oliver Booth")">
-        <meta property="twitter:description" content="Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.">
+        case IBlogPost post:
+            @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
+            break;
+        case ITutorialArticle article:
+            @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
+            break;
+        default:
+            <meta name="title" content="@title">
+            <meta name="description" content="@tagline">
+            <meta property="og:title" content="@title">
+            <meta property="og:description" content="@tagline">
+            <meta property="twitter:title" content="@title">
+            <meta property="twitter:description" content="@tagline">
+            break;
     }
     <title>@title</title>
     <link rel="shortcut icon" href="/img/favicon.png" asp-append-version="true">
