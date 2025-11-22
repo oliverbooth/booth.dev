@@ -22,39 +22,7 @@ builder.Configuration.AddTomlFile("data/config.toml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
-builder.Services.AddSingleton(provider => new MarkdownPipelineBuilder()
-    .Use<TimestampExtension>()
-    .UseTemplates(provider)
-
-    // we have our own "alert blocks"
-    .UseCallouts()
-
-    // advanced extensions. add explicitly to avoid UseAlertBlocks
-    .UseAbbreviations()
-    .UseAutoIdentifiers()
-    .UseCitations()
-    .UseCustomContainers()
-    .UseDefinitionLists()
-    .UseEmphasisExtras()
-    .UseFigures()
-    .UseFooters()
-    .UseFootnotes()
-    .UseGridTables()
-    .UseMathematics()
-    .UseMediaLinks()
-    .UsePipeTables()
-    .UseListExtras()
-    .UseTaskLists()
-    .UseDiagrams()
-    .UseAutoLinks()
-    .UseGenericAttributes() // must be last as it is one parser that is modifying other parsers
-
-    // no more advanced extensions
-    .UseBootstrap()
-    .UseEmojiAndSmiley()
-    .UseSmartyPants()
-    .Build());
-
+builder.Services.AddMarkdownPipeline();
 builder.Services.AddDbContextFactory<BlogContext>();
 builder.Services.AddDbContextFactory<WebContext>();
 builder.Services.AddHttpClient();
