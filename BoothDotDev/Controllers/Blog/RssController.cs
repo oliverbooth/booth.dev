@@ -47,7 +47,7 @@ public sealed class RssController : Controller
             {
                 Title = post.Title,
                 Link = url,
-                Comments = $"{url}#disqus_thread",
+                Comments = $"{url}#comments",
                 Creator = post.Author.DisplayName,
                 PubDate = post.Published.ToString("R"),
                 Guid = post.WordPressId.HasValue ? $"{baseUrl}?p={post.WordPressId.Value}" : $"{baseUrl}?pid={post.Id}",
