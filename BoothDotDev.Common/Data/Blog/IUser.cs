@@ -30,10 +30,22 @@ public interface IUser
     Guid Id { get; }
 
     /// <summary>
+    ///     Gets or sets the password hash.
+    /// </summary>
+    /// <value>The password hash.</value>
+    string Password { get; }
+
+    /// <summary>
     ///     Gets the date and time the user registered.
     /// </summary>
     /// <value>The registration date and time.</value>
     DateTimeOffset Registered { get; }
+
+    /// <summary>
+    ///     Gets or sets the salt used to hash the password.
+    /// </summary>
+    /// <value>The salt used to hash the password.</value>
+    string Salt { get; }
 
     /// <summary>
     ///     Gets the URL of the user's avatar.

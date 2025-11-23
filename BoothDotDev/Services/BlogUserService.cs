@@ -37,4 +37,13 @@ internal sealed class BlogUserService : IBlogUserService
         if (user is not null) _userCache.TryAdd(id, user);
         return user is not null;
     }
+
+    /// <inheritdoc />
+    public bool TryGetUser(string email, [NotNullWhen(true)] out IUser? user)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        user = context.Users.FirstOrDefault(u => u.EmailAddress == email);
+        if (user is not null) _userCache.TryAdd(user.Id, user);
+        return user is not null;
+    }
 }

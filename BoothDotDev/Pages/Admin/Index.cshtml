@@ -1,0 +1,59 @@
+@page
+@{
+    ViewData["Title"] = "Admin";
+    ViewData["Page"] = "Admin";
+}
+
+<article class="first-entry home-info">
+    <header class="page-header">
+        <div class="breadcrumbs"><a asp-page="/Admin/Index">Dashboard</a></div>
+        <h1 class="post-title entry-hint-parent">Hello, @(User.Identity?.Name)!</h1>
+        <div class="entry-content">
+            <a asp-page="/Admin/Logout" class="btn btn-danger">Logout</a>
+        </div>
+    </header>
+</article>
+
+<article class="post-entry">
+    <header class="entry-header">
+        <h2 class="entry-hint-parent">Manage blog posts</h2>
+    </header>
+    <div class="entry-content">
+        <p>Create, edit, and delete blog posts</p>
+    </div>
+
+    <a class="entry-link" asp-page="/Admin/Blog/Index"></a>
+</article>
+
+<article class="post-entry">
+    <header class="entry-header">
+        <h2 class="entry-hint-parent">Manage tutorials</h2>
+    </header>
+    <div class="entry-content">
+        <p>Create, edit, and delete tutorials</p>
+    </div>
+
+    <a class="entry-link" asp-page="/Admin/Tutorials/Index"></a>
+</article>
+
+<article class="post-entry">
+    <header class="entry-header">
+        <h2 class="entry-hint-parent">Manage challenges</h2>
+    </header>
+    <div class="entry-content">
+        <p>Create, edit, and delete dev challenges</p>
+    </div>
+
+    <a class="entry-link" asp-page="/Admin/Challenges/Index"></a>
+</article>
+
+<article class="post-entry">
+    <header class="entry-header">
+        <h2 class="entry-hint-parent">Manage projects</h2>
+    </header>
+    <div class="entry-content">
+        <p>Create, edit, and delete projects</p>
+    </div>
+
+    <a class="entry-link" asp-page="/Admin/Projects/Index"></a>
+</article>

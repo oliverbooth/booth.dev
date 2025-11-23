@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BoothDotDev.Common.Data.Blog;
 using Cysharp.Text;
+using BC = BCrypt.Net.BCrypt;
 
 namespace BoothDotDev.Data.Blog;
 
@@ -27,17 +28,11 @@ internal sealed class User : IUser, IBlogAuthor
     /// <inheritdoc />
     public DateTimeOffset Registered { get; private set; } = DateTimeOffset.UtcNow;
 
-    /// <summary>
-    ///     Gets or sets the password hash.
-    /// </summary>
-    /// <value>The password hash.</value>
-    internal string Password { get; set; } = string.Empty;
+    /// <inheritdoc />
+    public string Password { get; set; } = string.Empty;
 
-    /// <summary>
-    ///     Gets or sets the salt used to hash the password.
-    /// </summary>
-    /// <value>The salt used to hash the password.</value>
-    internal string Salt { get; set; } = string.Empty;
+    /// <inheritdoc />
+    public string Salt { get; set; } = string.Empty;
 
     /// <inheritdoc cref="IUser.GetAvatarUrl" />
     public Uri GetAvatarUrl(int size = 28)
@@ -69,6 +64,8 @@ internal sealed class User : IUser, IBlogAuthor
     /// <inheritdoc />
     public bool TestCredentials(string password)
     {
-        return false;
+        if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Salt)) return false;
+        BC.HashPassword(password, Salt);
+        return BC.Verify(password, Password);
     }
 }

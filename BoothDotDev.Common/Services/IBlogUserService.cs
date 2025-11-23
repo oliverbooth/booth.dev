@@ -20,4 +20,17 @@ public interface IBlogUserService
     ///     <see langword="true" /> if a user with the specified ID is found; otherwise, <see langword="false" />.
     /// </returns>
     bool TryGetUser(Guid id, [NotNullWhen(true)] out IUser? user);
+
+    /// <summary>
+    ///     Attempts to find a user with the specified email address.
+    /// </summary>
+    /// <param name="email">The email address of the user to find.</param>
+    /// <param name="user">
+    ///     When this method returns, contains the user with the specified email address, if the user is found; otherwise,
+    ///     <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a user with the specified email address is found; otherwise, <see langword="false" />.
+    /// </returns>
+    bool TryGetUser(string email, [NotNullWhen(true)] out IUser? user);
 }

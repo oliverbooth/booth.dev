@@ -5,6 +5,7 @@ using BoothDotDev.Extensions;
 using BoothDotDev.Extensions.Markdig.Services;
 using BoothDotDev.Pages.Components;
 using BoothDotDev.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using X10D.Hosting.DependencyInjection;
 
@@ -38,7 +39,21 @@ builder.Services.AddSingleton<IProjectService, ProjectService>();
 builder.Services.AddSingleton<ITutorialService, TutorialService>();
 builder.Services.AddSingleton<IReadingListService, ReadingListService>();
 builder.Services.AddSingleton<ISearchService, SearchService>();
-builder.Services.AddRazorPages();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/admin/login";
+        options.LogoutPath = "/admin/logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Admin");
+    options.Conventions.AllowAnonymousToPage("/Admin/Login");
+});
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -56,6 +71,7 @@ app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/error/{0}");
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
