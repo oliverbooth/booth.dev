@@ -74,7 +74,7 @@ public static class HtmlUtility
         {
             ["title"] = article.Title,
             ["description"] = excerpt,
-            ["author"] = "Oliver Booth" // TODO add article author support?
+            ["author"] = Strings.MyName // TODO add article author support?
         };
         return CreateMetaTags(tags);
     }

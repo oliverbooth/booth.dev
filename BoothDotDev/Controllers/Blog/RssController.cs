@@ -60,7 +60,7 @@ internal sealed class RssController : Controller
                 Description = $"{baseUrl}/",
                 LastBuildDate = DateTimeOffset.UtcNow.ToString("R"),
                 Link = $"{baseUrl}/",
-                Title = "Oliver Booth",
+                Title = Strings.MyName,
                 Generator = $"{baseUrl}/",
                 Items = blogItems
             }
