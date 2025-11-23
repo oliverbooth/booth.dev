@@ -14,9 +14,9 @@ internal sealed class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.ToTable("book");
         builder.HasKey(entry => entry.Isbn);
 
-        builder.Property(entry => entry.Isbn).IsRequired();
-        builder.Property(entry => entry.Title).IsRequired();
-        builder.Property(entry => entry.Author).IsRequired();
+        builder.Property(entry => entry.Isbn).IsRequired().HasMaxLength(13);
+        builder.Property(entry => entry.Title).IsRequired().HasMaxLength(64);
+        builder.Property(entry => entry.Author).IsRequired().HasMaxLength(64);
         builder.Property(entry => entry.State).HasColumnType("book_state").IsRequired();
     }
 }

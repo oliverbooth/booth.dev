@@ -12,16 +12,16 @@ namespace BoothDotDev.Data.Web;
 internal sealed class Book : IBook
 {
     /// <inheritdoc />
-    public string Author { get; }
+    public string Author { get; private set; } = string.Empty;
 
     /// <inheritdoc />
-    public string Isbn { get; }
+    public string Isbn { get; private set; } = string.Empty;
 
     /// <inheritdoc />
-    public BookState State { get; }
+    public BookState State { get; private set; }
 
     /// <inheritdoc />
-    public string Title { get; }
+    public string Title { get; private set; } = string.Empty;
 
     public string GetBarcode()
     {
