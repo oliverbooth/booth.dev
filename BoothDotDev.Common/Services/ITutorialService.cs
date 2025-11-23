@@ -30,10 +30,6 @@ public interface ITutorialService
     ///     Gets a folder by its ID.
     /// </summary>
     /// <param name="id">The ID of the folder to get</param>
-    /// <param name="folder">
-    ///     When this method returns, contains the folder whose ID is equal to the ID specified, or
-    ///     <see langword="null" /> if no such folder was found.
-    /// </param>
     /// <returns><see langword="true" /></returns> 
     ITutorialFolder? GetFolder(Guid id);
 
