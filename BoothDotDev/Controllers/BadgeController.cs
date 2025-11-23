@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoothDotDev.Controllers;
 
+/// <summary>
+///     Represents the badge controller.
+/// </summary>
 [ApiController]
 [Route("api/badge")]
 [Produces("application/json")]
-internal sealed class BadgeController : ControllerBase
+public sealed class BadgeController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -28,6 +31,13 @@ internal sealed class BadgeController : ControllerBase
         _version = attribute?.InformationalVersion ?? "1.0.0";
     }
 
+    /// <summary>
+    ///     Gets the GitHub Actions workflow status badge.
+    /// </summary>
+    /// <param name="repo">The repository name.</param>
+    /// <param name="workflow">The workflow name.</param>
+    /// <param name="owner">The repository owner (defaults to "oliverbooth").</param>
+    /// <returns>>The GitHub Actions workflow status badge.</returns>
     [HttpGet("github/{repo}/{workflow}")]
     [HttpGet("github/{owner}/{repo}/{workflow}")]
     public async Task<IActionResult> GitHubStatusAsync(string repo, string workflow, string owner = "oliverbooth")
