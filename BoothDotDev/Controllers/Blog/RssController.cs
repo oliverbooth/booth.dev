@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoothDotDev.Controllers.Blog;
 
+/// <summary>
+///     Represents the RSS feed controller.
+/// </summary>
 [ApiController]
 [Route("blog/feed")]
-internal sealed class RssController : Controller
+public sealed class RssController : Controller
 {
     private readonly IBlogPostService _blogPostService;
 
@@ -21,6 +24,10 @@ internal sealed class RssController : Controller
         _blogPostService = blogPostService;
     }
 
+    /// <summary>
+    ///     Gets the RSS feed for the blog.
+    /// </summary>
+    /// <returns>>The RSS feed for the blog.</returns>
     [HttpGet]
     [Produces("application/xml")]
     public IActionResult OnGet()
