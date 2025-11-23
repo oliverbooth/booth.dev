@@ -30,7 +30,7 @@ internal sealed class List : PageModel
         }
 
         PageNumber = page;
-        Tag = tag?.Split('+') ?? [];
+        ViewData["Tags"] = Tag = tag?.Split('+') ?? [];
         return Page();
     }
 }

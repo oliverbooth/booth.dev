@@ -21,7 +21,7 @@ internal sealed class Index : PageModel
         [FromQuery(Name = "p")] int? wpPostId = null,
         [FromQuery(Name = "tag")] string? tag = null)
     {
-        Tag = tag?.Split('+') ?? [];
+        ViewData["Tags"] = Tag = tag?.Split('+') ?? [];
 
         if (postId.HasValue == wpPostId.HasValue)
         {

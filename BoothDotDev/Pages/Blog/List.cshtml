@@ -21,10 +21,10 @@
 @{
 <footer class="page-footer">
     <nav class="pagination">
-        <a class="previous" asp-page="/Blog/List" asp-route-pageNumber="@previousPage">«&nbsp;Previous&nbsp;@previousPage/@pageCount</a>
+        <a class="previous" asp-page="/Blog/List" asp-route-pageNumber="@previousPage" asp-route-tag="@string.Join('+', Model.Tag)">«&nbsp;Previous&nbsp;@previousPage/@pageCount</a>
         @if (Model.PageNumber < pageCount)
         {
-            <a class="next" asp-page="/Blog/List" asp-route-pageNumber="@nextPage">Next&nbsp;@nextPage/@pageCount&nbsp;»</a>
+            <a class="next" asp-page="/Blog/List" asp-route-pageNumber="@nextPage" asp-route-tag="@string.Join('+', Model.Tag)">Next&nbsp;@nextPage/@pageCount&nbsp;»</a>
         }
     </nav>
 </footer>
