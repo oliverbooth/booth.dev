@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Web;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data.Web;
@@ -39,10 +40,17 @@ internal sealed class DevChallengeService : IDevChallengeService
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<IDevChallenge> GetDevChallenges()
+    public IReadOnlyList<IDevChallenge> GetDevChallenges(Visibility visibility)
     {
-        using var context = _dbContextFactory.CreateDbContext();
-        return context.DevChallenges.OrderBy(c => c.Date).ToArray<IDevChallenge>();
+        using WebContext context = _dbContextFactory.CreateDbContext();
+        IQueryable<DevChallenge> challenges = context.DevChallenges.OrderBy(c => c.Date);
+
+        if (visibility != Visibility.None)
+        {
+            challenges = challenges.Where(c => c.Visibility == visibility);
+        }
+
+        return challenges.ToArray();
     }
 
     /// <inheritdoc />

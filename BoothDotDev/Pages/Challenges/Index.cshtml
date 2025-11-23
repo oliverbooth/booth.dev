@@ -25,37 +25,37 @@
 
 @{
     int number = 1;
-}
-@foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges().Where(c => c.Visibility == Visibility.Published))
-{
-    DateTimeOffset date = challenge.Date;
+    foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
+    {
+        DateTimeOffset date = challenge.Date;
 
-    <article class="post-entry">
-        <header class="entry-header">
-            <h2 class="entry-hint-parent">
-                @(number++). @challenge.Title
-            </h2>
-        </header>
+        <article class="post-entry">
+            <header class="entry-header">
+                <h2 class="entry-hint-parent">
+                    @(number++). @challenge.Title
+                </h2>
+            </header>
 
-        <div class="entry-content">
-            @* nothing here, just padding *@
-        </div>
+            <div class="entry-content">
+                @* nothing here, just padding *@
+            </div>
 
-        <footer class="entry-footer">
-            <p>
-                <span class="text-muted" title="@date.ToString("F")">Published @date.Humanize()</span>
-                <span style="margin: 0 .2em;">&bull;</span>
-                @if (challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution))
-                {
-                    <span class="badge green">✅ Solution released</span>
-                }
-                else
-                {
-                    <span class="badge red">❌ Solution not released yet</span>
-                }
-            </p>
-        </footer>
+            <footer class="entry-footer">
+                <p>
+                    <span class="text-muted" title="@date.ToString("F")">Published @date.Humanize()</span>
+                    <span style="margin: 0 .2em;">&bull;</span>
+                    @if (challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution))
+                    {
+                        <span class="badge green">✅ Solution released</span>
+                    }
+                    else
+                    {
+                        <span class="badge red">❌ Solution not released yet</span>
+                    }
+                </p>
+            </footer>
 
-        <a class="entry-link" aria-label="post link to @challenge.Title" href="/challenge/@challenge.Id"></a>
-    </article>
+            <a class="entry-link" aria-label="post link to @challenge.Title" href="/challenge/@challenge.Id"></a>
+        </article>
+    }
 }

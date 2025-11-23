@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Web;
 
 namespace BoothDotDev.Common.Services;
@@ -20,7 +21,7 @@ public interface IDevChallengeService
     ///     Gets a read-only collection of dev challenges.
     /// </summary>
     /// <returns>A read-only collection of dev challenges.</returns>
-    IReadOnlyList<IDevChallenge> GetDevChallenges();
+    IReadOnlyList<IDevChallenge> GetDevChallenges(Visibility visibility = Visibility.None);
 
     /// <summary>
     ///     Gets a read-only collection of dev challenges.
