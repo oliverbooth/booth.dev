@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Challenges;
 
-public class Challenge : PageModel
+internal sealed class Challenge : PageModel
 {
     private readonly IDevChallengeService _devChallengeService;
 

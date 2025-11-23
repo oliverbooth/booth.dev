@@ -8,7 +8,7 @@ namespace BoothDotDev.Pages.Tutorials;
 /// <summary>
 ///     Represents the page model for the <c>Article</c> page.
 /// </summary>
-public class Article : PageModel
+internal sealed class Article : PageModel
 {
     private readonly ITutorialService _tutorialService;
 

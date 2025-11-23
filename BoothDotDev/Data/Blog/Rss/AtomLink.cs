@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 
 namespace BoothDotDev.Data.Blog.Rss;
 
-public sealed class AtomLink
+internal sealed class AtomLink
 {
     [XmlAttribute("href")]
     public string Href { get; set; } = default!;

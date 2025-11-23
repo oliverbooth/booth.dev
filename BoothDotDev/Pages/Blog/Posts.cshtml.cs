@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Blog;
 
-public class Posts : PageModel
+internal sealed class Posts : PageModel
 {
     /// <summary>
     ///     Gets the requested page number.

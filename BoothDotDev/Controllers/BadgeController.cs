@@ -8,7 +8,7 @@ namespace BoothDotDev.Controllers;
 [ApiController]
 [Route("api/badge")]
 [Produces("application/json")]
-public sealed class BadgeController : ControllerBase
+internal sealed class BadgeController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;

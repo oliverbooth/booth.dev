@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Tutorials;
 
-public class Index : PageModel
+internal sealed class Index : PageModel
 {
     private readonly ITutorialService _tutorialService;
 

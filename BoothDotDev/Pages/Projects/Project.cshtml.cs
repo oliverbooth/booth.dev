@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Projects;
 
-public class Project : PageModel
+internal sealed class Project : PageModel
 {
     private readonly IProjectService _projectService;
 
@@ -12,7 +12,7 @@ public class Project : PageModel
     {
         _projectService = projectService;
     }
-    
+
     public IProject? SelectedProject { get; private set; }
 
     public void OnGet(string slug)

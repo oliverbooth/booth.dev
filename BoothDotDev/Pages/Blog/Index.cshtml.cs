@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace BoothDotDev.Pages.Blog;
 
 [Area("blog")]
-public class Index : PageModel
+internal sealed class Index : PageModel
 {
     private readonly IBlogPostService _blogPostService;
 

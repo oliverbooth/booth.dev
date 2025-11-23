@@ -6,7 +6,7 @@ namespace BoothDotDev.Pages.Blog;
 /// <summary>
 ///     Represents a class which defines the model for the <c>/blog/page/#</c> route.
 /// </summary>
-public class List : PageModel
+internal sealed class List : PageModel
 {
     /// <summary>
     ///     Gets the requested page number.

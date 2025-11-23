@@ -8,7 +8,7 @@ namespace BoothDotDev.Controllers.Blog;
 
 [ApiController]
 [Route("blog/feed")]
-public class RssController : Controller
+internal sealed class RssController : Controller
 {
     private readonly IBlogPostService _blogPostService;
 

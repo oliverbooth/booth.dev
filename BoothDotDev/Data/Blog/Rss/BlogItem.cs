@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 
 namespace BoothDotDev.Data.Blog.Rss;
 
-public sealed class BlogItem
+internal sealed class BlogItem
 {
     [XmlElement("title")]
     public string Title { get; set; } = default!;

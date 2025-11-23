@@ -11,7 +11,7 @@ namespace BoothDotDev.Pages.Blog;
 ///     Represents the page model for the <c>Article</c> page.
 /// </summary>
 [Area("blog")]
-public class Article : PageModel
+internal sealed class Article : PageModel
 {
     private readonly IBlogPostService _blogPostService;
 

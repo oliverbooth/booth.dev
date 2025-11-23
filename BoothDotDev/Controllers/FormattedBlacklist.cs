@@ -4,7 +4,7 @@ namespace BoothDotDev.Controllers;
 
 [Controller]
 [Route("contact/blacklist/formatted")]
-public class FormattedBlacklistController : Controller
+internal sealed class FormattedBlacklistController : Controller
 {
     [HttpGet("{format}")]
     public IActionResult OnGet([FromRoute] string format)

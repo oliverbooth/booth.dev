@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 
 namespace BoothDotDev.Data.Blog.Rss;
 
-public struct BlogItemGuid
+internal struct BlogItemGuid
 {
     public BlogItemGuid()
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Contact;
 
-public class Blacklist : PageModel
+internal sealed class Blacklist : PageModel
 {
     public IActionResult OnGet()
     {

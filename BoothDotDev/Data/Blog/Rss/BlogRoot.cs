@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 namespace BoothDotDev.Data.Blog.Rss;
 
 [XmlRoot("rss")]
-public sealed class BlogRoot
+internal sealed class BlogRoot
 {
     [XmlAttribute("version")]
     public string Version { get; set; } = "2.0";
