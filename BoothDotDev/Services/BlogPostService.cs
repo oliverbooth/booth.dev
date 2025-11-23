@@ -82,6 +82,13 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     }
 
     /// <inheritdoc />
+    public IReadOnlyList<IBlogPost> GetEverySingleBlogPost()
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        return context.BlogPosts.OrderByDescending(post => post.Published).AsEnumerable().Select(CacheAuthor).ToArray();
+    }
+
+    /// <inheritdoc />
     public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize, string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
@@ -247,7 +254,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
                 break;
             }
         }
-        
+
         foreach (BlogPost post in posts)
         {
             if (post.Visibility != Visibility.Published || post.IsRedirect)

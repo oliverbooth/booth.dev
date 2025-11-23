@@ -31,7 +31,6 @@ public sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        BlogPosts = _blogPostService.GetAllBlogPosts().OrderByDescending(post => post.Published).ToArray();
+        BlogPosts = _blogPostService.GetEverySingleBlogPost();
     }
 }
-    

@@ -1,6 +1,5 @@
 @page
-@using BoothDotDev.Common.Data.Blog
-@using Humanizer
+@using BoothDotDev.Pages.Components
 @model BoothDotDev.Pages.Admin.Blog.Index
 @{
     ViewData["Title"] = "Admin";
@@ -23,42 +22,8 @@
     </header>
 </article>
 
-<div class="wide-wrapper">
-    <table class="table hover wide admin">
-        <thead>
-        <tr>
-            <th style="width: 40%">Title</th>
-            <th>Author</th>
-            <th>Published</th>
-            <th>Last updated</th>
-            <th style="width: 12em">Actions</th>
-        </tr>
-        </thead>
+<component type="typeof(AdminBlogPostTable)" render-mode="ServerPrerendered"/>
 
-        <tbody>
-        @foreach (IBlogPost post in Model.BlogPosts)
-        {
-            DateTimeOffset lastUpdated = post.Updated ?? post.Published;
-            <tr>
-                <td>@post.Title</td>
-                <td>
-                    <img src="@post.Author.AvatarUrl" alt="" style="vertical-align: middle; display: inline-block">
-                    @post.Author.DisplayName
-                </td>
-                <td><abbr title="@lastUpdated.ToString("F")">@lastUpdated.Humanize()</abbr></td>
-                <td><abbr title="@post.Published.ToString("F")">@post.Published.Humanize()</abbr></td>
-                <td>
-                    <a asp-page="/Blog/Article"
-                       asp-route-year="@post.Published.Year"
-                       asp-route-month="@post.Published.Month.ToString("00")"
-                       asp-route-day="@post.Published.Day.ToString("00")"
-                       asp-route-slug="@post.Slug"
-                       class="btn btn-success btn-sm">👁️</a>
-                    <a asp-page="/Admin/Blog/Edit" asp-route-id="@post.Id" class="btn btn-primary btn-sm">✏️</a>
-                    <a asp-page="/Admin/Blog/Delete" asp-route-id="@post.Id" class="btn btn-danger btn-sm">🗑️</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+@section Scripts {
+    <script src="_framework/blazor.server.js"></script>
+}

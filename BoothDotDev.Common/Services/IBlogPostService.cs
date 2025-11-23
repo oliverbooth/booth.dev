@@ -26,6 +26,12 @@ public interface IBlogPostService
     IReadOnlyList<IBlogPost> GetAllBlogPosts(int limit = -1);
 
     /// <summary>
+    ///     Returns a collection of every single blog post, regardless of visibility or redirection status.
+    /// </summary>
+    /// <returns>A collection of every single blog post.</returns>
+    IReadOnlyList<IBlogPost> GetEverySingleBlogPost();
+
+    /// <summary>
     ///     Returns the total number of blog posts.
     /// </summary>
     /// <param name="visibility">The post visibility filter.</param>

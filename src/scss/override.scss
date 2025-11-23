@@ -378,3 +378,11 @@ table {
     }
   }
 }
+
+.muted {
+  color: var(--secondary) !important;
+}
+
+abbr[title] {
+  cursor: pointer !important;
+}
