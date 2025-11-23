@@ -288,7 +288,7 @@ footer.site-footer {
         content: "·";
         padding: 0 0.5em;
       }
-      
+
       &::before {
         padding: 0 0.5em;
       }
@@ -296,6 +296,85 @@ footer.site-footer {
       &:last-child::after {
         content: "";
       }
+    }
+  }
+}
+
+.btn {
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 0.5rem 0.5rem 0.5rem 0;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1;
+  box-sizing: border-box;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+
+  &.full {
+    display: block;
+    width: 100%;
+    margin: 0 0 0.6rem 0;
+  }
+  
+  &.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+  }
+  
+  &.btn-sq {
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+  }
+
+  &.btn-primary { background: var(--blue); border: none; }
+  &.btn-secondary { background: var(--secondary); border: none; }
+  &.btn-success { background: var(--green); border: none; }
+  &.btn-danger { background: var(--red); border: none; }
+  &.btn-warning { background: var(--yellow); border: none; color: #000; }
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.wide-wrapper{
+  overflow-x: auto;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+}
+
+table {
+  display: table !important;
+
+  &.wide {
+    width: 80vw;
+    max-width: none;
+    position: relative;
+    margin: 0 auto;
+    table-layout: fixed;
+
+    thead, tbody {
+      width: 100%;
+    }
+  }
+
+  &.hover {
+    tbody tr:hover {
+      background-color: var(--tertiary);
+    }
+  }
+
+  &.admin {
+    thead {
+      border-bottom: 1px solid var(--tertiary);
     }
   }
 }

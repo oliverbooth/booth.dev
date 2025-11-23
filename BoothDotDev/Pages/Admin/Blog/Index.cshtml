@@ -1,0 +1,64 @@
+@page
+@using BoothDotDev.Common.Data.Blog
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Blog.Index
+@{
+    ViewData["Title"] = "Admin";
+    ViewData["Page"] = "Admin";
+}
+
+<article class="first-entry home-info">
+    <header class="page-header">
+        <div class="breadcrumbs">
+            <a asp-page="/Admin/Index">Dashboard</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Admin/Blog/Index">Blog Posts</a>
+        </div>
+        <h1 class="post-title entry-hint-parent">Blog Posts</h1>
+        <div class="entry-content">
+            Create, edit, and delete blog posts.
+            <br/>
+            <a asp-page="/Admin/Blog/Create" class="btn btn-success mb-3">Create New</a>
+        </div>
+    </header>
+</article>
+
+<div class="wide-wrapper">
+    <table class="table hover wide admin">
+        <thead>
+        <tr>
+            <th style="width: 40%">Title</th>
+            <th>Author</th>
+            <th>Published</th>
+            <th>Last updated</th>
+            <th style="width: 12em">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @foreach (IBlogPost post in Model.BlogPosts)
+        {
+            DateTimeOffset lastUpdated = post.Updated ?? post.Published;
+            <tr>
+                <td>@post.Title</td>
+                <td>
+                    <img src="@post.Author.AvatarUrl" alt="" style="vertical-align: middle; display: inline-block">
+                    @post.Author.DisplayName
+                </td>
+                <td><abbr title="@lastUpdated.ToString("F")">@lastUpdated.Humanize()</abbr></td>
+                <td><abbr title="@post.Published.ToString("F")">@post.Published.Humanize()</abbr></td>
+                <td>
+                    <a asp-page="/Blog/Article"
+                       asp-route-year="@post.Published.Year"
+                       asp-route-month="@post.Published.Month.ToString("00")"
+                       asp-route-day="@post.Published.Day.ToString("00")"
+                       asp-route-slug="@post.Slug"
+                       class="btn btn-success btn-sm">👁️</a>
+                    <a asp-page="/Admin/Blog/Edit" asp-route-id="@post.Id" class="btn btn-primary btn-sm">✏️</a>
+                    <a asp-page="/Admin/Blog/Delete" asp-route-id="@post.Id" class="btn btn-danger btn-sm">🗑️</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
