@@ -17,7 +17,7 @@ public sealed class TemplateInlineParser : InlineParser
     /// </summary>
     public TemplateInlineParser()
     {
-        OpeningCharacters = new[] { '{' };
+        OpeningCharacters = ['{'];
     }
 
     /// <inheritdoc />

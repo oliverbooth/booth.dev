@@ -13,7 +13,7 @@ public sealed class TimestampInlineParser : InlineParser
     /// </summary>
     public TimestampInlineParser()
     {
-        OpeningCharacters = new[] { '<' };
+        OpeningCharacters = ['<'];
     }
 
     /// <inheritdoc />
