@@ -350,6 +350,8 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         existingPost.Published = blogPost.Published;
         existingPost.Visibility = blogPost.Visibility;
         existingPost.Updated = DateTimeOffset.UtcNow;
+        existingPost.IsRedirect = blogPost.IsRedirect;
+        existingPost.RedirectUrl = string.IsNullOrWhiteSpace(blogPost.RedirectUrl) ? null : new Uri(blogPost.RedirectUrl);
         context.Update(existingPost);
         context.SaveChanges();
     }

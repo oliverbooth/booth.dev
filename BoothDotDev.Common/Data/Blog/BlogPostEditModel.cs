@@ -20,6 +20,8 @@ public sealed class BlogPostEditModel
         Password = blogPost.Password;
         Published = blogPost.Published;
         Visibility = blogPost.Visibility;
+        IsRedirect = blogPost.IsRedirect;
+        RedirectUrl = blogPost.RedirectUrl?.ToString();
     }
 
     /// <summary>
@@ -47,6 +49,18 @@ public sealed class BlogPostEditModel
     /// </summary>
     /// <value>The ID of the blog post.</value>
     public Guid Id { get; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether the blog post is a redirect.
+    /// </summary>
+    /// <value>><see langword="true" /> if the blog post is a redirect; otherwise, <see langword="false" />.</value>
+    public bool IsRedirect { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the redirect URL of the blog post.
+    /// </summary>
+    /// <value>The redirect URL of the blog post.</value>
+    public string? RedirectUrl { get; set; }
 
     /// <summary>
     ///     Gets or sets the password of the blog post.

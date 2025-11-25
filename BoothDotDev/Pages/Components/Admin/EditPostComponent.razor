@@ -91,6 +91,25 @@
             </td>
         </tr>
         <tr>
+            <th>
+                Is redirect
+            </th>
+            <td>
+                <input class="form-control" type="checkbox" @bind="BlogPost.IsRedirect"/>
+            </td>
+        </tr>
+        @if (BlogPost.IsRedirect)
+        {
+            <tr>
+                <th>
+                    Redirect URL
+                </th>
+                <td>
+                    <input class="form-control" type="url" @bind="BlogPost.RedirectUrl"/>
+                </td>
+            </tr>
+        }
+        <tr>
             <th colspan="2">
                 Body
             </th>
