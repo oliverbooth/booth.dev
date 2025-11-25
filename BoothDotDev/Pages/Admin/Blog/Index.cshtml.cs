@@ -1,5 +1,6 @@
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Blog;
@@ -7,6 +8,7 @@ namespace BoothDotDev.Pages.Admin.Blog;
 /// <summary>
 ///     Represents a class which defines the model for the <c>/admin/blog</c> route.
 /// </summary>
+[Authorize]
 public sealed class Index : PageModel
 {
     private readonly IBlogPostService _blogPostService;
