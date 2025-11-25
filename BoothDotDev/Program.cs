@@ -54,7 +54,13 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AuthorizeFolder("/Admin");
     options.Conventions.AllowAnonymousToPage("/Admin/Login");
 });
-builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+IServerSideBlazorBuilder blazor = builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+if (builder.Environment.IsDevelopment())
+{
+    blazor.AddCircuitOptions(options => options.DetailedErrors = true);
+}
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
