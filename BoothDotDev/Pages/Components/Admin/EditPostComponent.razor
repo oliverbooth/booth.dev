@@ -1,0 +1,115 @@
+<EditForm class="form-group" EditContext="@_editContext">
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <td>
+                <div class="input-group">
+                    <input class="form-control" type="text" disabled="disabled" readonly="readonly" required="required"
+                           value="@DisplayedId"/>
+                    <button type="button" class="btn btn-primary" title="Show @(_showShortId ? "long" : "short") ID"
+                            @onclick="ToggleIdDisplayMode">
+                        <i data-lucide="arrow-left-right"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td><input class="form-control" type="text" @bind-value="BlogPost.Title" required="required"/></td>
+        </tr>
+        <tr>
+            <th>Slug</th>
+            <td>
+                <div class="input-group">
+                    <input class="form-control" type="text" @bind-value="BlogPost.Slug" @bind-value:event="oninput"
+                           @onchange="SanitizeSlug" required="required"/>
+                    <button type="button" class="btn btn-primary" title="Regenerate" @onclick="RegenerateSlug">
+                        <i data-lucide="refresh-cw"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Publish date
+            </th>
+            <td>
+                <div class="input-group">
+                    <input class="form-control" type="datetime-local" @bind-value="BlogPost.Published"
+                           required="required"/>
+                    <button type="button" class="btn btn-primary" title="Set to current time"
+                            @onclick="@(() => BlogPost.Published = DateTimeOffset.UtcNow)">
+                        <i data-lucide="calendar-clock"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Visibility
+            </th>
+            <td>
+                <select class="form-control" @bind="BlogPost.Visibility" required="required">
+                    <option value="@(Common.Data.Visibility.Published)">Published</option>
+                    <option value="@(Common.Data.Visibility.Unlisted)">Unlisted</option>
+                    <option value="@(Common.Data.Visibility.Private)">Private</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Password
+            </th>
+            <td>
+                <div class="input-group">
+                    <input class="form-control" type="@PasswordInputType" @bind-value="BlogPost.Password"
+                           placeholder="No password set"/>
+                    <button type="button" class="btn btn-primary" title="Toggle password visibility"
+                            @onclick="TogglePasswordVisibility">
+                        <i data-lucide="eye"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Enable comments
+            </th>
+            <td>
+                <input class="form-control" type="checkbox" @bind="BlogPost.EnableComments"/>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Excerpt
+            </th>
+            <td>
+                <div class="input-group">
+                    <textarea class="form-control" @bind="BlogPost.Excerpt" rows="6"
+                              placeholder="Excerpt determined automatically"></textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2">
+                Body
+            </th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @{
+                    int lineCount = BlogPost.Body.Split('\n').Length;
+                    int rowCount = Math.Min(100, lineCount);
+                }
+                <textarea class="form-control" @bind="BlogPost.Body" rows="@rowCount" required="required"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="text-center">
+                <button type="button" class="btn btn-success" @onclick="@(Save)">
+                    <i data-lucide="save"></i> Save changes
+                </button>
+            </td>
+        </tr>
+    </table>
+</EditForm>

@@ -173,4 +173,21 @@ public interface IBlogPostService
     /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
     bool TryGetPost(DateOnly publishDate, string slug, [NotNullWhen(true)] out IBlogPost? post);
+
+    /// <summary>
+    ///     Updates the specified blog post.
+    /// </summary>
+    /// <param name="blogPost">The blog post to update.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="blogPost" /> is <see langword="null" />.</exception>
+    /// <exception cref="InvalidOperationException">The blog post to update does not exist.</exception>
+    void UpdateBlogPost(BlogPostEditModel blogPost);
+
+    /// <summary>
+    ///     Updates the specified blog post.
+    /// </summary>
+    /// <param name="id">The ID of the blog post to update.</param>
+    /// <param name="updateAction">The action that performs the update.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="updateAction" /> is <see langword="null" />.</exception>
+    /// <exception cref="InvalidOperationException">The blog post to update does not exist.</exception>
+    void UpdateBlogPost(Guid id, Action<BlogPostEditModel> updateAction);
 }

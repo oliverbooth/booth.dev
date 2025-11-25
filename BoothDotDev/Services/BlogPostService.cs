@@ -327,6 +327,52 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     }
 
     /// <inheritdoc />
+    public void UpdateBlogPost(BlogPostEditModel blogPost)
+    {
+        if (blogPost is null)
+        {
+            throw new ArgumentNullException(nameof(blogPost));
+        }
+
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        BlogPost? existingPost = context.BlogPosts.Find(blogPost.Id);
+        if (existingPost is null)
+        {
+            throw new InvalidOperationException($"Blog post with ID '{blogPost.Id}' not found.");
+        }
+
+        existingPost.Slug = blogPost.Slug;
+        existingPost.Title = blogPost.Title;
+        existingPost.Body = blogPost.Body;
+        existingPost.Excerpt = blogPost.Excerpt;
+        existingPost.EnableComments = blogPost.EnableComments;
+        existingPost.Password = blogPost.Password;
+        existingPost.Published = blogPost.Published;
+        existingPost.Visibility = blogPost.Visibility;
+        existingPost.Updated = DateTimeOffset.UtcNow;
+        context.Update(existingPost);
+        context.SaveChanges();
+    }
+
+    /// <inheritdoc />
+    public void UpdateBlogPost(Guid id, Action<BlogPostEditModel> updateAction)
+    {
+        if (updateAction is null)
+        {
+            throw new ArgumentNullException(nameof(updateAction));
+        }
+
+        if (!TryGetPost(id, out IBlogPost? post))
+        {
+            throw new InvalidOperationException($"Blog post with ID '{id}' not found.");
+        }
+
+        var editModel = new BlogPostEditModel(post);
+        updateAction(editModel);
+        UpdateBlogPost(editModel);
+    }
+
+    /// <inheritdoc />
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         CacheInvalidationTimer.Elapsed += InvalidateCache;

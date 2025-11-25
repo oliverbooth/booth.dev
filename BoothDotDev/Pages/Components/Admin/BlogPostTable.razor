@@ -1,13 +1,11 @@
 @using BoothDotDev.Common.Data
 @using BoothDotDev.Common.Data.Blog
-@using BoothDotDev.Common.Services
 @using DEDrake
 @using Humanizer
-@using Microsoft.AspNetCore.Mvc
 
 <div id="searchbox" style="margin-bottom: 2em">
     <input id="searchInput" autofocus="" placeholder="Filter posts ..." aria-label="search" type="search"
-           autocomplete="off" maxlength="64" @bind="SearchText" @bind:event="oninput" @onkeyup="OnKeyUp"/>
+           autocomplete="off" maxlength="64" @bind="_searchText" @bind:event="oninput" @onkeyup="OnKeyUp"/>
 </div>
 
 <div class="wide-wrapper">
@@ -23,7 +21,7 @@
         </thead>
 
         <tbody>
-        @foreach (IBlogPost post in DisplayedPosts)
+        @foreach (IBlogPost post in _displayedPosts)
         {
             DateTimeOffset lastUpdated = post.Updated ?? post.Published;
             <tr>
@@ -62,50 +60,19 @@
                 <td><abbr title="@post.Published.ToString("F")">@post.Published.Humanize()</abbr></td>
                 <td><abbr title="@lastUpdated.ToString("F")">@lastUpdated.Humanize()</abbr></td>
                 <td>
-                    <a href="/blog/@post.Published.ToString("yyyy/MM/dd")/@post.Slug"
-                       class="btn btn-success btn-sm">👁️</a>
-                    <a asp-page="/Admin/Blog/Edit" asp-route-id="@post.Id" class="btn btn-primary btn-sm">✏️</a>
-                    <a asp-page="/Admin/Blog/Delete" asp-route-id="@post.Id" class="btn btn-danger btn-sm">🗑️</a>
+                    <div class="input-group">
+                        <a href="/blog/@post.Published.ToString("yyyy/MM/dd")/@post.Slug"
+                           class="btn btn-success btn-sm"><i data-lucide="view"></i></a>
+                        <a href="/admin/blog/edit/@post.Id" class="btn btn-primary btn-sm">
+                            <i data-lucide="pencil"></i>️
+                        </a>
+                        <a asp-page="/Admin/Blog/Delete" asp-route-id="@post.Id" class="btn btn-danger btn-sm">
+                            <i data-lucide="trash-2"></i>
+                        </a>
+                    </div>
                 </td>
             </tr>
         }
         </tbody>
     </table>
 </div>
-
-@code {
-
-    [Inject]
-    private IBlogPostService BlogPostService { get; set; } = null!;
-
-    [BindProperty]
-    private IReadOnlyList<IBlogPost> BlogPosts { get; set; } = [];
-
-    [BindProperty]
-    private IReadOnlyList<IBlogPost> DisplayedPosts { get; set; } = [];
-
-    private string SearchText { get; set; } = string.Empty;
-
-    /// <inheritdoc />
-    protected override void OnInitialized()
-    {
-        BlogPosts = BlogPostService.GetEverySingleBlogPost();
-        DisplayedPosts = BlogPosts;
-    }
-
-
-    private void OnKeyUp(KeyboardEventArgs e)
-    {
-        DoSearch();
-    }
-
-    private void DoSearch()
-    {
-        const StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
-        const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
-
-        string[] keywords = SearchText.Split(' ', splitOptions);
-        DisplayedPosts = keywords.Length == 0 ? BlogPosts : BlogPosts.Where(post => keywords.All(kw => post.Title.Contains(kw, comparison))).ToArray();
-    }
-
-}

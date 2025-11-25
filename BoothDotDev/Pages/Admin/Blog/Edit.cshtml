@@ -1,0 +1,47 @@
+@page "/admin/blog/edit/{id}"
+@using BoothDotDev.Pages.Components.Admin
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model BoothDotDev.Pages.Admin.Blog.Edit
+
+@{
+    ViewData["Title"] = "Edit Blog Post";
+    ViewData["Page"] = "Admin";
+}
+
+<article>
+    <header class="page-header">
+        <div class="breadcrumbs">
+            <a asp-page="/Admin/Index">Dashboard</a>
+            &nbsp;»&nbsp;
+            <a asp-page="/Admin/Blog/Index">Blog Posts</a>
+            &nbsp;»&nbsp;
+            Edit Post
+        </div>
+        <h1 class="post-title entry-hint-parent">Edit Blog Post</h1>
+        <div class="entry-content">
+            Edit the blog post details below.
+        </div>
+    </header>
+</article>
+
+@if (ModelState.ErrorCount > 0)
+{
+    <div class="callout" data-callout="danger">
+        <div class="callout-title"><i data-lucide="alert-triangle"></i> Error editing post</div>
+        @{
+            ModelError? error = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
+            if (error != null && !string.IsNullOrWhiteSpace(error.ErrorMessage))
+            {
+                <p>@Html.Raw(error.ErrorMessage)</p>
+            }
+        }
+    </div>
+
+    return;
+}
+
+<component type="typeof(EditPostComponent)" render-mode="ServerPrerendered" param-BlogPostId="@Model.BlogPost.Id"/>
+
+@section Scripts {
+    <script src="_framework/blazor.server.js"></script>
+}

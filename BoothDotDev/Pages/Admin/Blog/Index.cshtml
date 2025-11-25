@@ -1,5 +1,5 @@
 @page
-@using BoothDotDev.Pages.Components
+@using BoothDotDev.Pages.Components.Admin
 @model BoothDotDev.Pages.Admin.Blog.Index
 @{
     ViewData["Title"] = "Admin";
@@ -22,7 +22,7 @@
     </header>
 </article>
 
-<component type="typeof(AdminBlogPostTable)" render-mode="ServerPrerendered"/>
+<component type="typeof(BlogPostTable)" render-mode="ServerPrerendered"/>
 
 @section Scripts {
     <script src="_framework/blazor.server.js"></script>
