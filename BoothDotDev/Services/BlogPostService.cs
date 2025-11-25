@@ -8,6 +8,7 @@ using BoothDotDev.Data.Blog;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
+using X10D.Text;
 using Timer = System.Timers.Timer;
 
 namespace BoothDotDev.Services;
@@ -346,7 +347,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         existingPost.Body = blogPost.Body;
         existingPost.Excerpt = blogPost.Excerpt;
         existingPost.EnableComments = blogPost.EnableComments;
-        existingPost.Password = blogPost.Password;
+        existingPost.Password = blogPost.Password.WithWhiteSpaceAlternative(null);
         existingPost.Published = blogPost.Published;
         existingPost.Visibility = blogPost.Visibility;
         existingPost.Updated = DateTimeOffset.UtcNow;
