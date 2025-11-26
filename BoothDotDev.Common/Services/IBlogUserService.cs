@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data.Blog;
+using Microsoft.AspNetCore.Http;
 
 namespace BoothDotDev.Common.Services;
 
@@ -8,6 +9,19 @@ namespace BoothDotDev.Common.Services;
 /// </summary>
 public interface IBlogUserService
 {
+    /// <summary>
+    ///     Signs in the specified user.
+    /// </summary>
+    /// <param name="httpContext">The HTTP context.</param>
+    /// <param name="user">The user to sign in.</param>
+    /// <returns>A task that represents the asynchronous sign-in operation.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <para><paramref name="httpContext" /> is <see langword="null" />.</para>
+    ///     -or-
+    ///     <para><paramref name="user" /> is <see langword="null" />.</para>
+    /// </exception>
+    Task SignInAsync(HttpContext httpContext, IUser user);
+
     /// <summary>
     ///     Attempts to find a user with the specified ID.
     /// </summary>

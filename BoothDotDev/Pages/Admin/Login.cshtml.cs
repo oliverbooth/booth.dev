@@ -1,8 +1,5 @@
-using System.Security.Claims;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Memory;
@@ -12,17 +9,17 @@ namespace BoothDotDev.Pages.Admin;
 
 internal sealed class Login : PageModel
 {
-    private readonly IBlogUserService _blogUserService;
+    private readonly IBlogUserService _userService;
     private readonly IMemoryCache _cache;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Login" /> class.
     /// </summary>
-    /// <param name="blogUserService">The blog user service.</param>
     /// <param name="cache">The memory cache.</param>
-    public Login(IBlogUserService blogUserService, IMemoryCache cache)
+    /// <param name="userService">The blog user service.</param>
+    public Login(IMemoryCache cache, IBlogUserService userService)
     {
-        _blogUserService = blogUserService;
+        _userService = userService;
         _cache = cache;
     }
 
@@ -42,7 +39,7 @@ internal sealed class Login : PageModel
 
     public async Task<IActionResult> OnPostAsync([FromQuery(Name = "ReturnUrl")] string? returnUrl = null)
     {
-        if (!_blogUserService.TryGetUser(EmailAddress, out IUser? user) || !user.TestCredentials(Password))
+        if (!_userService.TryGetUser(EmailAddress, out IUser? user) || !user.TestCredentials(Password))
         {
             ModelState.AddModelError(string.Empty, "The email address or password is incorrect.");
             return Page();
@@ -55,17 +52,7 @@ internal sealed class Login : PageModel
             return RedirectToPage("/Admin/TwoFactor", new { token, ReturnUrl = returnUrl });
         }
 
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.DisplayName),
-            new(ClaimTypes.Email, user.EmailAddress)
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        await _userService.SignInAsync(HttpContext, user);
         return Redirect(returnUrl.WithWhiteSpaceAlternative("/admin"));
     }
 }

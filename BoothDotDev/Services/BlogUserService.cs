@@ -1,8 +1,11 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data.Blog;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
@@ -24,6 +27,22 @@ internal sealed class BlogUserService : IBlogUserService
     public BlogUserService(IDbContextFactory<BlogContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
+    }
+
+    /// <inheritdoc />
+    public async Task SignInAsync(HttpContext httpContext, IUser user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.DisplayName),
+            new(ClaimTypes.Email, user.EmailAddress)
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
     }
 
     /// <inheritdoc />

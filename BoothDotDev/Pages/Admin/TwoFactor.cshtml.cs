@@ -1,8 +1,5 @@
-using System.Security.Claims;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Memory;
@@ -90,17 +87,7 @@ public sealed class TwoFactor : PageModel
 
         _cache.Remove(Token);
 
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.DisplayName),
-            new(ClaimTypes.Email, user.EmailAddress)
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        await _userService.SignInAsync(HttpContext, user);
         return Redirect(ReturnUrl.WithWhiteSpaceAlternative("/admin"));
     }
 }
