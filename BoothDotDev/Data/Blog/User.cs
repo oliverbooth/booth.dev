@@ -34,6 +34,9 @@ internal sealed class User : IUser, IBlogAuthor
     /// <inheritdoc />
     public string Salt { get; set; } = string.Empty;
 
+    /// <inheritdoc />
+    public string? Totp { get; set; }
+
     /// <inheritdoc cref="IUser.GetAvatarUrl" />
     public Uri GetAvatarUrl(int size = 28)
     {

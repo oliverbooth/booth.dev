@@ -53,6 +53,7 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/Admin");
     options.Conventions.AllowAnonymousToPage("/Admin/Login");
+    options.Conventions.AllowAnonymousToPage("/Admin/TwoFactor");
 });
 
 IServerSideBlazorBuilder blazor = builder.Services.AddRazorComponents().AddInteractiveServerComponents();

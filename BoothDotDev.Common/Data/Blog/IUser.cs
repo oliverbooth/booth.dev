@@ -48,6 +48,12 @@ public interface IUser
     string Salt { get; }
 
     /// <summary>
+    ///     Gets or sets the TOTP secret for the user.
+    /// </summary>
+    /// <value>The TOTP secret for the user.</value>
+    string? Totp { get; set; }
+
+    /// <summary>
     ///     Gets the URL of the user's avatar.
     /// </summary>
     /// <param name="size">The size of the avatar.</param>

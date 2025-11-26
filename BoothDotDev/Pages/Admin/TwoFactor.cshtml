@@ -1,0 +1,41 @@
+@page "/admin/login/2fa"
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model BoothDotDev.Pages.Admin.TwoFactor
+@{
+    ViewData["Title"] = "Admin";
+    ViewData["Page"] = "Admin";
+}
+
+<article class="post-single">
+    <header class="post-header">
+        <h1>Login</h1>
+    </header>
+
+    @if (ModelState.ErrorCount > 0)
+    {
+        <div class="callout" data-callout="danger">
+            <div class="callout-title">
+                <i data-lucide="alert-triangle"></i> There was a problem with your login attempt
+            </div>
+            <div class="inner callout-content">
+                @{
+                    ModelError? errors = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
+                    if (errors != null && !string.IsNullOrWhiteSpace(errors.ErrorMessage))
+                    {
+                        <p>@errors.ErrorMessage</p>
+                    }
+                }
+            </div>
+        </div>
+    }
+
+    <div class="post-content">
+        <form method="post">
+            <div class="form-group">
+                <label for="token">2FA code</label>
+                <input id="token" class="form-control" type="text" asp-for="Code" required/>
+            </div>
+            <button type="submit" class="btn btn-success">Login</button>
+        </form>
+    </div>
+</article>

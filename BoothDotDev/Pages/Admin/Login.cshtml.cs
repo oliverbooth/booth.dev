@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Memory;
 using X10D.Text;
 
 namespace BoothDotDev.Pages.Admin;
@@ -12,14 +13,17 @@ namespace BoothDotDev.Pages.Admin;
 internal sealed class Login : PageModel
 {
     private readonly IBlogUserService _blogUserService;
+    private readonly IMemoryCache _cache;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Login" /> class.
     /// </summary>
     /// <param name="blogUserService">The blog user service.</param>
-    public Login(IBlogUserService blogUserService)
+    /// <param name="cache">The memory cache.</param>
+    public Login(IBlogUserService blogUserService, IMemoryCache cache)
     {
         _blogUserService = blogUserService;
+        _cache = cache;
     }
 
     /// <summary>
@@ -42,6 +46,13 @@ internal sealed class Login : PageModel
         {
             ModelState.AddModelError(string.Empty, "The email address or password is incorrect.");
             return Page();
+        }
+
+        if (!string.IsNullOrWhiteSpace(user.Totp))
+        {
+            var token = Guid.NewGuid().ToString("N");
+            _cache.Set(token, user.Id, TimeSpan.FromMinutes(2));
+            return RedirectToPage("/Admin/TwoFactor", new { token, ReturnUrl = returnUrl });
         }
 
         var claims = new List<Claim>
