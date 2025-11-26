@@ -1,3 +1,5 @@
+@use "micromodal" as *;
+
 :root {
   --green: #198754;
   --red: #dc3545;
@@ -332,17 +334,17 @@ footer.site-footer {
     height: 40px;
     text-align: center;
   }
-
-  &.btn-primary { background: var(--blue); border: none; }
-  &.btn-secondary { background: var(--secondary); border: none; }
-  &.btn-success { background: var(--green); border: none; }
-  &.btn-danger { background: var(--red); border: none; }
-  &.btn-warning { background: var(--yellow); border: none; color: #000; }
   
   &:hover {
     opacity: 0.9;
   }
 }
+
+.btn-primary { background: var(--blue); border: none; }
+.btn-secondary { background: var(--secondary); border: none; }
+.btn-success { background: var(--green); border: none; }
+.btn-danger { background: var(--red); border: none; }
+.btn-warning { background: var(--yellow); border: none; color: #000; }
 
 .wide-wrapper {
   overflow-x: auto;
@@ -440,4 +442,36 @@ select.form-control {
 .text-center {
   text-align: center !important;
   justify-content: center !important;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  place-items: center;
+  z-index: 10000;
+  
+  &.is-open {
+    display: grid;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .modal-panel {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    width: calc(100% - 2rem);
+    max-height: 85vh;
+    overflow: auto;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    outline: none;
+  }
 }

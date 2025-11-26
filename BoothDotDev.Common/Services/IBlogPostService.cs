@@ -15,6 +15,29 @@ public interface IBlogPostService
     public const int DefaultPageSize = 5;
 
     /// <summary>
+    ///     Creates a new blog post.
+    /// </summary>
+    /// <param name="blogPost">The blog post to create. If <see langword="null" />, a new, empty blog post is created.</param>
+    /// <returns>The newly-created blog post.</returns>
+    IBlogPost CreateBlogPost(BlogPostEditModel? blogPost = null);
+
+    /// <summary>
+    ///     Creates a new blog post.
+    /// </summary>
+    /// <param name="configure">An action to configure the blog post being created.</param>
+    /// <returns>The newly-created blog post.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configure" /> is <see langword="null" />.</exception>
+    IBlogPost CreateBlogPost(Action<BlogPostEditModel> configure);
+
+    /// <summary>
+    ///     Deletes the specified blog post.
+    /// </summary>
+    /// <param name="postToDelete">The blog post to delete.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="postToDelete" /> is <see langword="null" />.</exception>
+    /// <exception cref="InvalidOperationException">The blog post to delete does not exist.</exception>
+    void DeleteBlogPost(IBlogPost postToDelete);
+
+    /// <summary>
     ///     Returns a collection of all blog posts.
     /// </summary>
     /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>

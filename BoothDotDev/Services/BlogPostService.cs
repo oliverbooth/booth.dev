@@ -8,6 +8,7 @@ using BoothDotDev.Data.Blog;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using X10D.Text;
 using Timer = System.Timers.Timer;
 
@@ -43,6 +44,65 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         _dbContextFactory = dbContextFactory;
         _blogUserService = blogUserService;
         _markdownPipeline = markdownPipeline;
+    }
+
+    /// <inheritdoc />
+    public IBlogPost CreateBlogPost(BlogPostEditModel? blogPost = null)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        var newPost = new BlogPost
+        {
+            Slug = blogPost?.Slug ?? "new-post",
+            Title = blogPost?.Title ?? "New Post",
+            Body = blogPost?.Body ?? string.Empty,
+            Excerpt = blogPost?.Excerpt,
+            EnableComments = blogPost?.EnableComments ?? true,
+            Password = blogPost?.Password.WithWhiteSpaceAlternative(null),
+            Published = blogPost?.Published ?? DateTimeOffset.UtcNow,
+            Visibility = blogPost?.Visibility ?? Visibility.Unlisted,
+            IsRedirect = blogPost?.IsRedirect ?? false,
+            RedirectUrl = string.IsNullOrWhiteSpace(blogPost?.RedirectUrl) ? null : new Uri(blogPost.RedirectUrl),
+            AuthorId = blogPost?.AuthorId ?? Guid.Empty,
+            Updated = DateTimeOffset.UtcNow
+        };
+
+        EntityEntry<BlogPost> entry = context.BlogPosts.Add(newPost);
+        context.SaveChanges();
+        _postCache[newPost.Id] = newPost;
+        return entry.Entity;
+    }
+
+    /// <inheritdoc />
+    public IBlogPost CreateBlogPost(Action<BlogPostEditModel> configure)
+    {
+        if (configure is null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        var editModel = new BlogPostEditModel();
+        configure.Invoke(editModel);
+        return CreateBlogPost(editModel);
+    }
+
+    /// <inheritdoc />
+    public void DeleteBlogPost(IBlogPost postToDelete)
+    {
+        if (postToDelete is null)
+        {
+            throw new ArgumentNullException(nameof(postToDelete));
+        }
+
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        BlogPost? existingPost = context.BlogPosts.Find(postToDelete.Id);
+        if (existingPost is null)
+        {
+            throw new InvalidOperationException($"Blog post with ID '{postToDelete.Id}' not found.");
+        }
+
+        context.BlogPosts.Remove(existingPost);
+        context.SaveChanges();
+        _postCache.TryRemove(existingPost.Id, out _);
     }
 
     /// <inheritdoc />
@@ -342,6 +402,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             throw new InvalidOperationException($"Blog post with ID '{blogPost.Id}' not found.");
         }
 
+        existingPost.AuthorId = blogPost.AuthorId;
         existingPost.Slug = blogPost.Slug;
         existingPost.Title = blogPost.Title;
         existingPost.Body = blogPost.Body;
@@ -355,6 +416,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         existingPost.RedirectUrl = string.IsNullOrWhiteSpace(blogPost.RedirectUrl) ? null : new Uri(blogPost.RedirectUrl);
         context.Update(existingPost);
         context.SaveChanges();
+        _postCache[existingPost.Id] = existingPost;
     }
 
     /// <inheritdoc />

@@ -13,6 +13,7 @@ public partial class BlogPostTable : ComponentBase
     private IReadOnlyList<IBlogPost> _blogPosts = [];
     private IReadOnlyList<IBlogPost> _displayedPosts = [];
     private string _searchText = string.Empty;
+    private IBlogPost? _postToDelete;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogPostTable" /> class.
@@ -85,6 +86,31 @@ public partial class BlogPostTable : ComponentBase
         }
 
         _displayedPosts = results;
+    }
+
+    private async Task PromptPostDeleteAsync(IBlogPost? post)
+    {
+        _postToDelete = post;
+
+        if (post is null)
+        {
+            return;
+        }
+
+        await _jsRuntime.InvokeVoidAsync("MicroModal.show", "delete-confirmation-modal");
+    }
+
+    private async Task DeletePostAsync()
+    {
+        if (_postToDelete is null)
+        {
+            return;
+        }
+
+        _blogPostService.DeleteBlogPost(_postToDelete);
+        await _jsRuntime.InvokeVoidAsync("MicroModal.close", "delete-confirmation-modal");
+        _blogPosts = _blogPostService.GetEverySingleBlogPost();
+        DoSearch();
     }
 
     private void OnKeyUp(KeyboardEventArgs e)

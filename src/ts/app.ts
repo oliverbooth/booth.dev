@@ -7,6 +7,7 @@ declare const lucide: any;
 declare const JXG: any;
 
 (() => {
+    UI.init();
     Callout.foldAll();
     lucide.createIcons();
     JXG.Options.text.useMathJax = true;

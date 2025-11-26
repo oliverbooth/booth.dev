@@ -1,8 +1,15 @@
 import TimeUtility from "./TimeUtility";
+import MicroModal from "micromodal";
 
 declare const Prism: any;
 
 class UI {
+    /**
+     * Initializes the UI components.
+     */
+    public static init() {
+        MicroModal.init();
+    }
     /**
      * Forces all UI elements under the given element to update their rendering.
      * @param element The element to search for UI elements in.

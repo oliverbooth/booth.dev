@@ -8,10 +8,18 @@ public sealed class BlogPostEditModel
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogPostEditModel" /> class.
     /// </summary>
+    public BlogPostEditModel()
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BlogPostEditModel" /> class.
+    /// </summary>
     /// <param name="blogPost">The blog post to edit.</param>
     public BlogPostEditModel(IBlogPost blogPost)
     {
         Id = blogPost.Id;
+        AuthorId = blogPost.Author.Id;
         Slug = blogPost.Slug;
         Title = blogPost.Title;
         Body = blogPost.Body;
@@ -25,10 +33,16 @@ public sealed class BlogPostEditModel
     }
 
     /// <summary>
+    ///     Gets or sets the ID of the author of the blog post.
+    /// </summary>
+    /// <value>The ID of the author of the blog post.</value>
+    public Guid AuthorId { get; set; }
+
+    /// <summary>
     ///     Gets or sets the body of the blog post.
     /// </summary>
     /// <value>The body of the blog post.</value>
-    public string Body { get; set; }
+    public string Body { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets or sets a value indicating whether comments are enabled for the blog post.
@@ -36,7 +50,7 @@ public sealed class BlogPostEditModel
     /// <value>
     ///     <see langword="true" /> if comments are enabled for the blog post; otherwise, <see langword="false" />.
     /// </value>
-    public bool EnableComments { get; set; }
+    public bool EnableComments { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the excerpt of the blog post.
@@ -76,23 +90,23 @@ public sealed class BlogPostEditModel
     ///     Gets or sets the publication date and time of the blog post.
     /// </summary>
     /// <value>The publication date and time of the blog post.</value>
-    public DateTimeOffset Published { get; set; }
+    public DateTimeOffset Published { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     ///     Gets or sets the slug of the blog post.
     /// </summary>
     /// <value>The slug of the blog post.</value>
-    public string Slug { get; set; }
+    public string Slug { get; set; } = "new-post";
 
     /// <summary>
     ///     Gets or sets the title of the blog post.
     /// </summary>
     /// <value>The title of the blog post.</value>
-    public string Title { get; set; }
+    public string Title { get; set; } = "New Post";
 
     /// <summary>
     ///     Gets or sets the visibility of the blog post.
     /// </summary>
     /// <value>The visibility of the blog post.</value>
-    public Visibility Visibility { get; set; }
+    public Visibility Visibility { get; set; } = Visibility.Unlisted;
 }
