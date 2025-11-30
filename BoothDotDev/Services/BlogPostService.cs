@@ -4,7 +4,9 @@ using System.Timers;
 using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Services;
+using BoothDotDev.Data;
 using BoothDotDev.Data.Blog;
+using BoothDotDev.Extensions;
 using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
@@ -201,7 +203,19 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public string RenderPost(IBlogPost post)
     {
-        return Markdig.Markdown.ToHtml(post.Body, _markdownPipeline);
+        return post is null ? throw new ArgumentNullException(nameof(post)) : Markdig.Markdown.ToHtml(post.Body, _markdownPipeline);
+    }
+
+    /// <inheritdoc />
+    public string RenderTableOfContents(IBlogPost post, HttpRequest request)
+    {
+        if (post is null)
+        {
+            throw new ArgumentNullException(nameof(post));
+        }
+
+        List<TocItem> items = MarkdownTocBuilder.BuildToc(post.Body);
+        return MarkdownTocBuilder.RenderTocAsHtml(items, request);
     }
 
     /// <inheritdoc />

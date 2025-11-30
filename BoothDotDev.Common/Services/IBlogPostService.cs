@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Blog;
+using Microsoft.AspNetCore.Http;
 
 namespace BoothDotDev.Common.Services;
 
@@ -115,7 +116,17 @@ public interface IBlogPostService
     /// </summary>
     /// <param name="post">The blog post to render.</param>
     /// <returns>The rendered HTML of the blog post.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
     string RenderPost(IBlogPost post);
+
+    /// <summary>
+    ///     Renders the table of contents for the specified blog post.
+    /// </summary>
+    /// <param name="post">The blog post whose table of contents to render.</param>
+    /// <param name="request"></param>
+    /// <returns>The rendered HTML of the blog post's table of contents.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
+    string RenderTableOfContents(IBlogPost post, HttpRequest request);
 
     /// <summary>
     ///     Searches blog posts for the specified search text.

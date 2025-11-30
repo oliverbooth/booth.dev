@@ -1,6 +1,7 @@
 using BoothDotDev.Extensions.Markdig;
 using BoothDotDev.Extensions.Markdig.Markdown.Timestamp;
 using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
 
 namespace BoothDotDev.Extensions;
 
@@ -27,7 +28,7 @@ internal static class ServiceCollectionExtensions
 
                 // advanced extensions. add explicitly to avoid UseAlertBlocks
                 .UseAbbreviations()
-                .UseAutoIdentifiers()
+                .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
                 .UseCitations()
                 .UseCustomContainers()
                 .UseDefinitionLists()

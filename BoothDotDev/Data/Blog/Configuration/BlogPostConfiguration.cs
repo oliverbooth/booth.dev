@@ -30,5 +30,7 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.Visibility).HasColumnType("visibility").IsRequired();
         builder.Property(e => e.Password).HasMaxLength(255).IsRequired(false);
         builder.Property(e => e.Tags).IsRequired();
+        builder.Property(e => e.ShowTableOfContents).HasColumnName("show_toc").IsRequired().HasDefaultValue(false);
+        builder.Property(e => e.TableOfContentsExpanded).HasColumnName("toc_open").IsRequired().HasDefaultValue(true);
     }
 }
