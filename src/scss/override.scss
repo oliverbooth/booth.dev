@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 @use "micromodal" as *;
 
 :root {
@@ -474,4 +478,22 @@ select.form-control {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     outline: none;
   }
+}
+
+.toc {
+  margin-bottom: var(--content-gap);
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  border-radius: var(--radius);
+  padding: .4em;
+
+  .inner {
+    margin: 5px 20px;
+    padding: 0 10px;
+    opacity: .9;
+  }
+}
+
+[data-theme="dark"] .toc {
+  background: var(--entry);
 }

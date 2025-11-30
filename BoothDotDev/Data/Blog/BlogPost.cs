@@ -37,7 +37,13 @@ internal sealed class BlogPost : IBlogPost
     public Uri? RedirectUrl { get; internal set; }
 
     /// <inheritdoc />
+    public bool ShowTableOfContents { get; internal set; }
+
+    /// <inheritdoc />
     public string Slug { get; internal set; } = string.Empty;
+
+    /// <inheritdoc />
+    public bool TableOfContentsExpanded { get; internal set; } = true;
 
     /// <inheritdoc />
     public IReadOnlyList<string> Tags { get; internal set; } = ArraySegment<string>.Empty;

@@ -1,4 +1,5 @@
 @page "/blog/{year:int}/{month:int}/{day:int}/{slug}"
+@using System.Globalization
 @using BoothDotDev.Common.Data
 @using BoothDotDev.Common.Data.Blog
 @using BoothDotDev.Common.Services
@@ -57,7 +58,7 @@
         </div>
         <h1 class="post-title entry-hint-parent">@post.Title</h1>
         <div class="post-meta">
-            <span title="@(published.ToString("s"))">@published.ToString("D")</span>
+            <span title="@(published.ToString("s"))">@published.ToString("D", new CultureInfo("en-GB"))</span>
             &nbsp;·
             @Math.Max(1, post.Body.Split().Length / 275) min
             ·
@@ -78,6 +79,20 @@
                 This post is unlisted and can only be viewed by those with the link.
             </div>
             break;
+    }
+    
+    @if (post.ShowTableOfContents)
+    {
+        <div class="toc">
+            <details open="@(post.TableOfContentsExpanded ? "open" : null)">
+                <summary>
+                    <span class="details">Table of Contents</span>
+                </summary>
+                <div class="inner">
+                    @Html.Raw(BlogPostService.RenderTableOfContents(post, Request))
+                </div>
+            </details>
+        </div>
     }
 
     <div class="post-content">
