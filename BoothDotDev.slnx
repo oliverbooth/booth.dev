@@ -5,8 +5,8 @@
         <File Path="Gulpfile.js"/>
         <File Path="tsconfig.json"/>
         <File Path=".dockerignore"/>
+        <File Path="compose.yaml"/>
         <File Path="Directory.Build.props"/>
-        <File Path="docker-compose.yml"/>
         <File Path="global.json"/>
     </Folder>
     <Project Path="BoothDotDev.Common\BoothDotDev.Common.csproj"/>

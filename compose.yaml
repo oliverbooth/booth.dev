@@ -15,9 +15,6 @@ services:
     ports:
       - "2845:8080"
     restart: unless-stopped
-    environment:
-      - SSL_CERT_PATH=${SSL_CERT_PATH}
-      - SSL_KEY_PATH=${SSL_KEY_PATH}
 
 networks:
   default:
