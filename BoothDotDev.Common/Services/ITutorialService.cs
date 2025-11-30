@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Data.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace BoothDotDev.Common.Services;
 
@@ -106,6 +107,15 @@ public interface ITutorialService
     /// </param>
     /// <returns>The rendered plain text of the article's excerpt.</returns>
     string RenderPlainTextExcerpt(ITutorialArticle article, out bool wasTrimmed);
+
+    /// <summary>
+    ///     Renders the table of contents for the specified article.
+    /// </summary>
+    /// <param name="article">The article whose table of contents to render.</param>
+    /// <param name="request"></param>
+    /// <returns>The rendered HTML of the article's table of contents.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="article" /> is <see langword="null" />.</exception>
+    string RenderTableOfContents(ITutorialArticle article, HttpRequest request);
 
     /// <summary>
     ///     Attempts to find an article by its ID.

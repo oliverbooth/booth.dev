@@ -59,6 +59,20 @@
         </div>
     </header>
 
+    @if (article.ShowTableOfContents)
+    {
+        <div class="toc">
+            <details open="@(article.TableOfContentsExpanded ? "open" : null)">
+                <summary>
+                    <span class="details">Table of Contents</span>
+                </summary>
+                <div class="inner">
+                    @Html.Raw(TutorialService.RenderTableOfContents(article, Request))
+                </div>
+            </details>
+        </div>
+    }
+
     <div class="post-content">
         @Html.Raw(TutorialService.RenderArticle(article))
     </div>
