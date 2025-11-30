@@ -47,7 +47,13 @@ internal sealed class TutorialArticle : IEquatable<TutorialArticle>, ITutorialAr
     public Guid? RedirectFrom { get; private set; }
 
     /// <inheritdoc />
+    public bool ShowTableOfContents { get; internal set; }
+
+    /// <inheritdoc />
     public string Slug { get; private set; } = string.Empty;
+
+    /// <inheritdoc />
+    public bool TableOfContentsExpanded { get; internal set; } = true;
 
     /// <inheritdoc />
     public string Title { get; private set; } = string.Empty;

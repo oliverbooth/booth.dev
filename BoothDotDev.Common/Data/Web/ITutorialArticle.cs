@@ -80,10 +80,26 @@ public interface ITutorialArticle
     Guid? RedirectFrom { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether to show the table of contents for the post.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the table of contents should be shown; otherwise, <see langword="false" />.
+    /// </value>
+    bool ShowTableOfContents { get; }
+
+    /// <summary>
     ///     Gets the slug of this article.
     /// </summary>
     /// <value>The slug.</value>
     string Slug { get; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the table of contents is expanded by default.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the table of contents is expanded by default; otherwise, <see langword="false" />.
+    /// </value>
+    bool TableOfContentsExpanded { get; }
 
     /// <summary>
     ///     Gets the title of this article.

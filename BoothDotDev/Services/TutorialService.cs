@@ -3,8 +3,10 @@ using BoothDotDev.Common.Data;
 using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Common.Data.Web;
 using BoothDotDev.Common.Services;
+using BoothDotDev.Data;
 using BoothDotDev.Data.Blog;
 using BoothDotDev.Data.Web;
+using BoothDotDev.Extensions;
 using Cysharp.Text;
 using Humanizer;
 using Markdig;
@@ -193,6 +195,18 @@ internal sealed class TutorialService : ITutorialService
 
         wasTrimmed = true;
         return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
+    }
+
+    /// <inheritdoc />
+    public string RenderTableOfContents(ITutorialArticle article, HttpRequest request)
+    {
+        if (article is null)
+        {
+            throw new ArgumentNullException(nameof(article));
+        }
+
+        List<TocItem> items = MarkdownTocBuilder.BuildToc(article.Body);
+        return MarkdownTocBuilder.RenderTocAsHtml(items, request);
     }
 
     /// <inheritdoc />
