@@ -20,6 +20,10 @@
 
 <component type="@typeof(SearchComponent)" render-mode="ServerPrerendered"/>
 
+@section Head {
+    <base href="~/"/>
+}
+
 @section Scripts {
     <script src="_framework/blazor.server.js"></script>
 }
