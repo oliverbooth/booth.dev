@@ -60,8 +60,7 @@ public sealed class BadgeController : ControllerBase
         var url = $"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow}/runs";
 
         using HttpClient client = _httpClientFactory.CreateClient();
-        using var request = new HttpRequestMessage();
-        request.RequestUri = new Uri(url);
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
         request.Headers.Add("Accept", "application/json");
         request.Headers.Add("Authorization", $"Bearer {githubToken}");
         request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
@@ -74,7 +73,30 @@ public sealed class BadgeController : ControllerBase
         }
 
         WorkflowRunSchema? body = await response.Content.ReadFromJsonAsync<WorkflowRunSchema>();
+
         WorkflowRun? run = body?.WorkflowRuns.FirstOrDefault(r => r.Status == WorkflowRunStatus.Completed);
+        if (run is null)
+        {
+            var completedUrl = url + "?status=completed&per_page=1";
+            using var completedRequest = new HttpRequestMessage(HttpMethod.Get, new Uri(completedUrl));
+            completedRequest.Headers.Add("Accept", "application/json");
+            completedRequest.Headers.Add("Authorization", $"Bearer {githubToken}");
+            completedRequest.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
+            completedRequest.Headers.UserAgent.Add(new ProductInfoHeaderValue("booth.dev", _version));
+
+            using HttpResponseMessage completedResponse = await client.SendAsync(completedRequest);
+            if (!completedResponse.IsSuccessStatusCode)
+            {
+                return StatusCode((int)completedResponse.StatusCode, new
+                {
+                    schemaVersion = 1, label = "build", color = "lightgray", message = "error"
+                });
+            }
+
+            WorkflowRunSchema? completedBody = await completedResponse.Content.ReadFromJsonAsync<WorkflowRunSchema>();
+            run = completedBody?.WorkflowRuns.FirstOrDefault();
+        }
+
         if (run is null)
         {
             return Ok(new { schemaVersion = 1, label = "build", color = "lightgray", message = "unknown" });
