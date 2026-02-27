@@ -5,6 +5,7 @@
         <File Path="Gulpfile.js"/>
         <File Path="tsconfig.json"/>
         <File Path=".dockerignore"/>
+        <File Path=".gitlab-ci.yml"/>
         <File Path="compose.yaml"/>
         <File Path="Directory.Build.props"/>
         <File Path="global.json"/>

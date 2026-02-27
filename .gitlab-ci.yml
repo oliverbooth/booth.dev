@@ -1,0 +1,15 @@
+stages:
+  - build
+
+build-aspnet:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  script:
+    - dotnet restore BoothDotDev.slnx
+    - dotnet build BoothDotDev.slnx --configuration Release
+  artifacts:
+    paths:
+      - "**/bin/**"
+      - "**/obj/**"
+  only:
+    - main
