@@ -60,7 +60,8 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
 
             return visibility == Visibility.None
                 ? context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Tags.Intersect(tags).Any())
-                : context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Visibility == visibility && p.Tags.Intersect(tags).Any());
+                : context.BlogPosts.AsEnumerable().Count(p =>
+                    !p.IsRedirect && p.Visibility == visibility && p.Tags.Intersect(tags).Any());
         }
 
         return visibility == Visibility.None
@@ -84,7 +85,8 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize, string[]? tags = null)
+    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize,
+        string[]? tags = null)
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         IEnumerable<BlogPost> posts = context.BlogPosts
@@ -138,7 +140,8 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     }
 
     /// <inheritdoc />
-    public int GetPageCount(int pageSize = IBlogPostService.DefaultPageSize, Visibility visibility = Visibility.None, string[]? tags = null)
+    public int GetPageCount(int pageSize = IBlogPostService.DefaultPageSize, Visibility visibility = Visibility.None,
+        string[]? tags = null)
     {
         float postCount = GetBlogPostCount(visibility, tags);
         return (int)MathF.Ceiling(postCount / pageSize);
@@ -203,7 +206,9 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public string RenderPost(IBlogPost post)
     {
-        return post is null ? throw new ArgumentNullException(nameof(post)) : Markdig.Markdown.ToHtml(post.Body, _markdownPipeline);
+        return post is null
+            ? throw new ArgumentNullException(nameof(post))
+            : Markdig.Markdown.ToHtml(post.Body, _markdownPipeline);
     }
 
     /// <inheritdoc />
@@ -219,7 +224,8 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyCollection<IBlogPost>> SearchBlogPostsAsync(string searchText, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<IBlogPost>> SearchBlogPostsAsync(string searchText,
+        CancellationToken cancellationToken)
     {
         const StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
         if (string.IsNullOrWhiteSpace(searchText))
@@ -261,7 +267,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
                 break;
             }
         }
-        
+
         foreach (BlogPost post in posts)
         {
             if (post.Visibility != Visibility.Published || post.IsRedirect)
@@ -306,6 +312,21 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     {
         using BlogContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == id);
+        if (post is null)
+        {
+            return false;
+        }
+
+        CacheAuthor((BlogPost)post);
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool TryGetPost(string slug, [NotNullWhen(true)] out IBlogPost? post)
+    {
+        using BlogContext context = _dbContextFactory.CreateDbContext();
+        post = context.BlogPosts.FirstOrDefault(post => post.Slug == slug);
+
         if (post is null)
         {
             return false;

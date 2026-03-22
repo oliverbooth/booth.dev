@@ -63,11 +63,7 @@
                                 </div>
 
                                 <a class="entry-link" aria-label="post link to @post.Title"
-                                   asp-page="/Blog/Article"
-                                   asp-route-year="@published.Year"
-                                   asp-route-month="@published.Month.ToString("00")"
-                                   asp-route-day="@published.Day.ToString("00")"
-                                   asp-route-slug="@post.Slug">
+                                   asp-page="/Blog/Article" asp-route-slug="@post.Slug">
                                 </a>
                             </div>
                         }

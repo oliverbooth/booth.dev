@@ -23,10 +23,9 @@ internal sealed class RawArticle : PageModel
         _blogPostService = blogPostService;
     }
 
-    public IActionResult OnGet(int year, int month, int day, string slug)
+    public IActionResult OnGet(string slug)
     {
-        var date = new DateOnly(year, month, day);
-        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
         {
             return NotFound();
         }

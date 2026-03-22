@@ -166,6 +166,21 @@ public interface IBlogPostService
     /// <summary>
     ///     Attempts to find a blog post with the specified publish date and URL slug.
     /// </summary>
+    /// <param name="slug">The URL slug of the blog post to find.</param>
+    /// <param name="post">
+    ///     When this method returns, contains the blog post with the specified publish date and URL slug, if the blog
+    ///     post is found; otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a blog post with the specified publish date and URL slug is found; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    bool TryGetPost(string slug, [NotNullWhen(true)] out IBlogPost? post);
+
+    /// <summary>
+    ///     Attempts to find a blog post with the specified publish date and URL slug.
+    /// </summary>
     /// <param name="publishDate">The date the blog post was published.</param>
     /// <param name="slug">The URL slug of the blog post to find.</param>
     /// <param name="post">

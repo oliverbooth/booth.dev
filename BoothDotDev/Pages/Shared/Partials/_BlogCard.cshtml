@@ -14,13 +14,7 @@
 
 <div class="blog-card">
     <h4>
-        <a asp-page="/Blog/Article"
-           asp-route-year="@published.Year"
-           asp-route-month="@published.Month.ToString("00")"
-           asp-route-day="@published.Day.ToString("00")"
-           asp-route-slug="@Model.Slug">
-            @Model.Title
-        </a>
+        <a asp-page="/Blog/Article" asp-route-slug="@Model.Slug">@Model.Title</a>
     </h4>
 
     <p>
@@ -37,11 +31,7 @@
     @if (trimmed || Model.Excerpt is not null)
     {
         <p>
-            <a asp-page="/Blog/Article"
-               asp-route-year="@published.Year"
-               asp-route-month="@published.Month.ToString("00")"
-               asp-route-day="@published.Day.ToString("00")"
-               asp-route-slug="@Model.Slug">
+            <a asp-page="/Blog/Article" asp-route-slug="@Model.Slug">
                 Read more...
             </a>
         </p>

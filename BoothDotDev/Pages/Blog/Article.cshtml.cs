@@ -48,10 +48,9 @@ internal sealed class Article : PageModel
     /// </value>
     public bool ShowPasswordPrompt { get; private set; }
 
-    public IActionResult OnGet(int year, int month, int day, string slug)
+    public IActionResult OnGet(string slug)
     {
-        var date = new DateOnly(year, month, day);
-        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
         {
             Response.StatusCode = 404;
             return NotFound();
@@ -71,13 +70,9 @@ internal sealed class Article : PageModel
         return Page();
     }
 
-    public IActionResult OnPost([FromRoute] int year,
-        [FromRoute] int month,
-        [FromRoute] int day,
-        [FromRoute] string slug)
+    public IActionResult OnPost([FromRoute] string slug)
     {
-        var date = new DateOnly(year, month, day);
-        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
         {
             return NotFound();
         }
