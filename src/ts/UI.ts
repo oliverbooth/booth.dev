@@ -56,12 +56,24 @@ class UI {
      */
     public static fixCanvas(element?: Element) {
         element = element || document.body;
+
+        // Fix any already-existing canvases
         element.querySelectorAll('canvas[data-engine]').forEach(c => {
             const el = c as HTMLCanvasElement;
-            if (!el) return;
             el.style.width = '100%';
             el.style.height = '100%';
         });
+
+        // Watch for new canvases being added
+        const observer = new MutationObserver(() => {
+            element!.querySelectorAll('canvas[data-engine]').forEach(c => {
+                const el = c as HTMLCanvasElement;
+                el.style.width = '100%';
+                el.style.height = '100%';
+            });
+        });
+
+        observer.observe(element, { childList: true, subtree: true });
     }
 
     /**
