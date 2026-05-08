@@ -17,6 +17,7 @@ class UI {
         UI.renderTimestamps(element);
         UI.updateProjectCards(element);
         UI.applyAnsi(element);
+        UI.fixCanvas(element);
     }
 
     /**
@@ -46,6 +47,20 @@ class UI {
         element = element || document.body;
         element.querySelectorAll("pre code").forEach((block) => {
             Prism.highlightAllUnder(block.parentElement);
+        });
+    }
+
+    /**
+     * Fixes canvas elements with data-engine attribute to fill their parent container.
+     * @param element The element to search for canvas elements in.
+     */
+    public static fixCanvas(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll('canvas[data-engine]').forEach(c => {
+            const el = c as HTMLCanvasElement;
+            if (!el) return;
+            el.style.width = '100%';
+            el.style.height = '100%';
         });
     }
 
