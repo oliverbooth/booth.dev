@@ -52,9 +52,19 @@ declare const JXG: any;
         setCookie("theme", "", -100);
         setCookie("theme", newTheme, 30);
 
-        const iframe = document.querySelector(".giscus iframe.giscus-frame") as HTMLIFrameElement;
-        if (iframe) {
-            iframe.contentWindow.postMessage({giscus: {setConfig: {theme: newTheme}}}, "https://giscus.app");
+        {
+            const iframe = document.querySelector(".giscus iframe.giscus-frame") as HTMLIFrameElement;
+            if (iframe) {
+                iframe.contentWindow.postMessage({giscus: {setConfig: {theme: newTheme}}}, "https://giscus.app");
+            }
+        }
+        {
+            const iframe = document.querySelector('iframe[src^="https://embed.bsky.app/embed/"]') as HTMLIFrameElement;
+            if (iframe) {
+                const url = new URL(iframe.src);
+                url.searchParams.set("colorMode", newTheme);
+                iframe.src = url.toString();
+            }
         }
     });
 

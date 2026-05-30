@@ -1,4 +1,5 @@
 using BoothDotDev.Common.Services;
+using BoothDotDev.Data;
 using BoothDotDev.Data.Blog;
 using BoothDotDev.Data.Web;
 using BoothDotDev.Extensions;
@@ -38,6 +39,11 @@ builder.Services.AddSingleton<IProjectService, ProjectService>();
 builder.Services.AddSingleton<ITutorialService, TutorialService>();
 builder.Services.AddSingleton<IReadingListService, ReadingListService>();
 builder.Services.AddSingleton<ISearchService, SearchService>();
+builder.Services.AddSingleton<BlueskyService>();
+builder.Services.Configure<BlueskyOptions>(
+    builder.Configuration.GetSection(BlueskyOptions.SectionName));
+builder.Services.AddMemoryCache();
+
 builder.Services.AddRazorPages();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddControllersWithViews();

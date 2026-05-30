@@ -1,10 +1,26 @@
 @using BoothDotDev.Common.Data.Blog
 @using BoothDotDev.Common.Services
 @inject IBlogPostService BlogPostService
+@inject BlueskyService BlueskyService
 
 @{
     var currentPage = (int)(ViewData["CurrentPage"] ?? 0);
     var tags = ViewData["Tags"] as string[];
+
+    HttpRequest request = Context.Request;
+    bool lightTheme = request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
+}
+
+@if (currentPage == 0)
+{
+    BlueskyPost? latestPost = await BlueskyService.GetLatestPostAsync();
+    @if (latestPost is not null)
+    {
+        <blockquote class="bluesky-embed" data-bluesky-uri="at://@latestPost.AtUri" data-bluesky-lang="" data-bluesky-embed-color-mode="@(lightTheme ? "light" : "dark")">
+            <a href="@latestPost.PostUrl">View on Bluesky</a>
+        </blockquote>
+        <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+    }
 }
 
 @foreach (IBlogPost post in BlogPostService.GetBlogPosts(currentPage, tags: tags))
