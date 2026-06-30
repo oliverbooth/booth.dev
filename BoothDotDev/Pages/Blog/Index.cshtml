@@ -31,13 +31,15 @@
     }
 }
 
-@{
-    BlueskyPost? latestPost = await BlueskyService.GetLatestPostAsync();
-    @if (latestPost is not null)
-    {
-        <blockquote class="bluesky-embed" data-bluesky-uri="at://@latestPost.AtUri" data-bluesky-lang="" data-bluesky-embed-color-mode="@(lightTheme ? "light" : "dark")">
-            <a href="@latestPost.PostUrl">View on Bluesky</a>
-        </blockquote>
-        <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+<div style="padding-top: 150px">
+    @{
+        BlueskyPost? latestPost = await BlueskyService.GetLatestPostAsync();
+        @if (latestPost is not null)
+        {
+            <blockquote class="bluesky-embed" data-bluesky-uri="at://@latestPost.AtUri" data-bluesky-lang="" data-bluesky-embed-color-mode="@(lightTheme ? "light" : "dark")">
+                <a href="@latestPost.PostUrl">View on Bluesky</a>
+            </blockquote>
+            <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+        }
     }
-}
+</div>
