@@ -12,27 +12,27 @@
   --header-height: 60px;
   --footer-height: 60px;
   --radius: 8px;
-  --theme: rgb(255, 255, 255);
-  --entry: rgb(255, 255, 255);
-  --primary: rgb(30, 30, 30);
-  --secondary: rgb(108, 108, 108);
-  --tertiary: rgb(214, 214, 214);
-  --content: rgb(31, 31, 31);
-  --code-block-bg: rgb(28, 29, 33);
-  --code-bg: rgb(245, 245, 245);
-  --border: rgb(238, 238, 238)
+  --theme: #fafafd;
+  --entry: #ffffff;
+  --primary: #17151f;
+  --secondary: #65616f;
+  --tertiary: #dedae6;
+  --content: #221f2b;
+  --code-block-bg: #15131c;
+  --code-bg: #f1eff6;
+  --border: #e6e3ec
 }
 
 .dark {
-  --theme: rgb(29, 30, 32);
-  --entry: rgb(46, 46, 51);
-  --primary: rgb(218, 218, 219);
-  --secondary: rgb(155, 156, 157);
-  --tertiary: rgb(65, 66, 68);
-  --content: rgb(196, 196, 197);
-  --code-block-bg: rgb(46, 46, 51);
-  --code-bg: rgb(55, 56, 62);
-  --border: rgb(51, 51, 51)
+  --theme: #0d0c13;
+  --entry: #16141d;
+  --primary: #eeecf5;
+  --secondary: #938fa0;
+  --tertiary: #3a3646;
+  --content: #d9d6e2;
+  --code-block-bg: #15131c;
+  --code-bg: #1c1a24;
+  --border: #2a2733
 }
 
 .list {
@@ -354,7 +354,8 @@ body:not(.dark) #sun {
 
 #menu .active {
   font-weight: 500;
-  border-bottom: 2px solid
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent)
 }
 
 .lang-switch li,
@@ -396,12 +397,17 @@ body:not(.dark) #sun {
 }
 
 .pagination a {
-  color: var(--theme);
+  color: #fff;
   font-size: 13px;
   line-height: 36px;
-  background: var(--primary);
+  background: var(--accent);
   border-radius: calc(36px / 2);
-  padding: 0 16px
+  padding: 0 16px;
+  transition: background-color .15s ease
+}
+
+.pagination a:hover {
+  background: var(--accent-hover)
 }
 
 .pagination .next {
@@ -486,8 +492,13 @@ pre:hover .copy-code {
   padding: var(--gap);
   background: var(--entry);
   border-radius: var(--radius);
-  transition: transform .1s;
+  transition: transform .15s ease, border-color .15s ease;
   border: 1px solid var(--border)
+}
+
+.post-entry:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px)
 }
 
 .post-entry:active {
@@ -630,6 +641,14 @@ pre:hover .copy-code {
   box-shadow: 0 1px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone
+}
+
+.post-content a {
+  color: var(--accent)
+}
+
+.post-content a:hover {
+  color: var(--accent-hover)
 }
 
 .post-content a code {
@@ -880,15 +899,22 @@ pre:hover .copy-code {
 .post-tags a {
   display: block;
   padding: 0 14px;
-  color: var(--secondary);
+  color: var(--accent);
   font-size: 14px;
   line-height: 34px;
-  background: var(--code-bg)
+  background: var(--accent-subtle);
+  border-color: transparent;
+  transition: background-color .15s ease, color .15s ease
 }
 
-.post-tags a:hover,
+.post-tags a:hover {
+  background: var(--accent);
+  color: #fff
+}
+
 .paginav a:hover {
-  background: var(--border)
+  border-color: var(--accent);
+  color: var(--accent)
 }
 
 .share-buttons {

@@ -1,12 +1,18 @@
-@use "sass:color";
+// Single source of truth for the site's accent color. Every dependent color is
+// derived from these three channels at paint-time via native CSS functions
+// (not Sass), so re-theming the whole site is a one-variable edit, live in the
+// browser — no rebuild required.
+:root {
+  --accent-h: 255;
+  --accent-s: 86%;
+  --accent-l: 65%; // tuned for contrast against the dark-theme background
 
-$background: #121212;
-$foreground: #f5f5f5;
-$accent: #03a9f4;
-$ui-foreground: #ffffff;
-$content-background: #333333;
-$blockquote: #ff0033;
-$project-background: #000000;
+  --accent: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+  --accent-hover: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) - 8%));
+  --accent-subtle: hsl(var(--accent-h) calc(var(--accent-s) - 40%) calc(var(--accent-l) + 20%) / 14%);
+  --accent-contrast: hsl(var(--accent-h) 30% 12%);
+}
 
-$link-text: $accent;
-$link-hover: color.scale($link-text, $lightness: 96.9581749049%);
+body:not(.dark) {
+  --accent-l: 56%; // a notch deeper on a light/white ground, for link-text contrast
+}
