@@ -23,7 +23,7 @@ $markup-punctuation: #80807F;
 $markup-attr-value: $css-foreground;
 
 code[class*="language-"] {
-  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   background: $background;
   color: $foreground;
 }

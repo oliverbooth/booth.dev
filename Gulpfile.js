@@ -47,7 +47,12 @@ function copyImages() {
         .pipe(gulp.dest(`${destDir}/img`));
 }
 
-exports.assets = copyImages;
+function copyFonts() {
+    return gulp.src(`${srcDir}/fonts/**/*.*`, { encoding: false })
+        .pipe(gulp.dest(`${destDir}/fonts`));
+}
+
+exports.assets = gulp.parallel(copyImages, copyFonts);
 exports.styles = gulp.parallel(compileSCSS, copyCSS);
 exports.scripts = gulp.parallel(copyJS, gulp.series(compileTS, bundleJS));
 
