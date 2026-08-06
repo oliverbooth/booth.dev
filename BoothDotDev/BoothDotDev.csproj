@@ -64,6 +64,9 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>Strings.resx</DependentUpon>
         </Compile>
+        <Compile Update="Pages\Shared\MainLayout.cs">
+          <DependentUpon>_MainLayout.cshtml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

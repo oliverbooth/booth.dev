@@ -1,0 +1,125 @@
+@inherits MainLayout
+@using BoothDotDev.Common.Data.Blog
+@using BoothDotDev.Common.Data.Web
+@using BoothDotDev.Extensions
+@{ await InitializeAsync(); }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @await RenderSectionAsync("Head", required: false)
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="@PageTitle">
+    <meta property="og:title" content="@PageTitle">
+    <meta property="twitter:title" content="@PageTitle">
+    <meta property="og:url" content="@CurrentUrl">
+    <meta property="twitter:url" content="@CurrentUrl">
+    <meta name="theme-color" content="#007EC6">
+    <meta property="og:image" content="@Url.Content("~/img/favicon.png")">
+    <meta property="twitter:image" content="@Url.Content("~/img/favicon.png")">
+    @if (ViewData["Title"] != null)
+    {
+        <title>@ViewData["Title"] - @Strings.MyName</title>
+    }
+    else
+    {
+        <title>@Strings.MyName</title>
+    }
+
+    @switch (ViewData["Post"])
+    {
+        case IBlogPost post:
+            @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
+            break;
+        case ITutorialArticle article:
+            @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
+            break;
+        default:
+            <meta name="title" content="@PageTitle">
+            <meta name="description" content="@Strings.Tagline">
+            <meta property="og:title" content="@PageTitle">
+            <meta property="og:description" content="@Strings.Tagline">
+            <meta property="twitter:title" content="@PageTitle">
+            <meta property="twitter:description" content="@Strings.Tagline">
+            break;
+    }
+    <title>@PageTitle</title>
+    <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true">
+    <link rel="shortcut icon" href="~/img/favicon-dark.png" asp-append-version="true" media="(prefers-color-scheme: light)">
+    <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraph.min.css">
+    <link rel="stylesheet" href="~/css/prism.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/prism.vs.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true">
+</head>
+
+<body>
+<div class="layout">
+    <header>
+        <nav class="topnav">
+            <a asp-page="/Index" class="topnav-brand">
+                <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h"/>
+                <span>Oliver Booth</span>
+            </a>
+            <div class="topnav-links">
+                <a asp-page="/Index" page-match="/Index">Home</a>
+                <a asp-page="/Blog/Index" page-match="/Blog">Write</a>
+                <a asp-page="/Projects/Index" page-match="/Projects">Build</a>
+                <a asp-page="/Learn/Index" page-match="/Learn">Learn</a>
+                <a asp-page="/Create/Index" page-match="/Create">Create</a>
+            </div>
+            <div class="topnav-secondary">
+                <a asp-page="/About" page-match="/About">About</a>
+                <a asp-page="/Donate" page-match="/Donate">Donate</a>
+            </div>
+        </nav>
+    </header>
+
+    @if (QuineSource is not null)
+    {
+        <div class="code-bg" aria-hidden="true">
+            @for (var index = 0; index < 4; index++)
+            {
+                @QuineSource
+                @Environment.NewLine
+                @Environment.NewLine
+            }
+        </div>
+    }
+
+    <main class="main">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <ul class="site-footer-links">
+            <li>&copy; @DateTime.Now.Year</li>
+            <li>Made with <i class="ti ti-heart-filled"></i> by @Strings.MyName</li>
+            <li><a href="https://git.booth.dev/oliver/booth.dev">Source</a></li>
+            <li><a asp-page="/Privacy/Index">Privacy</a></li>
+        </ul>
+
+        <p class="align-center">Version @Version</p>
+    </footer>
+</div>
+
+<nav class="bottom-nav">
+    <a asp-page="Index" page-match="/Index"><i class="ti ti-home"></i>Home</a>
+    <a asp-page="Blog" page-match="/Blog"><i class="ti ti-pencil"></i>Write</a>
+    <a asp-page="Projects" page-match="/Projects"><i class="ti ti-code"></i>Build</a>
+    <a asp-page="Learn" page-match="/Learn"><i class="ti ti-school"></i>Learn</a>
+    <a asp-page="More" page-match="/More"><i class="ti ti-menu-2"></i>More</a>
+</nav>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraphcore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.min.js"></script>
+<script src="~/js/prism.min.js" asp-append-version="true" data-manual></script>
+<script src="~/js/app.min.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", false)
+</body>
+</html>
