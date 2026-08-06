@@ -13,18 +13,20 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using X10D.Hosting.DependencyInjection;
 
-Directory.CreateDirectory("data");
-Directory.CreateDirectory("logs");
+var workingDir = AppContext.BaseDirectory;
+
+Directory.CreateDirectory(Path.Combine(workingDir, "data"));
+Directory.CreateDirectory(Path.Combine(workingDir, "logs"));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/latest.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(Path.Combine(workingDir, "logs", "latest.log"), rollingInterval: RollingInterval.Day)
 #if DEBUG
     .MinimumLevel.Debug()
 #endif
     .CreateLogger();
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 builder.Configuration.AddYamlFile("data/config.yaml", true, true);
 builder.Logging.ClearProviders();
