@@ -17,5 +17,6 @@ internal sealed class LegacyCommentConfiguration : IEntityTypeConfiguration<Lega
         builder.Property(e => e.Avatar).IsRequired(false).HasMaxLength(32767);
         builder.Property(e => e.Body).IsRequired().HasMaxLength(32767);
         builder.Property(e => e.ParentComment).IsRequired(false);
+        builder.Property(e => e.CreatedAt).IsRequired();
     }
 }

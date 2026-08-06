@@ -19,7 +19,7 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
         builder.Property(e => e.Slug).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
         builder.Property(e => e.PreviewImageUrl).HasConversion<UriToStringConverter>();
-        builder.Property(e => e.Visibility).HasColumnType("visibility").IsRequired();
+        builder.Property(e => e.Visibility).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.Rank).IsRequired();
     }
