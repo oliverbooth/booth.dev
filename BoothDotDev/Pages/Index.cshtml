@@ -1,4 +1,5 @@
 @page
+@using BoothDotDev.Extensions
 @model Index
 
 <div class="page-wide">
@@ -81,7 +82,7 @@
                     <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
                 </div>
                 <p class="commit-title">@post.Title</p>
-                <p class="commit-sub">@Math.Max(1, post.Body.Split().Length / 275) min read &middot; @post.Published.ToString("d MMM")</p>
+                <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
             </a>
         }
     </div>
@@ -92,31 +93,20 @@
     </div>
 
     <div class="card-grid">
-        @* Filler Projects *@
-        <a href="#" class="card">
-            <div class="card-icon"><i class="ti ti-train"></i></div>
-            <div class="card-body">
-                <p class="branch"><i class="ti ti-git-branch" style="font-size:12px"></i>main</p>
-                <p class="title">The Quiet Line</p>
-                <span class="status"><span class="dot" style="margin-right:5px"></span>active</span>
-            </div>
-        </a>
-        <a href="#" class="card">
-            <div class="card-icon"><i class="ti ti-brand-nuget"></i></div>
-            <div class="card-body">
-                <p class="branch"><i class="ti ti-git-branch" style="font-size:12px"></i>main</p>
-                <p class="title">X10D</p>
-                <span class="status"><span class="dot" style="margin-right:5px"></span>active</span>
-            </div>
-        </a>
-        <a href="#" class="card">
-            <div class="card-icon"><i class="ti ti-message-circle"></i></div>
-            <div class="card-body">
-                <p class="branch"><i class="ti ti-git-branch" style="font-size:12px"></i>main</p>
-                <p class="title">BrackeysBot</p>
-                <span class="status"><span class="dot" style="margin-right:5px"></span>active</span>
-            </div>
-        </a>
+        @foreach (var project in Model.Projects)
+        {
+            <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
+                <div class="card-icon">
+                    <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
+                </div>
+                <div class="card-body">
+                    <p class="title">@project.Name</p>
+                    <span class="status">
+                        <span class="dot" style="margin-right:5px"></span>@project.Status.ToString().ToLower()
+                    </span>
+                </div>
+            </a>
+        }
     </div>
 
 </div>

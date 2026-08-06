@@ -1,9 +1,8 @@
 @page
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Data.Models
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @using Humanizer
-@inject IReadingListService ReadingListService
+@inject ReadingListService ReadingListService
 @{
     ViewData["Title"] = "Reading List";
 }
@@ -49,7 +48,7 @@
                         </div>
 
                         <div class="stack-list section-list">
-                            @foreach (IBook book in books.OrderBy(b => b.Author).ThenBy(b => b.Title))
+                            @foreach (var book in books.OrderBy(b => b.Author).ThenBy(b => b.Title))
                             {
                                 <div>
                                     <div class="stack-icon">

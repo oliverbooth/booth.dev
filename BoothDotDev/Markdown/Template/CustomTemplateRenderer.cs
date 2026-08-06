@@ -1,5 +1,4 @@
 using BoothDotDev.Data;
-using BoothDotDev.Extensions.Markdig.Markdown.Template;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Markdown.Template;

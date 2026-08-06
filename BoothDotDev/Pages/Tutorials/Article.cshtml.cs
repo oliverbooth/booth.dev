@@ -1,5 +1,5 @@
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,13 +10,13 @@ namespace BoothDotDev.Pages.Tutorials;
 /// </summary>
 internal sealed class Article : PageModel
 {
-    private readonly ITutorialService _tutorialService;
+    private readonly TutorialService _tutorialService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Article" /> class.
     /// </summary>
-    /// <param name="tutorialService">The <see cref="ITutorialService" />.</param>
-    public Article(ITutorialService tutorialService)
+    /// <param name="tutorialService">The <see cref="TutorialService" />.</param>
+    public Article(TutorialService tutorialService)
     {
         _tutorialService = tutorialService;
     }
@@ -25,11 +25,11 @@ internal sealed class Article : PageModel
     ///     Gets the requested article.
     /// </summary>
     /// <value>The requested article.</value>
-    public ITutorialArticle CurrentArticle { get; private set; } = null!;
+    public TutorialArticle CurrentArticle { get; private set; } = null!;
 
     public IActionResult OnGet(string slug)
     {
-        if (!_tutorialService.TryGetArticle(slug, out ITutorialArticle? article))
+        if (!_tutorialService.TryGetArticle(slug, out TutorialArticle? article))
         {
             Response.StatusCode = 404;
             return NotFound();

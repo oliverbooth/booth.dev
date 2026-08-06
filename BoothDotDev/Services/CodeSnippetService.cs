@@ -1,14 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
 
-/// <inheritdoc />
-internal sealed class CodeSnippetService : ICodeSnippetService
+/// <summary>
+///     Represents a service which can fetch multi-language code snippets.
+/// </summary>
+internal sealed class CodeSnippetService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -21,7 +21,13 @@ internal sealed class CodeSnippetService : ICodeSnippetService
         _dbContextFactory = dbContextFactory;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Returns all the languages which apply to the specified snippet.
+    /// </summary>
+    /// <param name="id">The ID of the snippet whose languages should be returned.</param>
+    /// <returns>
+    ///     A read-only view of the languages that apply to the snippet. This list may be empty if the snippet ID is invalid.
+    /// </returns>
     public IReadOnlyList<string> GetLanguagesForSnippet(int id)
     {
         var languages = new HashSet<string>();
@@ -35,8 +41,18 @@ internal sealed class CodeSnippetService : ICodeSnippetService
         return [.. languages];
     }
 
-    /// <inheritdoc />
-    public bool TryGetCodeSnippetForLanguage(int id, string language, [NotNullWhen(true)] out ICodeSnippet? snippet)
+    /// <summary>
+    ///     Attempts to find a code snippet by the specified ID, in the specified language.
+    /// </summary>
+    /// <param name="id">The ID of the snippet to search for.</param>
+    /// <param name="language">The language to search for.</param>
+    /// <param name="snippet">
+    ///     When this method returns, contains the code snippet matching the specified criteria, if such a snippet was found;
+    ///     otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns><see langword="true" /> if the snippet was found; otherwise, <see langword="false" />.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="language" /> is <see langword="null" />.</exception>
+    public bool TryGetCodeSnippetForLanguage(int id, string language, [NotNullWhen(true)] out CodeSnippet? snippet)
     {
         if (language is null)
         {

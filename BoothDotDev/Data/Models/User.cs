@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
-using BoothDotDev.Common.Data.Models;
 using Cysharp.Text;
 
 namespace BoothDotDev.Data.Models;
@@ -9,22 +8,40 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a user.
 /// </summary>
-internal sealed class User : IUser, IBlogAuthor
+public sealed class User
 {
-    /// <inheritdoc cref="IUser.AvatarUrl" />
+    /// <summary>
+    ///     Gets the URL of the user's avatar.
+    /// </summary>
+    /// <value>The URL of the user's avatar.</value>
     [NotMapped]
-    public Uri AvatarUrl => GetAvatarUrl();
+    public Uri AvatarUrl
+    {
+        get => GetAvatarUrl();
+    }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets or sets the email address of the user.
+    /// </summary>
+    /// <value>The email address of the user.</value>
     public string EmailAddress { get; set; } = string.Empty;
 
-    /// <inheritdoc cref="IUser.DisplayName" />
+    /// <summary>
+    ///     Gets or sets the display name of the author.
+    /// </summary>
+    /// <value>The display name of the author.</value>
     public string DisplayName { get; set; } = string.Empty;
 
-    /// <inheritdoc cref="IUser.Id" />
+    /// <summary>
+    ///     Gets the unique identifier of the user.
+    /// </summary>
+    /// <value>The unique identifier of the user.</value>
     public Guid Id { get; private set; } = Guid.NewGuid();
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the date and time the user registered.
+    /// </summary>
+    /// <value>The registration date and time.</value>
     public DateTimeOffset Registered { get; private set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
@@ -39,7 +56,11 @@ internal sealed class User : IUser, IBlogAuthor
     /// <value>The salt used to hash the password.</value>
     internal string Salt { get; set; } = string.Empty;
 
-    /// <inheritdoc cref="IUser.GetAvatarUrl" />
+    /// <summary>
+    ///     Gets the URL of the author's avatar.
+    /// </summary>
+    /// <param name="size">The size of the avatar.</param>
+    /// <returns>The URL of the author's avatar.</returns>
     public Uri GetAvatarUrl(int size = 28)
     {
         if (string.IsNullOrWhiteSpace(EmailAddress))
@@ -48,7 +69,7 @@ internal sealed class User : IUser, IBlogAuthor
         }
 
         ReadOnlySpan<char> span = EmailAddress.AsSpan();
-        int byteCount = Encoding.UTF8.GetByteCount(span);
+        var byteCount = Encoding.UTF8.GetByteCount(span);
         Span<byte> bytes = stackalloc byte[byteCount];
         Encoding.UTF8.GetBytes(span, bytes);
 
@@ -59,14 +80,20 @@ internal sealed class User : IUser, IBlogAuthor
         Span<char> hex = stackalloc char[2];
         for (var index = 0; index < hash.Length; index++)
         {
-            if (hash[index].TryFormat(hex, out _, "x2")) builder.Append(hex);
-            else builder.Append("00");
+            builder.Append(hash[index].TryFormat(hex, out _, "x2") ? hex : "00");
         }
 
         return new Uri($"https://www.gravatar.com/avatar/{builder}?size={size}");
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Returns a value indicating whether the specified password is valid for the user.
+    /// </summary>
+    /// <param name="password">The password to test.</param>
+    /// <returns>
+    ///     <see langword="true" /> if the specified password is valid for the user; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
     public bool TestCredentials(string password)
     {
         return false;

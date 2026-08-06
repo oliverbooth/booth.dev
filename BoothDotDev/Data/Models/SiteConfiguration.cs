@@ -26,7 +26,10 @@ public sealed class SiteConfiguration : IEquatable<SiteConfiguration>
     ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise,
     ///     <see langword="false" />.
     /// </returns>
-    public static bool operator ==(SiteConfiguration? left, SiteConfiguration? right) => Equals(left, right);
+    public static bool operator ==(SiteConfiguration? left, SiteConfiguration? right)
+    {
+        return Equals(left, right);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="SiteConfiguration" /> are not equal.
@@ -37,7 +40,10 @@ public sealed class SiteConfiguration : IEquatable<SiteConfiguration>
     ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise,
     ///     <see langword="false" />.
     /// </returns>
-    public static bool operator !=(SiteConfiguration? left, SiteConfiguration? right) => !(left == right);
+    public static bool operator !=(SiteConfiguration? left, SiteConfiguration? right)
+    {
+        return !(left == right);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether this instance of <see cref="SiteConfiguration" /> is equal to another
@@ -50,8 +56,16 @@ public sealed class SiteConfiguration : IEquatable<SiteConfiguration>
     /// </returns>
     public bool Equals(SiteConfiguration? other)
     {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
         return Key == other.Key;
     }
 

@@ -1,14 +1,21 @@
-using BoothDotDev.Common.Data.Models;
-
 namespace BoothDotDev.Data.Models;
 
-/// <inheritdoc cref="IProgrammingLanguage" />
-internal sealed class ProgrammingLanguage : IEquatable<ProgrammingLanguage>, IProgrammingLanguage
+/// <summary>
+///     Represents a programming language.
+/// </summary>
+public sealed class ProgrammingLanguage : IEquatable<ProgrammingLanguage>
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the unique key for this programming language.
+    /// </summary>
+    /// <value>The unique key.</value>
+    /// <remarks>This is generally the file extension of the language.</remarks>
     public string Key { get; } = string.Empty;
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the name of this programming language.
+    /// </summary>
+    /// <value>The name.</value>
     public string Name { get; internal set; } = string.Empty;
 
     /// <summary>
@@ -20,7 +27,10 @@ internal sealed class ProgrammingLanguage : IEquatable<ProgrammingLanguage>, IPr
     ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise,
     ///     <see langword="false" />.
     /// </returns>
-    public static bool operator ==(ProgrammingLanguage? left, ProgrammingLanguage? right) => Equals(left, right);
+    public static bool operator ==(ProgrammingLanguage? left, ProgrammingLanguage? right)
+    {
+        return Equals(left, right);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="ProgrammingLanguage" /> are not equal.
@@ -31,7 +41,10 @@ internal sealed class ProgrammingLanguage : IEquatable<ProgrammingLanguage>, IPr
     ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise,
     ///     <see langword="false" />.
     /// </returns>
-    public static bool operator !=(ProgrammingLanguage? left, ProgrammingLanguage? right) => !(left == right);
+    public static bool operator !=(ProgrammingLanguage? left, ProgrammingLanguage? right)
+    {
+        return !(left == right);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether this instance of <see cref="ProgrammingLanguage" /> is equal to another
@@ -44,8 +57,16 @@ internal sealed class ProgrammingLanguage : IEquatable<ProgrammingLanguage>, IPr
     /// </returns>
     public bool Equals(ProgrammingLanguage? other)
     {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
         return Key.Equals(other.Key);
     }
 

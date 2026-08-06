@@ -1,15 +1,14 @@
-@using BoothDotDev.Common.Data.Models
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Services
 @using Humanizer
-@model BoothDotDev.Common.Data.Models.IBlogPost
-@inject IBlogPostService BlogPostService
+@model BoothDotDev.Data.Models.BlogPost
+@inject BlogPostService BlogPostService
 
 @{
-    IBlogAuthor author = Model.Author;
-    DateTimeOffset published = Model.Published;
-    DateTimeOffset? updated = Model.Updated;
-    DateTimeOffset time = updated ?? published;
-    string verb = updated is null ? "Published" : "Updated";
+    var author = Model.Author;
+    var published = Model.Published;
+    var updated = Model.Updated;
+    var time = updated ?? published;
+    var verb = updated is null ? "Published" : "Updated";
 }
 
 <div class="blog-card">
@@ -25,7 +24,7 @@
     </p>
 
     <article>
-        @Html.Raw(BlogPostService.RenderExcerpt(Model, out bool trimmed))
+        @Html.Raw(BlogPostService.RenderExcerpt(Model, out var trimmed))
     </article>
 
     @if (trimmed || Model.Excerpt is not null)
@@ -42,7 +41,7 @@
     <div class="d-flex align-items-center">
         <i data-lucide="tag"></i>
         <ul class="ms-2 post-tags">
-            @foreach (string tag in Model.Tags)
+            @foreach (var tag in Model.Tags)
             {
                 <li class="post-tag">
                     <a asp-page="Index" asp-route-tag="@Html.UrlEncoder.Encode(tag)">@tag</a>

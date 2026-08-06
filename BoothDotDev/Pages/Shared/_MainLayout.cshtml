@@ -1,5 +1,5 @@
 @inherits MainLayout
-@using BoothDotDev.Common.Data.Models
+@using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @{ await InitializeAsync(); }
 <!DOCTYPE html>
@@ -28,10 +28,10 @@
 
     @switch (ViewData["Post"])
     {
-        case IBlogPost post:
+        case BlogPost post:
             @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
             break;
-        case ITutorialArticle article:
+        case TutorialArticle article:
             @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
             break;
         default:

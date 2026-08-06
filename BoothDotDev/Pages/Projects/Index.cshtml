@@ -1,15 +1,14 @@
 @page
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Data.Models
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @using Markdig
 @inject MarkdownPipeline MarkdownPipeline
-@inject IProjectService ProjectService
+@inject ProjectService ProjectService
 @{
     ViewData["Title"] = "Projects";
     ViewData["Page"] = "Projects";
 
-    IEnumerable<IProject> projects = ProjectService.GetProjects()
+    var projects = ProjectService.GetProjects()
         .Concat(ProjectService.GetProjects(ProjectStatus.Past))
         .Concat(ProjectService.GetProjects(ProjectStatus.Retired))
         .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus));
@@ -20,7 +19,7 @@
     <h1>Projects</h1>
 </header>
 
-@foreach (IProject project in projects)
+@foreach (var project in projects)
 {
     <article class="post-entry">
         <figure class="entry-cover">

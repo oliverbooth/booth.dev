@@ -1,10 +1,9 @@
 @page
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Data.Models
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @using Humanizer
 @model BoothDotDev.Pages.Challenges.Index
-@inject IDevChallengeService DevChallengeService
+@inject DevChallengeService DevChallengeService
 @{
     ViewData["Title"] = "Dev Challenges";
     ViewData["Page"] = "Challenges";
@@ -24,10 +23,10 @@
 </article>
 
 @{
-    int number = 1;
-    foreach (IDevChallenge challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
+    var number = 1;
+    foreach (var challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
     {
-        DateTimeOffset date = challenge.Date;
+        var date = challenge.Date;
 
         <article class="post-entry">
             <header class="entry-header">

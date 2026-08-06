@@ -1,5 +1,4 @@
 using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.NameTranslation;
 

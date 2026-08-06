@@ -1,16 +1,25 @@
-using BoothDotDev.Common.Data.Models;
-
 namespace BoothDotDev.Data.Models;
 
-/// <inheritdoc />
-internal sealed class CodeSnippet : ICodeSnippet
+/// <summary>
+///     Represents a code snippet.
+/// </summary>
+public sealed class CodeSnippet
 {
-    /// <inheritdoc />
-    public string Content { get; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the content for this snippet.
+    /// </summary>
+    /// <value>The content for this snippet</value>
+    public string Content { get; set; } = string.Empty;
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the ID for this snippet.
+    /// </summary>
+    /// <value>The ID for this snippet</value>
     public int Id { get; }
 
-    /// <inheritdoc />
-    public string Language { get; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the language for this snippet.
+    /// </summary>
+    /// <value>The language for this snippet</value>
+    public string Language { get; set; } = string.Empty;
 }

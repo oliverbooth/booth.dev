@@ -1,7 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using DEDrake;
@@ -10,8 +7,10 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace BoothDotDev.Services;
 
-/// <inheritdoc />
-internal sealed class DevChallengeService : IDevChallengeService
+/// <summary>
+///     Represents a service which fetches and manages dev challenges.
+/// </summary>
+internal sealed class DevChallengeService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -24,7 +23,12 @@ internal sealed class DevChallengeService : IDevChallengeService
         _dbContextFactory = dbContextFactory;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Authenticates the challenge with the specified ID and password.
+    /// </summary>
+    /// <param name="id">The ID of the challenge.</param>
+    /// <param name="password">The password of the challenge.</param>
+    /// <returns><see langword="true" /> if the challenge is authenticated; otherwise, <see langword="false" />.</returns>
     public bool AuthenticateChallenge(string id, string? password)
     {
         if (!TryGetDevChallenge(id, out var challenge, out _))
@@ -40,8 +44,12 @@ internal sealed class DevChallengeService : IDevChallengeService
         return password is not null && BC.Verify(password, challenge.Password);
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<IDevChallenge> GetDevChallenges(Visibility visibility)
+    /// <summary>
+    ///     Gets a read-only collection of dev challenges.
+    /// </summary>
+    /// <param name="visibility">The visibility of the dev challenges.</param>
+    /// <returns>A read-only collection of dev challenges.</returns>
+    public IReadOnlyList<DevChallenge> GetDevChallenges(Visibility visibility)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<DevChallenge> challenges = context.DevChallenges.OrderBy(c => c.Date);
@@ -54,9 +62,21 @@ internal sealed class DevChallengeService : IDevChallengeService
         return [.. challenges];
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Tries to get a dev challenge by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the dev challenge.</param>
+    /// <param name="devChallenge">
+    ///     When this method returns, contains the dev challenge associated with the specified id, if the id is found;
+    ///     otherwise, the default value for the type will be returned. This parameter is passed uninitialized.
+    /// </param>
+    /// <param name="shouldRedirect">
+    ///     When this method returns, contains a value indicating whether the user should be redirected to the new URL.
+    ///     This parameter is passed uninitialized.
+    /// </param>
+    /// <returns><see langword="true" /> if the dev challenge is found; otherwise, <see langword="false" />.</returns>
     public bool TryGetDevChallenge(string id,
-        [NotNullWhen(true)] out IDevChallenge? devChallenge,
+        [NotNullWhen(true)] out DevChallenge? devChallenge,
         out bool shouldRedirect)
     {
         if (string.IsNullOrWhiteSpace(id))

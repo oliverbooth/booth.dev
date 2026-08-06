@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Data.Models.Rss;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BoothDotDev.Controllers.Blog;
@@ -13,13 +13,13 @@ namespace BoothDotDev.Controllers.Blog;
 [Route("blog/feed")]
 public sealed class RssController : Controller
 {
-    private readonly IBlogPostService _blogPostService;
+    private readonly BlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RssController" /> class.
     /// </summary>
-    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
-    public RssController(IBlogPostService blogPostService)
+    /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
+    public RssController(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
@@ -37,7 +37,7 @@ public sealed class RssController : Controller
         var baseUrl = $"https://{Request.Host}/blog";
         var blogItems = new List<BlogItem>();
 
-        foreach (IBlogPost post in _blogPostService.GetAllBlogPosts())
+        foreach (BlogPost post in _blogPostService.GetAllBlogPosts())
         {
             var url = $"{baseUrl}/{post.Published:yyyy/MM/dd}/{post.Slug}";
             string excerpt = _blogPostService.RenderExcerpt(post, out _);

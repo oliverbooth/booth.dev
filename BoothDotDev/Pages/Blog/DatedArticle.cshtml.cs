@@ -1,5 +1,4 @@
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,13 +10,13 @@ namespace BoothDotDev.Pages.Blog;
 [Area("blog")]
 internal sealed class DatedArticle : PageModel
 {
-    private readonly IBlogPostService _blogPostService;
+    private readonly BlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DatedArticle" /> class.
     /// </summary>
-    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
-    public DatedArticle(IBlogPostService blogPostService)
+    /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
+    public DatedArticle(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
@@ -33,7 +32,7 @@ internal sealed class DatedArticle : PageModel
     public IActionResult OnGet(int year, int month, int day, string slug)
     {
         var date = new DateOnly(year, month, day);
-        if (!_blogPostService.TryGetPost(date, slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(date, slug, out var post))
         {
             Response.StatusCode = 404;
             return NotFound();

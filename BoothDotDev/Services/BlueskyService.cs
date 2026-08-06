@@ -28,14 +28,18 @@ public sealed class BlueskyService(
     public async Task<BlueskyPost?> GetLatestPostAsync()
     {
         if (cache.TryGetValue(CacheKey, out BlueskyPost? cached))
+        {
             return cached;
+        }
 
         var opts = options.CurrentValue;
         var url = $"{BaseUrl}?actor={Uri.EscapeDataString(opts.Handle)}&filter=posts_no_replies&limit=10";
 
         using var response = await httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
+        {
             return null;
+        }
 
         await using var stream = await response.Content.ReadAsStreamAsync();
         using var doc = await JsonDocument.ParseAsync(stream);
@@ -51,7 +55,9 @@ public sealed class BlueskyService(
             {
                 var reasonType = reason.GetProperty("$type").GetString();
                 if (reasonType == "app.bsky.feed.defs#reasonRepost")
+                {
                     continue;
+                }
             }
 
             var uri = post.GetProperty("uri").GetString()!;

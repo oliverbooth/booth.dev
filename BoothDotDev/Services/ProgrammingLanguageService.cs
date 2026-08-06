@@ -1,12 +1,13 @@
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
 
-/// <inheritdoc />
-internal sealed class ProgrammingLanguageService : IProgrammingLanguageService
+/// <summary>
+///     Represents a service which can perform programming language lookup.
+/// </summary>
+internal sealed class ProgrammingLanguageService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -19,7 +20,11 @@ internal sealed class ProgrammingLanguageService : IProgrammingLanguageService
         _dbContextFactory = dbContextFactory;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Returns the human-readable name of a language.
+    /// </summary>
+    /// <param name="alias">The alias of the language.</param>
+    /// <returns>The human-readable name, or <paramref name="alias" /> if the name could not be found.</returns>
     public string GetLanguageName(string alias)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();

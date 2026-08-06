@@ -1,48 +1,81 @@
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
-
 namespace BoothDotDev.Data.Models;
 
 /// <summary>
 ///     Represents a project.
 /// </summary>
-internal sealed class Project : IEquatable<Project>, IProject
+public sealed class Project : IEquatable<Project>
 {
-    /// <inheritdoc />
-    public string Description { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the description of the project.
+    /// </summary>
+    /// <value>The description of the project.</value>
+    public string Description { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public string Details { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the details of the project.
+    /// </summary>
+    /// <value>The details.</value>
+    public string Details { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public string HeroUrl { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the URL of the hero image.
+    /// </summary>
+    /// <value>The URL of the hero image.</value>
+    public string HeroUrl { get; set; } = string.Empty;
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the ID of the project.
+    /// </summary>
+    /// <value>The ID of the project.</value>
     public Guid Id { get; private set; } = Guid.NewGuid();
 
-    /// <inheritdoc />
-    public IReadOnlyList<string> Languages { get; private set; } = ArraySegment<string>.Empty;
+    /// <summary>
+    ///     Gets or sets the set of languages used for this project.
+    /// </summary>
+    /// <value>The languages.</value>
+    public List<string> Languages { get; set; } = [];
 
-    /// <inheritdoc />
-    public string Name { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the name of the project.
+    /// </summary>
+    /// <value>The name of the project.</value>
+    public string Name { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public int Rank { get; private set; }
+    /// <summary>
+    ///     Gets or sets the rank of the project.
+    /// </summary>
+    /// <value>The rank of the project.</value>
+    public int Rank { get; set; }
 
-    /// <inheritdoc />
-    public string? RemoteTarget { get; private set; }
+    /// <summary>
+    ///     Gets or sets the host of the project.
+    /// </summary>
+    /// <value>The host of the project.</value>
+    public string? RemoteTarget { get; set; }
 
-    /// <inheritdoc />
-    public string? RemoteUrl { get; private set; }
+    /// <summary>
+    ///     Gets or sets the URL of the project.
+    /// </summary>
+    /// <value>The URL of the project.</value>
+    public string? RemoteUrl { get; set; }
 
-    /// <inheritdoc />
-    public string Slug { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the slug of the project.
+    /// </summary>
+    /// <value>The slug of the project.</value>
+    public string Slug { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public ProjectStatus Status { get; private set; } = ProjectStatus.Ongoing;
+    /// <summary>
+    ///     Gets or sets the status of the project.
+    /// </summary>
+    /// <value>The status of the project.</value>
+    public ProjectStatus Status { get; set; } = ProjectStatus.Ongoing;
 
-    /// <inheritdoc />
-    public string? Tagline { get; private set; }
+    /// <summary>
+    ///     Gets or sets the tagline of the project.
+    /// </summary>
+    /// <value>The tagline.</value>
+    public string? Tagline { get; set; }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="Project" /> are equal.
@@ -53,7 +86,10 @@ internal sealed class Project : IEquatable<Project>, IProject
     ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise,
     ///     <see langword="false" />.
     /// </returns>
-    public static bool operator ==(Project? left, Project? right) => Equals(left, right);
+    public static bool operator ==(Project? left, Project? right)
+    {
+        return Equals(left, right);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="Project" /> are not equal.
@@ -64,7 +100,10 @@ internal sealed class Project : IEquatable<Project>, IProject
     ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise,
     ///     <see langword="false" />.
     /// </returns>
-    public static bool operator !=(Project? left, Project? right) => !(left == right);
+    public static bool operator !=(Project? left, Project? right)
+    {
+        return !(left == right);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether this instance of <see cref="Project" /> is equal to another
@@ -77,8 +116,16 @@ internal sealed class Project : IEquatable<Project>, IProject
     /// </returns>
     public bool Equals(Project? other)
     {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
         return Id.Equals(other.Id);
     }
 

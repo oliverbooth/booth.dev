@@ -1,5 +1,5 @@
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,9 +8,9 @@ namespace BoothDotDev.Pages.Blog;
 [Area("blog")]
 internal sealed class Index : PageModel
 {
-    private readonly IBlogPostService _blogPostService;
+    private readonly BlogPostService _blogPostService;
 
-    public Index(IBlogPostService blogPostService)
+    public Index(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
@@ -33,15 +33,15 @@ internal sealed class Index : PageModel
 
     private IActionResult HandleNewRoute(Guid postId)
     {
-        return _blogPostService.TryGetPost(postId, out IBlogPost? post) ? RedirectToPost(post) : NotFound();
+        return _blogPostService.TryGetPost(postId, out var post) ? RedirectToPost(post) : NotFound();
     }
 
     private IActionResult HandleWordPressRoute(int wpPostId)
     {
-        return _blogPostService.TryGetPost(wpPostId, out IBlogPost? post) ? RedirectToPost(post) : NotFound();
+        return _blogPostService.TryGetPost(wpPostId, out var post) ? RedirectToPost(post) : NotFound();
     }
 
-    private RedirectResult RedirectToPost(IBlogPost post)
+    private RedirectResult RedirectToPost(BlogPost post)
     {
         var route = new
         {

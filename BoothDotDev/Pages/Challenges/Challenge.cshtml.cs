@@ -1,5 +1,5 @@
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -7,18 +7,18 @@ namespace BoothDotDev.Pages.Challenges;
 
 internal sealed class Challenge : PageModel
 {
-    private readonly IDevChallengeService _devChallengeService;
+    private readonly DevChallengeService _devChallengeService;
 
-    public Challenge(IDevChallengeService devChallengeService)
+    public Challenge(DevChallengeService devChallengeService)
     {
         _devChallengeService = devChallengeService;
     }
 
-    public IDevChallenge DevChallenge { get; private set; } = null!;
+    public DevChallenge DevChallenge { get; private set; } = null!;
 
     public IActionResult OnGet([FromRoute] string id, [FromQuery] string? password = null)
     {
-        if (!_devChallengeService.TryGetDevChallenge(id, out var challenge, out bool shouldRedirect))
+        if (!_devChallengeService.TryGetDevChallenge(id, out var challenge, out var shouldRedirect))
         {
             return NotFound();
         }

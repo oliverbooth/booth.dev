@@ -10,8 +10,5 @@
         <File Path="Directory.Build.props"/>
         <File Path="global.json"/>
     </Folder>
-    <Project Path="BoothDotDev.Common\BoothDotDev.Common.csproj"/>
-    <Project Path="BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj"/>
-    <Project Path="BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj"/>
     <Project Path="BoothDotDev\BoothDotDev.csproj"/>
 </Solution>

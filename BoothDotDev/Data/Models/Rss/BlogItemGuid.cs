@@ -33,5 +33,8 @@ public struct BlogItemGuid
     /// </summary>
     /// <param name="value">The string value to convert.</param>
     /// <returns>A <see cref="BlogItemGuid" /> with the specified value.</returns>
-    public static implicit operator BlogItemGuid(string value) => new() { Value = value };
+    public static implicit operator BlogItemGuid(string value)
+    {
+        return new BlogItemGuid { Value = value };
+    }
 }

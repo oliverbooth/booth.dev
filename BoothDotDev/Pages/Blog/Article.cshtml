@@ -1,16 +1,9 @@
 @page "/blog/{slug}"
-@using System.Globalization
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Data.Models
-@using BoothDotDev.Common.Services
-@using Humanizer
-@using Markdig
-@inject IBlogPostService BlogPostService
-@inject MarkdownPipeline MarkdownPipeline
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@inject BlogPostService BlogPostService
 @model Article
-@{
-    bool lightTheme = Request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
-}
 
 @if (Model.ShowPasswordPrompt)
 {
@@ -37,10 +30,40 @@
     ViewData["Page"] = "Blog";
     ViewData["Post"] = post;
     ViewData["Title"] = post.Title;
-    IBlogAuthor author = post.Author;
-    DateTimeOffset published = post.Published;
+    var author = post.Author;
+    var published = post.Published;
 }
 
+<div class="page">
+
+    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
+
+    <span class="eyebrow">Dev</span>
+    <h1 style="margin:8px 0 12px;font-size:30px">@post.Title</h1>
+
+    <div class="byline">
+        <div class="avatar">@author.DisplayName[0]</div>
+        <span
+            class="meta">@author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</span>
+    </div>
+
+    <div class="prose@(post.Type == BlogPostType.Journal ? " journal" : "")" style="margin-top:2.5rem">
+        @Html.Raw(BlogPostService.RenderPost(post))
+    </div>
+
+    @if (post.Tags.Count > 0)
+    {
+        <div style="border-top:0.5px solid var(--border);margin-top:2.5rem;padding-top:1.25rem;display:flex;gap:6px">
+            @foreach (string tag in post.Tags)
+            {
+                <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
+            }
+        </div>
+    }
+
+</div>
+
+@*
 <article class="post-single">
     <header class="post-header">
         <div class="breadcrumbs">
@@ -207,4 +230,4 @@ else
             </div>
         }
     }
-}
+}*@

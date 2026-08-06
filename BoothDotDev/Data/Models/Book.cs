@@ -1,22 +1,31 @@
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
-
 namespace BoothDotDev.Data.Models;
 
 /// <summary>
 ///     Represents a book.
 /// </summary>
-internal sealed class Book : IBook
+public sealed class Book
 {
-    /// <inheritdoc />
-    public string Author { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the author of the book.
+    /// </summary>
+    /// <value>The author of the book.</value>
+    public string Author { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public string Isbn { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the ISBN of the book.
+    /// </summary>
+    /// <value>The ISBN of the book.</value>
+    public string Isbn { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public BookState State { get; private set; }
+    /// <summary>
+    ///     Gets or sets the state of the book.
+    /// </summary>
+    /// <value>The state of the book.</value>
+    public BookState State { get; set; }
 
-    /// <inheritdoc />
-    public string Title { get; private set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the title of the book.
+    /// </summary>
+    /// <value>The title of the book.</value>
+    public string Title { get; set; } = string.Empty;
 }

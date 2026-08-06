@@ -1,12 +1,13 @@
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
 
-internal sealed class ReadingListService : IReadingListService
+/// <summary>
+///     Represents a service which fetches books from the reading list.
+/// </summary>
+internal sealed class ReadingListService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -24,7 +25,7 @@ internal sealed class ReadingListService : IReadingListService
     /// </summary>
     /// <param name="state">The state.</param>
     /// <returns>A collection of books in the specified state.</returns>
-    public IReadOnlyCollection<IBook> GetBooks(BookState state)
+    public IReadOnlyCollection<Book> GetBooks(BookState state)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return state == (BookState)(-1)

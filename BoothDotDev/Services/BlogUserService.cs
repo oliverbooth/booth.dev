@@ -1,19 +1,18 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Models;
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
 
 /// <summary>
-///     Represents an implementation of <see cref="IBlogUserService" />.
+///     Represents a service for managing users.
 /// </summary>
-internal sealed class BlogUserService : IBlogUserService
+public sealed class BlogUserService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly ConcurrentDictionary<Guid, IUser> _userCache = new();
+    private readonly ConcurrentDictionary<Guid, User> _userCache = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogUserService" /> class.
@@ -26,15 +25,32 @@ internal sealed class BlogUserService : IBlogUserService
         _dbContextFactory = dbContextFactory;
     }
 
-    /// <inheritdoc />
-    public bool TryGetUser(Guid id, [NotNullWhen(true)] out IUser? user)
+    /// <summary>
+    ///     Attempts to find a user with the specified ID.
+    /// </summary>
+    /// <param name="id">The ID of the user to find.</param>
+    /// <param name="user">
+    ///     When this method returns, contains the user with the specified ID, if the user is found; otherwise,
+    ///     <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a user with the specified ID is found; otherwise, <see langword="false" />.
+    /// </returns>
+    public bool TryGetUser(Guid id, [NotNullWhen(true)] out User? user)
     {
-        if (_userCache.TryGetValue(id, out user)) return true;
+        if (_userCache.TryGetValue(id, out user))
+        {
+            return true;
+        }
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         user = context.Users.Find(id);
 
-        if (user is not null) _userCache.TryAdd(id, user);
+        if (user is not null)
+        {
+            _userCache.TryAdd(id, user);
+        }
+
         return user is not null;
     }
 }

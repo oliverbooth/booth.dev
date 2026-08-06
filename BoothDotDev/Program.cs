@@ -1,8 +1,5 @@
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
-using BoothDotDev.Extensions.Markdig.Services;
-using BoothDotDev.Pages.Components;
 using BoothDotDev.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -40,16 +37,15 @@ builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 });
 
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton<ICodeSnippetService, CodeSnippetService>();
-builder.Services.AddSingleton<IDevChallengeService, DevChallengeService>();
-builder.Services.AddSingleton<ITemplateService, TemplateService>();
-builder.Services.AddHostedSingleton<IBlogPostService, BlogPostService>();
-builder.Services.AddSingleton<IBlogUserService, BlogUserService>();
-builder.Services.AddSingleton<IProgrammingLanguageService, ProgrammingLanguageService>();
-builder.Services.AddSingleton<IProjectService, ProjectService>();
-builder.Services.AddSingleton<ITutorialService, TutorialService>();
-builder.Services.AddSingleton<IReadingListService, ReadingListService>();
-builder.Services.AddSingleton<ISearchService, SearchService>();
+builder.Services.AddSingleton<CodeSnippetService>();
+builder.Services.AddSingleton<DevChallengeService>();
+builder.Services.AddSingleton<TemplateService>();
+builder.Services.AddHostedSingleton<BlogPostService>();
+builder.Services.AddSingleton<BlogUserService>();
+builder.Services.AddSingleton<ProgrammingLanguageService>();
+builder.Services.AddSingleton<ProjectService>();
+builder.Services.AddSingleton<TutorialService>();
+builder.Services.AddSingleton<ReadingListService>();
 builder.Services.AddSingleton<BlueskyService>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
@@ -78,7 +74,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapRazorPages();
-app.MapRazorComponents<SearchComponent>().AddInteractiveServerRenderMode();
 app.MapGet("/contact", () => Results.StatusCode(StatusCodes.Status410Gone));
 app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", permanent: true));
 app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", permanent: true));

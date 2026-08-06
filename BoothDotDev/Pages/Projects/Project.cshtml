@@ -1,14 +1,13 @@
 @page "/project/{slug}"
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Data.Models
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @using Markdig
 @model Project
-@inject IProjectService ProjectService
+@inject ProjectService ProjectService
 @inject MarkdownPipeline MarkdownPipeline
 
 @{
-    IProject? project = Model.SelectedProject;
+    var project = Model.SelectedProject;
     ViewData["Title"] = project is null ? "Projects" : project.Name;
 }
 
@@ -41,7 +40,7 @@
         <tr>
             <th style="width: 20%">Languages</th>
             <td>
-                @foreach (IProgrammingLanguage language in ProjectService.GetProgrammingLanguages(project))
+                @foreach (var language in ProjectService.GetProgrammingLanguages(project))
                 {
                     <img src="https://cdn.booth.dev/img/assets/p/@(language.Key).svg" alt="@language.Name" title="@language.Name" class="project-lang inline">
                 }

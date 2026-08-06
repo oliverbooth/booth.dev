@@ -1,7 +1,7 @@
 using System.Reflection;
-using BoothDotDev.Common.Services;
-using Microsoft.AspNetCore.Components;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.Internal;
 
 namespace BoothDotDev.Pages.Shared;
 
@@ -14,8 +14,8 @@ public abstract class MainLayout : RazorPage<object>
     ///     Gets or sets the blog post service.
     /// </summary>
     /// <value>The blog post service.</value>
-    [Inject]
-    public IBlogPostService BlogPostService { get; set; } = null!;
+    [RazorInject]
+    public BlogPostService BlogPostService { get; set; } = null!;
 
     /// <summary>
     ///     Gets the current URL of the page.
@@ -42,8 +42,8 @@ public abstract class MainLayout : RazorPage<object>
     ///    Gets or sets the tutorial service.
     /// </summary>
     /// <value>The tutorial service.</value>
-    [Inject]
-    public ITutorialService TutorialService { get; set; } = null!;
+    [RazorInject]
+    public TutorialService TutorialService { get; set; } = null!;
 
     /// <summary>
     ///     Gets the website's version string.

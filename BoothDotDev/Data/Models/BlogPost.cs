@@ -5,63 +5,129 @@ using SmartFormat;
 
 namespace BoothDotDev.Data.Models;
 
-/// <inheritdoc />
-internal sealed class BlogPost : IBlogPost
+/// <summary>
+///     Represents a blog post.
+/// </summary>
+public sealed class BlogPost
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the author of the post.
+    /// </summary>
+    /// <value>The author of the post.</value>
     [NotMapped]
-    public IBlogAuthor Author { get; internal set; } = null!;
+    public User Author { get; internal set; } = null!;
 
-    /// <inheritdoc />
-    public string Body { get; internal set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the body of the post.
+    /// </summary>
+    /// <value>The body of the post.</value>
+    public string Body { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public bool EnableComments { get; internal set; }
+    /// <summary>
+    ///     Gets or sets a value indicating whether comments are enabled for the post.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if comments are enabled for the post; otherwise, <see langword="false" />.
+    /// </value>
+    public bool EnableComments { get; set; }
 
-    /// <inheritdoc />
-    public string? Excerpt { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the excerpt of this post, if it has one.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if this post has no excerpt.</value>
+    public string? Excerpt { get; set; }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the ID of the post.
+    /// </summary>
+    /// <value>The ID of the post.</value>
     public Guid Id { get; private set; } = Guid.NewGuid();
 
-    /// <inheritdoc />
-    public bool IsRedirect { get; internal set; }
+    /// <summary>
+    ///     Gets or sets a value indicating whether the post redirects to another URL.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the post redirects to another URL; otherwise, <see langword="false" />.
+    /// </value>
+    public bool IsRedirect { get; set; }
 
-    /// <inheritdoc />
-    public string? Password { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the password of the post.
+    /// </summary>
+    /// <value>The password of the post.</value>
+    public string? Password { get; set; }
 
-    /// <inheritdoc />
-    public DateTimeOffset Published { get; internal set; }
+    /// <summary>
+    ///     Gets the date and time the post was published.
+    /// </summary>
+    /// <value>The publication date and time.</value>
+    public DateTimeOffset Published { get; internal set; } = DateTimeOffset.UtcNow;
 
-    /// <inheritdoc />
-    public Uri? RedirectUrl { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the URL to which the post redirects.
+    /// </summary>
+    /// <value>The URL to which the post redirects, or <see langword="null" /> if the post does not redirect.</value>
+    public Uri? RedirectUrl { get; set; }
 
-    /// <inheritdoc />
-    public bool ShowTableOfContents { get; internal set; }
+    /// <summary>
+    ///     Gets or sets a value indicating whether to show the table of contents for the post.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the table of contents should be shown; otherwise, <see langword="false" />.
+    /// </value>
+    public bool ShowTableOfContents { get; set; }
 
-    /// <inheritdoc />
-    public string Slug { get; internal set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the slug of the post.
+    /// </summary>
+    /// <value>The slug of the post.</value>
+    public string Slug { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public bool TableOfContentsExpanded { get; internal set; } = true;
+    /// <summary>
+    ///     Gets or sets a value indicating whether the table of contents is expanded by default.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> if the table of contents is expanded by default; otherwise, <see langword="false" />.
+    /// </value>
+    public bool TableOfContentsExpanded { get; set; } = true;
 
-    /// <inheritdoc />
-    public IReadOnlyList<string> Tags { get; internal set; } = ArraySegment<string>.Empty;
+    /// <summary>
+    ///     Gets or sets the tags of the post.
+    /// </summary>
+    /// <value>The tags of the post.</value>
+    public List<string> Tags { get; set; } = [];
 
-    /// <inheritdoc />
-    public string Title { get; internal set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the title of the post.
+    /// </summary>
+    /// <value>The title of the post.</value>
+    public string Title { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public BlogPostType Type { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the type of the post.
+    /// </summary>
+    /// <value>The type of the post.</value>
+    public BlogPostType Type { get; set; }
 
-    /// <inheritdoc />
-    public DateTimeOffset? Updated { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the date and time the post was last updated.
+    /// </summary>
+    /// <value>The update date and time, or <see langword="null" /> if the post has not been updated.</value>
+    public DateTimeOffset? Updated { get; set; }
 
-    /// <inheritdoc />
-    public Visibility Visibility { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the visibility of the post.
+    /// </summary>
+    /// <value>The visibility of the post.</value>
+    public Visibility Visibility { get; set; }
 
-    /// <inheritdoc />
-    public int? WordPressId { get; set; }
+    /// <summary>
+    ///     Gets the WordPress ID of the post.
+    /// </summary>
+    /// <value>
+    ///     The WordPress ID of the post, or <see langword="null" /> if the post was not imported from WordPress.
+    /// </value>
+    public int? WordPressId { get; internal set; }
 
     /// <summary>
     ///     Gets or sets the ID of the author of this blog post.
@@ -98,13 +164,19 @@ internal sealed class BlogPost : IBlogPost
             : Smart.Format(DisqusDomain, this);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the Disqus identifier for the post.
+    /// </summary>
+    /// <returns>The Disqus identifier for the post.</returns>
     public string GetDisqusIdentifier()
     {
         return string.IsNullOrWhiteSpace(DisqusIdentifier) ? $"post-{Id}" : Smart.Format(DisqusIdentifier, this);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the Disqus URL for the post.
+    /// </summary>
+    /// <returns>The Disqus URL for the post.</returns>
     public string GetDisqusUrl()
     {
         string path = string.IsNullOrWhiteSpace(DisqusPath)
@@ -114,7 +186,10 @@ internal sealed class BlogPost : IBlogPost
         return $"{GetDisqusDomain()}/{path}";
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the Disqus post ID for the post.
+    /// </summary>
+    /// <returns>The Disqus post ID for the post.</returns>
     public string GetDisqusPostId()
     {
         return WordPressId?.ToString() ?? Id.ToString();

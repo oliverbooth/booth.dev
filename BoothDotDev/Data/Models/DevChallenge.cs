@@ -1,36 +1,63 @@
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
 using DEDrake;
 
 namespace BoothDotDev.Data.Models;
 
-/// <inheritdoc />
-internal class DevChallenge : IDevChallenge
+/// <summary>
+///     Represents a development challenge.
+/// </summary>
+public sealed class DevChallenge
 {
-    /// <inheritdoc />
-    public DateTimeOffset Date { get; internal set; }
+    /// <summary>
+    ///     Gets the date of the challenge.
+    /// </summary>
+    /// <value>The date of the challenge.</value>
+    public DateTimeOffset Date { get; private set; }
 
-    /// <inheritdoc />
-    public string Description { get; internal set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the description of the challenge.
+    /// </summary>
+    /// <value>The description of the challenge.</value>
+    public string Description { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public ShortGuid Id { get; internal set; }
+    /// <summary>
+    ///     Gets the ID of the challenge.
+    /// </summary>
+    /// <value>The ID of the challenge.</value>
+    public ShortGuid Id { get; private set; }
 
-    /// <inheritdoc />
-    public int? OldId { get; internal set; }
+    /// <summary>
+    ///     Gets the old ID of the challenge.
+    /// </summary>
+    /// <value>The old ID of the challenge.</value>
+    public int? OldId { get; private set; }
 
-    /// <inheritdoc />
-    public string? Password { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the password for the challenge.
+    /// </summary>
+    /// <value>The password for the challenge.</value>
+    public string? Password { get; set; }
 
-    /// <inheritdoc />
-    public bool ShowSolution { get; internal set; }
+    /// <summary>
+    ///     Gets or sets a value indicating whether the solution should be shown.
+    /// </summary>
+    /// <value><see langword="true" /> if the solution should be shown; otherwise, <see langword="false" />.</value>
+    public bool ShowSolution { get; set; }
 
-    /// <inheritdoc />
-    public string? Solution { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the solution for the challenge.
+    /// </summary>
+    /// <value>The solution for the challenge.</value>
+    public string? Solution { get; set; }
 
-    /// <inheritdoc />
-    public string Title { get; internal set; } = string.Empty;
+    /// <summary>
+    ///     Gets or sets the title of the challenge.
+    /// </summary>
+    /// <value>The title of the challenge.</value>
+    public string Title { get; set; } = string.Empty;
 
-    /// <inheritdoc />
-    public Visibility Visibility { get; internal set; }
+    /// <summary>
+    ///     Gets or sets the visibility of the challenge.
+    /// </summary>
+    /// <value>The visibility of the challenge.</value>
+    public Visibility Visibility { get; set; }
 }
