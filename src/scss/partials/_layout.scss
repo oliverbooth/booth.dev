@@ -1,0 +1,54 @@
+html,
+body {
+  height: 100%;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  min-width: 0;
+  position: relative;
+  flex: 1 0 auto;
+}
+
+.page,
+.page-wide {
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  position: relative;
+  background: var(--bg);
+}
+
+.page {
+  max-width: var(--content-width);
+}
+
+.page-wide {
+  max-width: 760px;
+}
+
+.crumb {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+
+  a {
+    text-decoration: none;
+    color: var(--text-muted);
+
+    &:hover {
+      color: var(--text-secondary);
+    }
+  }
+}
+
+@media (max-width: 860px) {
+  .page,
+  .page-wide {
+    padding: 2rem 1.25rem 5rem;
+  }
+}

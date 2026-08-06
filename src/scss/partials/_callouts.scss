@@ -1,0 +1,85 @@
+.callout {
+  border: 0.5px solid var(--border);
+  border-left: 3px solid var(--text-secondary);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.35rem;
+  margin-bottom: 1rem;
+  background: var(--surface-1);
+}
+
+.callout-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.callout-body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+
+  p {
+    margin: 0 0 0.75rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  hr {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 0.9rem 0;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+}
+
+.callout-danger {
+  border-left-color: var(--danger-text);
+
+  .callout-title {
+    color: var(--danger-text);
+  }
+}
+
+.callout-warning {
+  border-left-color: var(--warning-text);
+
+  .callout-title {
+    color: var(--warning-text);
+  }
+}
+
+.callout-info {
+  border-left-color: var(--info-text);
+
+  .callout-title {
+    color: var(--info-text);
+  }
+}
+
+.callout-note {
+  border-left-color: var(--accent);
+
+  .callout-title {
+    color: var(--accent);
+  }
+}
+
+.callout-success {
+  border-left-color: var(--success-text);
+
+  .callout-title {
+    color: var(--success-text);
+  }
+}
