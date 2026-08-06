@@ -55,3 +55,45 @@
     margin: 0;
   }
 }
+
+.section-icon {
+  font-size: 18px;
+  vertical-align: -3px;
+  margin-right: 6px;
+
+  &--accent { color: var(--accent); }
+  &--muted { color: var(--text-muted); }
+  &--success { color: var(--success-text); }
+}
+
+.item-icon {
+  font-size: 12px;
+
+  &--success { color: var(--success-text); }
+  &--muted { color: var(--text-muted); }
+}
+
+.stack-meta--row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stack-author {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.isbn-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-list {
+  margin-bottom: 2rem;
+}

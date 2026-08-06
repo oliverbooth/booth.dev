@@ -96,17 +96,6 @@
   font-family: var(--font-sans);
 }
 
-[data-reveal],
-[data-command],
-[data-prompt] {
-  opacity: 0;
-  transition: opacity 0.25s ease;
-
-  &.is-visible {
-    opacity: 1;
-  }
-}
-
 @keyframes blink {
   50% {
     border-color: transparent;
