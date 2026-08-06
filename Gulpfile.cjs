@@ -9,6 +9,11 @@ const webpack = require('webpack-stream');
 const srcDir = 'src';
 const destDir = 'BoothDotDev/wwwroot';
 
+async function clean() {
+    const {deleteAsync} = await import('del');
+    return deleteAsync([`${destDir}/**/*`, `tmp/**/*`]);
+}
+
 function compileSCSS() {
     return gulp.src(`${srcDir}/scss/**/*.scss`)
         .pipe(sass().on('error', sass.logError))
@@ -47,8 +52,9 @@ function copyImages() {
         .pipe(gulp.dest(`${destDir}/img`));
 }
 
+exports.clean = clean;
 exports.assets = copyImages;
 exports.styles = gulp.parallel(compileSCSS, copyCSS);
 exports.scripts = gulp.parallel(copyJS, gulp.series(compileTS, bundleJS));
 
-exports.default = gulp.parallel(exports.styles, exports.scripts, exports.assets);
+exports.default = gulp.series(clean, gulp.parallel(exports.styles, exports.scripts, exports.assets));
