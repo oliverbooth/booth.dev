@@ -19,25 +19,28 @@ internal sealed class BlogContext : DbContext
     public BlogContext(IConfiguration configuration)
     {
         _configuration = configuration;
+        BlogPosts = Set<BlogPost>();
+        LegacyComments = Set<LegacyComment>();
+        Users = Set<User>();
     }
 
     /// <summary>
     ///     Gets the collection of blog posts in the database.
     /// </summary>
     /// <value>The collection of blog posts.</value>
-    public DbSet<BlogPost> BlogPosts { get; private set; } = null!;
+    public DbSet<BlogPost> BlogPosts { get; private set; }
 
     /// <summary>
     ///     Gets the collection of legacy comments in the database.
     /// </summary>
     /// <value>The collection of legacy comments.</value>
-    public DbSet<LegacyComment> LegacyComments { get; private set; } = null!;
+    public DbSet<LegacyComment> LegacyComments { get; private set; }
 
     /// <summary>
     ///     Gets the collection of users in the database.
     /// </summary>
     /// <value>The collection of users.</value>
-    public DbSet<User> Users { get; private set; } = null!;
+    public DbSet<User> Users { get; private set; }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
