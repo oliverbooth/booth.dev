@@ -29,20 +29,22 @@ h1,
 h2,
 h3 {
   font-weight: 500;
-  margin: 0;
   line-height: 1.25;
 }
 
 h1 {
   font-size: 30px;
+  margin: 0 0 1.5rem;
 }
 
 h2 {
   font-size: 19px;
+  margin: 0 0 12px;
 }
 
 h3 {
   font-size: 16px;
+  margin: 0;
 }
 
 p {
@@ -78,6 +80,59 @@ button:focus-visible,
     font-weight: 500;
     text-decoration: none;
   }
+}
+
+.body-copy {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin: 0 0 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  a {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  strong,
+  .emphasis {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+}
+
+.avatar-box {
+  width: 88px;
+  height: 88px;
+  border-radius: 12px;
+  background: var(--surface-1);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 32px;
+    color: var(--text-muted);
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+}
+
+.about-intro {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 860px) {
