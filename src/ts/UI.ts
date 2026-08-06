@@ -19,6 +19,7 @@ class UI {
         UI.applyAnsi(element);
         UI.fixCanvas(element);
         UI.runTerminalTypewriters(element);
+        UI.enableFilterPills(element);
     }
 
     /**
@@ -49,6 +50,41 @@ class UI {
         element.querySelectorAll("pre code").forEach((block) => {
             Prism.highlightAllUnder(block.parentElement);
         });
+    }
+
+    /**
+     * Enables filter pills to toggle visibility of sections based on their data-state attribute.
+     * @param element The element to search for filter rows in.
+     */
+    public static enableFilterPills(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll<HTMLElement>("[data-filter-scope]").forEach((scope) => {
+            const filterRow = scope.querySelector<HTMLElement>(".filter-row");
+            if (!filterRow) return;
+
+            const pills = Array.from(filterRow.querySelectorAll<HTMLElement>(".pill"));
+            const sections = Array.from(scope.querySelectorAll<HTMLElement>("[data-state]"));
+
+            sections.forEach((section) => section.classList.add("is-visible"));
+
+            pills.forEach((pill) => {
+                pill.addEventListener("click", () => {
+                    const filter = pill.dataset.filter ?? "all";
+
+                    pills.forEach((p) => p.classList.remove("active"));
+                    pill.classList.add("active");
+
+                    sections.forEach((section) => {
+                        const matches = filter === "all" || section.dataset.state === filter;
+                        UI.setSectionVisible(section, matches);
+                    });
+                });
+            });
+        });
+    }
+
+    private static setSectionVisible(section: HTMLElement, visible: boolean): void {
+        section.classList.toggle("is-collapsed", !visible);
     }
 
     /**
