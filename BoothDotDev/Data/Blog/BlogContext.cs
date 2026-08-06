@@ -1,4 +1,5 @@
 using BoothDotDev.Common.Data;
+using BoothDotDev.Common.Data.Blog;
 using BoothDotDev.Data.Blog.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.NameTranslation;
@@ -43,6 +44,7 @@ internal sealed class BlogContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("blog");
+        modelBuilder.HasPostgresEnum<BlogPostType>("public", "blog_post_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
 
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());

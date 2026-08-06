@@ -52,6 +52,9 @@ internal sealed class BlogPost : IBlogPost
     public string Title { get; internal set; } = string.Empty;
 
     /// <inheritdoc />
+    public BlogPostType Type { get; internal set; }
+
+    /// <inheritdoc />
     public DateTimeOffset? Updated { get; internal set; }
 
     /// <inheritdoc />

@@ -98,6 +98,12 @@ public interface IBlogPost
     string Title { get; }
 
     /// <summary>
+    ///     Gets or sets the type of the blog post.
+    /// </summary>
+    /// <value>The type of the blog post.</value>
+    BlogPostType Type { get; }
+
+    /// <summary>
     ///     Gets the date and time the post was last updated.
     /// </summary>
     /// <value>The update date and time, or <see langword="null" /> if the post has not been updated.</value>
