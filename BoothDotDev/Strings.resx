@@ -27,4 +27,7 @@
     <data name="MyName" xml:space="preserve">
         <value>Oliver Booth</value>
     </data>
+    <data name="Tagline" xml:space="preserve">
+        <value>Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.</value>
+    </data>
 </root>
