@@ -51,7 +51,7 @@ internal sealed class DevChallengeService : IDevChallengeService
             challenges = challenges.Where(c => c.Visibility == visibility);
         }
 
-        return challenges.ToArray();
+        return [.. challenges];
     }
 
     /// <inheritdoc />

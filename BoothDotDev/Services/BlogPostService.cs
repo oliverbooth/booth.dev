@@ -81,7 +81,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             ordered = ordered.Take(limit);
         }
 
-        return ordered.AsEnumerable().Select(CacheAuthor).ToArray();
+        return [.. ordered.AsEnumerable().Select(CacheAuthor)];
     }
 
     /// <inheritdoc />
@@ -105,7 +105,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         }
 
         posts = posts.Skip(page * pageSize).Take(pageSize);
-        return posts.AsEnumerable().Select(CacheAuthor).ToArray();
+        return [.. posts.AsEnumerable().Select(CacheAuthor)];
     }
 
     /// <inheritdoc />
@@ -119,14 +119,14 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     public IReadOnlyList<ILegacyComment> GetLegacyComments(IBlogPost post)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null).ToArray();
+        return [.. context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null)];
     }
 
     /// <inheritdoc />
     public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
+        return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
     }
 
     /// <inheritdoc />
@@ -233,11 +233,13 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             return [];
         }
 
-        string[] terms = searchText
-            .Split(' ', splitOptions)
-            .Select(t => t.Trim())
-            .Where(t => t.Length > 0)
-            .ToArray();
+        string[] terms =
+        [
+            .. searchText
+                .Split(' ', splitOptions)
+                .Select(t => t.Trim())
+                .Where(t => t.Length > 0)
+        ];
 
         if (terms.Length == 0)
         {
@@ -247,7 +249,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         const int maxResults = 50;
         var results = new HashSet<BlogPost>(maxResults);
 
-        BlogPost[] posts = _postCache.Values.OrderByDescending(p => p.Published).ToArray();
+        BlogPost[] posts = [.. _postCache.Values.OrderByDescending(p => p.Published)];
         foreach (BlogPost post in posts)
         {
             if (post.Visibility != Visibility.Published || post.IsRedirect)

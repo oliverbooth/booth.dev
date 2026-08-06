@@ -32,7 +32,7 @@ internal sealed class CodeSnippetService : ICodeSnippetService
             languages.Add(snippet.Language);
         }
 
-        return languages.ToArray();
+        return [.. languages];
     }
 
     /// <inheritdoc />

@@ -39,7 +39,7 @@ internal sealed class TutorialService : ITutorialService
         IQueryable<TutorialArticle> articles = context.TutorialArticles.Where(a => a.Folder == folder.Id);
 
         if (visibility != Visibility.None) articles = articles.Where(a => a.Visibility == visibility);
-        return articles.OrderBy(a => a.Rank).ToArray();
+        return [.. articles.OrderBy(a => a.Rank)];
     }
 
     /// <inheritdoc />
@@ -51,7 +51,7 @@ internal sealed class TutorialService : ITutorialService
 
         folders = parent is null ? folders.Where(f => f.Parent == null) : folders.Where(f => f.Parent == parent.Id);
         if (visibility != Visibility.None) folders = folders.Where(a => a.Visibility == visibility);
-        return folders.OrderBy(f => f.Rank).ToArray();
+        return [.. folders.OrderBy(f => f.Rank)];
     }
 
     /// <inheritdoc />
@@ -129,14 +129,14 @@ internal sealed class TutorialService : ITutorialService
         }
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Where(c => c.PostId == postId && c.ParentComment == null).ToArray();
+        return [.. context.LegacyComments.Where(c => c.PostId == postId && c.ParentComment == null)];
     }
 
     /// <inheritdoc />
     public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
+        return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
     }
 
     /// <inheritdoc />

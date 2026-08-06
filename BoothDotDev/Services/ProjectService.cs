@@ -39,23 +39,25 @@ internal sealed class ProjectService : IProjectService
     public IReadOnlyList<IProject> GetAllProjects()
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.Projects.OrderBy(p => p.Rank).ThenBy(p => p.Name).ToArray();
+        return [.. context.Projects.OrderBy(p => p.Rank).ThenBy(p => p.Name)];
     }
 
     /// <inheritdoc />
     public IReadOnlyList<IProgrammingLanguage> GetProgrammingLanguages(IProject project)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return project.Languages
-            .Select(l => context.ProgrammingLanguages.Find(l) ?? new ProgrammingLanguage { Name = l.Titleize() })
-            .ToArray();
+        return
+        [
+            .. project.Languages
+                .Select(l => context.ProgrammingLanguages.Find(l) ?? new ProgrammingLanguage { Name = l.Titleize() })
+        ];
     }
 
     /// <inheritdoc />
     public IReadOnlyList<IProject> GetProjects(ProjectStatus status = ProjectStatus.Ongoing)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.Projects.Where(p => p.Status == status).OrderBy(p => p.Rank).ThenBy(p => p.Name).ToArray();
+        return [.. context.Projects.Where(p => p.Status == status).OrderBy(p => p.Rank).ThenBy(p => p.Name)];
     }
 
     /// <inheritdoc />
