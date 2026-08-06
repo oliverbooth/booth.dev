@@ -67,9 +67,9 @@ builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
 builder.Services.AddMemoryCache();
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 WebApplication app = builder.Build();
