@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
-using BoothDotDev.Data.Web;
+using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
@@ -9,13 +10,13 @@ namespace BoothDotDev.Services;
 /// <inheritdoc />
 internal sealed class CodeSnippetService : ICodeSnippetService
 {
-    private readonly IDbContextFactory<WebContext> _dbContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CodeSnippetService" /> class.
     /// </summary>
-    /// <param name="dbContextFactory">The <see cref="WebContext" /> factory.</param>
-    public CodeSnippetService(IDbContextFactory<WebContext> dbContextFactory)
+    /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
+    public CodeSnippetService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
@@ -24,7 +25,7 @@ internal sealed class CodeSnippetService : ICodeSnippetService
     public IReadOnlyList<string> GetLanguagesForSnippet(int id)
     {
         var languages = new HashSet<string>();
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
 
         foreach (CodeSnippet snippet in context.CodeSnippets.Where(s => s.Id == id))
         {
@@ -42,7 +43,7 @@ internal sealed class CodeSnippetService : ICodeSnippetService
             throw new ArgumentNullException(nameof(language));
         }
 
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<CodeSnippet> snippets = context.CodeSnippets.Where(s => s.Id == id);
         snippet = snippets.FirstOrDefault(s => s.Language == language);
         return snippet is not null;

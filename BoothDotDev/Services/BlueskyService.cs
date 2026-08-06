@@ -1,7 +1,9 @@
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 using System.Text.Json;
 using BoothDotDev.Data;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+
+namespace BoothDotDev.Services;
 
 /// <summary>
 ///     Represents a service for interacting with Bluesky.

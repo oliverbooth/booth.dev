@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace BoothDotDev.Common.Services;

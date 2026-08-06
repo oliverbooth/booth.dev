@@ -2,10 +2,10 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Timers;
 using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Blog;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
-using BoothDotDev.Data.Blog;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using Humanizer;
 using Markdig;
@@ -21,7 +21,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
 {
     private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10).TotalMilliseconds);
     private readonly ILogger<BlogPostService> _logger;
-    private readonly IDbContextFactory<BlogContext> _dbContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly IBlogUserService _blogUserService;
     private readonly MarkdownPipeline _markdownPipeline;
     private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
@@ -31,12 +31,12 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{TCategoryName}" />.</param>
     /// <param name="dbContextFactory">
-    ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="BlogContext" />.
+    ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
     /// <param name="blogUserService">The <see cref="IBlogUserService" />.</param>
     /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
     public BlogPostService(ILogger<BlogPostService> logger,
-        IDbContextFactory<BlogContext> dbContextFactory,
+        IDbContextFactory<AppDbContext> dbContextFactory,
         IBlogUserService blogUserService,
         MarkdownPipeline markdownPipeline)
     {
@@ -49,7 +49,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         if (tags is { Length: > 0 })
         {
             for (var index = 0; index < tags.Length; index++)
@@ -72,7 +72,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public IReadOnlyList<IBlogPost> GetAllBlogPosts(int limit = -1)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<BlogPost> ordered = context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published);
@@ -88,7 +88,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize,
         string[]? tags = null)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IEnumerable<BlogPost> posts = context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published);
@@ -111,28 +111,28 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public int GetLegacyCommentCount(IBlogPost post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Count(c => c.PostId == post.Id);
     }
 
     /// <inheritdoc />
     public IReadOnlyList<ILegacyComment> GetLegacyComments(IBlogPost post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null).ToArray();
     }
 
     /// <inheritdoc />
     public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
     }
 
     /// <inheritdoc />
     public IBlogPost? GetNextPost(IBlogPost blogPost)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderBy(post => post.Published)
@@ -150,7 +150,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public IBlogPost? GetPreviousPost(IBlogPost blogPost)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
@@ -296,7 +296,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public bool TryGetPost(Guid id, [NotNullWhen(true)] out IBlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.Find(id);
         if (post is null)
         {
@@ -310,7 +310,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public bool TryGetPost(int id, [NotNullWhen(true)] out IBlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == id);
         if (post is null)
         {
@@ -324,7 +324,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public bool TryGetPost(string slug, [NotNullWhen(true)] out IBlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(post => post.Slug == slug);
 
         if (post is null)
@@ -339,7 +339,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// <inheritdoc />
     public bool TryGetPost(DateOnly publishDate, string slug, [NotNullWhen(true)] out IBlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(post => post.Published.Year == publishDate.Year &&
                                                         post.Published.Month == publishDate.Month &&
                                                         post.Published.Day == publishDate.Day &&
@@ -376,7 +376,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         _logger.LogInformation("Invalidating blog post cache...");
         _postCache.Clear();
 
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         foreach (BlogPost post in context.BlogPosts)
         {
             _postCache[post.Id] = post;

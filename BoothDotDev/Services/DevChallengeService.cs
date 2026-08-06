@@ -1,8 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
-using BoothDotDev.Data.Web;
+using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using DEDrake;
 using Microsoft.EntityFrameworkCore;
 using BC = BCrypt.Net.BCrypt;
@@ -12,13 +13,13 @@ namespace BoothDotDev.Services;
 /// <inheritdoc />
 internal sealed class DevChallengeService : IDevChallengeService
 {
-    private readonly IDbContextFactory<WebContext> _dbContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DevChallengeService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The factory for creating the web database context.</param>
-    public DevChallengeService(IDbContextFactory<WebContext> dbContextFactory)
+    public DevChallengeService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
@@ -42,7 +43,7 @@ internal sealed class DevChallengeService : IDevChallengeService
     /// <inheritdoc />
     public IReadOnlyList<IDevChallenge> GetDevChallenges(Visibility visibility)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<DevChallenge> challenges = context.DevChallenges.OrderBy(c => c.Date);
 
         if (visibility != Visibility.None)

@@ -1,4 +1,4 @@
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

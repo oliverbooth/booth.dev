@@ -1,5 +1,6 @@
 using BoothDotDev.Common.Services;
-using BoothDotDev.Data.Web;
+using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
@@ -7,13 +8,13 @@ namespace BoothDotDev.Services;
 /// <inheritdoc />
 internal sealed class ProgrammingLanguageService : IProgrammingLanguageService
 {
-    private readonly IDbContextFactory<WebContext> _dbContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProgrammingLanguageService" /> class.
     /// </summary>
-    /// <param name="dbContextFactory">The <see cref="WebContext" /> factory.</param>
-    public ProgrammingLanguageService(IDbContextFactory<WebContext> dbContextFactory)
+    /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
+    public ProgrammingLanguageService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
@@ -21,7 +22,7 @@ internal sealed class ProgrammingLanguageService : IProgrammingLanguageService
     /// <inheritdoc />
     public string GetLanguageName(string alias)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         ProgrammingLanguage? language = context.ProgrammingLanguages.FirstOrDefault(l => l.Key == alias);
         return language?.Name ?? alias;
     }

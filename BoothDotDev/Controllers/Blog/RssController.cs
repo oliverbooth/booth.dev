@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using BoothDotDev.Common.Data.Blog;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
-using BoothDotDev.Data.Blog.Rss;
+using BoothDotDev.Data.Models.Rss;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BoothDotDev.Controllers.Blog;

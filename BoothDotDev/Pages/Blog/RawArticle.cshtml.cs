@@ -1,4 +1,4 @@
-using BoothDotDev.Common.Data.Blog;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
 using Cysharp.Text;
 using Microsoft.AspNetCore.Mvc;

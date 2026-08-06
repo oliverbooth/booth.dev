@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 
 namespace BoothDotDev.Common.Services;
 

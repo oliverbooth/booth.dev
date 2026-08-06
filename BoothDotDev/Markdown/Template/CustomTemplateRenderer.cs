@@ -1,4 +1,4 @@
-using BoothDotDev.Data.Web;
+using BoothDotDev.Data;
 using BoothDotDev.Extensions.Markdig.Markdown.Template;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,14 +15,14 @@ internal abstract class CustomTemplateRenderer
     /// <param name="serviceProvider">The service provider.</param>
     protected CustomTemplateRenderer(IServiceProvider serviceProvider)
     {
-        DbContextFactory = serviceProvider.GetRequiredService<IDbContextFactory<WebContext>>();
+        DbContextFactory = serviceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
     }
 
     /// <summary>
-    ///     Gets the <see cref="WebContext" /> factory that was injected into this instance.
+    ///     Gets the <see cref="AppDbContext" /> factory that was injected into this instance.
     /// </summary>
-    /// <value>An <see cref="IDbContextFactory{TContext}" /> for <see cref="WebContext" />.</value>
-    protected IDbContextFactory<WebContext> DbContextFactory { get; }
+    /// <value>An <see cref="IDbContextFactory{TContext}" /> for <see cref="AppDbContext" />.</value>
+    protected IDbContextFactory<AppDbContext> DbContextFactory { get; }
 
     /// <summary>
     ///     Renders the specified template.

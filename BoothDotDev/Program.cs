@@ -1,10 +1,5 @@
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Data.Web;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
-using BoothDotDev.Data.Blog;
-using BoothDotDev.Data.Web;
 using BoothDotDev.Extensions;
 using BoothDotDev.Extensions.Markdig.Services;
 using BoothDotDev.Pages.Components;
@@ -33,24 +28,15 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
 builder.Services.AddMarkdownPipeline();
-builder.Services.AddDbContextFactory<BlogContext>((services, options) =>
+builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 {
     var configuration = services.GetRequiredService<IConfiguration>();
-    var logger = services.GetRequiredService<ILogger<BlogContext>>();
-    var connectionString = configuration.GetValue<string>("BLOG_CONNECTION_STRING") ?? throw new InvalidOperationException("BLOG_CONNECTION_STRING is not set");
+    var logger = services.GetRequiredService<ILogger<AppDbContext>>();
+    var connectionString = configuration.GetValue<string>("DB_CONNECTION_STRING") ??
+                           throw new InvalidOperationException("DB_CONNECTION_STRING is not set");
 
-    logger.LogTrace("Using PostgreSQL database provider for BlogContext");
-    BlogContextConfig.Configure(options, connectionString);
-});
-
-builder.Services.AddDbContextFactory<WebContext>((services, options) =>
-{
-    var configuration = services.GetRequiredService<IConfiguration>();
-    var logger = services.GetRequiredService<ILogger<WebContext>>();
-    var connectionString = configuration.GetValue<string>("WEB_CONNECTION_STRING") ?? throw new InvalidOperationException("WEB_CONNECTION_STRING is not set");
-
-    logger.LogTrace("Using PostgreSQL database provider for WebContext");
-    WebContextConfig.Configure(options, connectionString);
+    logger.LogTrace("Using PostgreSQL database provider for AppDbContext");
+    AppDbContextConfig.Configure(options, connectionString);
 });
 
 builder.Services.AddHttpClient();
@@ -75,8 +61,7 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 WebApplication app = builder.Build();
-await ConfigureMigrationsAsync<BlogContext>(app.Services);
-await ConfigureMigrationsAsync<WebContext>(app.Services);
+await ConfigureMigrationsAsync<AppDbContext>(app.Services);
 
 if (!app.Environment.IsDevelopment())
 {

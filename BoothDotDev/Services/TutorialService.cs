@@ -1,11 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
-using BoothDotDev.Data.Blog;
-using BoothDotDev.Data.Web;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using Cysharp.Text;
 using Humanizer;
@@ -16,23 +14,19 @@ namespace BoothDotDev.Services;
 
 internal sealed class TutorialService : ITutorialService
 {
-    private readonly IDbContextFactory<BlogContext> _blogContextFactory;
-    private readonly IDbContextFactory<WebContext> _dbContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MarkdownPipeline _markdownPipeline;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TutorialService" /> class.
     /// </summary>
-    /// <param name="dbContextFactory">The <see cref="WebContext" /> factory.</param>
-    /// <param name="blogContextFactory">The <see cref="BlogContext" /> factory.</param>
+    /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
     /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
-    public TutorialService(IDbContextFactory<WebContext> dbContextFactory,
-        IDbContextFactory<BlogContext> blogContextFactory,
+    public TutorialService(IDbContextFactory<AppDbContext> dbContextFactory,
         MarkdownPipeline markdownPipeline)
     {
         _dbContextFactory = dbContextFactory;
         _markdownPipeline = markdownPipeline;
-        _blogContextFactory = blogContextFactory;
     }
 
     /// <inheritdoc />
@@ -41,7 +35,7 @@ internal sealed class TutorialService : ITutorialService
     {
         if (folder is null) throw new ArgumentNullException(nameof(folder));
 
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<TutorialArticle> articles = context.TutorialArticles.Where(a => a.Folder == folder.Id);
 
         if (visibility != Visibility.None) articles = articles.Where(a => a.Visibility == visibility);
@@ -52,7 +46,7 @@ internal sealed class TutorialService : ITutorialService
     public IReadOnlyList<ITutorialFolder> GetFolders(ITutorialFolder? parent = null,
         Visibility visibility = Visibility.None)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<TutorialFolder> folders = context.TutorialFolders;
 
         folders = parent is null ? folders.Where(f => f.Parent == null) : folders.Where(f => f.Parent == parent.Id);
@@ -63,7 +57,7 @@ internal sealed class TutorialService : ITutorialService
     /// <inheritdoc />
     public ITutorialFolder? GetFolder(Guid id)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.TutorialFolders.FirstOrDefault(f => f.Id == id);
     }
 
@@ -71,7 +65,7 @@ internal sealed class TutorialService : ITutorialService
     [return: NotNullIfNotNull(nameof(slug))]
     public ITutorialFolder? GetFolder(string? slug, ITutorialFolder? parent = null)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return parent is null
             ? context.TutorialFolders.FirstOrDefault(a => a.Slug == slug)
             : context.TutorialFolders.FirstOrDefault(a => a.Slug == slug && a.Parent == parent.Id);
@@ -122,7 +116,7 @@ internal sealed class TutorialService : ITutorialService
             return 0;
         }
 
-        using BlogContext context = _blogContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Count(c => c.PostId == postId);
     }
 
@@ -134,14 +128,14 @@ internal sealed class TutorialService : ITutorialService
             return ArraySegment<ILegacyComment>.Empty;
         }
 
-        using BlogContext context = _blogContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Where(c => c.PostId == postId && c.ParentComment == null).ToArray();
     }
 
     /// <inheritdoc />
     public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
     {
-        using BlogContext context = _blogContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
     }
 
@@ -212,7 +206,7 @@ internal sealed class TutorialService : ITutorialService
     /// <inheritdoc />
     public bool TryGetArticle(Guid id, [NotNullWhen(true)] out ITutorialArticle? article)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         article = context.TutorialArticles.FirstOrDefault(a => a.Id == id);
         return article is not null;
     }
@@ -241,7 +235,7 @@ internal sealed class TutorialService : ITutorialService
             return false;
         }
 
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         slug = tokens[^1];
         article = context.TutorialArticles.FirstOrDefault(a => a.Slug == slug && a.Folder == folder.Id);
         return article is not null;

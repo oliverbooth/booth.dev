@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Web;
+using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Extensions.Markdig.Markdown.Template;
 
 namespace BoothDotDev.Extensions.Markdig.Services;

@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Web;
-using BoothDotDev.Data.Web;
+using BoothDotDev.Common.Data.Models;
+using BoothDotDev.Data;
 using BoothDotDev.Extensions.Markdig.Markdown.Template;
 using BoothDotDev.Extensions.Markdig.Services;
 using BoothDotDev.Extensions.SmartFormat;
@@ -20,7 +20,7 @@ internal sealed class TemplateService : ITemplateService
     private readonly Dictionary<string, CustomTemplateRenderer> _customTemplateRendererOverrides = new();
     private static readonly Random Random = new();
     private readonly ILogger<TemplateService> _logger;
-    private readonly IDbContextFactory<WebContext> _webContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly SmartFormatter _formatter;
 
     /// <summary>
@@ -28,10 +28,10 @@ internal sealed class TemplateService : ITemplateService
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" />.</param>
-    /// <param name="webContextFactory">The <see cref="WebContext" /> factory.</param>
+    /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
     public TemplateService(ILogger<TemplateService> logger,
         IServiceProvider serviceProvider,
-        IDbContextFactory<WebContext> webContextFactory)
+        IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _logger = logger;
 
@@ -44,7 +44,7 @@ internal sealed class TemplateService : ITemplateService
         _logger.LogDebug("Registering template override Snippet to CodeSnippetTemplateRenderer");
         AddRendererOverride("Snippet", new CodeSnippetTemplateRenderer(serviceProvider));
 
-        _webContextFactory = webContextFactory;
+        _dbContextFactory = dbContextFactory;
     }
 
     /// <inheritdoc />
@@ -107,7 +107,7 @@ internal sealed class TemplateService : ITemplateService
     /// <inheritdoc />
     public bool TryGetTemplate(string name, string variant, [NotNullWhen(true)] out ITemplate? template)
     {
-        using WebContext context = _webContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         template = context.Templates.FirstOrDefault(t => t.Name == name && t.Variant == variant);
         return template is not null;
     }
