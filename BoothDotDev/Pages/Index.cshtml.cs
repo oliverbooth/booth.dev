@@ -1,6 +1,5 @@
 using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Common.Services;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages;
