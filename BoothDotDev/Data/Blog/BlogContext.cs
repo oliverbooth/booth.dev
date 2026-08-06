@@ -10,15 +10,12 @@ namespace BoothDotDev.Data.Blog;
 /// </summary>
 internal sealed class BlogContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogContext" /> class.
     /// </summary>
-    /// <param name="configuration">The configuration.</param>
-    public BlogContext(IConfiguration configuration)
+    /// <param name="options">The options for this context.</param>
+    public BlogContext(DbContextOptions<BlogContext> options) : base(options)
     {
-        _configuration = configuration;
         BlogPosts = Set<BlogPost>();
         LegacyComments = Set<LegacyComment>();
         Users = Set<User>();
@@ -41,14 +38,6 @@ internal sealed class BlogContext : DbContext
     /// </summary>
     /// <value>The collection of users.</value>
     public DbSet<User> Users { get; private set; }
-
-    /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        string connectionString = _configuration.GetConnectionString("Blog") ?? string.Empty;
-        optionsBuilder.UseNpgsql(connectionString, o => o.MapEnum<Visibility>("visibility", "public"));
-        optionsBuilder.UseSnakeCaseNamingConvention();
-    }
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)

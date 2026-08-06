@@ -11,15 +11,12 @@ namespace BoothDotDev.Data.Web;
 /// </summary>
 internal sealed class WebContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="WebContext" /> class.
     /// </summary>
-    /// <param name="configuration">The configuration.</param>
-    public WebContext(IConfiguration configuration)
+    /// <param name="options">The options for this context.</param>
+    public WebContext(DbContextOptions<WebContext> options) : base(options)
     {
-        _configuration = configuration;
         Books = Set<Book>();
         CodeSnippets = Set<CodeSnippet>();
         DevChallenges = Set<DevChallenge>();
@@ -84,19 +81,6 @@ internal sealed class WebContext : DbContext
     /// </summary>
     /// <value>The collection of tutorial folders.</value>
     public DbSet<TutorialFolder> TutorialFolders { get; private set; }
-
-    /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        string connectionString = _configuration.GetConnectionString("Web") ?? string.Empty;
-        optionsBuilder.UseNpgsql(connectionString, o =>
-        {
-            o.MapEnum<BookState>("book_state");
-            o.MapEnum<ProjectStatus>("project_status");
-            o.MapEnum<Visibility>("visibility");
-        });
-        optionsBuilder.UseSnakeCaseNamingConvention();
-    }
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
