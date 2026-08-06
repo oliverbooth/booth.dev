@@ -1,15 +1,25 @@
 @page "/error/403"
-<article>
-    <div class="text-center d-flex flex-column align-items-center">
-        <div class="p-2">
-            <h1 class="text-center">403 Forbidden</h1>
-        </div>
-        <div class="p-2">
-            <img class="img-fluid" src="~/img/error/403-forbidden.png">
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="terminal" style="margin-bottom:1.75rem">
+            <div class="terminal-bar">
+                <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
+            </div>
+            <div class="terminal-body">
+                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> cat /app/data/private.md</div>
+                <div class="out" style="margin-top:6px">cat: /app/data/private.md: Permission denied</div>
+            </div>
         </div>
 
-        <div class="p-2">
-            <p class="text-center">Access to the requested page is forbidden.</p>
+        <p class="error-code">Error 403</p>
+        <h1 class="error-title">Forbidden</h1>
+        <p class="error-desc">You don't have permission to view this. If you think that's wrong, it probably isn't, but you're welcome to ask.</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Back home</a>
+            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
         </div>
+
     </div>
-</article>
+</div>

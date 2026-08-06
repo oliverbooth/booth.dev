@@ -1,17 +1,25 @@
 @page "/error/429"
-<article>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="p-2">
-                <h1 class="text-center">429 Too Many Requests</h1>
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="terminal" style="margin-bottom:1.75rem">
+            <div class="terminal-bar">
+                <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
             </div>
-            <div class="p-2">
-                <p class="text-center">You are being rate limited.</p>
+            <div class="terminal-body">
+                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> for i in {1..999}; do curl booth.dev; done</div>
+                <div class="out" style="margin-top:6px">429: rate limit exceeded, retry after 30s</div>
             </div>
         </div>
 
-        <div class="align-self-stretch">
-            <img class="img-fluid" src="~/img/error/429-too-many-requests.png">
+        <p class="error-code">Error 429</p>
+        <h1 class="error-title">Too Many Requests</h1>
+        <p class="error-desc">Slow down a little. You've made too many requests in too short a window &mdash; try again shortly.</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Back home</a>
+            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
         </div>
+
     </div>
-</article>
+</div>
