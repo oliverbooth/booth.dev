@@ -135,6 +135,12 @@ button:focus-visible,
   margin-bottom: 2rem;
 }
 
+.footnote {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2rem;
+}
+
 @media (max-width: 860px) {
   h1 {
     font-size: 26px;

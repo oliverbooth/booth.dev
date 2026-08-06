@@ -49,6 +49,10 @@
   .out {
     color: var(--text-secondary);
     font-size: 13px;
+
+    &--danger {
+      color: var(--danger-text);
+    }
   }
 
   .cursor {
