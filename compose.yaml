@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: BoothDotDev/Dockerfile
+    environment:
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
     volumes:
       - /var/log/boothdotdev/site:/app/logs
       - /etc/boothdotdev/site:/app/data
