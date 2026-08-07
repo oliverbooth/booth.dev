@@ -77,7 +77,23 @@ app.MapRazorPages();
 app.MapGet("/contact", () => Results.StatusCode(StatusCodes.Status410Gone));
 app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", permanent: true));
 app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", permanent: true));
-app.MapGet("/blog/posts/{page}", () => Results.Redirect("/blog", permanent: true));
+app.MapGet("/blog/posts/{page:int}", () => Results.Redirect("/blog", permanent: true));
+app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month, int day, string slug) =>
+{
+    var blogPostService = app.Services.GetRequiredService<BlogPostService>();
+    var date = new DateOnly(year, month, day);
+    return blogPostService.TryGetPost(date, slug, out _)
+        ? Results.Redirect($"/blog/{slug}", permanent: true)
+        : Results.NotFound();
+});
+app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}/raw", (int year, int month, int day, string slug) =>
+{
+    var blogPostService = app.Services.GetRequiredService<BlogPostService>();
+    var date = new DateOnly(year, month, day);
+    return blogPostService.TryGetPost(date, slug, out _)
+        ? Results.Redirect($"/blog/{slug}/raw", permanent: true)
+        : Results.NotFound();
+});
 
 app.Run();
 return;
