@@ -1,33 +1,44 @@
 @page
 @using BoothDotDev.Extensions
+@using BoothDotDev.Services
 @model Index
+@inject BlogPostService BlogPostService
 
 <div class="page">
 
-    <h1 style="margin:0 0 6px">Write</h1>
-    <p class="lede">Dev writing, and the occasional dear friend.</p>
+    <p class="crumb"><a asp-page="/Index">Home</a> / Write</p>
+    <h1>Write</h1>
+    <p class="lede">I write for me, not for you. Unless it's tech-related. Then I write for you. But also me.</p>
 
-    <div class="filter-row">
-        <span class="pill active">All</span>
-        <span class="pill">Dev</span>
-        <span class="pill">Journal</span>
-    </div>
+    <div data-filter-scope>
+        <div class="filter-row">
+            <span class="pill active">All</span>
+            @foreach (var category in Model.BlogPostCategories)
+            {
+                <span class="pill" data-filter="@category.Id">@category.Name</span>
+            }
+        </div>
 
-    <div class="commit-log" style="margin-bottom:3rem">
-        @for (var index = 0; index < Model.BlogPosts.Count; index++)
-        {
-            var post = Model.BlogPosts[index];
-            var first = index == 0;
+        <div class="commit-log" style="margin-bottom:3rem">
+            @for (var index = 0; index < Model.BlogPosts.Count; index++)
+            {
+                var post = Model.BlogPosts[index];
+                var first = index == 0;
 
-            <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="commit">
-                <div class="commit-dot@(first ? "" : " muted")"></div>
-                <div class="commit-meta">
-                    <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
-                </div>
-                <p class="commit-title">@post.Title</p>
-                <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
-            </a>
-        }
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug"
+                   class="commit"
+                   data-state="@BlogPostService.GetParentCategory(post).Id">
+                    <div class="commit-inner">
+                        <div class="commit-dot@(first ? "" : " muted")"></div>
+                        <div class="commit-meta">
+                            <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
+                        </div>
+                        <p class="commit-title">@post.Title</p>
+                        <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
+                    </div>
+                </a>
+            }
+        </div>
     </div>
 
 </div>

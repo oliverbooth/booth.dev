@@ -22,8 +22,14 @@ internal sealed class Index : PageModel
     /// <summary>
     ///     Gets all blog posts.
     /// </summary>
-    /// <returns>All blog posts.</returns>
+    /// <value>All blog posts.</value>
     public IReadOnlyList<BlogPost> BlogPosts { get; private set; } = [];
+
+    /// <summary>
+    ///     Gets all blog post categories.
+    /// </summary>
+    /// <value>All blog post categories.</value>
+    public IReadOnlyList<BlogPostCategory> BlogPostCategories { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request for the blog index page.
@@ -40,6 +46,7 @@ internal sealed class Index : PageModel
         }
 
         BlogPosts = _blogPostService.GetAllBlogPosts();
+        BlogPostCategories = _blogPostService.GetTopLevelCategories();
         return Page();
     }
 

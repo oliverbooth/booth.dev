@@ -203,6 +203,36 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Gets the parent-most category of the specified blog post.
+    /// </summary>
+    /// <param name="post">The blog post whose parent category to retrieve.</param>
+    /// <returns>The parent-most category of the specified blog post.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="post"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The blog post does not have a valid parent category.</exception>
+    public BlogPostCategory GetParentCategory(BlogPost post)
+    {
+        if (post is null)
+        {
+            throw new ArgumentNullException(nameof(post));
+        }
+
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        BlogPostCategory? current = context.BlogPostCategories.Find(post.CategoryId);
+
+        while (current is not null)
+        {
+            if (context.BlogPostCategories.Find(current.ParentCategoryId) is not { } parent)
+            {
+                break;
+            }
+
+            current = parent;
+        }
+
+        return current ?? throw new InvalidOperationException("The blog post does not have a valid parent category.");
+    }
+
+    /// <summary>
     ///     Returns the previous blog post from the specified blog post.
     /// </summary>
     /// <param name="blogPost">The blog post whose previous post to return.</param>
@@ -214,6 +244,16 @@ public sealed class BlogPostService : BackgroundService
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < blogPost.Published);
+    }
+
+    /// <summary>
+    ///     Returns the top-level blog post categories.
+    /// </summary>
+    /// <returns>The top-level blog post categories.</returns>
+    public BlogPostCategory[] GetTopLevelCategories()
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return [.. context.BlogPostCategories.Where(category => category.ParentCategory == null)];
     }
 
     /// <summary>
