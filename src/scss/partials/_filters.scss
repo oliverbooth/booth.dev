@@ -24,4 +24,16 @@
     grid-template-rows: 0fr;
     opacity: 0;
   }
+
+  > .commit-inner,
+  > .section-inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  &.is-collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-bottom: 0;
+  }
 }
