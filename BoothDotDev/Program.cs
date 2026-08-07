@@ -97,7 +97,7 @@ async Task ConfigureMigrationsAsync<TContext>(IServiceProvider services) where T
             string[] pending = [.. await context.Database.GetPendingMigrationsAsync()];
             if (pending.Length > 0)
             {
-                logger.LogInformation("Applying migrations for {DbContext}: {Migrations}", contextName, string.Join(", ", pending));
+                logger.LogInformation("Applying migrations for {Context}: {Migrations}", contextName, string.Join(", ", pending));
                 await context.Database.MigrateAsync();
             }
 
@@ -105,7 +105,7 @@ async Task ConfigureMigrationsAsync<TContext>(IServiceProvider services) where T
         }
         catch (Exception ex) when (attempt < 5)
         {
-            logger.LogWarning(ex, "Migration attempt {Attempt} for {DbContext} failed. Retrying...", attempt, contextName);
+            logger.LogWarning(ex, "Migration attempt {Attempt} for {Context} failed. Retrying...", attempt, contextName);
             await Task.Delay(TimeSpan.FromSeconds(3));
         }
     }
