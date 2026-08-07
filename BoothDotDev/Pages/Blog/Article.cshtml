@@ -1,7 +1,11 @@
 @page "/blog/{slug}"
+@using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
+@using Humanizer
+@using Markdig
 @inject BlogPostService BlogPostService
+@inject MarkdownPipeline MarkdownPipeline
 @model Article
 
 @if (Model.ShowPasswordPrompt)
@@ -61,6 +65,98 @@
         </div>
     }
 
+    <a id="comments"></a>
+
+    @if (post.EnableComments)
+    {
+        <div class="giscus"></div>
+
+        @section Scripts
+        {
+            <script src="https://giscus.app/client.js"
+                    data-repo="oliverbooth/booth.dev"
+                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
+                    data-category="Comments"
+                    data-category-id="DIC_kwDODp0rOs4Ce_Nj"
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="dark"
+                    data-lang="en"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        }
+    }
+    else
+    {
+        <p class="no-comment">Comments are not enabled for this post.</p>
+    }
+
+    @{
+        var commentCount = BlogPostService.GetLegacyCommentCount(post);
+        if (commentCount > 0)
+        {
+            <div class="legacy-comments-heading">
+                <h2 style="margin:0">@("legacy comment".ToQuantity(commentCount))</h2>
+                <p class="legacy-comments-subtitle">
+                    Legacy comments were posted using a commenting system I no longer use. They exist here for posterity.
+                </p>
+            </div>
+
+            var nestLevelMap = new Dictionary<LegacyComment, int>();
+            var legacyComments = BlogPostService.GetLegacyComments(post);
+            var comments = legacyComments.OrderByDescending(c => c.CreatedAt);
+            var commentStack = new Stack<LegacyComment>(comments);
+
+            <div class="legacy-comment-thread">
+                @while (commentStack.Count > 0)
+                {
+                    var comment = commentStack.Pop();
+                    var replies = BlogPostService.GetLegacyReplies(comment);
+                    foreach (var reply in replies.OrderByDescending(c => c.CreatedAt))
+                    {
+                        if (nestLevelMap.TryGetValue(comment, out var currentLevel))
+                        {
+                            nestLevelMap[reply] = currentLevel + 1;
+                        }
+                        else
+                        {
+                            nestLevelMap[reply] = 1;
+                        }
+
+                        commentStack.Push(reply);
+                    }
+
+                    var isNested = nestLevelMap.ContainsKey(comment);
+                    var avatarUrl = comment.GetAvatarUrl();
+
+                    <div class="legacy-comment@(isNested ? " legacy-comment--nested" : "")">
+                        @if (!string.IsNullOrEmpty(avatarUrl))
+                        {
+                            <img class="legacy-comment-avatar" src="@avatarUrl" alt="@comment.Author">
+                        }
+                        else
+                        {
+                            <div class="legacy-comment-avatar-fallback">@comment.Author[0]</div>
+                        }
+                        <div class="legacy-comment-body">
+                            <div class="legacy-comment-header">
+                                <span class="legacy-comment-author">@comment.Author</span>
+                                <abbr class="legacy-comment-time"
+                                      title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
+                                    @comment.CreatedAt.Humanize()
+                                </abbr>
+                            </div>
+                            <div class="legacy-comment-content">@Html.Raw(Markdown.ToHtml(comment.Body, MarkdownPipeline))</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
 </div>
 
 @*
@@ -145,89 +241,4 @@
         </nav>
     </footer>
 </article>
-
-<a id="comments"></a>
-
-@if (post.EnableComments)
-{
-    <div class="giscus"></div>
-
-    @section Scripts
-    {
-        <script src="https://giscus.app/client.js"
-                data-repo="oliverbooth/booth.dev"
-                data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
-                data-category="Comments"
-                data-category-id="DIC_kwDODp0rOs4Ce_Nj"
-                data-mapping="pathname"
-                data-strict="0"
-                data-reactions-enabled="1"
-                data-emit-metadata="0"
-                data-input-position="bottom"
-                data-theme="@(lightTheme ? "light" : "dark")"
-                data-lang="en"
-                crossorigin="anonymous"
-                async>
-        </script>
-    }
-}
-else
-{
-    <p class="no-comment">Comments are not enabled for this post.</p>
-}
-
-@{
-    int commentCount = BlogPostService.GetLegacyCommentCount(post);
-    if (commentCount > 0)
-    {
-        <hr>
-
-        var nestLevelMap = new Dictionary<ILegacyComment, int>();
-        IReadOnlyList<ILegacyComment> legacyComments = BlogPostService.GetLegacyComments(post);
-        IOrderedEnumerable<ILegacyComment> comments = legacyComments.OrderByDescending(c => c.CreatedAt);
-        var commentStack = new Stack<ILegacyComment>(comments);
-        <p class="legacy-comment-counter">
-            <strong>@("legacy comment".ToQuantity(commentCount))</strong>
-        </p>
-        <p class="legacy-comment-subtitle">
-            <sub>Legacy comments are comments that were posted using a commenting system that I no longer use. This
-                exists for posterity.</sub>
-        </p>
-
-        while (commentStack.Count > 0)
-        {
-            ILegacyComment comment = commentStack.Pop();
-            IReadOnlyList<ILegacyComment> replies = BlogPostService.GetLegacyReplies(comment);
-            foreach (ILegacyComment reply in replies.OrderByDescending(c => c.CreatedAt))
-            {
-                if (nestLevelMap.TryGetValue(comment, out int currentLevel))
-                {
-                    nestLevelMap[reply] = currentLevel + 1;
-                }
-                else
-                {
-                    nestLevelMap[reply] = 1;
-                }
-
-                commentStack.Push(reply);
-            }
-
-            int padding = 0;
-            if (nestLevelMap.TryGetValue(comment, out int nestLevel))
-            {
-                padding = 50 * nestLevel;
-            }
-
-            <div class="legacy-comment" style="margin-left: @(padding)px;">
-                <img class="blog-author-icon" src="@comment.GetAvatarUrl()" alt="@comment.Author">
-                @comment.Author ·
-
-                <abbr class="text-muted" title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
-                    @comment.CreatedAt.Humanize()
-                </abbr>
-
-                <div class="comment">@Html.Raw(Markdown.ToHtml(comment.Body, MarkdownPipeline))</div>
-            </div>
-        }
-    }
-}*@
+*@
