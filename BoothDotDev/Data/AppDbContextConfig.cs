@@ -1,4 +1,3 @@
-using BoothDotDev.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.NameTranslation;
 
@@ -18,8 +17,8 @@ public static class AppDbContextConfig
     {
         builder.UseNpgsql(connectionString, options =>
         {
-            options.MapEnum<BlogPostType>("blog_post_type", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<BookState>("book_state", "public", new NpgsqlSnakeCaseNameTranslator());
+            options.MapEnum<FontStyle>("font_style", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<ProjectStatus>("project_status", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<Visibility>("visibility", "public", new NpgsqlSnakeCaseNameTranslator());
         });

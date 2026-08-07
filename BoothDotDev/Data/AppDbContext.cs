@@ -1,5 +1,3 @@
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
 using BoothDotDev.Data.Configuration;
 using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +16,7 @@ public sealed class AppDbContext : DbContext
     /// <param name="options">The options for creating a new context.</param>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
+        BlogPostCategories = Set<BlogPostCategory>();
         BlogPosts = Set<BlogPost>();
         Books = Set<Book>();
         CodeSnippets = Set<CodeSnippet>();
@@ -31,6 +30,12 @@ public sealed class AppDbContext : DbContext
         TutorialFolders = Set<TutorialFolder>();
         Users = Set<User>();
     }
+
+    /// <summary>
+    ///     Gets the collection of blog post categories in the database.
+    /// </summary>
+    /// <value>The collection of blog post categories.</value>
+    public DbSet<BlogPostCategory> BlogPostCategories { get; private set; }
 
     /// <summary>
     ///     Gets the collection of blog posts in the database.
@@ -108,11 +113,12 @@ public sealed class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("public");
-        modelBuilder.HasPostgresEnum<BlogPostType>("public", "blog_post_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
 
+        modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
