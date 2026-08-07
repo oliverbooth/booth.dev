@@ -30,4 +30,7 @@
     <data name="Tagline" xml:space="preserve">
         <value>Coffee enthusiast and lover of all things tech. Tech enthusiast and lover of all things coffee.</value>
     </data>
+    <data name="TerminalUsername" xml:space="preserve">
+        <value>oliver@booth</value>
+    </data>
 </root>
