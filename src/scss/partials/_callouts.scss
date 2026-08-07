@@ -21,6 +21,71 @@
   --callout-bug: var(--danger-text);
 }
 
+details.callout {
+  transition: border-color 0.2s ease-in-out;
+  border-color: transparent; // right/top/bottom start invisible
+
+  .callout-title {
+    cursor: pointer;
+  }
+
+  &[open] .callout-title::after {
+    font-family: "tabler-icons";
+    content: "\ea5f";
+  }
+
+  &:not([open]) .callout-title {
+    margin-bottom: 0;
+
+    &::after {
+      font-family: "tabler-icons";
+      content: "\ea61";
+    }
+  }
+
+  &[data-callout="note"], &[data-callout="info"], &[data-callout="todo"], &[data-callout="update"] {
+    border-left-color: var(--callout-note);
+  }
+
+  &[data-callout="abstract"], &[data-callout="tip"], &[data-callout="important"], &[data-callout="example"] {
+    border-left-color: var(--callout-abstract);
+  }
+
+  &[data-callout="success"] {
+    border-left-color: var(--callout-success);
+  }
+
+  &[data-callout="question"], &[data-callout="warning"] {
+    border-left-color: var(--callout-warning);
+  }
+
+  &[data-callout="cite"] {
+    border-left-color: var(--callout-cite);
+  }
+
+  &[open] {
+    &[data-callout="note"], &[data-callout="info"], &[data-callout="todo"], &[data-callout="update"] {
+      border-color: var(--callout-note);
+    }
+
+    &[data-callout="abstract"], &[data-callout="tip"], &[data-callout="important"], &[data-callout="example"] {
+      border-color: var(--callout-abstract);
+    }
+
+    &[data-callout="success"] {
+      border-color: var(--callout-success);
+    }
+
+    &[data-callout="question"], &[data-callout="warning"] {
+      border-color: var(--callout-warning);
+    }
+
+    &[data-callout="cite"] {
+      border-color: var(--callout-cite);
+    }
+  }
+}
+
 .callout {
   border: 0.5px solid var(--border);
   border-left: 3px solid var(--text-secondary);
