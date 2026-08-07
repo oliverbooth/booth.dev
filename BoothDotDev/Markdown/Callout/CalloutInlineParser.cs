@@ -1,4 +1,3 @@
-using System.Reflection;
 using Cysharp.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
@@ -12,10 +11,6 @@ namespace BoothDotDev.Markdown.Callout;
 /// </summary>
 internal sealed class CalloutInlineParser : InlineParser
 {
-    // ugly hack to access internal method
-    private static readonly MethodInfo ReplaceParentContainerMethod =
-        typeof(InlineProcessor).GetMethod("ReplaceParentContainer", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="CalloutInlineParser" /> class.
     /// </summary>
@@ -170,7 +165,6 @@ internal sealed class CalloutInlineParser : InlineParser
             callout.Add(block);
         }
 
-        ReplaceParentContainerMethod.Invoke(processor, [quoteBlock, callout]);
-        // ReplaceParentContainer(processor, quoteBlock, callout);
+        processor.ReplaceParentContainer(quoteBlock, callout);
     }
 }
