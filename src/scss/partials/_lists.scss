@@ -135,4 +135,9 @@
   color: var(--text-muted);
   cursor: pointer;
   flex-shrink: 0;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--text-secondary);
+  }
 }
