@@ -40,13 +40,17 @@
     }
   }
 
-  &.journal {
+  &.prose--serif {
     font-family: var(--font-voice);
 
     h1 {
       font-family: var(--font-voice);
       font-weight: 500;
     }
+  }
+
+  &.prose--sans {
+    font-family: var(--font-sans);
   }
 }
 
