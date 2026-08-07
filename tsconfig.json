@@ -5,6 +5,7 @@
     "target": "ES2023",
     "module": "esnext",
     "moduleResolution": "Bundler",
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "sourceMap": true
   }
 }
