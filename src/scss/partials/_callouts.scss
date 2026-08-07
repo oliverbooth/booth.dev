@@ -1,3 +1,26 @@
+:root {
+  --callout-note: var(--info-text);
+  --callout-info: var(--info-text);
+  --callout-todo: var(--info-text);
+  --callout-update: var(--info-text);
+
+  --callout-abstract: var(--accent);
+  --callout-tip: var(--accent);
+  --callout-important: var(--accent);
+  --callout-example: var(--accent);
+
+  --callout-success: var(--success-text);
+
+  --callout-question: var(--warning-text);
+  --callout-warning: var(--warning-text);
+
+  --callout-cite: var(--text-muted);
+
+  --callout-failure: var(--danger-text);
+  --callout-danger: var(--danger-text);
+  --callout-bug: var(--danger-text);
+}
+
 .callout {
   border: 0.5px solid var(--border);
   border-left: 3px solid var(--text-secondary);
@@ -10,45 +33,81 @@
   &[data-callout="info"],
   &[data-callout="todo"],
   &[data-callout="update"] {
-    border-left-color: var(--info-text);
-    .callout-title { color: var(--info-text); }
-    .callout-body a { color: var(--info-text); }
+    border-left-color: var(--callout-note);
+
+    .callout-title {
+      color: var(--callout-note);
+    }
+
+    .callout-body a {
+      color: var(--callout-note);
+    }
   }
 
   &[data-callout="abstract"],
   &[data-callout="tip"],
   &[data-callout="important"],
   &[data-callout="example"] {
-    border-left-color: var(--accent);
-    .callout-title { color: var(--accent); }
-    .callout-body a { color: var(--accent); }
+    border-left-color: var(--callout-abstract);
+
+    .callout-title {
+      color: var(--callout-abstract);
+    }
+
+    .callout-body a {
+      color: var(--callout-abstract);
+    }
   }
 
   &[data-callout="success"] {
-    border-left-color: var(--success-text);
-    .callout-title { color: var(--success-text); }
-    .callout-body a { color: var(--success-text); }
+    border-left-color: var(--callout-success);
+
+    .callout-title {
+      color: var(--callout-success);
+    }
+
+    .callout-body a {
+      color: var(--callout-success);
+    }
   }
 
   &[data-callout="question"],
   &[data-callout="warning"] {
-    border-left-color: var(--warning-text);
-    .callout-title { color: var(--warning-text); }
-    .callout-body a { color: var(--warning-text); }
+    border-left-color: var(--callout-warning);
+
+    .callout-title {
+      color: var(--callout-warning);
+    }
+
+    .callout-body a {
+      color: var(--callout-warning);
+    }
   }
 
   &[data-callout="failure"],
   &[data-callout="danger"],
   &[data-callout="bug"] {
-    border-left-color: var(--danger-text);
-    .callout-title { color: var(--danger-text); }
-    .callout-body a { color: var(--danger-text); }
+    border-left-color: var(--callout-danger);
+
+    .callout-title {
+      color: var(--callout-danger);
+    }
+
+    .callout-body a {
+      color: var(--callout-danger);
+    }
   }
 
   &[data-callout="cite"] {
-    border-left-color: var(--text-muted);
-    .callout-title { color: var(--text-muted); }
-    .callout-body a { color: var(--text-muted); }
+    border-left-color: var(--callout-cite);
+
+    .callout-title {
+      color: var(--callout-cite);
+    }
+
+    .callout-body a {
+      color: var(--callout-cite);
+    }
   }
 }
 
@@ -68,7 +127,10 @@
 
   p {
     margin: 0 0 0.75rem;
-    &:last-child { margin-bottom: 0; }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   hr {
@@ -87,47 +149,61 @@
 }
 
 .callout-danger {
-  border-left-color: var(--danger-text);
+  border-left-color: var(--callout-danger);
 
   .callout-title {
-    color: var(--danger-text);
+    color: var(--callout-danger);
   }
 }
 
 .callout-warning {
-  border-left-color: var(--warning-text);
+  border-left-color: var(--callout-warning);
 
   .callout-title {
-    color: var(--warning-text);
+    color: var(--callout-warning);
   }
 }
 
 .callout-info {
-  border-left-color: var(--info-text);
+  border-left-color: var(--callout-info);
 
   .callout-title {
-    color: var(--info-text);
+    color: var(--callout-info);
   }
 }
 
 .callout-note {
-  border-left-color: var(--accent);
+  border-left-color: var(--callout-note);
 
   .callout-title {
-    color: var(--accent);
+    color: var(--callout-note);
   }
 }
 
 .callout-success {
-  border-left-color: var(--success-text);
+  border-left-color: var(--callout-success);
 
   .callout-title {
-    color: var(--success-text);
+    color: var(--callout-success);
   }
 }
 
-.callout-danger .callout-body a { color: var(--danger-text); }
-.callout-warning .callout-body a { color: var(--warning-text); }
-.callout-info .callout-body a { color: var(--info-text); }
-.callout-note .callout-body a { color: var(--accent); }
-.callout-success .callout-body a { color: var(--success-text); }
+.callout-danger .callout-body a {
+  color: var(--callout-danger);
+}
+
+.callout-warning .callout-body a {
+  color: var(--callout-warning);
+}
+
+.callout-info .callout-body a {
+  color: var(--callout-info);
+}
+
+.callout-note .callout-body a {
+  color: var(--callout-note);
+}
+
+.callout-success .callout-body a {
+  color: var(--callout-success);
+}
