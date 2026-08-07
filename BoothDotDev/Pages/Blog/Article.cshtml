@@ -1,5 +1,4 @@
 @page "/blog/{slug}"
-@using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @inject BlogPostService BlogPostService
@@ -32,13 +31,14 @@
     ViewData["Title"] = post.Title;
     var author = post.Author;
     var published = post.Published;
+    var category = BlogPostService.GetCategory(post.CategoryId)!;
 }
 
 <div class="page">
 
     <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
 
-    <span class="eyebrow">Dev</span>
+    <span class="eyebrow">@category.Name</span>
     <h1 style="margin:8px 0 12px;font-size:30px">@post.Title</h1>
 
     <div class="byline">
@@ -47,14 +47,14 @@
             class="meta">@author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</span>
     </div>
 
-    <div class="prose@(post.Type == BlogPostType.Journal ? " journal" : "")" style="margin-top:2.5rem">
+    <div class="prose prose--@(category.FontStyle.ToString().ToLower())" style="margin-top:2.5rem">
         @Html.Raw(BlogPostService.RenderPost(post))
     </div>
 
     @if (post.Tags.Count > 0)
     {
         <div style="border-top:0.5px solid var(--border);margin-top:2.5rem;padding-top:1.25rem;display:flex;gap:6px">
-            @foreach (string tag in post.Tags)
+            @foreach (var tag in post.Tags)
             {
                 <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
             }
