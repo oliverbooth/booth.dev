@@ -73,3 +73,8 @@ exports.styles = gulp.parallel(compileSCSS, copyCSS);
 exports.scripts = gulp.parallel(copyJS, gulp.series(compileTS, bundleJS));
 
 exports.default = gulp.series(clean, gulp.parallel(exports.styles, exports.scripts, exports.assets));
+
+exports.watch = function watch() {
+    gulp.watch(`${srcDir}/scss/**/*.scss`, exports.styles);
+    gulp.watch(`${srcDir}/ts/**/*.ts`, exports.scripts);
+};
