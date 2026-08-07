@@ -64,6 +64,40 @@
             }
         </div>
     }
+    
+    @{
+        var previousPost = BlogPostService.GetPreviousPost(post);
+        var nextPost = BlogPostService.GetNextPost(post);
+    }
+
+    @if (previousPost is not null || nextPost is not null)
+    {
+        <div class="post-nav">
+            @if (previousPost is not null)
+            {
+                <a asp-page="/Blog/Article" asp-route-slug="@previousPost.Slug" class="post-nav-link">
+                    <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
+                    <span class="post-nav-title">@previousPost.Title</span>
+                </a>
+            }
+            else
+            {
+                <div class="post-nav-empty"></div>
+            }
+
+            @if (nextPost is not null)
+            {
+                <a asp-page="/Blog/Article" asp-route-slug="@nextPost.Slug" class="post-nav-link post-nav-link--next">
+                    <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
+                    <span class="post-nav-title">@nextPost.Title</span>
+                </a>
+            }
+            else
+            {
+                <div class="post-nav-empty post-nav-empty--next"></div>
+            }
+        </div>
+    }
 
     <a id="comments"></a>
 
