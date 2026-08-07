@@ -9,6 +9,15 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-command],
+  [data-prompt] {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
 [data-state] {
   display: grid;
   grid-template-rows: 1fr;
