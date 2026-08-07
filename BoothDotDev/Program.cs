@@ -77,6 +77,7 @@ app.MapRazorPages();
 app.MapGet("/contact", () => Results.StatusCode(StatusCodes.Status410Gone));
 app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", permanent: true));
 app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", permanent: true));
+app.MapGet("/blog/posts/{page}", () => Results.Redirect("/blog", permanent: true));
 
 app.Run();
 return;
