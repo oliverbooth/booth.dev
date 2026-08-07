@@ -130,6 +130,17 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Returns the blog post category with the specified ID.
+    /// </summary>
+    /// <param name="categoryId">The ID of the category to return.</param>
+    /// <returns>The blog post category with the specified ID.</returns>
+    public BlogPostCategory? GetCategory(Guid categoryId)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return context.BlogPostCategories.Find(categoryId);
+    }
+
+    /// <summary>
     ///     Returns the number of legacy comments for the specified post.
     /// </summary>
     /// <param name="post">The post whose legacy comments to count.</param>

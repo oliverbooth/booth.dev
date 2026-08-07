@@ -1,6 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Models;
 using SmartFormat;
 
 namespace BoothDotDev.Data.Models;
@@ -22,6 +20,12 @@ public sealed class BlogPost
     /// </summary>
     /// <value>The body of the post.</value>
     public string Body { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the category ID of the post.
+    /// </summary>
+    /// <value>The category ID of the post.</value>
+    public Guid CategoryId { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether comments are enabled for the post.
@@ -102,12 +106,6 @@ public sealed class BlogPost
     /// </summary>
     /// <value>The title of the post.</value>
     public string Title { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the type of the post.
-    /// </summary>
-    /// <value>The type of the post.</value>
-    public BlogPostType Type { get; set; }
 
     /// <summary>
     ///     Gets or sets the date and time the post was last updated.
