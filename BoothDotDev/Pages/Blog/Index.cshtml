@@ -1,45 +1,33 @@
 @page
-@using BoothDotDev.Data
-@using BoothDotDev.Services
+@using BoothDotDev.Extensions
 @model Index
-@inject BlogPostService BlogPostService
-@inject BlueskyService BlueskyService
 
-@{
-    ViewData["Title"] = "Blog";
-    ViewData["Page"] = "Blog";
+<div class="page">
 
-    bool lightTheme = Request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
-}
+    <h1 style="margin:0 0 6px">Write</h1>
+    <p class="lede">Dev writing, and the occasional dear friend.</p>
 
-@await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")
-@await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
-{
-    ["CurrentPage"] = 0,
-    ["Tags"] = Model.Tag
-})
+    <div class="filter-row">
+        <span class="pill active">All</span>
+        <span class="pill">Dev</span>
+        <span class="pill">Journal</span>
+    </div>
 
-@{
-    int pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
-    if (pageCount > 1)
-    {
-        <footer class="page-footer">
-            <nav class="pagination">
-                <a class="next" asp-page="/Blog/List" asp-route-pageNumber="2" asp-route-tag="@string.Join('+', Model.Tag)">Next&nbsp;2/@pageCount&nbsp;»</a>
-            </nav>
-        </footer>
-    }
-}
-
-<div style="padding-top: 150px">
-    @{
-        BlueskyPost? latestPost = await BlueskyService.GetLatestPostAsync();
-        @if (latestPost is not null)
+    <div class="commit-log" style="margin-bottom:3rem">
+        @for (var index = 0; index < Model.BlogPosts.Count; index++)
         {
-            <blockquote class="bluesky-embed" data-bluesky-uri="at://@latestPost.AtUri" data-bluesky-lang="" data-bluesky-embed-color-mode="@(lightTheme ? "light" : "dark")">
-                <a href="@latestPost.PostUrl">View on Bluesky</a>
-            </blockquote>
-            <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+            var post = Model.BlogPosts[index];
+            var first = index == 0;
+
+            <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="commit">
+                <div class="commit-dot@(first ? "" : " muted")"></div>
+                <div class="commit-meta">
+                    <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
+                </div>
+                <p class="commit-title">@post.Title</p>
+                <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
+            </a>
         }
-    }
+    </div>
+
 </div>

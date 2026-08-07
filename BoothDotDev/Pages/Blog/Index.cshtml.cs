@@ -10,25 +10,37 @@ internal sealed class Index : PageModel
 {
     private readonly BlogPostService _blogPostService;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Index"/> class.
+    /// </summary>
+    /// <param name="blogPostService">The blog post service.</param>
     public Index(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
 
-    public string[] Tag { get; private set; } = [];
+    /// <summary>
+    ///     Gets all blog posts.
+    /// </summary>
+    /// <returns>All blog posts.</returns>
+    public IReadOnlyList<BlogPost> BlogPosts { get; private set; } = [];
 
+    /// <summary>
+    ///     Handles the GET request for the blog index page.
+    /// </summary>
+    /// <param name="postId">The post ID.</param>
+    /// <param name="wpPostId">The WordPress post ID.</param>
+    /// <returns>The result of the GET request.</returns>
     public IActionResult OnGet([FromQuery(Name = "pid")] Guid? postId = null,
-        [FromQuery(Name = "p")] int? wpPostId = null,
-        [FromQuery(Name = "tag")] string? tag = null)
+        [FromQuery(Name = "p")] int? wpPostId = null)
     {
-        ViewData["Tags"] = Tag = tag?.Split('+') ?? [];
-
-        if (postId.HasValue == wpPostId.HasValue)
+        if (postId.HasValue != wpPostId.HasValue)
         {
-            return Page();
+            return postId.HasValue ? HandleNewRoute(postId.Value) : HandleWordPressRoute(wpPostId!.Value);
         }
 
-        return postId.HasValue ? HandleNewRoute(postId.Value) : HandleWordPressRoute(wpPostId!.Value);
+        BlogPosts = _blogPostService.GetAllBlogPosts();
+        return Page();
     }
 
     private IActionResult HandleNewRoute(Guid postId)
