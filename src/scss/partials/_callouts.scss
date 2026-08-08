@@ -51,7 +51,20 @@
 
 details.callout {
   transition: border-color 0.2s ease-in-out;
-  border-color: transparent; // right/top/bottom start invisible
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  interpolate-size: allow-keywords;
+  
+  &::details-content {
+    transition: height 0.3s ease, content-visibility 0.3s ease allow-discrete;
+    height: 0;
+    overflow: hidden;
+  }
+
+  &[open]::details-content {
+    height: auto;
+  }
 
   .callout-title {
     cursor: pointer;
