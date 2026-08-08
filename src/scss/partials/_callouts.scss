@@ -55,6 +55,11 @@ details.callout {
 
   .callout-title {
     cursor: pointer;
+
+    code {
+      padding: 0;
+      margin-top: 2px;
+    }
   }
 
   &[open] .callout-title::after {
