@@ -98,12 +98,12 @@
             <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
                 <div class="card-icon">
                     <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
+                    <span class="card-status-badge">
+                        <span class="dot" style="margin-right:5px"></span>@project.Status.ToString().ToLower()
+                    </span>
                 </div>
                 <div class="card-body">
                     <p class="title">@project.Name</p>
-                    <span class="status">
-                        <span class="dot" style="margin-right:5px"></span>@project.Status.ToString().ToLower()
-                    </span>
                 </div>
             </a>
         }
