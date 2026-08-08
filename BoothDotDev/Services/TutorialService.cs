@@ -92,7 +92,6 @@ public sealed class TutorialService
     /// <param name="slug">The slug of the folder.</param>
     /// <param name="parent">The parent folder.</param>
     /// <returns>The folder, or <see langword="null" /> if not found.</returns>
-    [return: NotNullIfNotNull(nameof(slug))]
     public TutorialFolder? GetFolder(string? slug, TutorialFolder? parent = null)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
@@ -322,16 +321,15 @@ public sealed class TutorialService
     ///     <see langword="null" /> if no such article was found.
     /// </param>
     /// <returns><see langword="true" /> if a matching article was found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetArticle(string slug, [NotNullWhen(true)] out TutorialArticle? article)
+    public bool TryGetArticle(string? slug, [NotNullWhen(true)] out TutorialArticle? article)
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (slug is null)
         {
             article = null;
             return false;
         }
 
-        string[] tokens = slug.Split('/');
+        var tokens = slug.Split('/');
         TutorialFolder? folder = null;
 
         for (var index = 0; index < tokens.Length - 1; index++)
@@ -349,5 +347,39 @@ public sealed class TutorialService
         slug = tokens[^1];
         article = context.TutorialArticles.FirstOrDefault(a => a.Slug == slug && a.Folder == folder.Id);
         return article is not null;
+    }
+
+    /// <summary>
+    ///     Attempts to find a folder by its slug.
+    /// </summary>
+    /// <param name="slug">The slug of the folder.</param>
+    /// <param name="folder">
+    ///     When this method returns, contains the folder whose slug matches the specified <paramref name="slug" />, or
+    ///     <see langword="null" /> if no such folder was found.
+    /// </param>
+    /// <returns><see langword="true" /> if a matching folder was found; otherwise, <see langword="false" />.</returns>
+    public bool TryGetFolder(string? slug, [NotNullWhen(true)] out TutorialFolder? folder)
+    {
+        if (slug is null)
+        {
+            folder = null;
+            return false;
+        }
+
+        var tokens = slug.Split('/');
+        TutorialFolder? currentFolder = null;
+
+        foreach (var token in tokens)
+        {
+            currentFolder = GetFolder(token, currentFolder);
+            if (currentFolder is null)
+            {
+                folder = null;
+                return false;
+            }
+        }
+
+        folder = currentFolder;
+        return folder is not null;
     }
 }

@@ -12,7 +12,7 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
 {
     public void Configure(EntityTypeBuilder<TutorialFolder> builder)
     {
-        builder.ToTable("folder", "tutorials");
+        builder.ToTable("tutorial_folder");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();

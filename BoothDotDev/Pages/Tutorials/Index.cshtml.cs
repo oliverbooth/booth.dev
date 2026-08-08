@@ -5,12 +5,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Tutorials;
 
-internal sealed class Index : PageModel
+/// <summary>
+///     Represents the index page for the tutorials.
+/// </summary>
+public sealed class Index : PageModel
 {
     private readonly TutorialService _tutorialService;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Index" /> class.
+    ///     Initializes a new instance of the <see cref="Index"/> class.
     /// </summary>
     /// <param name="tutorialService">The tutorial service.</param>
     public Index(TutorialService tutorialService)
@@ -18,23 +21,52 @@ internal sealed class Index : PageModel
         _tutorialService = tutorialService;
     }
 
+    /// <summary>
+    ///     Gets the current tutorial article.
+    /// </summary>
+    /// <value>The current tutorial article.</value>
+    public TutorialArticle? CurrentArticle { get; private set; }
+
+    /// <summary>
+    ///     Gets the current tutorial folder.
+    /// </summary>
+    /// <value>The current tutorial folder.</value>
     public TutorialFolder? CurrentFolder { get; private set; }
+    
+    /// <summary>
+    ///     Gets a value indicating whether to show the folder view.
+    /// </summary>
+    /// <value><see langword="true"/> if the folder view should be shown; otherwise, <see langword="false"/>.</value>
+    public bool ShowFolderView { get; private set; }
 
-    public void OnGet([FromRoute(Name = "slug")] string? slug)
+    /// <summary>
+    ///     Handles the GET request for the tutorial page based on the provided slug.
+    /// </summary>
+    /// <param name="slug">The slug of the tutorial page.</param>
+    /// <returns>An <see cref="IActionResult"/> representing the result of the request.</returns>
+    public IActionResult OnGet([FromRoute(Name = "slug")] string? slug)
     {
-        if (slug is null)
+        if (string.IsNullOrEmpty(slug))
         {
-            return;
+            CurrentFolder = null;
+            ShowFolderView = true;
+            return Page();
         }
 
-        var tokens = slug.Split('/');
-        TutorialFolder? folder = null;
-
-        foreach (var token in tokens)
+        if (_tutorialService.TryGetFolder(slug, out var folder))
         {
-            folder = _tutorialService.GetFolder(token, folder);
+            CurrentFolder = folder;
+            ShowFolderView = true;
+            return Page();
         }
 
-        CurrentFolder = folder;
+        if (_tutorialService.TryGetArticle(slug, out var article))
+        {
+            CurrentArticle = article;
+            ShowFolderView = false;
+            return Page();
+        }
+
+        return NotFound();
     }
 }

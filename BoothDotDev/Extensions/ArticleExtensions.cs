@@ -4,9 +4,9 @@ using BoothDotDev.Data.Models;
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     Extension methods for <see cref="BlogPost"/>.
+///     Extension methods for <see cref="BlogPost"/> and <see cref="TutorialArticle"/>.
 /// </summary>
-internal static class BlogPostExtensions
+internal static class ArticleExtensions
 {
     private const int WordsPerMinute = 275;
 
@@ -25,6 +25,20 @@ internal static class BlogPostExtensions
         public int GetEstimatedReadingTime()
         {
             var wordCount = CountWords(post.Body);
+            return Math.Max(1, wordCount / WordsPerMinute);
+        }
+    }
+
+    /// <param name="article">The <see cref="TutorialArticle"/>.</param>
+    extension(TutorialArticle article)
+    {
+        /// <summary>
+        ///     Returns the estimated reading time of the tutorial article, in minutes.
+        /// </summary>
+        /// <returns>The estimated reading time of the tutorial article, in minutes.</returns>
+        public int GetEstimatedReadingTime()
+        {
+            var wordCount = CountWords(article.Body);
             return Math.Max(1, wordCount / WordsPerMinute);
         }
     }

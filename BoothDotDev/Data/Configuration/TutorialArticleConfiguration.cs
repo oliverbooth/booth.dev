@@ -12,7 +12,7 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
 {
     public void Configure(EntityTypeBuilder<TutorialArticle> builder)
     {
-        builder.ToTable("article", "tutorials");
+        builder.ToTable("tutorial_article");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
