@@ -84,9 +84,7 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
 
         renderer.WriteLine(block.Foldable ? "</summary>" : "</div>");
 
-        renderer.Write(block.Foldable
-            ? "<div class=\"callout-body\">"
-            : "<div class=\"callout-body\">");
+        renderer.Write("<div class=\"callout-body\">");
         renderer.WriteChildren(block);
         renderer.WriteLine("</div>");
         renderer.WriteLine(block.Foldable ? "</details>" : "</div>");
