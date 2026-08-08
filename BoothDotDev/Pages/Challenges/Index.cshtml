@@ -1,60 +1,48 @@
 @page
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using Humanizer
-@model BoothDotDev.Pages.Challenges.Index
+@model Index
 @inject DevChallengeService DevChallengeService
 @{
     ViewData["Title"] = "Dev Challenges";
     ViewData["Page"] = "Challenges";
 }
 
-<article class="first-entry home-info">
-    <header class="page-header">
-        <div class="breadcrumbs"><a asp-page="/Index">Home</a></div>
-        <h1 class="post-title entry-hint-parent">Dev Challenges</h1>
-        <div class="entry-content">
-            <p>
-                These are a collection of challenges I've written to help you improve your skills as a developer.
-                They're designed to be fun, challenging, and educational. I hope you enjoy them!
-            </p>
-        </div>
-    </header>
-</article>
+<div class="page-wide">
 
-@{
-    var number = 1;
-    foreach (var challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
-    {
-        var date = challenge.Date;
+    <p class="crumb"><a asp-page="/Index">Home</a> / Challenges</p>
+    <h1>Dev Challenges</h1>
+    <p class="lede">
+        These are a collection of challenges I've written to help you improve your skills as a developer.
+        They're designed to be fun, challenging, and educational. I hope you enjoy them!
+    </p>
 
-        <article class="post-entry">
-            <header class="entry-header">
-                <h2 class="entry-hint-parent">
-                    @(number++). @challenge.Title
-                </h2>
-            </header>
+    <div class="card-grid">
+        @{
+            var number = 1;
+        }
+        @foreach (var challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
+        {
+            var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
 
-            <div class="entry-content">
-                @* nothing here, just padding *@
-            </div>
+            <a href="@challenge.Id.ToRoute("/challenge")" class="card">
+                <div class="card-icon">
+                    <i class="ti ti-code"></i>
+                    <span class="card-status-badge@(hasSolution ? "" : " done")">
+                        <i class="ti @(hasSolution ? "ti-check" : "ti-lock")" style="font-size:12px"></i>
+                        @(hasSolution ? "Solution unlocked" : "Solution locked")
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p class="branch">#@number</p>
+                    <p class="title">@challenge.Title</p>
+                    <p class="desc">Published @challenge.Date.Humanize()</p>
+                </div>
+            </a>
+            number++;
+        }
+    </div>
 
-            <footer class="entry-footer">
-                <p>
-                    <span class="text-muted" title="@date.ToString("F")">Published @date.Humanize()</span>
-                    <span style="margin: 0 .2em;">&bull;</span>
-                    @if (challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution))
-                    {
-                        <span class="badge green">✅ Solution released</span>
-                    }
-                    else
-                    {
-                        <span class="badge red">❌ Solution not released yet</span>
-                    }
-                </p>
-            </footer>
-
-            <a class="entry-link" aria-label="post link to @challenge.Title" href="/challenge/@challenge.Id"></a>
-        </article>
-    }
-}
+</div>

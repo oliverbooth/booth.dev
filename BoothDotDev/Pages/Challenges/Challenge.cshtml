@@ -1,44 +1,61 @@
 @page "/challenge/{id}"
+@using BoothDotDev.Extensions
 @using Markdig
-@model BoothDotDev.Pages.Challenges.Challenge
 @inject MarkdownPipeline MarkdownPipeline
+@model Challenge
 @{
     ViewData["Title"] = Model.DevChallenge.Title;
     ViewData["Page"] = "Challenges";
+    var challenge = Model.DevChallenge;
+    var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
 }
 
-<article class="post-single">
-    <header class="post-header">
-        <div class="breadcrumbs">
-            <a asp-page="/Index">Home</a>
-            &nbsp;»&nbsp;
-            <a asp-page="/Challenges/Index">Challenges</a>
-            &nbsp;»&nbsp;
-            <a asp-page="/Challenges/Challenge"
-               asp-route-id="@Model.DevChallenge.Id">
-                @Model.DevChallenge.Title
-            </a>
-        </div>
-        <h1 class="post-title entry-hint-parent">@Model.DevChallenge.Title</h1>
-    </header>
+<div class="page">
 
-    <div class="post-content">
-        @Html.Raw(Markdown.ToHtml(Model.DevChallenge.Description, MarkdownPipeline))
-        @if (Model.DevChallenge is { ShowSolution: true, Solution: not null })
-        {
-            <details class="callout" data-callout="success">
-                <summary class="callout-title"><i data-lucide="star"></i> Solution</summary>
-                @Html.Raw(Markdown.ToHtml(Model.DevChallenge.Solution, MarkdownPipeline))
-            </details>
-        }
-        else
-        {
-            <div class="callout" data-callout="warning">
-                <div class="callout-title"><i data-lucide="timer"></i> Solution not released yet</div>
-                <p>
-                    The solution for this challenge has not been released publicly yet. Check back later!
-                </p>
-            </div>
-        }
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Challenges/Index">Challenges</a> /
+        @challenge.Title
+    </p>
+
+    <span class="eyebrow">Challenge</span>
+    <h1 style="margin:8px 0 12px;font-size:30px">@challenge.Title</h1>
+
+    <div class="byline">
+        <span class="meta">
+            Published @challenge.Date.ToShortString()
+            &middot;
+            @if (hasSolution)
+            {
+                <span style="color:var(--success-text)"><i class="ti ti-check" style="font-size:13px;vertical-align:-1px"></i> Solution available</span>
+            }
+            else
+            {
+                <span style="color:var(--text-muted)"><i class="ti ti-lock" style="font-size:13px;vertical-align:-1px"></i> Solution locked</span>
+            }
+        </span>
     </div>
-</article>
+
+    <div class="prose" style="margin-top:2rem">
+        @Html.Raw(Markdown.ToHtml(challenge.Description, MarkdownPipeline))
+    </div>
+
+    @if (hasSolution)
+    {
+        <details class="callout" data-callout="success" style="margin-top:2rem">
+            <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
+            <div class="callout-body">
+                @Html.Raw(Markdown.ToHtml(challenge.Solution!, MarkdownPipeline))
+            </div>
+        </details>
+    }
+    else
+    {
+        <div class="challenge-locked" style="margin-top:2rem">
+            <i class="ti ti-lock" style="font-size:22px"></i>
+            <p class="challenge-locked-title">Solution not released yet</p>
+            <p class="challenge-locked-desc">Give it a real attempt first. Check back later for the official solution.</p>
+        </div>
+    }
+
+</div>

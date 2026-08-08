@@ -87,11 +87,11 @@ internal sealed class DevChallengeService
         }
 
         using var context = _dbContextFactory.CreateDbContext();
-        if (int.TryParse(id, out int oldId))
+        if (int.TryParse(id, out var oldId))
         {
             devChallenge = context.DevChallenges.FirstOrDefault(c => c.OldId == oldId);
             shouldRedirect = devChallenge is not null;
-            return devChallenge is not null;
+            return shouldRedirect;
         }
 
         ShortGuid guid;

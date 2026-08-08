@@ -1,0 +1,19 @@
+.challenge-locked {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.challenge-locked-title {
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 10px 0 4px;
+}
+
+.challenge-locked-desc {
+  font-size: 13px;
+  margin: 0;
+}

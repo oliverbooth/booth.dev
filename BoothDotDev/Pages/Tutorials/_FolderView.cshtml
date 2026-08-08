@@ -44,7 +44,22 @@
         }
     </p>
 
-    <h1>@(Model?.Title ?? "Tutorials")</h1>
+    <h1>@(Model?.Title ?? "Learn")</h1>
+
+    @if (Model is null)
+    {
+        <div class="section-head"><h2>Challenges</h2></div>
+
+        <a asp-page="/Challenges/Index" class="card" style="margin-bottom:2.5rem;display:block;max-width:320px">
+            <div class="card-icon">
+                <i class="ti ti-code" style="color:var(--warning-text)"></i>
+            </div>
+            <div class="card-body">
+                <p class="title">Dev Challenges</p>
+                <p class="desc">Codewars-style problems to test your skills.</p>
+            </div>
+        </a>
+    }
 
     @if (!string.IsNullOrEmpty(Model?.Description))
     {
@@ -53,7 +68,7 @@
 
     @if (folders.Count > 0)
     {
-        <div class="section-head"><h2>Folders</h2></div>
+        <div class="section-head"><h2>Tutorials</h2></div>
 
         <div class="card-grid" style="margin-bottom:2.5rem">
             @foreach (var folder in folders)

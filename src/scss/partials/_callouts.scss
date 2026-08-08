@@ -135,3 +135,54 @@ details.callout {
     color: var(--callout-accent, var(--accent));
   }
 }
+
+.callout code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--surface-1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.callout pre {
+  background: var(--surface-1);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+
+  .kw {
+    color: var(--accent);
+  }
+
+  .str {
+    color: var(--success-text);
+  }
+
+  code {
+    padding: 0;
+
+    mark {
+      background: var(--warning-text);
+      padding: 2px 0;
+      border-radius: 2px;
+      color: var(--surface-1) !important;
+
+      * {
+        color: var(--surface-1) !important;
+      }
+    }
+
+    .tag {
+      font-size: inherit;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+      text-decoration: none;
+    }
+  }
+}
