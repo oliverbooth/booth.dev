@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BoothDotDev.Pages.Challenges;
+namespace BoothDotDev.Pages.Learn.Challenges;
 
 internal sealed class Index : PageModel
 {

@@ -3,7 +3,7 @@ using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BoothDotDev.Pages.Tutorials;
+namespace BoothDotDev.Pages.Learn.Tutorials;
 
 /// <summary>
 ///     Represents the index page for the tutorials.

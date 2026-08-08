@@ -34,11 +34,11 @@
 
     <p class="crumb">
         <a asp-page="/Index">Home</a> /
-        <a asp-page="/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
         @while (parents.Count > 0)
         {
             var current = parents.Pop();
-            <text> / <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
         }
         / @article.Title
     </p>
@@ -78,7 +78,7 @@
             <div class="post-nav">
                 @if (previousPart is not null)
                 {
-                    <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart)" class="post-nav-link">
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart)" class="post-nav-link">
                         <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
                         <span class="post-nav-title">@previousPart.Title</span>
                     </a>
@@ -90,7 +90,7 @@
 
                 @if (nextPart is not null)
                 {
-                    <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart)" class="post-nav-link post-nav-link--next">
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart)" class="post-nav-link post-nav-link--next">
                         <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
                         <span class="post-nav-title">@nextPart.Title</span>
                     </a>

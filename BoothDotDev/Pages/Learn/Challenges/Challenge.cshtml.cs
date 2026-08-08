@@ -3,7 +3,7 @@ using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BoothDotDev.Pages.Challenges;
+namespace BoothDotDev.Pages.Learn.Challenges;
 
 internal sealed class Challenge : PageModel
 {

@@ -32,11 +32,11 @@
 
     <p class="crumb">
         <a asp-page="/Index">Home</a> /
-        <a asp-page="/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
         @while (parents.Count > 0)
         {
             var current = parents.Pop();
-            <text> / <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
         }
         @if (Model is not null)
         {
@@ -50,7 +50,7 @@
     {
         <div class="section-head"><h2>Challenges</h2></div>
 
-        <a asp-page="/Challenges/Index" class="card" style="margin-bottom:2.5rem;display:block;max-width:320px">
+        <a asp-page="/Learn/Challenges/Index" class="card" style="margin-bottom:2.5rem;display:block;max-width:320px">
             <div class="card-icon">
                 <i class="ti ti-code" style="color:var(--warning-text)"></i>
             </div>
@@ -75,7 +75,7 @@
             {
                 var articleCount = TutorialService.GetArticles(folder, Visibility.Published).Count;
 
-                <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card">
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card">
                     <div class="card-icon">
                         @if (folder.PreviewImageUrl is not null)
                         {
@@ -106,7 +106,7 @@
         <div class="stack-list">
             @foreach (var article in articles)
             {
-                <a asp-page="/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)">
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)">
                     <div class="stack-icon"><i class="ti ti-file-text"></i></div>
                     <div class="stack-meta">
                         <p class="title">@article.Title</p>
