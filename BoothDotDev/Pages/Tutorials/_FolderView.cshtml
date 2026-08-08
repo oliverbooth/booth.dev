@@ -48,7 +48,7 @@
 
     @if (!string.IsNullOrEmpty(Model?.Description))
     {
-        <p class="lede">@Html.Raw(Markdown.ToHtml(Model.Description, MarkdownPipeline))</p>
+        <p class="lede">@Html.Raw(Markdown.ToHtmlUnwrapped(Model.Description, MarkdownPipeline))</p>
     }
 
     @if (folders.Count > 0)

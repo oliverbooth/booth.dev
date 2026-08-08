@@ -1,13 +1,16 @@
+using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Markdown.Callout;
 using BoothDotDev.Markdown.Template;
+using HtmlAgilityPack;
 using Markdig;
+using MD = Markdig.Markdown;
 
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     Extension methods for <see cref="MarkdownPipelineBuilder" />.
+///     Extension methods for <see cref="Markdig"/>.
 /// </summary>
-public static class MarkdownPipelineExtensions
+public static class MarkdownExtensions
 {
     /// <param name="builder">The Markdig markdown pipeline builder.</param>
     extension(MarkdownPipelineBuilder builder)
@@ -37,6 +40,35 @@ public static class MarkdownPipelineExtensions
 
             builder.Use(new TemplateExtension(serviceProvider));
             return builder;
+        }
+    }
+
+    /// <summary>
+    ///     Extension methods <see cref="MD"/>.
+    /// </summary>
+    extension(MD)
+    {
+        /// <summary>
+        ///     Converts the specified Markdown string to HTML and unwraps it if it is wrapped in a single <c>&lt;p&gt;</c> tag.
+        /// </summary>
+        /// <param name="markdown">The Markdown string to convert.</param>
+        /// <param name="pipeline">The Markdig pipeline to use for conversion.</param>
+        /// <param name="context">The Markdig parser context.</param>
+        /// <returns>The unwrapped HTML string.</returns>
+        public static string ToHtmlUnwrapped([StringSyntax("markdown")] string markdown,
+            MarkdownPipeline? pipeline = null,
+            MarkdownParserContext? context = null)
+        {
+            var html = MD.ToHtml(markdown, pipeline, context);
+            var document = new HtmlDocument();
+            document.LoadHtml(html);
+
+            if (document.DocumentNode.FirstChild is { Name: "p" } child)
+            {
+                return child.InnerHtml;
+            }
+
+            return html;
         }
     }
 }
