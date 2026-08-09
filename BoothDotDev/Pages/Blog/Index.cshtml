@@ -28,7 +28,7 @@
                 <a asp-page="/Blog/Article" asp-route-slug="@post.Slug"
                    class="commit"
                    data-state="@BlogPostService.GetParentCategory(post).Id">
-                    <div class="commit-inner">
+                    <div class="collapse-inner">
                         <div class="commit-dot@(first ? "" : " muted")"></div>
                         <div class="commit-meta">
                             <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
