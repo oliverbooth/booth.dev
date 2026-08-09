@@ -69,4 +69,8 @@
         </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+        <EmbeddedResource Include="wwwroot\.vite\manifest.json"/>
+    </ItemGroup>
+
 </Project>

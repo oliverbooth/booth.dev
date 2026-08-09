@@ -1,0 +1,19 @@
+import {defineConfig} from 'vite';
+import {resolve} from 'path';
+
+export default defineConfig({
+    root: 'src',
+    publicDir: '../public',
+    build: {
+        outDir: '../BoothDotDev/wwwroot',
+        emptyOutDir: true,
+        manifest: true,
+        rollupOptions: {
+            input: {
+                app: resolve(__dirname, 'src/ts/app.ts'),
+                style: resolve(__dirname, 'src/scss/style.scss'),
+                prism_vs: resolve(__dirname, 'src/scss/prism.vs.scss'),
+            },
+        },
+    },
+});
