@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using SmartFormat;
 
 namespace BoothDotDev.Data.Models;
 
@@ -132,64 +131,4 @@ public sealed class BlogPost
     /// </summary>
     /// <value>The ID of the author of this blog post.</value>
     internal Guid AuthorId { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the base URL of the Disqus comments for the blog post.
-    /// </summary>
-    /// <value>The Disqus base URL.</value>
-    internal string? DisqusDomain { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the identifier of the Disqus comments for the blog post.
-    /// </summary>
-    /// <value>The Disqus identifier.</value>
-    internal string? DisqusIdentifier { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the URL path of the Disqus comments for the blog post.
-    /// </summary>
-    /// <value>The Disqus URL path.</value>
-    internal string? DisqusPath { get; set; }
-
-    /// <summary>
-    ///     Gets the Disqus domain for the blog post.
-    /// </summary>
-    /// <returns>The Disqus domain.</returns>
-    public string GetDisqusDomain()
-    {
-        return string.IsNullOrWhiteSpace(DisqusDomain)
-            ? "https://booth.dev/blog"
-            : Smart.Format(DisqusDomain, this);
-    }
-
-    /// <summary>
-    ///     Gets the Disqus identifier for the post.
-    /// </summary>
-    /// <returns>The Disqus identifier for the post.</returns>
-    public string GetDisqusIdentifier()
-    {
-        return string.IsNullOrWhiteSpace(DisqusIdentifier) ? $"post-{Id}" : Smart.Format(DisqusIdentifier, this);
-    }
-
-    /// <summary>
-    ///     Gets the Disqus URL for the post.
-    /// </summary>
-    /// <returns>The Disqus URL for the post.</returns>
-    public string GetDisqusUrl()
-    {
-        string path = string.IsNullOrWhiteSpace(DisqusPath)
-            ? $"{Published:yyyy/MM/dd}/{Slug}/"
-            : Smart.Format(DisqusPath, this);
-
-        return $"{GetDisqusDomain()}/{path}";
-    }
-
-    /// <summary>
-    ///     Gets the Disqus post ID for the post.
-    /// </summary>
-    /// <returns>The Disqus post ID for the post.</returns>
-    public string GetDisqusPostId()
-    {
-        return WordPressId?.ToString() ?? Id.ToString();
-    }
 }

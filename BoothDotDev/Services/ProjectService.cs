@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using Humanizer;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
 
