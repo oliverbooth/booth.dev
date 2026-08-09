@@ -22,7 +22,6 @@ public sealed class AppDbContext : DbContext
         CodeSnippets = Set<CodeSnippet>();
         DevChallenges = Set<DevChallenge>();
         LegacyComments = Set<LegacyComment>();
-        ProgrammingLanguages = Set<ProgrammingLanguage>();
         Projects = Set<Project>();
         SiteConfiguration = Set<SiteConfiguration>();
         Templates = Set<Template>();
@@ -66,12 +65,6 @@ public sealed class AppDbContext : DbContext
     /// </summary>
     /// <value>The collection of legacy comments.</value>
     public DbSet<LegacyComment> LegacyComments { get; private set; }
-
-    /// <summary>
-    ///     Gets the collection of programming languages in the database.
-    /// </summary>
-    /// <value>The collection of programming languages.</value>
-    public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; private set; }
 
     /// <summary>
     ///     Gets the collection of projects in the database.
@@ -124,7 +117,6 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
-        modelBuilder.ApplyConfiguration(new ProgrammingLanguageConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());

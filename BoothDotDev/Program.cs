@@ -42,7 +42,6 @@ builder.Services.AddSingleton<DevChallengeService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddHostedSingleton<BlogPostService>();
 builder.Services.AddSingleton<BlogUserService>();
-builder.Services.AddSingleton<ProgrammingLanguageService>();
 builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<ReadingListService>();

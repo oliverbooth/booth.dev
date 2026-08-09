@@ -13,7 +13,6 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
 {
     private readonly CodeSnippetService _codeSnippetService;
     private readonly Lazy<MarkdownPipeline> _markdownPipeline;
-    private readonly ProgrammingLanguageService _programmingLanguageService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CodeSnippetTemplateRenderer" /> class.
@@ -24,7 +23,6 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
         // lazily evaluate to avoid circular dependency problem causing tremendous stack overflow 
         _markdownPipeline = new Lazy<MarkdownPipeline>(serviceProvider.GetRequiredService<MarkdownPipeline>);
         _codeSnippetService = serviceProvider.GetRequiredService<CodeSnippetService>();
-        _programmingLanguageService = serviceProvider.GetRequiredService<ProgrammingLanguageService>();
     }
 
     /// <inheritdoc />
@@ -92,7 +90,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
                                       data-tabs="snp-{snippetId}-{identifier:N}"
                                       aria-controls="snp-{snippetId}-{identifier:N}-{language}"
                                       aria-selected="true"
-                                      >{_programmingLanguageService.GetLanguageName(language)}</a
+                                      >{ProgrammingLanguage.GetNameFromShorthand(language)}</a
                                     >
                                 """);
             builder.AppendLine("</li>");
