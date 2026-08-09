@@ -109,6 +109,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
 
         modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());

@@ -76,6 +76,12 @@ public sealed class Project : IEquatable<Project>
     /// </summary>
     /// <value>The tagline.</value>
     public string? Tagline { get; set; }
+    
+    /// <summary>
+    ///     Gets or sets the type of the project.
+    /// </summary>
+    /// <value>The type of the project.</value>
+    public ProjectType Type { get; set; } = ProjectType.App;
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="Project" /> are equal.
