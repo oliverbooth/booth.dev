@@ -93,6 +93,7 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}/raw", (int year, int m
         ? Results.Redirect($"/blog/{slug}/raw", permanent: true)
         : Results.NotFound();
 });
+app.MapGet("/tutorials", () => Results.Redirect($"/learn", permanent: true));
 app.MapGet("/tutorials/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", permanent: true));
 app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", permanent: true));
 
