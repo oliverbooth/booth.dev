@@ -1,6 +1,7 @@
 @inherits MainLayout
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Vite
 @{ await InitializeAsync(); }
 <!DOCTYPE html>
 <html lang="en">
@@ -51,9 +52,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraph.min.css">
-    <link rel="stylesheet" href="~/css/prism.min.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/prism.vs.min.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/prism.css" asp-append-version="true">
+    <link rel="stylesheet" href="@ViteManifest.Resolve("scss/prism.vs.scss")">
+    <link rel="stylesheet" href="@ViteManifest.Resolve("scss/style.scss")">
     <noscript>
         <style>
             [data-reveal],
@@ -128,8 +129,8 @@
 <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraphcore.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.min.js"></script>
-<script src="~/js/prism.min.js" asp-append-version="true" data-manual></script>
-<script src="~/js/app.min.js" asp-append-version="true"></script>
+<script src="~/js/prism.js" asp-append-version="true" data-manual></script>
+<script src="@ViteManifest.Resolve("ts/app.ts")"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>

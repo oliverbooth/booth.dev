@@ -6,13 +6,13 @@ EXPOSE 443
 FROM node:20-alpine as build-deps
 WORKDIR /src
 COPY package.json package-lock.json ./
-RUN npm i -g gulp-cli
-RUN npm i
+RUN npm ci
 COPY . ./
-RUN gulp
+RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY --from=build-deps /src/BoothDotDev/wwwroot /src/BoothDotDev/wwwroot
+COPY --from=build-deps /src/BoothDotDev/wwwroot/.vite/manifest.json /src/BoothDotDev/wwwroot.vite/manifest.json
 WORKDIR /src
 COPY ["BoothDotDev/BoothDotDev.csproj", "BoothDotDev/"]
 COPY . .
