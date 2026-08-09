@@ -1,17 +1,25 @@
 @page "/error/418"
-<article>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="align-self-stretch">
-            <img class="img-fluid" src="~/img/error/418-im-a-teapot.png">
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="terminal" style="margin-bottom:1.75rem">
+            <div class="terminal-bar">
+                <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
+            </div>
+            <div class="terminal-body">
+                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> curl -X BREW booth.dev/coffee</div>
+                <div class="out" style="margin-top:6px">418 I'm a teapot &mdash; short and stout</div>
+            </div>
         </div>
 
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="p-2">
-                <h1 class="text-center">418 I'm A Teapot</h1>
-            </div>
-            <div class="p-2">
-                <p class="text-center">No coffee available. I am only capable of brewing tea.</p>
-            </div>
+        <p class="error-code">Error 418</p>
+        <h1 class="error-title">I'm a teapot</h1>
+        <p class="error-desc">This server is, briefly and by design, a teapot. RFC 2324 demands nothing less.</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Back home</a>
+            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
         </div>
+
     </div>
-</article>
+</div>

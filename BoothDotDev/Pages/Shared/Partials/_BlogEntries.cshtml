@@ -1,16 +1,15 @@
-@using BoothDotDev.Common.Data.Blog
-@using BoothDotDev.Common.Services
-@inject IBlogPostService BlogPostService
+@using BoothDotDev.Services
+@inject BlogPostService BlogPostService
 
 @{
     var currentPage = (int)(ViewData["CurrentPage"] ?? 0);
     var tags = ViewData["Tags"] as string[];
 }
 
-@foreach (IBlogPost post in BlogPostService.GetBlogPosts(currentPage, tags: tags))
+@foreach (var post in BlogPostService.GetBlogPosts(currentPage, tags: tags))
 {
-    bool hasExcerpt = string.IsNullOrWhiteSpace(post.Excerpt);
-    DateTimeOffset published = post.Published;
+    var hasExcerpt = string.IsNullOrWhiteSpace(post.Excerpt);
+    var published = post.Published;
     <article class="post-entry">
         <header class="entry-header">
             <h2 class="entry-hint-parent">
@@ -18,7 +17,7 @@
             </h2>
         </header>
         <div class="entry-content@(hasExcerpt ? " no-trim" : "")">
-            @Html.Raw(BlogPostService.RenderExcerpt(post, out bool trimmed))
+            @Html.Raw(BlogPostService.RenderExcerpt(post, out _))
         </div>
         <footer class="entry-footer">
             <span title="@(published.ToString("s"))">@published.ToString("D")</span>

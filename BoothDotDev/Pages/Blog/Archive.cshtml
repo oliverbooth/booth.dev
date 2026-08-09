@@ -1,9 +1,8 @@
 @page
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Data.Blog
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @model BoothDotDev.Pages.Blog.Archive
-@inject IBlogPostService BlogPostService
+@inject BlogPostService BlogPostService
 
 @{
     ViewData["Page"] = "Archive";
@@ -23,9 +22,9 @@
 </header>
 
 @{
-    IEnumerable<IBlogPost> posts = BlogPostService.GetAllBlogPosts().Where(p => p.Visibility == Visibility.Published);
+    var posts = BlogPostService.GetAllBlogPosts().Where(p => p.Visibility == Visibility.Published);
 
-    foreach (IGrouping<int, IBlogPost> yearGroup in posts.GroupBy(p => p.Published.Year))
+    foreach (var yearGroup in posts.GroupBy(p => p.Published.Year))
     {
         <div class="archive-year">
             <h2 class="archive-year-header">
@@ -33,7 +32,7 @@
                 <sup class="archive-count">&nbsp;&nbsp;@yearGroup.Count()</sup>
             </h2>
 
-            @foreach (IGrouping<int, IBlogPost> monthGroup in yearGroup.GroupBy(p => p.Published.Month))
+            @foreach (var monthGroup in yearGroup.GroupBy(p => p.Published.Month))
             {
                 <div class="archive-month">
                     <h3 class="archive-month-header">
@@ -42,11 +41,11 @@
                     </h3>
 
                     <div class="archive-posts">
-                        @foreach (IBlogPost post in monthGroup)
+                        @foreach (var post in monthGroup)
                         {
-                            IBlogAuthor author = post.Author;
-                            DateTimeOffset published = post.Published;
-                            int wordCount = post.Body.Split().Length;
+                            var author = post.Author;
+                            var published = post.Published;
+                            var wordCount = post.Body.Split().Length;
 
                             <div class="archive-entry">
                                 <h3 class="archive-entry-title entry-hint-parent">

@@ -1,88 +1,112 @@
 @page "/project/{slug}"
-@using BoothDotDev.Common.Data.Web
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Data.Models
+@using BoothDotDev.Extensions
 @using Markdig
 @model Project
-@inject IProjectService ProjectService
 @inject MarkdownPipeline MarkdownPipeline
 
 @{
-    IProject? project = Model.SelectedProject;
-    ViewData["Title"] = project is null ? "Projects" : project.Name;
+    var project = Model.SelectedProject;
 }
 
-<article class="post-single">
-    @if (project is null)
-    {
-        <h1>Project Not Found</h1>
-        return;
-    }
+<div class="page">
 
-    <header class="post-header">
-        <div class="breadcrumbs">
-            <a asp-page="/Index">Home</a>
-            &nbsp;»&nbsp;
-            <a asp-page="/Projects/Index">Projects</a>
+    <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Projects/Index">Projects</a> / @project.Name</p>
+
+    <div class="card" style="cursor:default">
+        <div class="card-icon project-hero-icon">
+            <img src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
         </div>
-        <h1 class="post-title entry-hint-parent">@project.Name</h1>
-        <p class="lead">@project.Tagline</p>
-    </header>
+        <div class="card-body project-body">
 
-    @if (!string.IsNullOrWhiteSpace(project.Tagline))
-    {
-    }
+            <div class="project-status">
+                <span class="dot"></span>
+                <span class="status-label">
+                    @switch (project.Status)
+                    {
+                        case ProjectStatus.Ongoing:
+                            <text>In Active Development</text>
+                            break;
+                        case ProjectStatus.Past:
+                            <text>Completed</text>
+                            break;
+                        case ProjectStatus.Retired:
+                            <text>Retired</text>
+                            break;
+                        case ProjectStatus.Hiatus:
+                            <text>On Hiatus</text>
+                            break;
+                    }
+                </span>
+            </div>
 
-    <p class="text-center">
-        <img src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" class="img-fluid" alt="@project.Name">
-    </p>
+            <h1 class="project-title">@project.Name</h1>
 
-    <table class="table">
-        <tr>
-            <th style="width: 20%">Languages</th>
-            <td>
-                @foreach (IProgrammingLanguage language in ProjectService.GetProgrammingLanguages(project))
-                {
-                    <img src="https://cdn.booth.dev/img/assets/p/@(language.Key).svg" alt="@language.Name" title="@language.Name" class="project-lang inline">
+            <div class="project-desc">
+                @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
+            </div>
+
+            @if (project.Languages is { Count: > 0 } and not ["various"])
+            {
+                <div class="tag-row">
+                    @foreach (var language in project.Languages)
+                    {
+                        if (language == "various")
+                        {
+                            continue;
+                        }
+
+                        <span class="tag">
+                            <img src="~/img/lang/@(language).svg" asp-append-version="true"
+                                 alt="@ProgrammingLanguage.GetNameFromShorthand(language)">
+                            @ProgrammingLanguage.GetNameFromShorthand(language)
+                        </span>
+                    }
+                </div>
+            }
+
+            <div class="action-row">
+                @{
+                    var icon = project.RemoteTarget switch
+                    {
+                        "GitHub" => "brand-github",
+                        "GitLab" => "brand-gitlab",
+                        "Itch.io" => "building-store",
+                        "PlayStore" => "brand-google-play",
+                        _ => "world"
+                    };
+
+                    var linkText = project.RemoteTarget switch
+                    {
+                        "GitHub" => "Repository",
+                        "GitLab" => "Repository",
+                        "Itch.io" => "itch.io Page",
+                        "PlayStore" => "Google Play Store Page",
+                        _ => "External site"
+                    };
                 }
-            </td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>
-                @switch (project.Status)
-                {
-                    case ProjectStatus.Ongoing:
-                        <span class="badge green">In Active Development</span>
-                        break;
+                <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon" style="font-size:15px"></i> @linkText</a>
+                @*<a href="#" class="btn">Devlog</a>*@
+            </div>
 
-                    case ProjectStatus.Past:
-                        <span class="badge blue">Completed</span>
-                        break;
+            @*@if (project.DevlogEntries.Count > 0)
+            {
+                <div class="project-devlog">
+                    <p class="project-devlog-title">Recent devlog entries</p>
+                    <div class="project-devlog-list">
+                        @foreach (var entry in project.DevlogEntries.Take(2))
+                        {
+                            <div class="project-devlog-row">
+                                <span>@entry.Title</span>
+                                <span class="project-devlog-time">@entry.Published.Humanize()</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }*@
 
-                    case ProjectStatus.Retired:
-                        <span class="badge red">Retired</span>
-                        break;
+        </div>
+    </div>
 
-                    case ProjectStatus.Hiatus:
-                        <span class="badge">On Hiatus</span>
-                        break;
-                }
-            </td>
-        </tr>
-        @if (project.RemoteUrl != null)
-        {
-            <tr>
-                <th>View</th>
-                <td>
-                    <a href="@project.RemoteUrl">
-                        @(new Uri(project.RemoteUrl).Host) <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                </td>
-            </tr>
-        }
-        <tr>
-            <th>Details</th>
-            <td class="trim-p">@Html.Raw(Markdown.ToHtml(project.Details, MarkdownPipeline))</td>
-        </tr>
-    </table>
-</article>
+</div>

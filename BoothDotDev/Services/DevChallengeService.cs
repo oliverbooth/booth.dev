@@ -1,29 +1,34 @@
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Web;
-using BoothDotDev.Common.Services;
-using BoothDotDev.Data.Web;
+using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using DEDrake;
 using Microsoft.EntityFrameworkCore;
 using BC = BCrypt.Net.BCrypt;
 
 namespace BoothDotDev.Services;
 
-/// <inheritdoc />
-internal sealed class DevChallengeService : IDevChallengeService
+/// <summary>
+///     Represents a service which fetches and manages dev challenges.
+/// </summary>
+internal sealed class DevChallengeService
 {
-    private readonly IDbContextFactory<WebContext> _dbContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DevChallengeService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The factory for creating the web database context.</param>
-    public DevChallengeService(IDbContextFactory<WebContext> dbContextFactory)
+    public DevChallengeService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Authenticates the challenge with the specified ID and password.
+    /// </summary>
+    /// <param name="id">The ID of the challenge.</param>
+    /// <param name="password">The password of the challenge.</param>
+    /// <returns><see langword="true" /> if the challenge is authenticated; otherwise, <see langword="false" />.</returns>
     public bool AuthenticateChallenge(string id, string? password)
     {
         if (!TryGetDevChallenge(id, out var challenge, out _))
@@ -39,10 +44,14 @@ internal sealed class DevChallengeService : IDevChallengeService
         return password is not null && BC.Verify(password, challenge.Password);
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<IDevChallenge> GetDevChallenges(Visibility visibility)
+    /// <summary>
+    ///     Gets a read-only collection of dev challenges.
+    /// </summary>
+    /// <param name="visibility">The visibility of the dev challenges.</param>
+    /// <returns>A read-only collection of dev challenges.</returns>
+    public IReadOnlyList<DevChallenge> GetDevChallenges(Visibility visibility)
     {
-        using WebContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IQueryable<DevChallenge> challenges = context.DevChallenges.OrderBy(c => c.Date);
 
         if (visibility != Visibility.None)
@@ -50,12 +59,24 @@ internal sealed class DevChallengeService : IDevChallengeService
             challenges = challenges.Where(c => c.Visibility == visibility);
         }
 
-        return challenges.ToArray();
+        return [.. challenges];
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Tries to get a dev challenge by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the dev challenge.</param>
+    /// <param name="devChallenge">
+    ///     When this method returns, contains the dev challenge associated with the specified id, if the id is found;
+    ///     otherwise, the default value for the type will be returned. This parameter is passed uninitialized.
+    /// </param>
+    /// <param name="shouldRedirect">
+    ///     When this method returns, contains a value indicating whether the user should be redirected to the new URL.
+    ///     This parameter is passed uninitialized.
+    /// </param>
+    /// <returns><see langword="true" /> if the dev challenge is found; otherwise, <see langword="false" />.</returns>
     public bool TryGetDevChallenge(string id,
-        [NotNullWhen(true)] out IDevChallenge? devChallenge,
+        [NotNullWhen(true)] out DevChallenge? devChallenge,
         out bool shouldRedirect)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -66,11 +87,11 @@ internal sealed class DevChallengeService : IDevChallengeService
         }
 
         using var context = _dbContextFactory.CreateDbContext();
-        if (int.TryParse(id, out int oldId))
+        if (int.TryParse(id, out var oldId))
         {
             devChallenge = context.DevChallenges.FirstOrDefault(c => c.OldId == oldId);
             shouldRedirect = devChallenge is not null;
-            return devChallenge is not null;
+            return shouldRedirect;
         }
 
         ShortGuid guid;

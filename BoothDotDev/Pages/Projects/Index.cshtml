@@ -1,58 +1,70 @@
 @page
-@using BoothDotDev.Common.Data.Web
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @using Markdig
-@inject MarkdownPipeline MarkdownPipeline
-@inject IProjectService ProjectService
+@inject ProjectService ProjectService
 @{
     ViewData["Title"] = "Projects";
     ViewData["Page"] = "Projects";
 
-    IEnumerable<IProject> projects = ProjectService.GetProjects()
+    var projects = ProjectService.GetProjects()
         .Concat(ProjectService.GetProjects(ProjectStatus.Past))
         .Concat(ProjectService.GetProjects(ProjectStatus.Retired))
         .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus));
 }
 
+<div class="page-wide">
 
-<header class="page-header">
+    <p class="crumb"><a asp-page="/Index">Home</a> / Projects</p>
     <h1>Projects</h1>
-</header>
+    <p class="lede">
+        Things I gone done and made.
+    </p>
 
-@foreach (IProject project in projects)
-{
-    <article class="post-entry">
-        <figure class="entry-cover">
-            <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="">
-        </figure>
-        <header class="entry-header">
-            <h2 class="entry-hint-parent">
-                @project.Name
-            </h2>
-        </header>
-        <div class="entry-content">
-            <p>@Html.Raw(Markdown.ToHtml(project.Description, MarkdownPipeline))</p>
-        </div>
-        <footer class="entry-footer">
-            @switch (project.Status)
-            {
-                case ProjectStatus.Ongoing:
-                    <span class="badge green">In Active Development</span>
-                    break;
+    <div class="card-grid">
+        @foreach (var project in projects)
+        {
+            var statusClass = $"{project.Status switch
+                {
+                    ProjectStatus.Ongoing => "",
+                    ProjectStatus.Past => "done",
+                    ProjectStatus.Retired => "retired",
+                    ProjectStatus.Hiatus => "hiatus",
+                    _ => throw new InvalidOperationException($"Unknown project status {project.Status}.")
+                }}";
 
-                case ProjectStatus.Past:
-                    <span class="badge blue">Completed</span>
-                    break;
+            <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
+                <div class="card-icon">
+                    <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
+                </div>
+                <div class="card-body">
+                    <p class="title">@project.Name</p>
+                    <p class="desc">@Markdown.ToPlainText(project.Description)</p>
 
-                case ProjectStatus.Retired:
-                    <span class="badge red">Retired</span>
-                    break;
+                    <span class="status @statusClass">
+                        <span class="dot" style="margin-right:5px"></span>
+                        @switch (project.Status.ToString())
+                        {
+                            case "Ongoing":
+                                <text>in active development</text>
+                                break;
 
-                case ProjectStatus.Hiatus:
-                    <span class="badge">On Hiatus</span>
-                    break;
-            }
-        </footer>
-        <a class="entry-link" aria-label="link to subfolder @project.Name" asp-page="Project" asp-route-slug="@project.Slug"></a>
-    </article>
-}
+                            case "Past":
+                                <text>completed</text>
+                                break;
+
+                            case "Retired":
+                                <text>retired</text>
+                                break;
+
+                            case "Hiatus":
+                                <text>on hiatus</text>
+                                break;
+                        }
+                    </span>
+                </div>
+            </a>
+        }
+    </div>
+
+</div>

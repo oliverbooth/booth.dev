@@ -1,0 +1,198 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Data.Models
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@using Humanizer
+@using Markdig
+@model TutorialArticle?
+@inject TutorialService TutorialService
+@inject MarkdownPipeline MarkdownPipeline
+
+@if (Model is not { } article)
+{
+    return;
+}
+
+@{
+    ViewData["Post"] = article;
+    ViewData["Title"] = article.Title;
+    ViewData["Page"] = "Learn";
+    var published = article.Published;
+
+    var parents = new Stack<TutorialFolder>();
+    Guid? parent = article.Folder;
+    while (parent is not null)
+    {
+        var folder = TutorialService.GetFolder(parent.Value)
+            ?? throw new InvalidOperationException($"TutorialArticle {article.Id} references a folder chain with a missing parent {parent.Value}.");
+        parents.Push(folder);
+        parent = folder.Parent;
+    }
+}
+
+<div class="page">
+
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        @while (parents.Count > 0)
+        {
+            var current = parents.Pop();
+            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+        }
+        / @article.Title
+    </p>
+
+    <span class="eyebrow">Tutorial</span>
+    <h1 style="margin:8px 0 12px;font-size:30px">@article.Title</h1>
+
+    <div class="byline">
+        <span class="meta">@published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read</span>
+    </div>
+
+    @if (article.ShowTableOfContents)
+    {
+        <details class="callout" data-callout="note" style="margin-top:1.5rem" open="@(article.TableOfContentsExpanded ? "open" : null)">
+            <summary class="callout-title"><i class="ti ti-list"></i> Table of Contents</summary>
+            <div class="callout-body">
+                @Html.Raw(TutorialService.RenderTableOfContents(article, Context.Request))
+            </div>
+        </details>
+    }
+
+    <div class="prose" style="margin-top:2.5rem">
+        @Html.Raw(TutorialService.RenderArticle(article))
+    </div>
+
+    @if (article.HasOtherParts)
+    {
+        var previousPart = article.PreviousPart is { } prevId && TutorialService.TryGetArticle(prevId, out var prev) && prev.Visibility == Visibility.Published
+            ? prev
+            : null;
+        var nextPart = article.NextPart is { } nextId && TutorialService.TryGetArticle(nextId, out var next) && next.Visibility == Visibility.Published
+            ? next
+            : null;
+
+        @if (previousPart is not null || nextPart is not null)
+        {
+            <div class="post-nav">
+                @if (previousPart is not null)
+                {
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart)" class="post-nav-link">
+                        <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
+                        <span class="post-nav-title">@previousPart.Title</span>
+                    </a>
+                }
+                else
+                {
+                    <div class="post-nav-empty"></div>
+                }
+
+                @if (nextPart is not null)
+                {
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart)" class="post-nav-link post-nav-link--next">
+                        <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
+                        <span class="post-nav-title">@nextPart.Title</span>
+                    </a>
+                }
+                else
+                {
+                    <div class="post-nav-empty post-nav-empty--next"></div>
+                }
+            </div>
+        }
+    }
+
+    <a id="comments"></a>
+
+    @if (article.EnableComments)
+    {
+        <div class="giscus"></div>
+
+        @section Scripts
+        {
+            <script src="https://giscus.app/client.js"
+                    data-repo="oliverbooth/booth.dev"
+                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
+                    data-category="Comments"
+                    data-category-id="DIC_kwDODp0rOs4Ce_Nj"
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="dark"
+                    data-lang="en"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        }
+    }
+    else
+    {
+        <p class="no-comment">Comments are not enabled for this post.</p>
+    }
+
+    @{
+        var commentCount = TutorialService.GetLegacyCommentCount(article);
+        if (commentCount > 0)
+        {
+            <div class="legacy-comments-heading">
+                <h2 style="margin:0">@("legacy comment".ToQuantity(commentCount))</h2>
+                <p class="legacy-comments-subtitle">
+                    Legacy comments were posted using a commenting system I no longer use. They exist here for posterity.
+                </p>
+            </div>
+
+            var nestLevelMap = new Dictionary<LegacyComment, int>();
+            var legacyComments = TutorialService.GetLegacyComments(article);
+            var comments = legacyComments.OrderByDescending(c => c.CreatedAt);
+            var commentStack = new Stack<LegacyComment>(comments);
+
+            <div class="legacy-comment-thread">
+                @while (commentStack.Count > 0)
+                {
+                    var comment = commentStack.Pop();
+                    var replies = TutorialService.GetLegacyReplies(comment);
+                    foreach (var reply in replies.OrderByDescending(c => c.CreatedAt))
+                    {
+                        if (nestLevelMap.TryGetValue(comment, out var currentLevel))
+                        {
+                            nestLevelMap[reply] = currentLevel + 1;
+                        }
+                        else
+                        {
+                            nestLevelMap[reply] = 1;
+                        }
+
+                        commentStack.Push(reply);
+                    }
+
+                    var isNested = nestLevelMap.ContainsKey(comment);
+                    var avatarUrl = comment.GetAvatarUrl();
+
+                    <div class="legacy-comment@(isNested ? " legacy-comment--nested" : "")">
+                        @if (!string.IsNullOrEmpty(avatarUrl))
+                        {
+                            <img class="legacy-comment-avatar" src="@avatarUrl" alt="@comment.Author">
+                        }
+                        else
+                        {
+                            <div class="legacy-comment-avatar-fallback">@comment.Author[0]</div>
+                        }
+                        <div class="legacy-comment-body">
+                            <div class="legacy-comment-header">
+                                <span class="legacy-comment-author">@comment.Author</span>
+                                <abbr class="legacy-comment-time" title="@comment.CreatedAt.ToString("dddd, d MMMM yyyy HH:mm")">
+                                    @comment.CreatedAt.Humanize()
+                                </abbr>
+                            </div>
+                            <div class="legacy-comment-content">@Html.Raw(Markdown.ToHtml(comment.Body, MarkdownPipeline))</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+
+</div>

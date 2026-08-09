@@ -18,6 +18,9 @@ class UI {
         UI.updateProjectCards(element);
         UI.applyAnsi(element);
         UI.fixCanvas(element);
+        UI.runTerminalTypewriters(element);
+        UI.enableFilterPills(element);
+        UI.enableCopyButtons(element);
     }
 
     /**
@@ -48,6 +51,76 @@ class UI {
         element.querySelectorAll("pre code").forEach((block) => {
             Prism.highlightAllUnder(block.parentElement);
         });
+    }
+
+    /**
+     * Adds copy functionality to all .copy-icon elements in the element.
+     * @param element The element to search for .copy-icon elements in.
+     */
+    public static enableCopyButtons(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll<HTMLElement>(".copy-icon").forEach((icon) => {
+            icon.addEventListener("click", () => {
+                const row = icon.closest(".crypto-row");
+                const addressEl = row?.querySelector<HTMLElement>(".crypto-address");
+                const text = addressEl?.textContent?.trim();
+
+                if (!text) return;
+
+                navigator.clipboard.writeText(text).then(() => {
+                    UI.showCopyFeedback(icon);
+                }).catch(() => {
+                    // clipboard API unavailable or permission denied — fail silently, icon just won't confirm
+                });
+            });
+        });
+    }
+
+    private static showCopyFeedback(icon: HTMLElement): void {
+        const originalClasses = icon.className;
+        icon.classList.remove("ti-copy");
+        icon.classList.add("ti-check");
+        icon.style.color = "var(--success-text)";
+
+        setTimeout(() => {
+            icon.className = originalClasses;
+            icon.style.color = "";
+        }, 1200);
+    }
+
+    /**
+     * Enables filter pills to toggle visibility of sections based on their data-state attribute.
+     * @param element The element to search for filter rows in.
+     */
+    public static enableFilterPills(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll<HTMLElement>("[data-filter-scope]").forEach((scope) => {
+            const filterRow = scope.querySelector<HTMLElement>(".filter-row");
+            if (!filterRow) return;
+
+            const pills = Array.from(filterRow.querySelectorAll<HTMLElement>(".pill"));
+            const sections = Array.from(scope.querySelectorAll<HTMLElement>("[data-state]"));
+
+            sections.forEach((section) => section.classList.add("is-visible"));
+
+            pills.forEach((pill) => {
+                pill.addEventListener("click", () => {
+                    const filter = pill.dataset.filter ?? "all";
+
+                    pills.forEach((p) => p.classList.remove("active"));
+                    pill.classList.add("active");
+
+                    sections.forEach((section) => {
+                        const matches = filter === "all" || section.dataset.state === filter;
+                        UI.setSectionVisible(section, matches);
+                    });
+                });
+            });
+        });
+    }
+
+    private static setSectionVisible(section: HTMLElement, visible: boolean): void {
+        section.classList.toggle("is-collapsed", !visible);
     }
 
     /**
@@ -247,6 +320,77 @@ class UI {
                 .concat("</span>") // Close any open tags at the end
                 .replace(/<\/span>(?=<\/span>)/g, ""); // Remove redundant closing tags
         }
+    }
+
+    /**
+     * Runs the typewriter animation for all hero terminals under the given element.
+     * @param element The element to search for terminals in.
+     */
+    public static runTerminalTypewriters(element?: Element) {
+        element = element || document.body;
+        const containers = element.querySelectorAll<HTMLElement>("[data-terminal-typewriter]");
+
+        document.fonts.ready.then(() => {
+            containers.forEach((container) => {
+                UI.runTerminalTypewriter(container);
+            });
+        });
+    }
+
+    private static async runTerminalTypewriter(container: HTMLElement): Promise<void> {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const username = container.dataset.username ?? "user@host";
+
+        const commandLines = Array.from(container.querySelectorAll<HTMLElement>("[data-command]"));
+        const revealBlocks = Array.from(container.querySelectorAll<HTMLElement>("[data-reveal]"));
+        const promptLine = container.querySelector<HTMLElement>("[data-prompt]");
+
+        if (reducedMotion) {
+            [...commandLines, ...revealBlocks].forEach((el) => el.classList.add("is-visible"));
+            if (promptLine) promptLine.classList.add("is-visible");
+            return; // static text already correct in markup, just reveal everything at once
+        }
+
+        const sequence: HTMLElement[] = [];
+        container.childNodes.forEach((node) => {
+            if (node instanceof HTMLElement) sequence.push(node);
+        });
+
+        for (const el of sequence) {
+            if (el.dataset.command !== undefined) {
+                await UI.typeCommand(el, username, el.dataset.command);
+                await UI.sleep(150);
+            } else if (el.hasAttribute("data-prompt")) {
+                UI.renderPrompt(el, username);
+                el.classList.add("is-visible");
+                await UI.sleep(300);
+            } else if (el.hasAttribute("data-reveal")) {
+                el.classList.add("is-visible");
+                await UI.sleep(300);
+            }
+        }
+    }
+
+    private static async typeCommand(el: HTMLElement, username: string, text: string): Promise<void> {
+        el.innerHTML = `<span class="prompt">${username}</span><span class="path">:~$</span> `;
+        el.classList.add("is-visible");
+        for (const char of text) {
+            el.innerHTML += char;
+            await UI.sleep(35 + Math.random() * 25);
+        }
+    }
+
+    private static renderStaticCommand(el: HTMLElement, username: string): void {
+        const text = el.dataset.command ?? "";
+        el.innerHTML = `<span class="prompt">${username}</span><span class="path">:~$</span> ${text}`;
+    }
+
+    private static renderPrompt(el: HTMLElement, username: string): void {
+        el.innerHTML = `<span class="prompt">${username}</span><span class="path">:~$</span> <span class="cursor">&nbsp;</span>`;
+    }
+
+    private static sleep(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
 

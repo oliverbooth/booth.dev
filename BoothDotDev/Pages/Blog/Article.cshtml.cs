@@ -1,5 +1,5 @@
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Primitives;
@@ -13,32 +13,22 @@ namespace BoothDotDev.Pages.Blog;
 [Area("blog")]
 internal sealed class Article : PageModel
 {
-    private readonly IBlogPostService _blogPostService;
+    private readonly BlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Article" /> class.
     /// </summary>
-    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
-    public Article(IBlogPostService blogPostService)
+    /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
+    public Article(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
-
-    /*
-    /// <summary>
-    ///     Gets a value indicating whether the post is a legacy WordPress post.
-    /// </summary>
-    /// <value>
-    ///     <see langword="true" /> if the post is a legacy WordPress post; otherwise, <see langword="false" />.
-    /// </value>
-    public bool IsWordPressLegacyPost => Post.WordPressId.HasValue;
-    */
 
     /// <summary>
     ///     Gets the requested blog post.
     /// </summary>
     /// <value>The requested blog post.</value>
-    public IBlogPost Post { get; private set; } = null!;
+    public BlogPost Post { get; private set; } = null!;
 
     /// <summary>
     ///     Gets a value indicating whether to show the password prompt.
@@ -50,7 +40,7 @@ internal sealed class Article : PageModel
 
     public IActionResult OnGet(string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(slug, out BlogPost? post))
         {
             Response.StatusCode = 404;
             return NotFound();
@@ -72,7 +62,7 @@ internal sealed class Article : PageModel
 
     public IActionResult OnPost([FromRoute] string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(slug, out BlogPost? post))
         {
             return NotFound();
         }

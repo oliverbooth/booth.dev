@@ -1,7 +1,6 @@
 using System.Web;
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Data.Web;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Cysharp.Text;
 
 namespace BoothDotDev.Extensions;
@@ -15,14 +14,14 @@ public static class HtmlUtility
     ///     Creates <c>&lt;meta&gt;</c> embed tags by pulling data from the specified blog post.
     /// </summary>
     /// <param name="post">The blog post whose metadata should be retrieved.</param>
-    /// <param name="blogPostService">The <see cref="IBlogPostService" /> injected by the page.</param>
+    /// <param name="blogPostService">The <see cref="BlogPostService" /> injected by the page.</param>
     /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="post" /> is <see langword="null" />.</para>
     ///     -or-
     ///     <para><paramref name="blogPostService" /> is <see langword="null" />.</para>
     /// </exception>
-    public static string CreateMetaTagsFromPost(IBlogPost post, IBlogPostService blogPostService)
+    public static string CreateMetaTagsFromPost(BlogPost post, BlogPostService blogPostService)
     {
         if (post is null)
         {
@@ -34,13 +33,10 @@ public static class HtmlUtility
             throw new ArgumentNullException(nameof(blogPostService));
         }
 
-
-        string excerpt = blogPostService.RenderPlainTextExcerpt(post, out _).Trim();
+        var excerpt = blogPostService.RenderPlainTextExcerpt(post, out _).Trim();
         var tags = new Dictionary<string, string>
         {
-            ["title"] = post.Title,
-            ["description"] = excerpt,
-            ["author"] = post.Author.DisplayName
+            ["title"] = post.Title, ["description"] = excerpt, ["author"] = post.Author.DisplayName
         };
         return CreateMetaTags(tags);
     }
@@ -49,14 +45,14 @@ public static class HtmlUtility
     ///     Creates <c>&lt;meta&gt;</c> embed tags by pulling data from the specified article.
     /// </summary>
     /// <param name="article">The article whose metadata should be retrieved.</param>
-    /// <param name="tutorialService">The <see cref="ITutorialService" /> injected by the page.</param>
+    /// <param name="tutorialService">The <see cref="TutorialService" /> injected by the page.</param>
     /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="article" /> is <see langword="null" />.</para>
     ///     -or-
     ///     <para><paramref name="tutorialService" /> is <see langword="null" />.</para>
     /// </exception>
-    public static string CreateMetaTagsFromTutorialArticle(ITutorialArticle article, ITutorialService tutorialService)
+    public static string CreateMetaTagsFromTutorialArticle(TutorialArticle article, TutorialService tutorialService)
     {
         if (article is null)
         {
@@ -69,12 +65,10 @@ public static class HtmlUtility
         }
 
 
-        string excerpt = tutorialService.RenderPlainTextExcerpt(article, out _).Trim();
+        var excerpt = tutorialService.RenderPlainTextExcerpt(article, out _).Trim();
         var tags = new Dictionary<string, string>
         {
-            ["title"] = article.Title,
-            ["description"] = excerpt,
-            ["author"] = Strings.MyName // TODO add article author support?
+            ["title"] = article.Title, ["description"] = excerpt, ["author"] = Strings.MyName // TODO add article author support?
         };
         return CreateMetaTags(tags);
     }
@@ -125,7 +119,7 @@ public static class HtmlUtility
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("""<meta property="og:type" content="article">""");
 
-        if (tags.TryGetValue("description", out string? description))
+        if (tags.TryGetValue("description", out var description))
         {
             description = HttpUtility.HtmlEncode(description);
             builder.AppendLine($"""<meta name="description" content="{description}">""");
@@ -133,14 +127,14 @@ public static class HtmlUtility
             builder.AppendLine($"""<meta property="twitter:description" content="{description}">""");
         }
 
-        if (tags.TryGetValue("author", out string? author))
+        if (tags.TryGetValue("author", out var author))
         {
             author = HttpUtility.HtmlEncode(author);
             builder.AppendLine($"""<meta property="og:site_name" content="{author}">""");
             builder.AppendLine($"""<meta property="twitter:creator" content="{author}">""");
         }
 
-        if (tags.TryGetValue("title", out string? title))
+        if (tags.TryGetValue("title", out var title))
         {
             title = HttpUtility.HtmlEncode(title);
             builder.AppendLine($"""<meta name="title" content="{title}">""");

@@ -5,43 +5,48 @@
     ViewData["Page"] = "About";
 }
 
-<article class="post-single">
-    <header class="post-header">
-        <div class="breadcrumbs"><a asp-page="/Index">Home</a></div>
-        <h1 class="post-title entry-hint-parent">About me</h1>
-    </header>
-    <div class="post-content">
-        <p class="pfp-headshot"><img src="~/img/headshot_512x512_2023.jpg" alt="Headshot of me"></p>
-        <p>
-            I'm a passionate developer with a strong background in C#, although I have experimented with many languages
-            and frameworks over the years. I'm always pushing myself to learn more and explore every aspect technology
-            has to offer. I'm currently studying for my Bachelor's in Computer Science at University of South Wales. I
-            enjoy playing video games, piano, guitar, programming, reading, and drinking copious amounts of coffee.
+<div class="page">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / About</p>
+    <h1>About me</h1>
+
+    <div class="about-intro">
+        <div class="avatar-box">
+            <img src="~/img/headshot_512x512_2023.jpg" alt="Profile picture">
+        </div>
+        <p class="body-copy">
+            I'm a developer with a strong background in <span class="emphasis">C#</span>, though I've experimented with plenty of other
+            languages along the way.
+            Currently studying for a BSc in Computer Science at USW.
+            Outside of code, I'm usually playing piano, guitar, or far too many video games.
         </p>
-        <p>
-            My two most active projects right now are <a href="https://github.com/oliverbooth/X10D">X10D</a> and
-            <a href="https://github.com/BrackeysBot">BrackeysBot</a>.
-        </p>
-        <p>
-            I've also written a few <a asp-page="/Tutorials/Index">tutorials on various topics</a>, usually involving
-            information not readily available elsewhere. I hope you find them useful.
-        </p>
-        <ul>
-            <li>
-                GitHub: <a href="https://github.com/oliverbooth">https://github.com/oliverbooth</a>
-            </li>
-            <li>
-                BlueSky: <a href="https://bsky.app/profile/booth.dev">https://bsky.app/profile/booth.dev</a>
-            </li>
-            <li>
-                Itch.io: <a href="https://oliverbooth.itch.io">https://oliverbooth.itch.io</a>
-            </li>
-            <li>
-                GameJolt: <a href="https://gamejolt.com/@@oliverlukebooth">https://gamejolt.com/@@oliverlukebooth</a>
-            </li>
-            <li>
-                LinkedIn: <a href="https://www.linkedin.com/in/oliverlukebooth">https://www.linkedin.com/in/oliverlukebooth</a>
-            </li>
-        </ul>
     </div>
-</article>
+
+    <p class="body-copy">
+        My most active projects right now are <a href="https://github.com/oliverbooth/X10D">X10D</a> and
+        <a href="https://git.brackeys.dev/bot">the myriad bots</a> which power the official
+        <a href="https://discord.gg/brackeys">Brackeys Community</a> discord server.
+        I've also written a handful of <a asp-page="/Learn/Index">tutorials</a>, usually covering things I couldn't find written up anywhere
+        else.
+    </p>
+
+    <h2>Elsewhere</h2>
+    <div class="tile-grid">
+        <a href="https://github.com/oliverbooth" class="tile">
+            <i class="ti ti-brand-github"></i><span class="label">GitHub</span>
+        </a>
+        <a href="https://bsky.app/profile/booth.dev" class="tile">
+            <i class="ti ti-brand-bluesky"></i><span class="label">Bluesky</span>
+        </a>
+        <a href="https://oliverbooth.itch.io" class="tile">
+            <i class="ti ti-device-gamepad-2"></i><span class="label">itch.io</span>
+        </a>
+        <a href="https://gamejolt.com/@@oliverlukebooth" class="tile">
+            <i class="ti ti-bolt"></i><span class="label">GameJolt</span>
+        </a>
+        <a href="https://linkedin.com/in/oliverlukebooth" class="tile">
+            <i class="ti ti-brand-linkedin"></i><span class="label">LinkedIn</span>
+        </a>
+    </div>
+
+</div>

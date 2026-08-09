@@ -1,10 +1,8 @@
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
-using BoothDotDev.Common.Data.Web;
-using BoothDotDev.Data.Web;
-using BoothDotDev.Extensions.Markdig.Markdown.Template;
-using BoothDotDev.Extensions.Markdig.Services;
-using BoothDotDev.Extensions.SmartFormat;
+using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Formatting;
 using BoothDotDev.Markdown.Template;
 using Microsoft.EntityFrameworkCore;
 using SmartFormat;
@@ -15,12 +13,12 @@ namespace BoothDotDev.Services;
 /// <summary>
 ///     Represents a service that renders MediaWiki-style templates.
 /// </summary>
-internal sealed class TemplateService : ITemplateService
+internal sealed class TemplateService
 {
     private readonly Dictionary<string, CustomTemplateRenderer> _customTemplateRendererOverrides = new();
     private static readonly Random Random = new();
     private readonly ILogger<TemplateService> _logger;
-    private readonly IDbContextFactory<WebContext> _webContextFactory;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly SmartFormatter _formatter;
 
     /// <summary>
@@ -28,10 +26,10 @@ internal sealed class TemplateService : ITemplateService
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" />.</param>
-    /// <param name="webContextFactory">The <see cref="WebContext" /> factory.</param>
+    /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
     public TemplateService(ILogger<TemplateService> logger,
         IServiceProvider serviceProvider,
-        IDbContextFactory<WebContext> webContextFactory)
+        IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _logger = logger;
 
@@ -44,10 +42,17 @@ internal sealed class TemplateService : ITemplateService
         _logger.LogDebug("Registering template override Snippet to CodeSnippetTemplateRenderer");
         AddRendererOverride("Snippet", new CodeSnippetTemplateRenderer(serviceProvider));
 
-        _webContextFactory = webContextFactory;
+        _dbContextFactory = dbContextFactory;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Renders the specified global template with the specified arguments.
+    /// </summary>
+    /// <param name="templateInline">The global template to render.</param>
+    /// <returns>The rendered global template.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <paramref name="templateInline" /> is <see langword="null" />.
+    /// </exception>
     public string RenderGlobalTemplate(TemplateInline templateInline)
     {
         if (templateInline is null)
@@ -63,13 +68,21 @@ internal sealed class TemplateService : ITemplateService
             return renderer.Render(templateInline);
         }
 
-        return TryGetTemplate(templateInline.Name, templateInline.Variant, out ITemplate? template)
+        return TryGetTemplate(templateInline.Name, templateInline.Variant, out Template? template)
             ? RenderTemplate(templateInline, template)
             : GetDefaultRender(templateInline);
     }
 
-    /// <inheritdoc />
-    public string RenderTemplate(TemplateInline templateInline, ITemplate? template)
+    /// <summary>
+    ///     Renders the specified global template with the specified arguments.
+    /// </summary>
+    /// <param name="templateInline">The global template to render.</param>
+    /// <param name="template">The database template object.</param>
+    /// <returns>The rendered global template.</returns>
+    /// <exception cref="ArgumentNullException">
+    ///     <paramref name="templateInline" /> is <see langword="null" />.
+    /// </exception>
+    public string RenderTemplate(TemplateInline templateInline, Template? template)
     {
         if (template is null)
         {
@@ -98,16 +111,33 @@ internal sealed class TemplateService : ITemplateService
         }
     }
 
-    /// <inheritdoc />
-    public bool TryGetTemplate(string name, [NotNullWhen(true)] out ITemplate? template)
+    /// <summary>
+    ///     Attempts to get the template with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the template.</param>
+    /// <param name="template">
+    ///     When this method returns, contains the template with the specified name, if the template is found;
+    ///     otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns><see langword="true" /> if the template exists; otherwise, <see langword="false" />.</returns>
+    public bool TryGetTemplate(string name, [NotNullWhen(true)] out Template? template)
     {
         return TryGetTemplate(name, string.Empty, out template);
     }
 
-    /// <inheritdoc />
-    public bool TryGetTemplate(string name, string variant, [NotNullWhen(true)] out ITemplate? template)
+    /// <summary>
+    ///     Attempts to get the template with the specified name and variant.
+    /// </summary>
+    /// <param name="name">The name of the template.</param>
+    /// <param name="variant">The variant of the template.</param>
+    /// <param name="template">
+    ///     When this method returns, contains the template with the specified name and variant, if the template is
+    ///     found; otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns><see langword="true" /> if the template exists; otherwise, <see langword="false" />.</returns>
+    public bool TryGetTemplate(string name, string variant, [NotNullWhen(true)] out Template? template)
     {
-        using WebContext context = _webContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         template = context.Templates.FirstOrDefault(t => t.Name == name && t.Variant == variant);
         return template is not null;
     }

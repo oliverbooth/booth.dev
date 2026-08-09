@@ -1,15 +1,15 @@
 @page "/blog/page/{pageNumber:int}"
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Services
+@using BoothDotDev.Data
+@using BoothDotDev.Services
 @model List
-@inject IBlogPostService BlogPostService
+@inject BlogPostService BlogPostService
 
 @{
     ViewData["Title"] = "Blog";
     ViewData["Page"] = "Blog";
-    int pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
-    int previousPage = Model.PageNumber - 1;
-    int nextPage = Model.PageNumber + 1;
+    var pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
+    var previousPage = Model.PageNumber - 1;
+    var nextPage = Model.PageNumber + 1;
 }
 
 @await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")

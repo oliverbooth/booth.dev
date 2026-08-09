@@ -1,2 +1,112 @@
 @page
+@using BoothDotDev.Extensions
 @model Index
+
+<div class="page-wide">
+
+    <div class="terminal">
+        <div class="terminal-bar">
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+        </div>
+        <div class="terminal-body" id="hero-terminal" data-username="@Strings.TerminalUsername" data-terminal-typewriter>
+            <div class="terminal-line" data-command="whoami">
+                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> whoami
+            </div>
+
+            <div class="terminal-block terminal-name-block" data-reveal>
+                <h1 class="terminal-name">Oliver Booth</h1>
+                <p class="terminal-tagline">
+                    Coffee enthusiast with a love for all things tech. Tech enthusiast with a love for all things coffee.
+                </p>
+            </div>
+
+            <div class="terminal-line" data-command="cat status.txt">
+                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> cat status.txt
+            </div>
+
+            <div class="out terminal-block" data-reveal>
+                @{
+                    string[] statuses =
+                    [
+                        "injecting copious amounts of java into my veins",
+                        "literally screaming at the pain of web dev",
+                        "seeing sharp",
+                        "rust? i think you mean CORROSION",
+                        "help i'm stuck in a terminal",
+                        "compiling my will to live",
+                        "currently in a git conflict with reality",
+                        "42% coffee by volume",
+                        "sudo make me a sandwich (permission denied)",
+                        "yes, i test in production, how could you tell",
+                        "it's not a bug, it's an undocumented feature",
+                        "staring at a stack trace like it owes me money",
+                        "if this breaks, i'm blaming docker",
+                        "segmentation fault (core dumped my sanity)",
+                        "async and confused",
+                        "definitely not procrastinating my degree right now",
+                        "there are 10 types of people, and i'm both of them",
+                        "01101000 01100101 01101100 01110000",
+                        "npm install more-motivation"
+                    ];
+                    @statuses[Random.Shared.Next(statuses.Length)]
+                }
+            </div>
+
+            <div class="terminal-line" data-prompt>
+                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span>
+            </div>
+
+            <div class="terminal-actions" data-reveal>
+                <a asp-page="/Projects/Index" class="btn btn-primary">View projects</a>
+                <a asp-page="/Blog/Index" class="btn">Read the blog</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-head">
+        <h2>Latest activity</h2>
+        <a asp-page="/Blog/Index"><span class="command-link">git log --all</span> &rarr;</a>
+    </div>
+
+    <div class="commit-log" style="margin-bottom:3rem">
+        @for (var index = 0; index < Model.BlogPosts.Count; index++)
+        {
+            var post = Model.BlogPosts[index];
+            var first = index == 0;
+
+            <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="commit">
+                <div class="commit-dot@(first ? "" : " muted")"></div>
+                <div class="commit-meta">
+                    <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
+                </div>
+                <p class="commit-title">@post.Title</p>
+                <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
+            </a>
+        }
+    </div>
+
+    <div class="section-head">
+        <h2>Projects</h2>
+        <a asp-page="/Projects/Index">View all <i class="ti ti-arrow-right" style="font-size:12px"></i></a>
+    </div>
+
+    <div class="card-grid">
+        @foreach (var project in Model.Projects)
+        {
+            <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
+                <div class="card-icon">
+                    <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
+                    <span class="card-status-badge">
+                        <span class="dot" style="margin-right:5px"></span>@project.Status.ToString().ToLower()
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p class="title">@project.Name</p>
+                </div>
+            </a>
+        }
+    </div>
+
+</div>

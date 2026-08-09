@@ -149,7 +149,9 @@ public static class MarkdownTocBuilder
         {
             // if stack empty -> top-level
             while (stack.Count > 0 && item.Level <= stack.Peek().Level)
+            {
                 stack.Pop();
+            }
 
             if (stack.Count == 0)
             {

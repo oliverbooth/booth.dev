@@ -1,11 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Timers;
-using BoothDotDev.Common.Data;
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Services;
 using BoothDotDev.Data;
-using BoothDotDev.Data.Blog;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using Humanizer;
 using Markdig;
@@ -15,14 +12,19 @@ using Timer = System.Timers.Timer;
 namespace BoothDotDev.Services;
 
 /// <summary>
-///     Represents an implementation of <see cref="IBlogPostService" />.
+///     Represents an implementation of <see cref="BlogPostService" />.
 /// </summary>
-internal sealed class BlogPostService : BackgroundService, IBlogPostService
+public sealed class BlogPostService : BackgroundService
 {
+    /// <summary>
+    ///     The default page size for blog post pagination.
+    /// </summary>
+    public const int DefaultPageSize = 5;
+
     private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10).TotalMilliseconds);
     private readonly ILogger<BlogPostService> _logger;
-    private readonly IDbContextFactory<BlogContext> _dbContextFactory;
-    private readonly IBlogUserService _blogUserService;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private readonly BlogUserService _blogUserService;
     private readonly MarkdownPipeline _markdownPipeline;
     private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
 
@@ -31,13 +33,13 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{TCategoryName}" />.</param>
     /// <param name="dbContextFactory">
-    ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="BlogContext" />.
+    ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
-    /// <param name="blogUserService">The <see cref="IBlogUserService" />.</param>
+    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
     /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
     public BlogPostService(ILogger<BlogPostService> logger,
-        IDbContextFactory<BlogContext> dbContextFactory,
-        IBlogUserService blogUserService,
+        IDbContextFactory<AppDbContext> dbContextFactory,
+        BlogUserService blogUserService,
         MarkdownPipeline markdownPipeline)
     {
         _logger = logger;
@@ -46,10 +48,38 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         _markdownPipeline = markdownPipeline;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Returns a collection of all blog posts.
+    /// </summary>
+    /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>
+    /// <returns>A collection of all blog posts.</returns>
+    /// <remarks>
+    ///     This method may slow down execution if there are a large number of blog posts being requested. It is
+    ///     recommended to use <see cref="GetBlogPosts" /> instead.
+    /// </remarks>
+    public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        IQueryable<BlogPost> ordered = context.BlogPosts
+            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
+            .OrderByDescending(post => post.Published);
+        if (limit > -1)
+        {
+            ordered = ordered.Take(limit);
+        }
+
+        return [.. ordered.AsEnumerable().Select(CacheAuthor)];
+    }
+
+    /// <summary>
+    ///     Returns the total number of blog posts.
+    /// </summary>
+    /// <param name="visibility">The post visibility filter.</param>
+    /// <param name="tags">The tags of the posts to return.</param>
+    /// <returns>The total number of blog posts.</returns>
     public int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         if (tags is { Length: > 0 })
         {
             for (var index = 0; index < tags.Length; index++)
@@ -69,26 +99,17 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             : context.BlogPosts.Count(p => !p.IsRedirect && p.Visibility == visibility);
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<IBlogPost> GetAllBlogPosts(int limit = -1)
+    /// <summary>
+    ///     Returns a collection of blog posts from the specified page, optionally limiting the number of posts
+    ///     returned per page.
+    /// </summary>
+    /// <param name="page">The zero-based index of the page to return.</param>
+    /// <param name="pageSize">The maximum number of posts to return per page.</param>
+    /// <param name="tags">The tags of the posts to return.</param>
+    /// <returns>A collection of blog posts.</returns>
+    public IReadOnlyList<BlogPost> GetBlogPosts(int page, int pageSize = DefaultPageSize, string[]? tags = null)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<BlogPost> ordered = context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
-            .OrderByDescending(post => post.Published);
-        if (limit > -1)
-        {
-            ordered = ordered.Take(limit);
-        }
-
-        return ordered.AsEnumerable().Select(CacheAuthor).ToArray();
-    }
-
-    /// <inheritdoc />
-    public IReadOnlyList<IBlogPost> GetBlogPosts(int page, int pageSize = IBlogPostService.DefaultPageSize,
-        string[]? tags = null)
-    {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         IEnumerable<BlogPost> posts = context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published);
@@ -105,83 +126,146 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         }
 
         posts = posts.Skip(page * pageSize).Take(pageSize);
-        return posts.AsEnumerable().Select(CacheAuthor).ToArray();
+        return [.. posts.AsEnumerable().Select(CacheAuthor)];
     }
 
-    /// <inheritdoc />
-    public int GetLegacyCommentCount(IBlogPost post)
+    /// <summary>
+    ///     Returns the blog post category with the specified ID.
+    /// </summary>
+    /// <param name="categoryId">The ID of the category to return.</param>
+    /// <returns>The blog post category with the specified ID.</returns>
+    public BlogPostCategory? GetCategory(Guid categoryId)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return context.BlogPostCategories.Find(categoryId);
+    }
+
+    /// <summary>
+    ///     Returns the number of legacy comments for the specified post.
+    /// </summary>
+    /// <param name="post">The post whose legacy comments to count.</param>
+    /// <returns>The total number of legacy comments.</returns>
+    public int GetLegacyCommentCount(BlogPost post)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Count(c => c.PostId == post.Id);
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<ILegacyComment> GetLegacyComments(IBlogPost post)
+    /// <summary>
+    ///     Returns the collection of legacy comments for the specified post.
+    /// </summary>
+    /// <param name="post">The post whose legacy comments to retrieve.</param>
+    /// <returns>A read-only view of the legacy comments.</returns>
+    public IReadOnlyList<LegacyComment> GetLegacyComments(BlogPost post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null).ToArray();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return [.. context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null)];
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<ILegacyComment> GetLegacyReplies(ILegacyComment comment)
+    /// <summary>
+    ///     Returns the collection of replies to the specified legacy comment.
+    /// </summary>
+    /// <param name="comment">The comment whose replies to retrieve.</param>
+    /// <returns>A read-only view of the replies.</returns>
+    public IReadOnlyList<LegacyComment> GetLegacyReplies(LegacyComment comment)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Where(c => c.ParentComment == comment.Id).ToArray();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
     }
 
-    /// <inheritdoc />
-    public IBlogPost? GetNextPost(IBlogPost blogPost)
+    /// <summary>
+    ///     Returns the next blog post from the specified blog post.
+    /// </summary>
+    /// <param name="blogPost">The blog post whose next post to return.</param>
+    /// <returns>The next blog post from the specified blog post.</returns>
+    public BlogPost? GetNextPost(BlogPost blogPost)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderBy(post => post.Published)
             .FirstOrDefault(post => post.Published > blogPost.Published);
     }
 
-    /// <inheritdoc />
-    public int GetPageCount(int pageSize = IBlogPostService.DefaultPageSize, Visibility visibility = Visibility.None,
+    /// <summary>
+    ///     Returns the number of pages needed to render all blog posts, using the specified <paramref name="pageSize" /> as an
+    ///     indicator of how many posts are allowed per page.
+    /// </summary>
+    /// <param name="pageSize">The page size. Defaults to 10.</param>
+    /// <param name="visibility">The post visibility filter.</param>
+    /// <param name="tags">The tags of the posts to return.</param>
+    /// <returns>The page count.</returns>
+    public int GetPageCount(int pageSize = DefaultPageSize, Visibility visibility = Visibility.None,
         string[]? tags = null)
     {
         float postCount = GetBlogPostCount(visibility, tags);
         return (int)MathF.Ceiling(postCount / pageSize);
     }
 
-    /// <inheritdoc />
-    public IBlogPost? GetPreviousPost(IBlogPost blogPost)
+    /// <summary>
+    ///     Gets the parent-most category of the specified blog post.
+    /// </summary>
+    /// <param name="post">The blog post whose parent category to retrieve.</param>
+    /// <returns>The parent-most category of the specified blog post.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="post"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The blog post does not have a valid parent category.</exception>
+    public BlogPostCategory GetParentCategory(BlogPost post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        if (post is null)
+        {
+            throw new ArgumentNullException(nameof(post));
+        }
+
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        BlogPostCategory? current = context.BlogPostCategories.Find(post.CategoryId);
+
+        while (current is not null)
+        {
+            if (context.BlogPostCategories.Find(current.ParentCategoryId) is not { } parent)
+            {
+                break;
+            }
+
+            current = parent;
+        }
+
+        return current ?? throw new InvalidOperationException("The blog post does not have a valid parent category.");
+    }
+
+    /// <summary>
+    ///     Returns the previous blog post from the specified blog post.
+    /// </summary>
+    /// <param name="blogPost">The blog post whose previous post to return.</param>
+    /// <returns>The previous blog post from the specified blog post.</returns>
+    public BlogPost? GetPreviousPost(BlogPost blogPost)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < blogPost.Published);
     }
 
-    /// <inheritdoc />
-    public string RenderPlainTextExcerpt(IBlogPost post, out bool wasTrimmed)
+    /// <summary>
+    ///     Returns the top-level blog post categories.
+    /// </summary>
+    /// <returns>The top-level blog post categories.</returns>
+    public BlogPostCategory[] GetTopLevelCategories()
     {
-        if (!string.IsNullOrWhiteSpace(post.Excerpt))
-        {
-            wasTrimmed = false;
-            return Markdig.Markdown.ToPlainText(post.Excerpt, _markdownPipeline);
-        }
-
-        string body = post.Body;
-        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
-
-        if (moreIndex == -1)
-        {
-            string excerpt = body.Truncate(255, "...");
-            wasTrimmed = body.Length > 255;
-            return Markdig.Markdown.ToPlainText(excerpt, _markdownPipeline);
-        }
-
-        wasTrimmed = true;
-        return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return [.. context.BlogPostCategories.Where(category => category.ParentCategory == null)];
     }
 
-    /// <inheritdoc />
-    public string RenderExcerpt(IBlogPost post, out bool wasTrimmed)
+    /// <summary>
+    ///     Renders the excerpt of the specified blog post.
+    /// </summary>
+    /// <param name="post">The blog post whose excerpt to render.</param>
+    /// <param name="wasTrimmed">
+    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
+    ///     <see langword="false" />.
+    /// </param>
+    /// <returns>The rendered HTML of the blog post's excerpt.</returns>
+    public string RenderExcerpt(BlogPost post, out bool wasTrimmed)
     {
         if (!string.IsNullOrWhiteSpace(post.Excerpt))
         {
@@ -203,16 +287,58 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         return Markdig.Markdown.ToHtml(body[..moreIndex], _markdownPipeline);
     }
 
-    /// <inheritdoc />
-    public string RenderPost(IBlogPost post)
+    /// <summary>
+    ///     Renders the excerpt of the specified blog post as plain text.
+    /// </summary>
+    /// <param name="post">The blog post whose excerpt to render.</param>
+    /// <param name="wasTrimmed">
+    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
+    ///     <see langword="false" />.
+    /// </param>
+    /// <returns>The rendered plain text of the blog post's excerpt.</returns>
+    public string RenderPlainTextExcerpt(BlogPost post, out bool wasTrimmed)
+    {
+        if (!string.IsNullOrWhiteSpace(post.Excerpt))
+        {
+            wasTrimmed = false;
+            return Markdig.Markdown.ToPlainText(post.Excerpt, _markdownPipeline);
+        }
+
+        string body = post.Body;
+        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
+
+        if (moreIndex == -1)
+        {
+            string excerpt = body.Truncate(255, "...");
+            wasTrimmed = body.Length > 255;
+            return Markdig.Markdown.ToPlainText(excerpt, _markdownPipeline);
+        }
+
+        wasTrimmed = true;
+        return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
+    }
+
+    /// <summary>
+    ///     Renders the body of the specified blog post.
+    /// </summary>
+    /// <param name="post">The blog post to render.</param>
+    /// <returns>The rendered HTML of the blog post.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
+    public string RenderPost(BlogPost post)
     {
         return post is null
             ? throw new ArgumentNullException(nameof(post))
             : Markdig.Markdown.ToHtml(post.Body, _markdownPipeline);
     }
 
-    /// <inheritdoc />
-    public string RenderTableOfContents(IBlogPost post, HttpRequest request)
+    /// <summary>
+    ///     Renders the table of contents for the specified blog post.
+    /// </summary>
+    /// <param name="post">The blog post whose table of contents to render.</param>
+    /// <param name="request"></param>
+    /// <returns>The rendered HTML of the blog post's table of contents.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
+    public string RenderTableOfContents(BlogPost post, HttpRequest request)
     {
         if (post is null)
         {
@@ -223,8 +349,13 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         return MarkdownTocBuilder.RenderTocAsHtml(items, request);
     }
 
-    /// <inheritdoc />
-    public async Task<IReadOnlyCollection<IBlogPost>> SearchBlogPostsAsync(string searchText,
+    /// <summary>
+    ///     Searches blog posts for the specified search text.
+    /// </summary>
+    /// <param name="searchText">The text to search for.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A collection of blog posts that match the search text.</returns>
+    public async Task<IReadOnlyCollection<BlogPost>> SearchBlogPostsAsync(string searchText,
         CancellationToken cancellationToken)
     {
         const StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
@@ -233,11 +364,13 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             return [];
         }
 
-        string[] terms = searchText
-            .Split(' ', splitOptions)
-            .Select(t => t.Trim())
-            .Where(t => t.Length > 0)
-            .ToArray();
+        string[] terms =
+        [
+            .. searchText
+                .Split(' ', splitOptions)
+                .Select(t => t.Trim())
+                .Where(t => t.Length > 0)
+        ];
 
         if (terms.Length == 0)
         {
@@ -247,7 +380,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         const int maxResults = 50;
         var results = new HashSet<BlogPost>(maxResults);
 
-        BlogPost[] posts = _postCache.Values.OrderByDescending(p => p.Published).ToArray();
+        BlogPost[] posts = [.. _postCache.Values.OrderByDescending(p => p.Published)];
         foreach (BlogPost post in posts)
         {
             if (post.Visibility != Visibility.Published || post.IsRedirect)
@@ -293,38 +426,71 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         return results.AsReadOnly();
     }
 
-    /// <inheritdoc />
-    public bool TryGetPost(Guid id, [NotNullWhen(true)] out IBlogPost? post)
+    /// <summary>
+    ///     Attempts to find a blog post with the specified ID.
+    /// </summary>
+    /// <param name="id">The ID of the blog post to find.</param>
+    /// <param name="post">
+    ///     When this method returns, contains the blog post with the specified ID, if the blog post is found;
+    ///     otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a blog post with the specified ID is found; otherwise, <see langword="false" />.
+    /// </returns>
+    public bool TryGetPost(Guid id, [NotNullWhen(true)] out BlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.Find(id);
         if (post is null)
         {
             return false;
         }
 
-        CacheAuthor((BlogPost)post);
+        CacheAuthor(post);
         return true;
     }
 
-    /// <inheritdoc />
-    public bool TryGetPost(int id, [NotNullWhen(true)] out IBlogPost? post)
+    /// <summary>
+    ///     Attempts to find a blog post with the specified WordPress ID.
+    /// </summary>
+    /// <param name="id">The ID of the blog post to find.</param>
+    /// <param name="post">
+    ///     When this method returns, contains the blog post with the specified WordPress ID, if the blog post is found;
+    ///     otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a blog post with the specified WordPress ID is found; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool TryGetPost(int id, [NotNullWhen(true)] out BlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == id);
         if (post is null)
         {
             return false;
         }
 
-        CacheAuthor((BlogPost)post);
+        CacheAuthor(post);
         return true;
     }
 
-    /// <inheritdoc />
-    public bool TryGetPost(string slug, [NotNullWhen(true)] out IBlogPost? post)
+    /// <summary>
+    ///     Attempts to find a blog post with the specified publish date and URL slug.
+    /// </summary>
+    /// <param name="slug">The URL slug of the blog post to find.</param>
+    /// <param name="post">
+    ///     When this method returns, contains the blog post with the specified publish date and URL slug, if the blog
+    ///     post is found; otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a blog post with the specified publish date and URL slug is found; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    public bool TryGetPost(string slug, [NotNullWhen(true)] out BlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(post => post.Slug == slug);
 
         if (post is null)
@@ -332,14 +498,27 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             return false;
         }
 
-        CacheAuthor((BlogPost)post);
+        CacheAuthor(post);
         return true;
     }
 
-    /// <inheritdoc />
-    public bool TryGetPost(DateOnly publishDate, string slug, [NotNullWhen(true)] out IBlogPost? post)
+    /// <summary>
+    ///     Attempts to find a blog post with the specified publish date and URL slug.
+    /// </summary>
+    /// <param name="publishDate">The date the blog post was published.</param>
+    /// <param name="slug">The URL slug of the blog post to find.</param>
+    /// <param name="post">
+    ///     When this method returns, contains the blog post with the specified publish date and URL slug, if the blog
+    ///     post is found; otherwise, <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true" /> if a blog post with the specified publish date and URL slug is found; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    public bool TryGetPost(DateOnly publishDate, string slug, [NotNullWhen(true)] out BlogPost? post)
     {
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         post = context.BlogPosts.FirstOrDefault(post => post.Published.Year == publishDate.Year &&
                                                         post.Published.Month == publishDate.Month &&
                                                         post.Published.Day == publishDate.Day &&
@@ -350,7 +529,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             return false;
         }
 
-        CacheAuthor((BlogPost)post);
+        CacheAuthor(post);
         return true;
     }
 
@@ -376,7 +555,7 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
         _logger.LogInformation("Invalidating blog post cache...");
         _postCache.Clear();
 
-        using BlogContext context = _dbContextFactory.CreateDbContext();
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
         foreach (BlogPost post in context.BlogPosts)
         {
             _postCache[post.Id] = post;
@@ -393,9 +572,9 @@ internal sealed class BlogPostService : BackgroundService, IBlogPostService
             return post;
         }
 
-        if (_blogUserService.TryGetUser(post.AuthorId, out IUser? user) && user is IBlogAuthor author)
+        if (_blogUserService.TryGetUser(post.AuthorId, out User? user))
         {
-            post.Author = author;
+            post.Author = user;
         }
 
         return post;

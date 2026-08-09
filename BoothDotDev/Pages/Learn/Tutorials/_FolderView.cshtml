@@ -1,0 +1,131 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Data.Models
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@using Humanizer
+@using Markdig
+@model TutorialFolder?
+@inject MarkdownPipeline MarkdownPipeline
+@inject TutorialService TutorialService
+
+@{
+    ViewData["Title"] = "Tutorials";
+    ViewData["Page"] = "Learn";
+
+    var parents = new Stack<TutorialFolder>();
+    var parent = Model?.Parent;
+    while (parent is not null)
+    {
+        var folder = TutorialService.GetFolder(parent.Value)
+            ?? throw new InvalidOperationException($"Folder chain references missing parent {parent.Value}.");
+        parents.Push(folder);
+        parent = folder.Parent;
+    }
+
+    var folders = TutorialService.GetFolders(Model, Visibility.Published);
+    var articles = Model is not null
+        ? TutorialService.GetArticles(Model, Visibility.Published)
+        : [];
+}
+
+<div class="page-wide">
+
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        @while (parents.Count > 0)
+        {
+            var current = parents.Pop();
+            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+        }
+        @if (Model is not null)
+        {
+            <text> / @Model.Title</text>
+        }
+    </p>
+
+    <h1>@(Model?.Title ?? "Learn")</h1>
+
+    @if (Model is null)
+    {
+        <div class="section-head"><h2>Challenges</h2></div>
+
+        <a asp-page="/Learn/Challenges/Index" class="card" style="margin-bottom:2.5rem;display:block;max-width:320px">
+            <div class="card-icon">
+                <i class="ti ti-code" style="color:var(--warning-text)"></i>
+            </div>
+            <div class="card-body">
+                <p class="title">Dev Challenges</p>
+                <p class="desc">Codewars-style problems to test your skills.</p>
+            </div>
+        </a>
+    }
+
+    @if (!string.IsNullOrEmpty(Model?.Description))
+    {
+        <p class="lede">@Html.Raw(Markdown.ToHtmlUnwrapped(Model.Description, MarkdownPipeline))</p>
+    }
+
+    @if (folders.Count > 0)
+    {
+        <div class="section-head"><h2>Tutorials</h2></div>
+
+        <div class="card-grid" style="margin-bottom:2.5rem">
+            @foreach (var folder in folders)
+            {
+                var articleCount = TutorialService.GetArticles(folder, Visibility.Published).Count;
+
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card">
+                    <div class="card-icon">
+                        @if (folder.PreviewImageUrl is not null)
+                        {
+                            <img loading="lazy" src="@folder.PreviewImageUrl" alt="@folder.Title">
+                        }
+                        else
+                        {
+                            <i class="ti ti-folder"></i>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <p class="title">@folder.Title</p>
+                        @if (!string.IsNullOrEmpty(folder.Description))
+                        {
+                            <p class="desc">@Markdown.ToPlainText(folder.Description, MarkdownPipeline)</p>
+                        }
+                        <span class="tag">@("tutorial".ToQuantity(articleCount))</span>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    @if (articles.Count > 0)
+    {
+        <div class="section-head"><h2>Articles</h2></div>
+
+        <div class="stack-list">
+            @foreach (var article in articles)
+            {
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)">
+                    <div class="stack-icon"><i class="ti ti-file-text"></i></div>
+                    <div class="stack-meta">
+                        <p class="title">@article.Title</p>
+                        <p class="sub">
+                            @article.GetEstimatedReadingTime() min read
+                            @if (article.HasOtherParts)
+                            {
+                                <text> &middot; part of a series</text>
+                            }
+                        </p>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    @if (folders.Count == 0 && articles.Count == 0)
+    {
+        <p class="footnote">Nothing here yet.</p>
+    }
+
+</div>

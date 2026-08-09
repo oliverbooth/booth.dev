@@ -1,47 +1,67 @@
 @page "/psa/binaryformatter"
 
-<div class="callout" data-callout="danger">
-    <div class="callout-title"><h2>⚠️ Stop! This application is unsafe!</h2></div>
-    <p>
-        This application is using an insecure method to read and write data, and needs to be updated
-        <em>immediately</em>.
-    </p>
-</div>
+<div class="page">
 
-<div class="callout" data-callout="warning">
-    <div class="callout-title">I'm a user, what does this mean?</div>
-    <p>
-        If you are seeing this message, it means you loaded a payload that I crafted to exploit this vulnerability. Be
-        fortunate, because I could have done much worse including stealing your data or installing malware on your
-        computer.
-    </p>
-    <p>
-        If you're seeing this because you loaded my data from a game, this means it's possible for an attacker to craft
-        a save file that can, for example, steal your Steam credentials and send them to a remote server. Just because
-        you loaded - what seemed to be - a save file!
-    </p>
-    <hr/>
-    <p>
-        <strong>Do not</strong> load any more data into this application until the developer has addressed this issue.
-    </p>
-</div>
+    <div class="terminal">
+        <div class="terminal-bar">
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+        </div>
+        <div class="terminal-body">
+            <div>
+                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> BinaryFormatter.Deserialize(payload)
+            </div>
+            <div class="out out--danger" style="margin-top:6px">warning: untrusted stream deserialized - arbitrary code executed</div>
+        </div>
+    </div>
 
-<div class="callout" data-callout="info">
-    <div class="callout-title">I'm a developer, can you explain more?</div>
-    <p>
-        <code>BinaryFormatter</code> is a .NET class that is used to serialize and deserialize data such as game saves
-        or configuration files. However, it was discovered that this class is vulnerable to remote code execution when
-        deserializing untrusted data.
+    <div class="callout" data-callout-type="danger">
+        <p class="callout-title"><i class="ti ti-alert-triangle-filled"></i> Stop! This application is unsafe!</p>
+        <div class="callout-body">
+            <p>This application is using an insecure method to read and write data, and needs to be updated <em>immediately</em>.</p>
+        </div>
+    </div>
+
+    <div class="callout" data-callout="warning">
+        <p class="callout-title"><i class="ti ti-user-exclamation"></i> I'm a user - what does this mean?</p>
+        <div class="callout-body">
+            <p>
+                If you're seeing this message, it means you loaded a payload crafted to exploit this vulnerability.
+                Be glad it was this - the same flaw could have stolen your data or installed malware on your computer instead.
+            </p>
+            <p>
+                If you're seeing this because you loaded save data from a game, it means an attacker could craft a save file that, for
+                example, steals your Steam credentials and sends them to a remote server - just from loading what looked like an ordinary
+                save.
+            </p>
+            <hr>
+            <p><strong>Do not</strong> load any more data into this application until the developer has addressed this issue.</p>
+        </div>
+    </div>
+
+    <div class="callout" data-callout="info">
+        <p class="callout-title"><i class="ti ti-code"></i> I'm a developer - can you explain more?</p>
+        <div class="callout-body">
+            <p>
+                <code>BinaryFormatter</code> is a .NET class historically used to serialize and deserialize data such as game saves or
+                configuration files. It's since been discovered to be vulnerable to remote code execution when deserializing untrusted data
+                - deserializing a crafted payload can run arbitrary code with no further exploitation needed.
+            </p>
+            <p>
+                <strong>Update your application to use a different serialization method</strong> - <code>System.Text.Json</code>, or a
+                binary format designed with untrusted input in mind, such as MessagePack with type-safety enabled.
+            </p>
+            <hr>
+            <p>For more information, read Microsoft's own
+                <a href="https://learn.microsoft.com/dotnet/standard/serialization/binaryformatter-security-guide">
+                    BinaryFormatter security guide</a>.</p>
+        </div>
+    </div>
+
+    <p class="footnote">
+        This page exists as a proof of concept, opened deliberately by a crafted payload to demonstrate the vulnerability - nothing else on
+        your system was touched.
     </p>
-    <p>
-        <strong>Please update your application to use a different serialization method.</strong>
-    </p>
-    <hr/>
-    <p>
-        For more information, please read the
-        <a href="https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide">
-            official security notice
-        </a>
-        from Microsoft.
-    </p>
+
 </div>

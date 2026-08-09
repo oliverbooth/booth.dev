@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "esModuleInterop": true,
+    "lib": ["ES2023", "DOM"],
+    "target": "ES2023",
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "rewriteRelativeImportExtensions": true,
+    "sourceMap": true
   }
 }

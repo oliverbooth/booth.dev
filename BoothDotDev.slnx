@@ -1,17 +1,15 @@
 ﻿<Solution>
     <Folder Name="/Solution Items/">
         <File Path="README.md"/>
+        <File Path="Gulpfile.cjs"/>
         <File Path="package.json"/>
-        <File Path="Gulpfile.js"/>
         <File Path="tsconfig.json"/>
         <File Path=".dockerignore"/>
+        <File Path=".editorconfig"/>
         <File Path=".gitlab-ci.yml"/>
         <File Path="compose.yaml"/>
         <File Path="Directory.Build.props"/>
         <File Path="global.json"/>
     </Folder>
-    <Project Path="BoothDotDev.Common\BoothDotDev.Common.csproj"/>
-    <Project Path="BoothDotDev.Extensions.Markdig\BoothDotDev.Extensions.Markdig.csproj"/>
-    <Project Path="BoothDotDev.Extensions.SmartFormat\BoothDotDev.Extensions.SmartFormat.csproj"/>
     <Project Path="BoothDotDev\BoothDotDev.csproj"/>
 </Solution>

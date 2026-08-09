@@ -1,5 +1,4 @@
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Services;
 using Cysharp.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,20 +11,20 @@ namespace BoothDotDev.Pages.Blog;
 [Area("blog")]
 internal sealed class RawArticle : PageModel
 {
-    private readonly IBlogPostService _blogPostService;
+    private readonly BlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RawArticle" /> class.
     /// </summary>
-    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
-    public RawArticle(IBlogPostService blogPostService)
+    /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
+    public RawArticle(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
 
     public IActionResult OnGet(string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
+        if (!_blogPostService.TryGetPost(slug, out var post))
         {
             return NotFound();
         }
@@ -38,7 +37,9 @@ internal sealed class RawArticle : PageModel
 
         builder.AppendLine($"Published: {post.Published:R}");
         if (post.Updated.HasValue)
+        {
             builder.AppendLine($"Updated: {post.Updated:R}");
+        }
 
         builder.AppendLine();
         builder.AppendLine(post.Body);

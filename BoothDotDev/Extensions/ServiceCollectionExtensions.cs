@@ -1,5 +1,4 @@
-using BoothDotDev.Extensions.Markdig;
-using BoothDotDev.Extensions.Markdig.Markdown.Timestamp;
+using BoothDotDev.Markdown.Timestamp;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 

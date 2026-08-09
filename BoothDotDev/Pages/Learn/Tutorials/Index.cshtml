@@ -1,0 +1,11 @@
+@page "/learn/{**slug}"
+@model Index
+
+@if (Model.ShowFolderView)
+{
+    <partial name="_FolderView" model="Model.CurrentFolder" />
+}
+else if (Model.CurrentArticle is not null)
+{
+    <partial name="_ArticleView" model="Model.CurrentArticle" />
+}
