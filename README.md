@@ -33,4 +33,4 @@ time-being, that the rights to all assets and code are reserved. You may use the
 directly copying my website for your own purposes is strictly forbidden at this current time.
 
 ## Contact
-For questions or support, feel free to each out to me at https://booth.dev/contact.
+For questions or support, feel free to reach out to me from my links on my about page https://booth.dev/about.
