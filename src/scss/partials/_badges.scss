@@ -33,6 +33,22 @@
     color: var(--text-secondary);
     background: var(--surface-1);
   }
+
+  &.hiatus {
+    color: var(--warning-text);
+    background: var(--warning-bg);
+    .dot {
+      background: var(--warning-text);
+    }
+  }
+
+  &.retired {
+    color: var(--danger-text);
+    background: var(--danger-bg);
+    .dot {
+      background: var(--danger-text);
+    }
+  }
 }
 
 .dot {
