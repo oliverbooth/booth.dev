@@ -44,7 +44,7 @@ public sealed class BlogPost
     ///     Gets the ID of the post.
     /// </summary>
     /// <value>The ID of the post.</value>
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets a value indicating whether the post redirects to another URL.

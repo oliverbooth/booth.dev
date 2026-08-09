@@ -36,7 +36,7 @@ public sealed class User
     ///     Gets the unique identifier of the user.
     /// </summary>
     /// <value>The unique identifier of the user.</value>
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets the date and time the user registered.

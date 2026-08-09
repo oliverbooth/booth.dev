@@ -47,7 +47,7 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>
     ///     Gets the ID of this article.
     /// </summary>
     /// <value>The ID.</value>
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the ID of the next article to this one.

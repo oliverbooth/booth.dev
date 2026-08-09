@@ -27,7 +27,7 @@ public sealed class Project : IEquatable<Project>
     ///     Gets the ID of the project.
     /// </summary>
     /// <value>The ID of the project.</value>
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the set of languages used for this project.

@@ -43,7 +43,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
             return DefaultRender(template);
         }
 
-        var identifier = Guid.NewGuid();
+        var identifier = Guid.CreateVersion7();
         var snippets = new List<CodeSnippet>();
 
         IReadOnlyList<string> languages = argumentList.Count > 1
