@@ -21,7 +21,7 @@ internal sealed class Project : PageModel
     ///     Gets the selected project to display on the page.
     /// </summary>
     /// <value>The selected project.</value>
-    public Data.Models.Project SelectedProject { get; private set; }
+    public Data.Models.Project SelectedProject { get; private set; } = null!;
 
     /// <summary>
     ///     Handles the GET request for the project page.
