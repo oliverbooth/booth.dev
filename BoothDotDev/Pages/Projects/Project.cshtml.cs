@@ -9,7 +9,7 @@ internal sealed class Project : PageModel
     private readonly ProjectService _projectService;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Project"/> class.
+    ///     Initializes a new instance of the <see cref="Project" /> class.
     /// </summary>
     /// <param name="projectService">The project service.</param>
     public Project(ProjectService projectService)

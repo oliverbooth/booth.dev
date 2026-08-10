@@ -8,7 +8,7 @@ using MD = Markdig.Markdown;
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     Extension methods for <see cref="Markdig"/>.
+///     Extension methods for <see cref="Markdig" />.
 /// </summary>
 public static class MarkdownExtensions
 {
@@ -44,7 +44,7 @@ public static class MarkdownExtensions
     }
 
     /// <summary>
-    ///     Extension methods <see cref="MD"/>.
+    ///     Extension methods <see cref="MD" />.
     /// </summary>
     extension(MD)
     {

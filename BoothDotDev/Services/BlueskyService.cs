@@ -8,10 +8,10 @@ namespace BoothDotDev.Services;
 /// <summary>
 ///     Represents a service for interacting with Bluesky.
 /// </summary>
-/// <param name="httpClient">The <see cref="HttpClient"/> to use for making requests to the Bluesky API.</param>
-/// <param name="cache">The <see cref="IMemoryCache"/> to use for caching the latest post.</param>
+/// <param name="httpClient">The <see cref="HttpClient" /> to use for making requests to the Bluesky API.</param>
+/// <param name="cache">The <see cref="IMemoryCache" /> to use for caching the latest post.</param>
 /// <param name="options">
-///     The <see cref="IOptionsMonitor{BlueskyOptions}"/> to use for accessing configuration options.
+///     The <see cref="IOptionsMonitor{BlueskyOptions}" /> to use for accessing configuration options.
 /// </param>
 public sealed class BlueskyService(
     HttpClient httpClient,

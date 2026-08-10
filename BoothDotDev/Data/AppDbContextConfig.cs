@@ -4,7 +4,7 @@ using Npgsql.NameTranslation;
 namespace BoothDotDev.Data;
 
 /// <summary>
-///     Provides configuration for <see cref="AppDbContext"/>.
+///     Provides configuration for <see cref="AppDbContext" />.
 /// </summary>
 public static class AppDbContextConfig
 {

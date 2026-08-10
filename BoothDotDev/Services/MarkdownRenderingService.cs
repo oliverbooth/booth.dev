@@ -15,20 +15,20 @@ public sealed class MarkdownRenderingService
     private readonly MarkdownPipeline _markdownPipeline;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MarkdownRenderingService"/> class.
+    ///     Initializes a new instance of the <see cref="MarkdownRenderingService" /> class.
     /// </summary>
-    /// <param name="markdownPipeline">The <see cref="MarkdownPipeline"/> to use for rendering Markdown.</param>
+    /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" /> to use for rendering Markdown.</param>
     public MarkdownRenderingService(MarkdownPipeline markdownPipeline)
     {
         _markdownPipeline = markdownPipeline;
     }
 
     /// <summary>
-    ///     Renders the body of a <see cref="IMarkdownBody"/> as HTML using the configured Markdown pipeline.
+    ///     Renders the body of a <see cref="IMarkdownBody" /> as HTML using the configured Markdown pipeline.
     /// </summary>
-    /// <param name="body">The <see cref="IMarkdownBody"/> to render.</param>
+    /// <param name="body">The <see cref="IMarkdownBody" /> to render.</param>
     /// <returns>The HTML content of the rendered content.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="body"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="body" /> is <see langword="null" />.</exception>
     public string Render(IMarkdownBody body)
     {
         if (body is null)
@@ -48,7 +48,7 @@ public sealed class MarkdownRenderingService
     ///     <see langword="false" />.
     /// </param>
     /// <returns>The rendered HTML of the blog post's excerpt.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="markdown"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="markdown" /> is <see langword="null" />.</exception>
     public string RenderExcerpt(IMarkdownExcerpt markdown, out bool wasTrimmed)
     {
         if (markdown is null)
@@ -85,7 +85,7 @@ public sealed class MarkdownRenderingService
     ///     <see langword="false" />.
     /// </param>
     /// <returns>The rendered plain text of the article's excerpt.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="markdown"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="markdown" /> is <see langword="null" />.</exception>
     public string RenderPlainTextExcerpt(IMarkdownExcerpt markdown, out bool wasTrimmed)
     {
         if (markdown is null)

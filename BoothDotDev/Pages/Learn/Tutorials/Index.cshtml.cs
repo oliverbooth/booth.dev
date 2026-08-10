@@ -13,7 +13,7 @@ public sealed class Index : PageModel
     private readonly TutorialService _tutorialService;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Index"/> class.
+    ///     Initializes a new instance of the <see cref="Index" /> class.
     /// </summary>
     /// <param name="tutorialService">The tutorial service.</param>
     public Index(TutorialService tutorialService)
@@ -36,14 +36,14 @@ public sealed class Index : PageModel
     /// <summary>
     ///     Gets a value indicating whether to show the folder view.
     /// </summary>
-    /// <value><see langword="true"/> if the folder view should be shown; otherwise, <see langword="false"/>.</value>
+    /// <value><see langword="true" /> if the folder view should be shown; otherwise, <see langword="false" />.</value>
     public bool ShowFolderView { get; private set; }
 
     /// <summary>
     ///     Handles the GET request for the tutorial page based on the provided slug.
     /// </summary>
     /// <param name="slug">The slug of the tutorial page.</param>
-    /// <returns>An <see cref="IActionResult"/> representing the result of the request.</returns>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
     public IActionResult OnGet([FromRoute(Name = "slug")] string? slug)
     {
         if (string.IsNullOrEmpty(slug))

@@ -11,7 +11,7 @@ internal sealed class Index : PageModel
     private readonly ProjectService _projectService;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Index"/> class.
+    ///     Initializes a new instance of the <see cref="Index" /> class.
     /// </summary>
     /// <param name="blogPostService">The blog post service.</param>
     /// <param name="projectService">The project service.</param>

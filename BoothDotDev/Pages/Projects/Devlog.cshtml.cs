@@ -10,7 +10,7 @@ internal sealed class Devlog : PageModel
     private readonly ProjectService _projectService;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Devlog"/> class.
+    ///     Initializes a new instance of the <see cref="Devlog" /> class.
     /// </summary>
     /// <param name="projectService">The project service.</param>
     public Devlog(ProjectService projectService)

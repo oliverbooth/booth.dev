@@ -3,15 +3,15 @@ using DEDrake;
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     Extensions for <see cref="ShortGuid"/>.
+///     Extensions for <see cref="ShortGuid" />.
 /// </summary>
 public static class ShortGuidExtensions
 {
-    /// <param name="id">The <see cref="ShortGuid"/> to convert.</param>
+    /// <param name="id">The <see cref="ShortGuid" /> to convert.</param>
     extension(ShortGuid id)
     {
         /// <summary>
-        ///     Builds a raw URL for a route containing a <see cref="ShortGuid"/> segment, bypassing tag-helper link
+        ///     Builds a raw URL for a route containing a <see cref="ShortGuid" /> segment, bypassing tag-helper link
         ///     generation.
         /// </summary>
         /// <param name="basePath">The base path of the route.</param>

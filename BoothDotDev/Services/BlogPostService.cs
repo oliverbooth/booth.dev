@@ -200,7 +200,7 @@ public sealed class BlogPostService : BackgroundService
     /// </summary>
     /// <param name="post">The blog post whose parent category to retrieve.</param>
     /// <returns>The parent-most category of the specified blog post.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="post"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
     /// <exception cref="InvalidOperationException">The blog post does not have a valid parent category.</exception>
     public BlogPostCategory GetParentCategory(BlogPost post)
     {

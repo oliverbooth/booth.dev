@@ -11,7 +11,7 @@ namespace BoothDotDev.Data;
 public sealed class AppDbContext : DbContext
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="AppDbContext"/> class.
+    ///     Initializes a new instance of the <see cref="AppDbContext" /> class.
     /// </summary>
     /// <param name="options">The options for creating a new context.</param>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

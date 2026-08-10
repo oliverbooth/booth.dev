@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace BoothDotDev.Data.Configuration;
 
 /// <summary>
-///     Represents the configuration for the <see cref="ProjectDevlog"/> entity.
+///     Represents the configuration for the <see cref="ProjectDevlog" /> entity.
 /// </summary>
 internal sealed class ProjectDevlogConfiguration : IEntityTypeConfiguration<ProjectDevlog>
 {

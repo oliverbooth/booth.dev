@@ -14,7 +14,7 @@ public sealed class ProjectDevlog : IMarkdownBody
     /// <summary>
     ///     Gets or sets a value indicating whether comments are enabled for the devlog entry.
     /// </summary>
-    /// <value><see langword="true"/> if comments are enabled; otherwise, <see langword="false"/>.</value>
+    /// <value><see langword="true" /> if comments are enabled; otherwise, <see langword="false" />.</value>
     public bool EnableComments { get; set; } = true;
 
     /// <summary>

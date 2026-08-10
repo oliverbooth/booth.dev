@@ -11,7 +11,7 @@ internal sealed class Index : PageModel
     private readonly BlogPostService _blogPostService;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Index"/> class.
+    ///     Initializes a new instance of the <see cref="Index" /> class.
     /// </summary>
     /// <param name="blogPostService">The blog post service.</param>
     public Index(BlogPostService blogPostService)

@@ -19,7 +19,7 @@ public static class HtmlUtility
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="post" /> is <see langword="null" />.</para>
     ///     -or-
-    ///     <para><paramref name="markdownRenderingService"/> is <see langword="null"/>.</para>
+    ///     <para><paramref name="markdownRenderingService" /> is <see langword="null" />.</para>
     /// </exception>
     public static string CreateMetaTagsFromPost(BlogPost post, MarkdownRenderingService markdownRenderingService)
     {
@@ -45,12 +45,12 @@ public static class HtmlUtility
     ///     Creates <c>&lt;meta&gt;</c> embed tags by pulling data from the specified article.
     /// </summary>
     /// <param name="article">The article whose metadata should be retrieved.</param>
-    /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService"/> injected by the page.</param>
+    /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" /> injected by the page.</param>
     /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="article" /> is <see langword="null" />.</para>
     ///     -or-
-    ///     <para><paramref name="markdownRenderingService"/> is <see langword="null"/>.</para>
+    ///     <para><paramref name="markdownRenderingService" /> is <see langword="null" />.</para>
     /// </exception>
     public static string CreateMetaTagsFromTutorialArticle(TutorialArticle article, MarkdownRenderingService markdownRenderingService)
     {
