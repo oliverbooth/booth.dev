@@ -46,4 +46,56 @@ declare const JXG: any;
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
 
     UI.updateUI();
+
+    document.addEventListener("click", (event: MouseEvent) => {
+        const target = event.target as Element | null;
+        const badge = target?.closest<HTMLButtonElement>(".alt-badge") ?? null;
+        const clickedPopover = target?.closest<HTMLElement>(".alt-popover") ?? null;
+
+        if (clickedPopover !== null) {
+            clickedPopover.classList.remove("is-open");
+            clickedPopover.remove();
+            return;
+        }
+
+        const openPopover = document.querySelector<HTMLElement>(".alt-popover.is-open");
+
+        if (openPopover !== null && openPopover.dataset.owner !== badge?.dataset.altText) {
+            openPopover.classList.remove("is-open");
+            openPopover.remove();
+        }
+
+        if (badge === null) {
+            return;
+        }
+
+        event.stopPropagation();
+
+        const wrap = badge.closest<HTMLElement>(".figure-img-wrap");
+        if (wrap === null) {
+            return;
+        }
+
+        let popover = wrap.querySelector<HTMLElement>(".alt-popover");
+
+        if (popover !== null) {
+            popover.classList.remove("is-open");
+            popover.remove();
+            return;
+        }
+
+        popover = document.createElement("div");
+        popover.className = "alt-popover";
+        popover.setAttribute("role", "status");
+        popover.innerHTML = badge.dataset.altText ?? "";
+        wrap.appendChild(popover);
+
+        requestAnimationFrame(() => popover!.classList.add("is-open"));
+    });
+
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+            document.querySelectorAll<HTMLElement>(".alt-popover.is-open").forEach((el) => el.remove());
+        }
+    });
 })();
