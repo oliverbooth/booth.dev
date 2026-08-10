@@ -49,6 +49,13 @@
     font-size: 14px;
     line-height: 1.6;
 
+    &.language-ansi {
+      background: #0c0c0c !important;
+      code {
+        background: #0c0c0c !important;
+      }
+    }
+
     .kw {
       color: var(--accent);
     }
