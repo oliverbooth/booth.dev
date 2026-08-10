@@ -3,9 +3,8 @@
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using Humanizer
-@using Markdig
 @inject BlogPostService BlogPostService
-@inject MarkdownPipeline MarkdownPipeline
+@inject MarkdownRenderingService MarkdownRenderingService
 @model Article
 
 @if (Model.ShowPasswordPrompt)
@@ -52,7 +51,7 @@
     </div>
 
     <div class="prose prose--@(category.FontStyle.ToString().ToLower())" style="margin-top:2.5rem">
-        @Html.Raw(BlogPostService.RenderPost(post))
+        @Html.Raw(MarkdownRenderingService.Render(post))
     </div>
 
     @if (post.Tags.Count > 0)
@@ -184,7 +183,7 @@
                                     @comment.CreatedAt.Humanize()
                                 </abbr>
                             </div>
-                            <div class="legacy-comment-content">@Html.Raw(Markdown.ToHtml(comment.Body, MarkdownPipeline))</div>
+                            <div class="legacy-comment-content">@Html.Raw(MarkdownRenderingService.Render(comment))</div>
                         </div>
                     </div>
                 }

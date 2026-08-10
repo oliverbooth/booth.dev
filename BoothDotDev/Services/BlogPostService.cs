@@ -3,9 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Timers;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using BoothDotDev.Extensions;
-using Humanizer;
-using Markdig;
 using Microsoft.EntityFrameworkCore;
 using Timer = System.Timers.Timer;
 
@@ -25,7 +22,6 @@ public sealed class BlogPostService : BackgroundService
     private readonly ILogger<BlogPostService> _logger;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly BlogUserService _blogUserService;
-    private readonly MarkdownPipeline _markdownPipeline;
     private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
 
     /// <summary>
@@ -36,16 +32,13 @@ public sealed class BlogPostService : BackgroundService
     ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
     /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
-    /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
     public BlogPostService(ILogger<BlogPostService> logger,
         IDbContextFactory<AppDbContext> dbContextFactory,
-        BlogUserService blogUserService,
-        MarkdownPipeline markdownPipeline)
+        BlogUserService blogUserService)
     {
         _logger = logger;
         _dbContextFactory = dbContextFactory;
         _blogUserService = blogUserService;
-        _markdownPipeline = markdownPipeline;
     }
 
     /// <summary>
@@ -254,99 +247,6 @@ public sealed class BlogPostService : BackgroundService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.BlogPostCategories.Where(category => category.ParentCategory == null)];
-    }
-
-    /// <summary>
-    ///     Renders the excerpt of the specified blog post.
-    /// </summary>
-    /// <param name="post">The blog post whose excerpt to render.</param>
-    /// <param name="wasTrimmed">
-    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
-    ///     <see langword="false" />.
-    /// </param>
-    /// <returns>The rendered HTML of the blog post's excerpt.</returns>
-    public string RenderExcerpt(BlogPost post, out bool wasTrimmed)
-    {
-        if (!string.IsNullOrWhiteSpace(post.Excerpt))
-        {
-            wasTrimmed = false;
-            return Markdig.Markdown.ToHtml(post.Excerpt, _markdownPipeline);
-        }
-
-        string body = post.Body;
-        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
-
-        if (moreIndex == -1)
-        {
-            string excerpt = body.Truncate(255, "...");
-            wasTrimmed = body.Length > 255;
-            return Markdig.Markdown.ToHtml(excerpt, _markdownPipeline);
-        }
-
-        wasTrimmed = true;
-        return Markdig.Markdown.ToHtml(body[..moreIndex], _markdownPipeline);
-    }
-
-    /// <summary>
-    ///     Renders the excerpt of the specified blog post as plain text.
-    /// </summary>
-    /// <param name="post">The blog post whose excerpt to render.</param>
-    /// <param name="wasTrimmed">
-    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
-    ///     <see langword="false" />.
-    /// </param>
-    /// <returns>The rendered plain text of the blog post's excerpt.</returns>
-    public string RenderPlainTextExcerpt(BlogPost post, out bool wasTrimmed)
-    {
-        if (!string.IsNullOrWhiteSpace(post.Excerpt))
-        {
-            wasTrimmed = false;
-            return Markdig.Markdown.ToPlainText(post.Excerpt, _markdownPipeline);
-        }
-
-        string body = post.Body;
-        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
-
-        if (moreIndex == -1)
-        {
-            string excerpt = body.Truncate(255, "...");
-            wasTrimmed = body.Length > 255;
-            return Markdig.Markdown.ToPlainText(excerpt, _markdownPipeline);
-        }
-
-        wasTrimmed = true;
-        return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
-    }
-
-    /// <summary>
-    ///     Renders the body of the specified blog post.
-    /// </summary>
-    /// <param name="post">The blog post to render.</param>
-    /// <returns>The rendered HTML of the blog post.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
-    public string RenderPost(BlogPost post)
-    {
-        return post is null
-            ? throw new ArgumentNullException(nameof(post))
-            : Markdig.Markdown.ToHtml(post.Body, _markdownPipeline);
-    }
-
-    /// <summary>
-    ///     Renders the table of contents for the specified blog post.
-    /// </summary>
-    /// <param name="post">The blog post whose table of contents to render.</param>
-    /// <param name="request"></param>
-    /// <returns>The rendered HTML of the blog post's table of contents.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
-    public string RenderTableOfContents(BlogPost post, HttpRequest request)
-    {
-        if (post is null)
-        {
-            throw new ArgumentNullException(nameof(post));
-        }
-
-        List<TocItem> items = MarkdownTocBuilder.BuildToc(post.Body);
-        return MarkdownTocBuilder.RenderTocAsHtml(items, request);
     }
 
     /// <summary>

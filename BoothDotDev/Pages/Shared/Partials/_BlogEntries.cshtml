@@ -1,5 +1,6 @@
 @using BoothDotDev.Services
 @inject BlogPostService BlogPostService
+@inject MarkdownRenderingService MarkdownRenderingService
 
 @{
     var currentPage = (int)(ViewData["CurrentPage"] ?? 0);
@@ -17,7 +18,7 @@
             </h2>
         </header>
         <div class="entry-content@(hasExcerpt ? " no-trim" : "")">
-            @Html.Raw(BlogPostService.RenderExcerpt(post, out _))
+            @Html.Raw(MarkdownRenderingService.RenderExcerpt(post, out _))
         </div>
         <footer class="entry-footer">
             <span title="@(published.ToString("s"))">@published.ToString("D")</span>

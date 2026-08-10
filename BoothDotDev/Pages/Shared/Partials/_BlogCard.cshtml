@@ -1,7 +1,7 @@
 @using BoothDotDev.Services
 @using Humanizer
 @model BoothDotDev.Data.Models.BlogPost
-@inject BlogPostService BlogPostService
+@inject MarkdownRenderingService MarkdownRenderingService
 
 @{
     var author = Model.Author;
@@ -24,7 +24,7 @@
     </p>
 
     <article>
-        @Html.Raw(BlogPostService.RenderExcerpt(Model, out var trimmed))
+        @Html.Raw(MarkdownRenderingService.RenderExcerpt(Model, out var trimmed))
     </article>
 
     @if (trimmed || Model.Excerpt is not null)

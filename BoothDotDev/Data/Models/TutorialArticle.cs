@@ -5,7 +5,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a tutorial article.
 /// </summary>
-public sealed class TutorialArticle : IEquatable<TutorialArticle>
+public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExcerpt
 {
     /// <summary>
     ///     Gets or sets the body of this article.

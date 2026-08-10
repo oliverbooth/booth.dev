@@ -34,7 +34,7 @@ internal sealed class ProjectService
     /// <exception cref="ArgumentNullException"><paramref name="project" /> is <see langword="null" />.</exception>
     public string GetDescription(Project project)
     {
-        return Markdig.Markdown.ToHtml(project.Description, _markdownPipeline);
+        return MD.ToHtml(project.Description, _markdownPipeline);
     }
 
     /// <summary>
@@ -105,22 +105,6 @@ internal sealed class ProjectService
             .Where(p => p.ProjectId == devlog.ProjectId)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < devlog.Published);
-    }
-
-    /// <summary>
-    ///     Renders the body of the specified devlog entry as HTML.
-    /// </summary>
-    /// <param name="devlog">The devlog entry to render.</param>
-    /// <returns>The rendered HTML.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="devlog"/> is <see langword="null" />.</exception>
-    public string RenderDevlog(ProjectDevlog devlog)
-    {
-        if (devlog is null)
-        {
-            throw new ArgumentNullException(nameof(devlog));
-        }
-
-        return MD.ToHtml(devlog.Body, _markdownPipeline);
     }
 
     /// <summary>

@@ -14,26 +14,26 @@ public static class HtmlUtility
     ///     Creates <c>&lt;meta&gt;</c> embed tags by pulling data from the specified blog post.
     /// </summary>
     /// <param name="post">The blog post whose metadata should be retrieved.</param>
-    /// <param name="blogPostService">The <see cref="BlogPostService" /> injected by the page.</param>
+    /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" /> injected by the page.</param>
     /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="post" /> is <see langword="null" />.</para>
     ///     -or-
-    ///     <para><paramref name="blogPostService" /> is <see langword="null" />.</para>
+    ///     <para><paramref name="markdownRenderingService"/> is <see langword="null"/>.</para>
     /// </exception>
-    public static string CreateMetaTagsFromPost(BlogPost post, BlogPostService blogPostService)
+    public static string CreateMetaTagsFromPost(BlogPost post, MarkdownRenderingService markdownRenderingService)
     {
         if (post is null)
         {
             throw new ArgumentNullException(nameof(post));
         }
 
-        if (blogPostService is null)
+        if (markdownRenderingService is null)
         {
-            throw new ArgumentNullException(nameof(blogPostService));
+            throw new ArgumentNullException(nameof(markdownRenderingService));
         }
 
-        var excerpt = blogPostService.RenderPlainTextExcerpt(post, out _).Trim();
+        var excerpt = markdownRenderingService.RenderPlainTextExcerpt(post, out _).Trim();
         var tags = new Dictionary<string, string>
         {
             ["title"] = post.Title, ["description"] = excerpt, ["author"] = post.Author.DisplayName
@@ -45,27 +45,27 @@ public static class HtmlUtility
     ///     Creates <c>&lt;meta&gt;</c> embed tags by pulling data from the specified article.
     /// </summary>
     /// <param name="article">The article whose metadata should be retrieved.</param>
-    /// <param name="tutorialService">The <see cref="TutorialService" /> injected by the page.</param>
+    /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService"/> injected by the page.</param>
     /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
     /// <exception cref="ArgumentNullException">
     ///     <para><paramref name="article" /> is <see langword="null" />.</para>
     ///     -or-
-    ///     <para><paramref name="tutorialService" /> is <see langword="null" />.</para>
+    ///     <para><paramref name="markdownRenderingService"/> is <see langword="null"/>.</para>
     /// </exception>
-    public static string CreateMetaTagsFromTutorialArticle(TutorialArticle article, TutorialService tutorialService)
+    public static string CreateMetaTagsFromTutorialArticle(TutorialArticle article, MarkdownRenderingService markdownRenderingService)
     {
         if (article is null)
         {
             throw new ArgumentNullException(nameof(article));
         }
 
-        if (tutorialService is null)
+        if (markdownRenderingService is null)
         {
-            throw new ArgumentNullException(nameof(tutorialService));
+            throw new ArgumentNullException(nameof(markdownRenderingService));
         }
 
 
-        var excerpt = tutorialService.RenderPlainTextExcerpt(article, out _).Trim();
+        var excerpt = markdownRenderingService.RenderPlainTextExcerpt(article, out _).Trim();
         var tags = new Dictionary<string, string>
         {
             ["title"] = article.Title, ["description"] = excerpt, ["author"] = Strings.MyName // TODO add article author support?

@@ -14,14 +14,17 @@ namespace BoothDotDev.Controllers.Blog;
 public sealed class RssController : Controller
 {
     private readonly BlogPostService _blogPostService;
+    private readonly MarkdownRenderingService _markdownRenderingService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RssController" /> class.
     /// </summary>
     /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
-    public RssController(BlogPostService blogPostService)
+    /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" />.</param>
+    public RssController(BlogPostService blogPostService, MarkdownRenderingService markdownRenderingService)
     {
         _blogPostService = blogPostService;
+        _markdownRenderingService = markdownRenderingService;
     }
 
     /// <summary>
@@ -40,7 +43,7 @@ public sealed class RssController : Controller
         foreach (BlogPost post in _blogPostService.GetAllBlogPosts())
         {
             var url = $"{baseUrl}/{post.Published:yyyy/MM/dd}/{post.Slug}";
-            string excerpt = _blogPostService.RenderExcerpt(post, out _);
+            string excerpt = _markdownRenderingService.RenderExcerpt(post, out _);
             var description = $"{excerpt}<p><a href=\"{url}\">Read more...</a></p>";
 
             var item = new BlogItem

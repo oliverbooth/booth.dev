@@ -3,6 +3,7 @@
 @using BoothDotDev.Services
 @model Devlog
 @inject ProjectService ProjectService
+@inject MarkdownRenderingService MarkdownRenderingService
 
 @if (Model.SelectedDevlog is not { } devlog)
 {
@@ -39,7 +40,7 @@
     </div>
 
     <div class="prose" style="margin-top:2.5rem">
-        @Html.Raw(ProjectService.RenderDevlog(devlog))
+        @Html.Raw(MarkdownRenderingService.Render(devlog))
     </div>
 
     @{

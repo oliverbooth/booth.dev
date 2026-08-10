@@ -30,10 +30,10 @@
     @switch (ViewData["Post"])
     {
         case BlogPost post:
-            @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, BlogPostService))
+            @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, MarkdownRenderingService))
             break;
         case TutorialArticle article:
-            @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, TutorialService))
+            @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, MarkdownRenderingService))
             break;
         default:
             <meta name="title" content="@PageTitle">

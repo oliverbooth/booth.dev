@@ -38,6 +38,7 @@ builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<CodeSnippetService>();
+builder.Services.AddSingleton<MarkdownRenderingService>();
 builder.Services.AddSingleton<DevChallengeService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddHostedSingleton<BlogPostService>();

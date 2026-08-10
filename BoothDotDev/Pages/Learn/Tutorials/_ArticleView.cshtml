@@ -6,6 +6,7 @@
 @using Markdig
 @model TutorialArticle?
 @inject TutorialService TutorialService
+@inject MarkdownRenderingService MarkdownRenderingService
 @inject MarkdownPipeline MarkdownPipeline
 
 @if (Model is not { } article)
@@ -55,13 +56,13 @@
         <details class="callout" data-callout="note" style="margin-top:1.5rem" open="@(article.TableOfContentsExpanded ? "open" : null)">
             <summary class="callout-title"><i class="ti ti-list"></i> Table of Contents</summary>
             <div class="callout-body">
-                @Html.Raw(TutorialService.RenderTableOfContents(article, Context.Request))
+                @Html.Raw(MarkdownRenderingService.RenderTableOfContents(article, Context.Request))
             </div>
         </details>
     }
 
     <div class="prose" style="margin-top:2.5rem">
-        @Html.Raw(TutorialService.RenderArticle(article))
+        @Html.Raw(MarkdownRenderingService.Render(article))
     </div>
 
     @if (article.HasOtherParts)

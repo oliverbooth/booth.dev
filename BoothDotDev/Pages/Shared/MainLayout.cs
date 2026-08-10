@@ -11,17 +11,17 @@ namespace BoothDotDev.Pages.Shared;
 public abstract class MainLayout : RazorPage<object>
 {
     /// <summary>
-    ///     Gets or sets the blog post service.
-    /// </summary>
-    /// <value>The blog post service.</value>
-    [RazorInject]
-    public BlogPostService BlogPostService { get; set; } = null!;
-
-    /// <summary>
     ///     Gets the current URL of the page.
     /// </summary>
     /// <value>The current URL of the page.</value>
     public Uri CurrentUrl { get; private set; } = null!;
+
+    /// <summary>
+    ///     Gets or sets the Markdown rendering service.
+    /// </summary>
+    /// <value>The Markdown rendering service.</value>
+    [RazorInject]
+    public MarkdownRenderingService MarkdownRenderingService { get; set; } = null!;
 
     /// <summary>
     ///     Gets the page title to display in the browser tab.
@@ -37,13 +37,6 @@ public abstract class MainLayout : RazorPage<object>
     /// </summary>
     /// <value>The source code of the current page.</value>
     public string? QuineSource { get; private set; }
-
-    /// <summary>
-    ///    Gets or sets the tutorial service.
-    /// </summary>
-    /// <value>The tutorial service.</value>
-    [RazorInject]
-    public TutorialService TutorialService { get; set; } = null!;
 
     /// <summary>
     ///     Gets the website's version string.

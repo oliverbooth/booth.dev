@@ -3,7 +3,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a devlog entry for a project.
 /// </summary>
-public sealed class ProjectDevlog
+public sealed class ProjectDevlog : IMarkdownBody
 {
     /// <summary>
     ///     Gets or sets the body content of the devlog entry.

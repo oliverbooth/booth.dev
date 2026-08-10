@@ -5,7 +5,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a blog post.
 /// </summary>
-public sealed class BlogPost
+public sealed class BlogPost : IMarkdownExcerpt
 {
     /// <summary>
     ///     Gets the author of the post.

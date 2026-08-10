@@ -1,10 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using BoothDotDev.Extensions;
 using Cysharp.Text;
-using Humanizer;
-using Markdig;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
@@ -15,18 +12,14 @@ namespace BoothDotDev.Services;
 public sealed class TutorialService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly MarkdownPipeline _markdownPipeline;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TutorialService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
-    /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" />.</param>
-    public TutorialService(IDbContextFactory<AppDbContext> dbContextFactory,
-        MarkdownPipeline markdownPipeline)
+    public TutorialService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _markdownPipeline = markdownPipeline;
     }
 
     /// <summary>
@@ -205,95 +198,6 @@ public sealed class TutorialService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
-    }
-
-    /// <summary>
-    ///     Renders the body of the specified article.
-    /// </summary>
-    /// <param name="article">The article to render.</param>
-    /// <returns>The rendered HTML of the article.</returns>
-    public string RenderArticle(TutorialArticle article)
-    {
-        return Markdig.Markdown.ToHtml(article.Body, _markdownPipeline);
-    }
-
-    /// <summary>
-    ///     Renders the excerpt of the specified article.
-    /// </summary>
-    /// <param name="article">The article whose excerpt to render.</param>
-    /// <param name="wasTrimmed">
-    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
-    ///     <see langword="false" />.
-    /// </param>
-    /// <returns>The rendered HTML of the article's excerpt.</returns>
-    public string RenderExcerpt(TutorialArticle article, out bool wasTrimmed)
-    {
-        if (!string.IsNullOrWhiteSpace(article.Excerpt))
-        {
-            wasTrimmed = false;
-            return Markdig.Markdown.ToHtml(article.Excerpt, _markdownPipeline);
-        }
-
-        string body = article.Body;
-        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
-
-        if (moreIndex == -1)
-        {
-            string excerpt = body.Truncate(255, "...");
-            wasTrimmed = body.Length > 255;
-            return Markdig.Markdown.ToHtml(excerpt, _markdownPipeline);
-        }
-
-        wasTrimmed = true;
-        return Markdig.Markdown.ToHtml(body[..moreIndex], _markdownPipeline);
-    }
-
-    /// <summary>
-    ///     Renders the plain text excerpt of the specified article.
-    /// </summary>
-    /// <param name="article">The article whose excerpt to render.</param>
-    /// <param name="wasTrimmed">
-    ///     When this method returns, contains <see langword="true" /> if the excerpt was trimmed; otherwise,
-    ///     <see langword="false" />.
-    /// </param>
-    /// <returns>The rendered plain text of the article's excerpt.</returns>
-    public string RenderPlainTextExcerpt(TutorialArticle article, out bool wasTrimmed)
-    {
-        if (!string.IsNullOrWhiteSpace(article.Excerpt))
-        {
-            wasTrimmed = false;
-            return Markdig.Markdown.ToPlainText(article.Excerpt, _markdownPipeline);
-        }
-
-        string body = article.Body;
-        int moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
-
-        if (moreIndex == -1)
-        {
-            string excerpt = body.Truncate(255, "...");
-            wasTrimmed = body.Length > 255;
-            return Markdig.Markdown.ToPlainText(excerpt, _markdownPipeline);
-        }
-
-        wasTrimmed = true;
-        return Markdig.Markdown.ToPlainText(body[..moreIndex], _markdownPipeline);
-    }
-
-    /// <summary>
-    ///     Renders the table of contents for the specified article.
-    /// </summary>
-    /// <param name="article">The article for which to render the table of contents.</param>
-    /// <param name="request">The HTTP request.</param>
-    /// <returns>The rendered HTML of the table of contents.</returns>
-    public string RenderTableOfContents(TutorialArticle article, HttpRequest request)
-    {
-        if (article is null)
-        {
-            throw new ArgumentNullException(nameof(article));
-        }
-
-        List<TocItem> items = MarkdownTocBuilder.BuildToc(article.Body);
-        return MarkdownTocBuilder.RenderTocAsHtml(items, request);
     }
 
     /// <summary>

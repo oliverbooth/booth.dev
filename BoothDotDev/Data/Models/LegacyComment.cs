@@ -5,7 +5,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a comment that was posted on a legacy comment framework.
 /// </summary>
-public sealed class LegacyComment
+public sealed class LegacyComment : IMarkdownBody
 {
     /// <summary>
     ///     Gets the PNG-encoded avatar of the author.
