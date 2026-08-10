@@ -1,0 +1,111 @@
+@page "/project/{projectSlug}/devlog/{slug}"
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@model Devlog
+@inject ProjectService ProjectService
+
+@if (Model.SelectedDevlog is not { } devlog)
+{
+    return;
+}
+
+@{
+    ViewData["Page"] = "Build";
+    ViewData["Post"] = devlog;
+    ViewData["Title"] = devlog.Title;
+    var published = devlog.Published;
+}
+
+<div class="page">
+
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Projects/Index">Build</a> /
+        <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
+        @devlog.Title
+    </p>
+
+    <span class="eyebrow">Devlog</span>
+    <h1 style="margin:8px 0 12px;font-size:30px">@devlog.Title</h1>
+
+    <div class="byline">
+        <span class="meta">
+            @published.ToShortString() &middot; @devlog.GetEstimatedReadingTime() min read
+            @if (devlog.Updated is { } updated)
+            {
+                <text>&middot; updated @updated.ToShortString()</text>
+            }
+        </span>
+    </div>
+
+    <div class="prose" style="margin-top:2.5rem">
+        @Html.Raw(ProjectService.RenderDevlog(devlog))
+    </div>
+
+    @{
+        var previousDevlog = ProjectService.GetPreviousDevlog(devlog);
+        var nextDevlog = ProjectService.GetNextDevlog(devlog);
+    }
+
+    @if (previousDevlog is not null || nextDevlog is not null)
+    {
+        <div class="post-nav">
+            @if (previousDevlog is not null)
+            {
+                <a asp-page="/Projects/Devlog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@previousDevlog.Slug"
+                   class="post-nav-link">
+                    <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
+                    <span class="post-nav-title">@previousDevlog.Title</span>
+                </a>
+            }
+            else
+            {
+                <div class="post-nav-empty"></div>
+            }
+
+            @if (nextDevlog is not null)
+            {
+                <a asp-page="/Projects/Devlog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@nextDevlog.Slug"
+                   class="post-nav-link post-nav-link--next">
+                    <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
+                    <span class="post-nav-title">@nextDevlog.Title</span>
+                </a>
+            }
+            else
+            {
+                <div class="post-nav-empty post-nav-empty--next"></div>
+            }
+        </div>
+    }
+
+    <a id="comments"></a>
+
+    @if (devlog.EnableComments)
+    {
+        <div class="giscus"></div>
+
+        @section Scripts
+        {
+            <script src="https://giscus.app/client.js"
+                    data-repo="oliverbooth/booth.dev"
+                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
+                    data-category="Comments"
+                    data-category-id="DIC_kwDODp0rOs4Ce_Nj"
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="dark"
+                    data-lang="en"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        }
+    }
+    else
+    {
+        <p class="no-comment">Comments are not enabled for this post.</p>
+    }
+
+</div>

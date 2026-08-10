@@ -21,6 +21,7 @@ public sealed class AppDbContext : DbContext
         Books = Set<Book>();
         CodeSnippets = Set<CodeSnippet>();
         DevChallenges = Set<DevChallenge>();
+        DevLogs = Set<ProjectDevlog>();
         LegacyComments = Set<LegacyComment>();
         Projects = Set<Project>();
         SiteConfiguration = Set<SiteConfiguration>();
@@ -59,6 +60,12 @@ public sealed class AppDbContext : DbContext
     /// </summary>
     /// <value>The collection of dev challenges.</value>
     public DbSet<DevChallenge> DevChallenges { get; private set; }
+
+    /// <summary>
+    ///     Gets the collection of project devlogs in the database.
+    /// </summary>
+    /// <value>The collection of project devlogs.</value>
+    public DbSet<ProjectDevlog> DevLogs { get; private set; }
 
     /// <summary>
     ///     Gets the collection of legacy comments in the database.
@@ -119,6 +126,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+        modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
         modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());

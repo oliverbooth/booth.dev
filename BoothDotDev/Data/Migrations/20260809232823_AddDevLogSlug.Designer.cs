@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BoothDotDev.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809232823_AddDevLogSlug")]
+    partial class AddDevLogSlug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -379,10 +382,6 @@ namespace BoothDotDev.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("body");
-
-                    b.Property<bool>("EnableComments")
-                        .HasColumnType("boolean")
-                        .HasColumnName("enable_comments");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid")

@@ -4,7 +4,7 @@ using BoothDotDev.Data.Models;
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     Extension methods for <see cref="BlogPost"/> and <see cref="TutorialArticle"/>.
+///     Extension methods for <see cref="BlogPost"/>, <see cref="ProjectDevlog"/>, and <see cref="TutorialArticle"/>.
 /// </summary>
 internal static class ArticleExtensions
 {
@@ -25,6 +25,20 @@ internal static class ArticleExtensions
         public int GetEstimatedReadingTime()
         {
             var wordCount = CountWords(post.Body);
+            return Math.Max(1, wordCount / WordsPerMinute);
+        }
+    }
+
+    /// <param name="devlog">The <see cref="ProjectDevlog"/>.</param>
+    extension(ProjectDevlog devlog)
+    {
+        /// <summary>
+        ///     Returns the estimated reading time of the devlog entry, in minutes.
+        /// </summary>
+        /// <returns>The estimated reading time of the devlog entry, in minutes.</returns>
+        public int GetEstimatedReadingTime()
+        {
+            var wordCount = CountWords(devlog.Body);
             return Math.Max(1, wordCount / WordsPerMinute);
         }
     }

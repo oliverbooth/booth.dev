@@ -2,9 +2,12 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@using Humanizer
 @using Markdig
 @model Project
 @inject MarkdownPipeline MarkdownPipeline
+@inject ProjectService ProjectService
 
 @{
     var project = Model.SelectedProject;
@@ -90,21 +93,29 @@
                 @*<a href="#" class="btn">Devlog</a>*@
             </div>
 
-            @*@if (project.DevlogEntries.Count > 0)
-            {
-                <div class="project-devlog">
-                    <p class="project-devlog-title">Recent devlog entries</p>
-                    <div class="project-devlog-list">
-                        @foreach (var entry in project.DevlogEntries.Take(2))
-                        {
-                            <div class="project-devlog-row">
-                                <span>@entry.Title</span>
-                                <span class="project-devlog-time">@entry.Published.Humanize()</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }*@
+            <div class="project-devlog">
+                <p class="project-devlog-title">Recent devlog entries</p>
+                @{
+                    var devlogEntries = ProjectService.GetDevlogs(project);
+
+                    if (devlogEntries.Count == 0)
+                    {
+                        <p class="lede">No devlog entries available.</p>
+                    }
+                    else
+                    {
+                        <div class="project-devlog-list">
+                            @foreach (var entry in devlogEntries.Take(2))
+                            {
+                                <div class="project-devlog-row">
+                                    <span><a asp-page="/Projects/DevLog" asp-route-projectSlug="@project.Slug" asp-route-slug="@entry.Slug">@entry.Title</a></span>
+                                    <span class="project-devlog-time">@entry.Published.Humanize()</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
 
         </div>
     </div>

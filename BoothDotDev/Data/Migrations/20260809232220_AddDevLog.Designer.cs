@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BoothDotDev.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809232220_AddDevLog")]
+    partial class AddDevLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -380,10 +383,6 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body");
 
-                    b.Property<bool>("EnableComments")
-                        .HasColumnType("boolean")
-                        .HasColumnName("enable_comments");
-
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid")
                         .HasColumnName("project_id");
@@ -391,12 +390,6 @@ namespace BoothDotDev.Data.Migrations
                     b.Property<DateTimeOffset>("Published")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("published");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("slug");
 
                     b.Property<string>("Title")
                         .IsRequired()
