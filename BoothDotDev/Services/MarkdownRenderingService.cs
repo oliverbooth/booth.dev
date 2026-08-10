@@ -1,8 +1,12 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
+using BoothDotDev.Markdown;
+using BoothDotDev.Markdown.Link;
 using Humanizer;
 using Markdig;
+using Markdig.Renderers;
+using Markdig.Renderers.Html.Inlines;
 using MD = Markdig.Markdown;
 
 namespace BoothDotDev.Services;
@@ -13,30 +17,59 @@ namespace BoothDotDev.Services;
 public sealed class MarkdownRenderingService
 {
     private readonly MarkdownPipeline _markdownPipeline;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MarkdownRenderingService" /> class.
     /// </summary>
     /// <param name="markdownPipeline">The <see cref="MarkdownPipeline" /> to use for rendering Markdown.</param>
-    public MarkdownRenderingService(MarkdownPipeline markdownPipeline)
+    /// <param name="serviceScopeFactory">The service scope factory.</param>
+    public MarkdownRenderingService(MarkdownPipeline markdownPipeline, IServiceScopeFactory serviceScopeFactory)
     {
         _markdownPipeline = markdownPipeline;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     /// <summary>
     ///     Renders the body of a <see cref="IMarkdownBody" /> as HTML using the configured Markdown pipeline.
     /// </summary>
     /// <param name="body">The <see cref="IMarkdownBody" /> to render.</param>
+    /// <param name="id">The identifier.</param>
+    /// <param name="published">The published date and time.</param>
     /// <returns>The HTML content of the rendered content.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="body" /> is <see langword="null" />.</exception>
-    public string Render(IMarkdownBody body)
+    public string Render(IMarkdownBody body, Guid id, DateTimeOffset published)
     {
         if (body is null)
         {
             throw new ArgumentNullException(nameof(body));
         }
+        
+        using var scope = _serviceScopeFactory.CreateScope();
+        var razorPartialRenderer = scope.ServiceProvider.GetRequiredService<RazorPartialRenderer>();
 
-        return MD.ToHtml(body.Body, _markdownPipeline);
+        var context = new MarkdownRenderContext(id, published);
+        var renderer = new CdnImageLinkRenderer(context, razorPartialRenderer);
+
+        using var writer = new StringWriter();
+        var htmlRenderer = new HtmlRenderer(writer);
+        _markdownPipeline.Setup(htmlRenderer);
+
+        var index = htmlRenderer.ObjectRenderers.FindIndex(r => r is LinkInlineRenderer);
+        if (index >= 0)
+        {
+            htmlRenderer.ObjectRenderers[index] = renderer;
+        }
+        else
+        {
+            htmlRenderer.ObjectRenderers.Add(renderer);
+        }
+
+        var document = MD.Parse(body.Body, _markdownPipeline);
+        htmlRenderer.Render(document);
+        writer.Flush();
+
+        return writer.ToString();
     }
 
     /// <summary>

@@ -47,6 +47,7 @@ builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<ReadingListService>();
 builder.Services.AddSingleton<BlueskyService>();
+builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
 builder.Services.AddMemoryCache();

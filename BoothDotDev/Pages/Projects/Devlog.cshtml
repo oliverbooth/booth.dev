@@ -40,7 +40,7 @@
     </div>
 
     <div class="prose" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(devlog))
+        @Html.Raw(MarkdownRenderingService.Render(devlog, devlog.Id, devlog.Published))
     </div>
 
     @{

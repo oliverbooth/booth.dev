@@ -51,7 +51,7 @@
     </div>
 
     <div class="prose prose--@(category.FontStyle.ToString().ToLower())" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(post))
+        @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.Published))
     </div>
 
     @if (post.Tags.Count > 0)
@@ -183,7 +183,7 @@
                                     @comment.CreatedAt.Humanize()
                                 </abbr>
                             </div>
-                            <div class="legacy-comment-content">@Html.Raw(MarkdownRenderingService.Render(comment))</div>
+                            <div class="legacy-comment-content">@Html.Raw(MarkdownRenderingService.Render(comment, comment.Id, comment.CreatedAt))</div>
                         </div>
                     </div>
                 }

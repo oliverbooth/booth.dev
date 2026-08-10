@@ -1,0 +1,11 @@
+@using Markdig
+@model BoothDotDev.Views.ImageTemplate
+@inject MarkdownPipeline MarkdownPipeline
+
+<figure class="figure text-center">
+    <img src="@Model.Url" alt="@Model.Alt" title="@Model.Title" class="figure-img img-fluid">
+    @if (!string.IsNullOrEmpty(Model.Title))
+    {
+        <figcaption class="figure-caption text-center">@Html.Raw(Markdown.ToHtml(Model.Title, MarkdownPipeline))</figcaption>
+    }
+</figure>

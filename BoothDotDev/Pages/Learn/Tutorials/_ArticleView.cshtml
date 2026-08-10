@@ -62,7 +62,7 @@
     }
 
     <div class="prose" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(article))
+        @Html.Raw(MarkdownRenderingService.Render(article, article.Id, article.Published))
     </div>
 
     @if (article.HasOtherParts)
