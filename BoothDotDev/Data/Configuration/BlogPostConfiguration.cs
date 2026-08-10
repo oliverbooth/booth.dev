@@ -31,5 +31,10 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.CategoryId).IsRequired();
         builder.Property(e => e.ShowTableOfContents).HasColumnName("show_toc").IsRequired().HasDefaultValue(false);
         builder.Property(e => e.TableOfContentsExpanded).HasColumnName("toc_open").IsRequired().HasDefaultValue(true);
+
+        builder.HasOne<User>().WithMany().HasForeignKey(e => e.AuthorId);
+        builder.HasOne<BlogPostCategory>().WithMany().HasForeignKey(e => e.CategoryId);
+
+        builder.HasIndex(e => e.Slug).IsUnique();
     }
 }

@@ -31,5 +31,7 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
         builder.Property(e => e.Rank).IsRequired();
         builder.Property(e => e.ShowTableOfContents).HasColumnName("show_toc").IsRequired().HasDefaultValue(true);
         builder.Property(e => e.TableOfContentsExpanded).HasColumnName("toc_open").IsRequired().HasDefaultValue(true);
+
+        builder.HasOne<TutorialFolder>().WithMany().HasForeignKey(e => e.Folder);
     }
 }

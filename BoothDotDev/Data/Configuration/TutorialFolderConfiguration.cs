@@ -23,5 +23,7 @@ internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<Tut
         builder.Property(e => e.Visibility).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.Rank).IsRequired();
+
+        builder.HasOne<TutorialFolder>().WithMany().HasForeignKey(e => e.Parent);
     }
 }
