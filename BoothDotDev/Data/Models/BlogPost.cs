@@ -5,7 +5,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a blog post.
 /// </summary>
-public sealed class BlogPost : IMarkdownExcerpt
+public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
 {
     /// <summary>
     ///     Gets the author of the post.
@@ -131,4 +131,79 @@ public sealed class BlogPost : IMarkdownExcerpt
     /// </summary>
     /// <value>The ID of the author of this blog post.</value>
     internal Guid AuthorId { get; set; }
+
+    /// <summary>
+    ///     Returns a value indicating whether two instances of <see cref="BlogPost" /> are equal.
+    /// </summary>
+    /// <param name="left">The first instance of <see cref="BlogPost" /> to compare.</param>
+    /// <param name="right">The second instance of <see cref="BlogPost" /> to compare.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public static bool operator ==(BlogPost? left, BlogPost? right)
+    {
+        return Equals(left, right);
+    }
+
+    /// <summary>
+    ///     Returns a value indicating whether two instances of <see cref="BlogPost" /> are not equal.
+    /// </summary>
+    /// <param name="left">The first instance of <see cref="BlogPost" /> to compare.</param>
+    /// <param name="right">The second instance of <see cref="BlogPost" /> to compare.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public static bool operator !=(BlogPost? left, BlogPost? right)
+    {
+        return !(left == right);
+    }
+
+    /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="BlogPost" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(BlogPost? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
+    ///     Returns a value indicating whether this instance is equal to a specified object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="obj" /> is an instance of <see cref="BlogPost" /> and
+    ///     equals the value of this instance; otherwise, <see langword="false" />.
+    /// </returns>
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is BlogPost other && Equals(other);
+    }
+
+    /// <summary>
+    ///     Gets the hash code for this instance.
+    /// </summary>
+    /// <returns>The hash code.</returns>
+    public override int GetHashCode()
+    {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
+        return Id.GetHashCode();
+    }
 }
