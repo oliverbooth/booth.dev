@@ -186,3 +186,7 @@ details.callout {
     }
   }
 }
+
+details:not(.callout) summary {
+  cursor: pointer;
+}
