@@ -46,7 +46,6 @@ internal static class ServiceCollectionExtensions
                 .UseGenericAttributes() // must be last as it is one parser modifying other parsers
 
                 // no more advanced extensions
-                .UseBootstrap()
                 .UseEmojiAndSmiley()
                 .UseSmartyPants()
                 .Build());
