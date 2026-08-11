@@ -64,7 +64,7 @@ public sealed class TemplateInlineParser : InlineParser
         }
 
         var argumentList = new List<string>();
-        var paramsList = new Dictionary<string, string>();
+        var paramsList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         ParseArguments(argumentSpan, argumentList, paramsList);
 

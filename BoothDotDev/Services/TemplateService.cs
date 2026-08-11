@@ -1,9 +1,11 @@
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Formatting;
 using BoothDotDev.Markdown.Template;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using SmartFormat;
 using SmartFormat.Extensions;
@@ -15,10 +17,13 @@ namespace BoothDotDev.Services;
 /// </summary>
 internal sealed class TemplateService
 {
+    private static readonly Dictionary<string, string> TemplateNameMap = new(StringComparer.OrdinalIgnoreCase);
+
     private readonly Dictionary<string, CustomTemplateRenderer> _customTemplateRendererOverrides = new();
-    private static readonly Random Random = new();
     private readonly ILogger<TemplateService> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private readonly IRazorViewEngine _viewEngine;
     private readonly SmartFormatter _formatter;
 
     /// <summary>
@@ -26,12 +31,17 @@ internal sealed class TemplateService
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" />.</param>
+    /// <param name="scopeFactory">The <see cref="IServiceScopeFactory" />.</param>
     /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
+    /// <param name="viewEngine">The <see cref="IRazorViewEngine" />.</param>
     public TemplateService(ILogger<TemplateService> logger,
         IServiceProvider serviceProvider,
-        IDbContextFactory<AppDbContext> dbContextFactory)
+        IServiceScopeFactory scopeFactory,
+        IDbContextFactory<AppDbContext> dbContextFactory,
+        IRazorViewEngine viewEngine)
     {
         _logger = logger;
+        _scopeFactory = scopeFactory;
 
         _formatter = Smart.CreateDefaultSmartFormat();
         _formatter.AddExtensions(new DefaultSource());
@@ -43,6 +53,7 @@ internal sealed class TemplateService
         AddRendererOverride("Snippet", new CodeSnippetTemplateRenderer(serviceProvider));
 
         _dbContextFactory = dbContextFactory;
+        _viewEngine = viewEngine;
     }
 
     /// <summary>
@@ -84,30 +95,55 @@ internal sealed class TemplateService
     /// </exception>
     public string RenderTemplate(TemplateInline templateInline, Template? template)
     {
+        var partialName = ResolvePartialPath(templateInline.Name, templateInline.Variant);
+
+        if (PartialExists(partialName))
+        {
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var razorPartialRenderer = scope.ServiceProvider.GetRequiredService<RazorPartialRenderer>();
+                return razorPartialRenderer
+                    .RenderToStringAsync(partialName, BuildModel(templateInline))
+                    .GetAwaiter().GetResult();
+            }
+            catch
+            {
+                return GetDefaultRender(templateInline);
+            }
+        }
+
         if (template is null)
         {
             return GetDefaultRender(templateInline);
         }
 
         Span<byte> randomBytes = stackalloc byte[20];
-        Random.NextBytes(randomBytes);
-
-        var formatted = new
-        {
-            templateInline.ArgumentList,
-            templateInline.ArgumentString,
-            templateInline.Params,
-            RandomInt = BinaryPrimitives.ReadInt32LittleEndian(randomBytes[..4]),
-            RandomGuid = new Guid(randomBytes[4..]).ToString("N"),
-        };
+        RandomNumberGenerator.Fill(randomBytes);
 
         try
         {
-            return _formatter.Format(template.FormatString, formatted);
+            return _formatter.Format(template.FormatString, BuildModel(templateInline));
         }
         catch
         {
             return GetDefaultRender(templateInline);
+        }
+
+        static TemplateModel BuildModel(TemplateInline templateInline)
+        {
+            Span<byte> randomBytes = stackalloc byte[20];
+            Random.Shared.NextBytes(randomBytes);
+
+            return new TemplateModel
+            {
+                ArgumentList = templateInline.ArgumentList,
+                ArgumentString = templateInline.ArgumentString,
+                Params = templateInline.Params,
+                RandomInt = BinaryPrimitives.ReadInt32LittleEndian(randomBytes[..4]),
+                RandomGuid = new Guid(randomBytes[4..]).ToString("N"),
+                Variant = templateInline.Variant
+            };
         }
     }
 
@@ -137,6 +173,16 @@ internal sealed class TemplateService
     /// <returns><see langword="true" /> if the template exists; otherwise, <see langword="false" />.</returns>
     public bool TryGetTemplate(string name, string variant, [NotNullWhen(true)] out Template? template)
     {
+        var partialName = ResolvePartialPath(name, variant);
+        if (PartialExists(partialName))
+        {
+            // template object is not used!
+#pragma warning disable CS8762
+            template = null;
+            return true;
+#pragma warning restore CS8762
+        }
+
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         template = context.Templates.FirstOrDefault(t => t.Name == name && t.Variant == variant);
         return template is not null;
@@ -153,5 +199,29 @@ internal sealed class TemplateService
         return string.IsNullOrWhiteSpace(templateInline.ArgumentString)
             ? $"{{{{{templateInline.Name}}}}}"
             : $"{{{{{templateInline.Name}|{templateInline.ArgumentString}}}}}";
+    }
+
+    private bool PartialExists(string partialName)
+    {
+        return _viewEngine.GetView(executingFilePath: null, partialName, isMainPage: false).Success;
+    }
+
+    private string ResolvePartialPath(string name, string? variant)
+    {
+        if (!TemplateNameMap.TryGetValue(name, out var canonicalName))
+        {
+            canonicalName = name;
+        }
+
+        if (!string.IsNullOrWhiteSpace(variant))
+        {
+            var variantPath = $"/Views/Templates/_{canonicalName}.{variant}.cshtml";
+            if (PartialExists(variantPath))
+            {
+                return variantPath;
+            }
+        }
+
+        return $"/Views/Templates/_{canonicalName}.cshtml";
     }
 }
