@@ -48,6 +48,7 @@ internal static class ServiceCollectionExtensions
                 // no more advanced extensions
                 .UseEmojiAndSmiley()
                 .UseSmartyPants()
+                .EnableTrackTrivia()
                 .Build());
         }
     }
