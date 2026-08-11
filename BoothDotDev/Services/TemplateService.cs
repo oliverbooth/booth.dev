@@ -17,7 +17,14 @@ namespace BoothDotDev.Services;
 /// </summary>
 internal sealed class TemplateService
 {
-    private static readonly Dictionary<string, string> TemplateNameMap = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, string> TemplateNameMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Abbr"] = "Abbr",
+        ["ContentWarning"] = "ContentWarning",
+        ["GuestPost"] = "GuestPost",
+        ["LegacyPost"] = "LegacyPost",
+        ["Spoiler"] = "Spoiler"
+    };
 
     private readonly Dictionary<string, CustomTemplateRenderer> _customTemplateRendererOverrides = new();
     private readonly ILogger<TemplateService> _logger;

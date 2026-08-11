@@ -1,0 +1,26 @@
+@model BoothDotDev.Markdown.Template.TemplateModel
+
+@{
+    var isMajor = Model.Params.TryGetValue("severity", out var severity) && severity.Equals("major", StringComparison.OrdinalIgnoreCase);
+}
+
+<div class="callout" data-callout="@(isMajor ? "danger" : "warning")">
+    <div class="callout-title"><i class="ti ti-alert-@(isMajor ? "octagon" : "triangle")"></i> @(isMajor ? "Severe" : "") Content Warning</div>
+    <div class="callout-body">
+        <p>This post contains sensitive content that may be distressing to some people. Reader discretion is advised.</p>
+        <details>
+            <summary><strong>Click here to reveal topics discussed</strong></summary>
+            <ul>
+                @foreach (var topic in Model.ArgumentList)
+                {
+                    if (topic.StartsWith("severity=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    <li>@topic</li>
+                }
+            </ul>
+        </details>
+    </div>
+</div>
