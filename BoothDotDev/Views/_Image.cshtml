@@ -1,0 +1,17 @@
+@using Markdig
+@model BoothDotDev.Views.MediaLinkModel
+@inject MarkdownPipeline MarkdownPipeline
+
+<figure class="figure text-center @(!string.IsNullOrWhiteSpace(Model.Alt) ? "image-with-alt" : "")">
+    <div class="figure-img-wrap">
+        <img src="@Model.Url" alt="@Model.Alt" class="figure-img img-fluid" />
+        @if (!string.IsNullOrWhiteSpace(Model.Alt))
+        {
+            <button type="button" class="alt-badge" aria-label="Show image description" data-alt-text="@Model.Alt">ALT</button>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Title))
+    {
+        <figcaption class="figure-caption text-center">@Html.Raw(Markdown.ToHtml(Model.Title, MarkdownPipeline))</figcaption>
+    }
+</figure>

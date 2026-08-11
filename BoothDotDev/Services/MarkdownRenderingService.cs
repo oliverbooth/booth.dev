@@ -44,12 +44,17 @@ public sealed class MarkdownRenderingService
         {
             throw new ArgumentNullException(nameof(body));
         }
-        
+
         using var scope = _serviceScopeFactory.CreateScope();
         var razorPartialRenderer = scope.ServiceProvider.GetRequiredService<RazorPartialRenderer>();
 
         var context = new MarkdownRenderContext(id, published);
-        var renderer = new CdnImageLinkRenderer(context, razorPartialRenderer);
+        var renderer = new CdnMediaLinkRenderer(context, razorPartialRenderer, body switch
+        {
+            BlogPost => "blog",
+            TutorialArticle => "tutorial",
+            _ => "content"
+        });
 
         using var writer = new StringWriter();
         var htmlRenderer = new HtmlRenderer(writer);

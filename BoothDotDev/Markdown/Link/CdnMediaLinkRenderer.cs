@@ -1,0 +1,117 @@
+using BoothDotDev.Services;
+using BoothDotDev.Views;
+using Markdig.Renderers;
+using Markdig.Renderers.Html.Inlines;
+using Markdig.Syntax.Inlines;
+using Microsoft.AspNetCore.StaticFiles;
+
+namespace BoothDotDev.Markdown.Link;
+
+/// <summary>
+///     Represents a Markdown inline renderer that handles CDN media links.
+/// </summary>
+public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
+{
+    private enum MediaKind
+    {
+        Image,
+        Video,
+        Audio,
+        Misc
+    }
+
+    private const string BaseUrl = "https://cdn.booth.dev";
+    private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
+    private readonly MarkdownRenderContext _renderContext;
+    private readonly RazorPartialRenderer _razorPartialRenderer;
+    private readonly string _area;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="CdnMediaLinkRenderer" /> class.
+    /// </summary>
+    /// <param name="renderContext">The rendering context.</param>
+    /// <param name="razorPartialRenderer">The Razor partial renderer.</param>
+    /// <param name="area">The area.</param>
+    public CdnMediaLinkRenderer(MarkdownRenderContext renderContext,
+        RazorPartialRenderer razorPartialRenderer,
+        string area)
+    {
+        _renderContext = renderContext;
+        _razorPartialRenderer = razorPartialRenderer;
+        _area = area;
+    }
+
+    /// <inheritdoc />
+    protected override void Write(HtmlRenderer renderer, LinkInline link)
+    {
+        if (!link.IsImage)
+        {
+            base.Write(renderer, link);
+            return;
+        }
+
+        MediaKind mediaKind = ResolveMediaKind(link.Url);
+        var cdnUrl = ResolveCdnUrl(link.Url, mediaKind);
+
+        var partialName = mediaKind switch
+        {
+            MediaKind.Video => "_Video",
+            MediaKind.Audio => "_Audio",
+            _ => "_Image"
+        };
+
+        var model = new MediaLinkModel
+        {
+            Url = cdnUrl, Alt = ExtractAltText(renderer, link), Title = link.Title, MimeType = GetMimeType(link.Url)
+        };
+        var result = _razorPartialRenderer.RenderToStringAsync(partialName, model).GetAwaiter().GetResult();
+        renderer.Write(result);
+    }
+
+    private static string? GetMimeType(string? url)
+    {
+        if (url is null)
+        {
+            return null;
+        }
+
+        ContentTypeProvider.TryGetContentType(url, out var contentType);
+        return contentType;
+    }
+
+    private static MediaKind ResolveMediaKind(string? url)
+    {
+        var extension = Path.GetExtension(url)?.TrimStart('.').ToLowerInvariant() ?? string.Empty;
+        return extension switch
+        {
+            "png" or "jpg" or "jpeg" or "gif" or "webp" or "svg" => MediaKind.Image,
+            "mp4" or "webm" or "mov" => MediaKind.Video,
+            "mp3" or "wav" or "ogg" or "flac" => MediaKind.Audio,
+            _ => MediaKind.Misc
+        };
+    }
+
+    private static string ExtractAltText(HtmlRenderer renderer, LinkInline link)
+    {
+        using var altWriter = new StringWriter();
+        var altRenderer = new HtmlRenderer(altWriter) { EnableHtmlForInline = false };
+
+        foreach (var objectRenderer in renderer.ObjectRenderers)
+        {
+            altRenderer.ObjectRenderers.Add(objectRenderer);
+        }
+
+        altRenderer.WriteChildren(link);
+        altWriter.Flush();
+
+        return altWriter.ToString();
+    }
+
+    private string ResolveCdnUrl(string? url, MediaKind mediaKind)
+    {
+        var uuid = _renderContext.Id;
+        var date = _renderContext.Date;
+
+        return $"{BaseUrl}/{_area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{uuid:N}/{url}";
+    }
+}
