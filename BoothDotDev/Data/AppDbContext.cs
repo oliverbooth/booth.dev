@@ -25,7 +25,6 @@ public sealed class AppDbContext : DbContext
         LegacyComments = Set<LegacyComment>();
         Projects = Set<Project>();
         SiteConfiguration = Set<SiteConfiguration>();
-        Templates = Set<Template>();
         TutorialArticles = Set<TutorialArticle>();
         TutorialFolders = Set<TutorialFolder>();
         Users = Set<User>();
@@ -86,12 +85,6 @@ public sealed class AppDbContext : DbContext
     public DbSet<SiteConfiguration> SiteConfiguration { get; private set; }
 
     /// <summary>
-    ///     Gets the collection of templates in the database.
-    /// </summary>
-    /// <value>The collection of templates.</value>
-    public DbSet<Template> Templates { get; private set; }
-
-    /// <summary>
     ///     Gets the collection of tutorial articles in the database.
     /// </summary>
     /// <value>The collection of tutorial articles.</value>
@@ -128,7 +121,6 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
-        modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
