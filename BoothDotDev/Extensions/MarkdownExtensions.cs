@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Markdown.Callout;
+using BoothDotDev.Markdown.Embed;
 using BoothDotDev.Markdown.Template;
 using HtmlAgilityPack;
 using Markdig;
@@ -22,6 +23,23 @@ public static class MarkdownExtensions
         public MarkdownPipelineBuilder UseCallouts()
         {
             builder.Extensions.AddIfNotAlready<CalloutExtension>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Enables the use of Obsidian-style file embeds in this pipeline.
+        /// </summary>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <returns>The modified Markdig markdown pipeline builder.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="serviceProvider" /> is <see langword="null" />.</exception>
+        public MarkdownPipelineBuilder UseEmbeds(IServiceProvider serviceProvider)
+        {
+            if (serviceProvider is null)
+            {
+                throw new ArgumentNullException(nameof(serviceProvider));
+            }
+
+            builder.Use(new EmbedExtension(serviceProvider));
             return builder;
         }
 

@@ -9,7 +9,6 @@ namespace BoothDotDev.Markdown.Template;
 /// </summary>
 public sealed class TemplateExtension : IMarkdownExtension
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly TemplateService _templateService;
 
     /// <summary>
@@ -18,7 +17,6 @@ public sealed class TemplateExtension : IMarkdownExtension
     /// <param name="serviceProvider">The service provider.</param>
     public TemplateExtension(IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider;
         _templateService = serviceProvider.GetRequiredService<TemplateService>();
     }
 
@@ -33,7 +31,7 @@ public sealed class TemplateExtension : IMarkdownExtension
     {
         if (renderer is HtmlRenderer htmlRenderer)
         {
-            htmlRenderer.ObjectRenderers.Add(new TemplateRenderer(_serviceProvider, pipeline, _templateService));
+            htmlRenderer.ObjectRenderers.Add(new TemplateRenderer(_templateService));
         }
     }
 }
