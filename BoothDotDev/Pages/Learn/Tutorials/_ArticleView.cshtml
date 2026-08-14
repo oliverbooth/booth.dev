@@ -56,7 +56,7 @@
         <details class="callout" data-callout="note" style="margin-top:1.5rem" open="@(article.TableOfContentsExpanded ? "open" : null)">
             <summary class="callout-title"><i class="ti ti-list"></i> Table of Contents</summary>
             <div class="callout-body">
-                @Html.Raw(MarkdownRenderingService.RenderTableOfContents(article, Context.Request))
+                @Html.Raw(MarkdownRenderingService.RenderTableOfContents(article.Body, Context.Request))
             </div>
         </details>
     }

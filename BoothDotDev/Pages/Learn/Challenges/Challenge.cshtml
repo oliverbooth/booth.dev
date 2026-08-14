@@ -1,7 +1,7 @@
 @page "/challenge/{id}"
 @using BoothDotDev.Extensions
-@using Markdig
-@inject MarkdownPipeline MarkdownPipeline
+@using BoothDotDev.Services
+@inject MarkdownRenderingService MarkdownRenderingService
 @model Challenge
 @{
     ViewData["Title"] = Model.DevChallenge.Title;
@@ -37,7 +37,7 @@
     </div>
 
     <div class="prose" style="margin-top:2rem">
-        @Html.Raw(Markdown.ToHtml(challenge.Description, MarkdownPipeline))
+        @Html.Raw(MarkdownRenderingService.Render(challenge.Description, challenge.Id, challenge.Date, "challenge"))
     </div>
 
     @if (hasSolution)
@@ -45,7 +45,7 @@
         <details class="callout" data-callout="success" style="margin-top:2rem">
             <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
             <div class="callout-body">
-                @Html.Raw(Markdown.ToHtml(challenge.Solution!, MarkdownPipeline))
+                @Html.Raw(MarkdownRenderingService.Render(challenge.Solution!, challenge.Id, challenge.Date, "challenge"))
             </div>
         </details>
     }

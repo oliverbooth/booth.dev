@@ -2,10 +2,12 @@ using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using BoothDotDev.Markdown;
+using BoothDotDev.Markdown.CodeBlock;
 using BoothDotDev.Markdown.Link;
 using Humanizer;
 using Markdig;
 using Markdig.Renderers;
+using Markdig.Renderers.Html;
 using Markdig.Renderers.Html.Inlines;
 using MD = Markdig.Markdown;
 
@@ -31,6 +33,34 @@ public sealed class MarkdownRenderingService
     }
 
     /// <summary>
+    ///     Renders the specified Markdown content into HTML using the configured Markdown pipeline.
+    /// </summary>
+    /// <param name="body">The Markdown content to render.</param>
+    /// <param name="id">The identifier.</param>
+    /// <param name="published">The published date and time.</param>
+    /// <param name="area">The area.</param>
+    /// <returns>The HTML content of the rendered content.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="body" /> is <see langword="null" />.</exception>
+    public string Render(string body, Guid id, DateTimeOffset published, string area)
+    {
+        if (body is null)
+        {
+            throw new ArgumentNullException(nameof(body));
+        }
+
+        using var writer = new StringWriter();
+        using var scope = _serviceScopeFactory.CreateScope();
+
+        HtmlRenderer htmlRenderer = CreateHtmlRenderer(writer, area, id, published, scope.ServiceProvider);
+
+        var document = MD.Parse(body, _markdownPipeline);
+        htmlRenderer.Render(document);
+        writer.Flush();
+
+        return writer.ToString();
+    }
+
+    /// <summary>
     ///     Renders the body of a <see cref="IMarkdownBody" /> as HTML using the configured Markdown pipeline.
     /// </summary>
     /// <param name="body">The <see cref="IMarkdownBody" /> to render.</param>
@@ -40,41 +70,14 @@ public sealed class MarkdownRenderingService
     /// <exception cref="ArgumentNullException"><paramref name="body" /> is <see langword="null" />.</exception>
     public string Render(IMarkdownBody body, Guid id, DateTimeOffset published)
     {
-        if (body is null)
-        {
-            throw new ArgumentNullException(nameof(body));
-        }
-
-        using var scope = _serviceScopeFactory.CreateScope();
-        var razorPartialRenderer = scope.ServiceProvider.GetRequiredService<RazorPartialRenderer>();
-
-        var context = new MarkdownRenderContext(id, published);
-        var renderer = new CdnMediaLinkRenderer(context, razorPartialRenderer, body switch
+        var area = body switch
         {
             BlogPost => "blog",
             TutorialArticle => "tutorial",
             _ => "content"
-        });
-
-        using var writer = new StringWriter();
-        var htmlRenderer = new HtmlRenderer(writer);
-        _markdownPipeline.Setup(htmlRenderer);
-
-        var index = htmlRenderer.ObjectRenderers.FindIndex(r => r is LinkInlineRenderer);
-        if (index >= 0)
-        {
-            htmlRenderer.ObjectRenderers[index] = renderer;
-        }
-        else
-        {
-            htmlRenderer.ObjectRenderers.Add(renderer);
-        }
-
-        var document = MD.Parse(body.Body, _markdownPipeline);
-        htmlRenderer.Render(document);
-        writer.Flush();
-
-        return writer.ToString();
+        };
+        
+        return Render(body.Body, id, published, area);
     }
 
     /// <summary>
@@ -158,14 +161,46 @@ public sealed class MarkdownRenderingService
     /// <param name="request">The HTTP request.</param>
     /// <returns>The rendered HTML of the blog post's table of contents.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="markdown" /> is <see langword="null" />.</exception>
-    public string RenderTableOfContents(IMarkdownBody markdown, HttpRequest? request)
+    public string RenderTableOfContents(string markdown, HttpRequest? request)
     {
         if (markdown is null)
         {
             throw new ArgumentNullException(nameof(markdown));
         }
 
-        List<TocItem> items = MarkdownTocBuilder.BuildToc(markdown.Body);
+        List<TocItem> items = MarkdownTocBuilder.BuildToc(markdown);
         return MarkdownTocBuilder.RenderTocAsHtml(items, request);
+    }
+
+    private HtmlRenderer CreateHtmlRenderer(TextWriter writer,
+        string area,
+        Guid id,
+        DateTimeOffset published,
+        IServiceProvider services)
+    {
+        var htmlRenderer = new HtmlRenderer(writer);
+        _markdownPipeline.Setup(htmlRenderer);
+
+        var context = new MarkdownRenderContext(id, published);
+        var razorPartialRenderer = services.GetRequiredService<RazorPartialRenderer>();
+
+        ReplaceRenderer<LinkInlineRenderer>(htmlRenderer, new CdnMediaLinkRenderer(context, razorPartialRenderer, area));
+        ReplaceRenderer<CodeBlockRenderer>(htmlRenderer, new HighlightCodeBlockRenderer());
+
+        return htmlRenderer;
+    }
+
+    private static void ReplaceRenderer<TExisting>(HtmlRenderer htmlRenderer, IMarkdownObjectRenderer replacement)
+        where TExisting : IMarkdownObjectRenderer
+    {
+        var index = htmlRenderer.ObjectRenderers.FindIndex(r => r is TExisting);
+        if (index >= 0)
+        {
+            htmlRenderer.ObjectRenderers[index] = replacement;
+        }
+        else
+        {
+            htmlRenderer.ObjectRenderers.Add(replacement);
+        }
     }
 }
