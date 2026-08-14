@@ -1,4 +1,5 @@
 import TimeUtility from "./TimeUtility";
+import {applyCodeBlockHighlights} from "./codeblock-highlight/highlighting.ts";
 
 declare const Prism: any;
 
@@ -9,9 +10,8 @@ class UI {
      */
     public static updateUI(element?: Element) {
         element = element || document.body;
-        UI.unescapeMarkTags(element);
         UI.addLineNumbers(element);
-        UI.addHighlighting(element);
+        UI.addSyntaxHighlighting(element);
         UI.renderSpoilers(element);
         UI.renderTabs(element);
         UI.renderTimestamps(element);
@@ -46,10 +46,24 @@ class UI {
      * Adds syntax highlighting to all <pre> <code> blocks in the element.
      * @param element The element to search for <pre> <code> blocks in.
      */
+    public static addSyntaxHighlighting(element?: Element) {
+        element = element || document.body;
+        element.querySelectorAll("pre code").forEach((block: HTMLElement) => {
+            Prism.highlightAllUnder(block.parentElement);
+            if (block.dataset.highlight) {
+                applyCodeBlockHighlights(block);
+            }
+        });
+    }
+
+    /**
+     * Adds line and segment highlighting to all <pre> <code> blocks in the element.
+     * @param element The element to search for <pre> <code> blocks in.
+     */
     public static addHighlighting(element?: Element) {
         element = element || document.body;
-        element.querySelectorAll("pre code").forEach((block) => {
-            Prism.highlightAllUnder(block.parentElement);
+        element.querySelectorAll("pre code").forEach((block: HTMLElement) => {
+            console.log(block);
         });
     }
 
@@ -242,22 +256,6 @@ class UI {
                     }, 1000);
                     break;
             }
-        });
-    }
-
-    /**
-     * Unescapes all <mark> tags in <pre> <code> blocks.
-     * @param element The element to search for <pre> <code> blocks in.
-     */
-    public static unescapeMarkTags(element?: Element) {
-        element = element || document.body;
-        element.querySelectorAll("pre code").forEach((block) => {
-            let content = block.innerHTML;
-
-            // but ugly fucking hack. I hate this
-            content = content.replaceAll(/&lt;mark(.*?)&gt;/g, "<mark$1>");
-            content = content.replaceAll("&lt;/mark&gt;", "</mark>");
-            block.innerHTML = content;
         });
     }
 

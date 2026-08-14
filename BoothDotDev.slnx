@@ -10,5 +10,7 @@
         <File Path="Directory.Build.props" />
         <File Path="global.json" />
     </Folder>
+    <Project Path="BoothDotDev.CodeBlockTrivia/BoothDotDev.CodeBlockTrivia.csproj" />
+    <Project Path="BoothDotDev.Tests/BoothDotDev.Tests.csproj" />
     <Project Path="BoothDotDev\BoothDotDev.csproj" />
 </Solution>

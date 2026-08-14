@@ -73,4 +73,8 @@
         <EmbeddedResource Include="wwwroot\.vite\manifest.json" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\BoothDotDev.CodeBlockTrivia\BoothDotDev.CodeBlockTrivia.csproj" />
+    </ItemGroup>
+
 </Project>

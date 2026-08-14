@@ -13,3 +13,9 @@ build-aspnet:
       - "**/obj/**"
   only:
     - main
+
+test:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  script:
+    - dotnet test BoothDotDev.slnx --configuration Release
