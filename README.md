@@ -28,9 +28,10 @@ my specific requirements. However, I'm always happy to receive PRs for bug fixes
 even new features. This, however, is entirely optional.
 
 ## License
-This project is currently unlicensed until I decide on a license that is fit for this repository. This means, for the
-time-being, that the rights to all assets and code are reserved. You may use the code here for educational purposes, but
-directly copying my website for your own purposes is strictly forbidden at this current time.
+For license details, please see the [LICENSE.md](LICENSE.md) file.
+In short, this repository is made publicly available for **reference and educational purposes only**.
+It is **not** an open-source license, and it does **not** grant permission to copy, redistribute, or republish this site or its contents in
+whole or in part.
 
 ## Contact
-For questions or support, feel free to reach out to me from my links on my about page https://booth.dev/about.
+For questions or support, feel free to reach out to me from my links on my [about page](https://booth.dev/about).
