@@ -12,7 +12,7 @@ RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY --from=build-deps /src/BoothDotDev/wwwroot /src/BoothDotDev/wwwroot
-COPY --from=build-deps /src/BoothDotDev/wwwroot/.vite/manifest.json /src/BoothDotDev/wwwroot.vite/manifest.json
+COPY --from=build-deps /src/BoothDotDev/wwwroot/.vite/manifest.json /src/BoothDotDev/wwwroot/.vite/manifest.json
 WORKDIR /src
 COPY ["BoothDotDev/BoothDotDev.csproj", "BoothDotDev/"]
 COPY . .
