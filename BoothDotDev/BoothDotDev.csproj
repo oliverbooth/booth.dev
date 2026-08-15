@@ -45,7 +45,6 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="ShortGuid" Version="2.0.1" />
-        <PackageReference Include="SmartFormat.NET" Version="3.6.1" />
         <PackageReference Include="X10D" Version="4.0.0" />
         <PackageReference Include="X10D.Hosting" Version="4.0.0" />
         <PackageReference Include="ZString" Version="2.6.0" />
