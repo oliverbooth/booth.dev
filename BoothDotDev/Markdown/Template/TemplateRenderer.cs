@@ -14,7 +14,6 @@ internal sealed class TemplateRenderer : HtmlObjectRenderer<TemplateInline>
     /// <summary>
     ///     Initializes a new instance of the <see cref="TemplateRenderer" /> class.
     /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
     /// <param name="templateService">The <see cref="TemplateService" />.</param>
     public TemplateRenderer(TemplateService templateService)
     {

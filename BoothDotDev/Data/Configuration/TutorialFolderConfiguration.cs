@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoothDotDev.Data.Configuration;
 
 /// <summary>
-///     Represents the configuration for the <see cref="Template" /> entity.
+///     Represents the configuration for the <see cref="TutorialFolder" /> entity.
 /// </summary>
 internal sealed class TutorialFolderConfiguration : IEntityTypeConfiguration<TutorialFolder>
 {
