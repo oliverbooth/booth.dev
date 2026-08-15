@@ -1,5 +1,5 @@
 stages:
-  - test
+  - verify
   - build
 
 .default-rules:
@@ -9,7 +9,7 @@ stages:
 
 test:
   extends: .default-rules
-  stage: test
+  stage: verify
   image: mcr.microsoft.com/dotnet/sdk:10.0
   script:
     - dotnet test BoothDotDev.slnx --configuration Release --logger "junit;LogFilePath=test-results.xml"
@@ -17,6 +17,18 @@ test:
     when: always
     reports:
       junit: "**/test-results.xml"
+
+build-assets:
+  extends: .default-rules
+  stage: verify
+  image: node:22-alpine
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - BoothDotDev/wwwroot/
+    expire_in: 1 hour
 
 build:
   extends: .default-rules
