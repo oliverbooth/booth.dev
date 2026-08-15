@@ -1,7 +1,25 @@
 stages:
+  - test
   - build
 
-build-aspnet:
+.default-rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+test:
+  extends: .default-rules
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  script:
+    - dotnet test BoothDotDev.slnx --configuration Release --logger "junit;LogFilePath=test-results.xml"
+  artifacts:
+    when: always
+    reports:
+      junit: "**/test-results.xml"
+
+build:
+  extends: .default-rules
   stage: build
   image: mcr.microsoft.com/dotnet/sdk:10.0
   script:
@@ -10,12 +28,3 @@ build-aspnet:
   artifacts:
     paths:
       - "**/bin/**"
-      - "**/obj/**"
-  only:
-    - main
-
-test:
-  stage: build
-  image: mcr.microsoft.com/dotnet/sdk:10.0
-  script:
-    - dotnet test BoothDotDev.slnx --configuration Release
