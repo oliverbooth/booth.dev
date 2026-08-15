@@ -11,8 +11,8 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 app: resolve(__dirname, 'src/ts/app.ts'),
-                style: resolve(__dirname, 'src/scss/style.scss'),
-                prism_vs: resolve(__dirname, 'src/scss/prism.vs.scss'),
+                style: resolve(__dirname, 'src/css/style.css'),
+                prism_vs: resolve(__dirname, 'src/css/prism.vs.css'),
             },
         },
     },

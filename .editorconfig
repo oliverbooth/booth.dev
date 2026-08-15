@@ -2,6 +2,11 @@
 [*]
 guidelines = 130
 
+[*.css]
+indent_size=2
+indent_style=space
+tab_width=2
+
 # C# files
 [*.cs]
 

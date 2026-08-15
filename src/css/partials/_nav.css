@@ -81,7 +81,7 @@
   }
 }
 
-// ---------- bottom nav (mobile) ----------
+/* ---------- bottom nav (mobile) ---------- */
 .bottom-nav {
   display: none;
   position: sticky;

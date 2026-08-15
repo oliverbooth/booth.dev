@@ -31,7 +31,7 @@ div.code-toolbar > .toolbar {
     }
 
     > button {
-      background-color: rgba(0, 0, 0, 0.65); // re-assert over the button-reset below
+      background-color: rgba(0, 0, 0, 0.65); /* re-assert over the button-reset below */
       border: 1px solid rgba(255, 255, 255, 0.12);
       font: inherit;
       font-size: 0.7rem;
