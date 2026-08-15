@@ -3,6 +3,7 @@ using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using BoothDotDev.Markdown;
 using BoothDotDev.Markdown.CodeBlock;
+using BoothDotDev.Markdown.Embed;
 using BoothDotDev.Markdown.Link;
 using Humanizer;
 using Markdig;
@@ -74,9 +75,10 @@ public sealed class MarkdownRenderingService
         {
             BlogPost => "blog",
             TutorialArticle => "tutorial",
+            ProjectDevlog => "devlog",
             _ => "content"
         };
-        
+
         return Render(body.Body, id, published, area);
     }
 
@@ -183,9 +185,11 @@ public sealed class MarkdownRenderingService
 
         var context = new MarkdownRenderContext(id, published);
         var razorPartialRenderer = services.GetRequiredService<RazorPartialRenderer>();
+        var resolver = new CdnMediaResolver(context, razorPartialRenderer, area);
 
         ReplaceRenderer<LinkInlineRenderer>(htmlRenderer, new CdnMediaLinkRenderer(context, razorPartialRenderer, area));
         ReplaceRenderer<CodeBlockRenderer>(htmlRenderer, new HighlightCodeBlockRenderer());
+        ReplaceRenderer<EmbedRenderer>(htmlRenderer, new EmbedRenderer(services, _markdownPipeline, resolver));
 
         return htmlRenderer;
     }

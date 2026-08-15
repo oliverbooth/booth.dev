@@ -9,7 +9,7 @@ public sealed class MediaLinkModel
     ///     Gets the alt text for the media link.
     /// </summary>
     /// <value>The alt text for the media link.</value>
-    public required string Alt { get; init; }
+    public required string? Alt { get; init; }
 
     /// <summary>
     ///     Gets the MIME type of the media link.

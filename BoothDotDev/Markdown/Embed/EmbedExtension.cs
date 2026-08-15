@@ -33,7 +33,7 @@ internal sealed class EmbedExtension : IMarkdownExtension
     {
         if (renderer is HtmlRenderer htmlRenderer && !htmlRenderer.ObjectRenderers.Contains<EmbedRenderer>())
         {
-            htmlRenderer.ObjectRenderers.Insert(0, new EmbedRenderer(_serviceProvider, pipeline));
+            htmlRenderer.ObjectRenderers.Insert(0, new EmbedRenderer(_serviceProvider, pipeline, resolver: null!));
         }
     }
 }
