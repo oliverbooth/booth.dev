@@ -10,7 +10,7 @@ stages:
 test:
   extends: .default-rules
   stage: verify
-  image: mcr.microsoft.com/dotnet/sdk:10.0
+  image: mcr.microsoft.com/dotnet/sdk:11.0-preview
   script:
     - dotnet test BoothDotDev.slnx --configuration Release --logger "junit;LogFilePath=test-results.xml"
   artifacts:
@@ -33,7 +33,7 @@ build-assets:
 build:
   extends: .default-rules
   stage: build
-  image: mcr.microsoft.com/dotnet/sdk:10.0
+  image: mcr.microsoft.com/dotnet/sdk:11.0-preview
   script:
     - dotnet restore BoothDotDev.slnx
     - dotnet build BoothDotDev.slnx --configuration Release
