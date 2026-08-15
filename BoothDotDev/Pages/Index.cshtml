@@ -71,18 +71,24 @@
     </div>
 
     <div class="commit-log" style="margin-bottom:3rem">
-        @for (var index = 0; index < Model.BlogPosts.Count; index++)
+        @for (var index = 0; index < Model.RecentActivity.Count; index++)
         {
-            var post = Model.BlogPosts[index];
+            var entry = Model.RecentActivity[index];
             var first = index == 0;
 
-            <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="commit">
+            <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" class="commit">
                 <div class="commit-dot@(first ? "" : " muted")"></div>
                 <div class="commit-meta">
-                    <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
+                    <span class="commit-hash">@entry.CommitSha</span><span class="commit-tag">@entry.Category</span>
                 </div>
-                <p class="commit-title">@post.Title</p>
-                <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
+                <p class="commit-title">@entry.Title</p>
+                <p class="commit-sub">
+                    @if (entry.ReadingMinutes.HasValue)
+                    {
+                        <text>@entry.ReadingMinutes min read &middot; </text>
+                    }
+                    @entry.CreatedAt.ToShortString()
+                </p>
             </a>
         }
     </div>

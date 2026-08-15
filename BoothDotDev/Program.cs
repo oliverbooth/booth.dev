@@ -37,6 +37,7 @@ builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 });
 
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<ActivityService>();
 builder.Services.AddSingleton<CodeSnippetService>();
 builder.Services.AddSingleton<MarkdownRenderingService>();
 builder.Services.AddSingleton<DevChallengeService>();

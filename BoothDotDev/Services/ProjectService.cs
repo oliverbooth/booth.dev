@@ -10,7 +10,7 @@ namespace BoothDotDev.Services;
 /// <summary>
 ///     Represents a service for interacting with projects.
 /// </summary>
-internal sealed class ProjectService
+public sealed class ProjectService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MarkdownPipeline _markdownPipeline;
@@ -105,6 +105,22 @@ internal sealed class ProjectService
             .Where(p => p.ProjectId == devlog.ProjectId)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < devlog.Published);
+    }
+
+    /// <summary>
+    ///     Returns the most recent devlogs, limited to the specified count.
+    /// </summary>
+    /// <param name="count">The number of devlogs to return.</param>
+    /// <returns>A read-only list of the most recent devlogs.</returns>
+    public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(int count)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return context.DevLogs
+            .Where(p => p.Visibility == Visibility.Published)
+            .OrderByDescending(p => p.Published)
+            .Take(count)
+            .ToList()
+            .AsReadOnly();
     }
 
     /// <summary>

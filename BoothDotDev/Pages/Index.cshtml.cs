@@ -7,25 +7,25 @@ namespace BoothDotDev.Pages;
 
 internal sealed class Index : PageModel
 {
-    private readonly BlogPostService _blogPostService;
+    private readonly ActivityService _activityService;
     private readonly ProjectService _projectService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Index" /> class.
     /// </summary>
-    /// <param name="blogPostService">The blog post service.</param>
+    /// <param name="activityService">The activity service.</param>
     /// <param name="projectService">The project service.</param>
-    public Index(BlogPostService blogPostService, ProjectService projectService)
+    public Index(ActivityService activityService, ProjectService projectService)
     {
-        _blogPostService = blogPostService;
+        _activityService = activityService;
         _projectService = projectService;
     }
 
     /// <summary>
-    ///     Gets the latest blog posts.
+    ///     Gets the recent activity.
     /// </summary>
-    /// <returns>The latest blog posts.</returns>
-    public IReadOnlyList<BlogPost> BlogPosts { get; private set; } = [];
+    /// <returns>The recent activity.</returns>
+    public IReadOnlyList<ActivityEntry> RecentActivity { get; private set; } = [];
 
     /// <summary>
     ///     Gets the latest projects.
@@ -38,7 +38,7 @@ internal sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        BlogPosts = _blogPostService.GetBlogPosts(0, 3);
+        RecentActivity = _activityService.GetRecentActivity(3);
         Projects = [.. _projectService.GetProjects().Concat(_projectService.GetProjects(ProjectStatus.Past)).Take(3)];
     }
 }

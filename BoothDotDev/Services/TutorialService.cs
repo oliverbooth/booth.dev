@@ -201,6 +201,22 @@ public sealed class TutorialService
     }
 
     /// <summary>
+    ///     Returns the most recent tutorial articles, limited to the specified count.
+    /// </summary>
+    /// <param name="count">The number of tutorial articles to return.</param>
+    /// <returns>A read-only list of the most recent tutorial articles.</returns>
+    public IReadOnlyList<TutorialArticle> GetRecentArticles(int count)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return context.TutorialArticles
+            .Where(a => a.Visibility == Visibility.Published)
+            .OrderByDescending(a => a.Published)
+            .Take(count)
+            .ToList()
+            .AsReadOnly();
+    }
+
+    /// <summary>
     ///     Attempts to find an article by its ID.
     /// </summary>
     /// <param name="id">The ID of the article.</param>

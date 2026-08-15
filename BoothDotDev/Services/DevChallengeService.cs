@@ -10,7 +10,7 @@ namespace BoothDotDev.Services;
 /// <summary>
 ///     Represents a service which fetches and manages dev challenges.
 /// </summary>
-internal sealed class DevChallengeService
+public sealed class DevChallengeService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -60,6 +60,22 @@ internal sealed class DevChallengeService
         }
 
         return [.. challenges];
+    }
+
+    /// <summary>
+    ///     Returns the most recent dev challenges, limited to the specified count.
+    /// </summary>
+    /// <param name="count">The number of dev challenges to return.</param>
+    /// <returns>A read-only list of the most recent dev challenges.</returns>
+    public IReadOnlyList<DevChallenge> GetRecentChallenges(int count)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return context.DevChallenges
+            .Where(c => c.Visibility == Visibility.Published)
+            .OrderByDescending(c => c.Date)
+            .Take(count)
+            .ToList()
+            .AsReadOnly();
     }
 
     /// <summary>

@@ -240,6 +240,22 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Returns the most recent blog posts, limited to the specified count.
+    /// </summary>
+    /// <param name="count">The number of blog posts to return.</param>
+    /// <returns>A read-only list of the most recent blog posts.</returns>
+    public IReadOnlyList<BlogPost> GetRecentBlogPosts(int count)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return context.BlogPosts
+            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
+            .OrderByDescending(p => p.Published)
+            .Take(count)
+            .ToList()
+            .AsReadOnly();
+    }
+
+    /// <summary>
     ///     Returns the top-level blog post categories.
     /// </summary>
     /// <returns>The top-level blog post categories.</returns>
