@@ -1,9 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using Markdig;
 using Microsoft.EntityFrameworkCore;
-using MD = Markdig.Markdown;
 
 namespace BoothDotDev.Services;
 
@@ -13,17 +11,17 @@ namespace BoothDotDev.Services;
 public sealed class ProjectService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly MarkdownPipeline _markdownPipeline;
+    private readonly MarkdownRenderingService _markdownRenderingService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProjectService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The database context factory.</param>
-    /// <param name="markdownPipeline">The Markdown pipeline.</param>
-    public ProjectService(IDbContextFactory<AppDbContext> dbContextFactory, MarkdownPipeline markdownPipeline)
+    /// <param name="markdownRenderingService">The Markdown rendering service.</param>
+    public ProjectService(IDbContextFactory<AppDbContext> dbContextFactory, MarkdownRenderingService markdownRenderingService)
     {
         _dbContextFactory = dbContextFactory;
-        _markdownPipeline = markdownPipeline;
+        _markdownRenderingService = markdownRenderingService;
     }
 
     /// <summary>
@@ -34,7 +32,8 @@ public sealed class ProjectService
     /// <exception cref="ArgumentNullException"><paramref name="project" /> is <see langword="null" />.</exception>
     public string GetDescription(Project project)
     {
-        return MD.ToHtml(project.Description, _markdownPipeline);
+        // TODO we need dates on projects, CDN resolver can't just use today. fix this!!!
+        return _markdownRenderingService.Render(project.Description, project.Id, DateTimeOffset.UtcNow, "projects");
     }
 
     /// <summary>
