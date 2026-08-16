@@ -66,7 +66,7 @@ public static class ActivityEntryFactory
         return new(challenge.Date,
             challenge.Title,
             "challenge",
-            new() { ["id"] = challenge.Id.ToString() },
+            $"/challenge/{challenge.Id}",
             ((Guid)challenge.Id).ToString("N")[..7]);
     }
 }

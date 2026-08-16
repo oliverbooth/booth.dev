@@ -14,6 +14,7 @@ public abstract record ActivityEntry(
     string Title,
     string Category,
     string PagePath,
+    string? RawUrl,
     Dictionary<string, string> RouteValues,
     int? ReadingMinutes,
     string CommitSha)
@@ -34,7 +35,7 @@ public abstract record ActivityEntry(
         Dictionary<string, string> RouteValues,
         int? ReadingMinutes,
         string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Blog/Article", RouteValues, ReadingMinutes, CommitSha);
+        : ActivityEntry(CreatedAt, Title, Category, "/Blog/Article", null, RouteValues, ReadingMinutes, CommitSha);
 
     /// <summary>
     ///     Represents a tutorial article activity entry.
@@ -52,7 +53,7 @@ public abstract record ActivityEntry(
         Dictionary<string, string> RouteValues,
         int? ReadingMinutes,
         string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Learn/Tutorials/Index", RouteValues, ReadingMinutes, CommitSha);
+        : ActivityEntry(CreatedAt, Title, Category, "/Learn/Tutorials/Index", null, RouteValues, ReadingMinutes, CommitSha);
 
     /// <summary>
     ///     Represents a devlog activity entry.
@@ -70,7 +71,7 @@ public abstract record ActivityEntry(
         Dictionary<string, string> RouteValues,
         int? ReadingMinutes,
         string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Projects/Devlog", RouteValues, ReadingMinutes, CommitSha);
+        : ActivityEntry(CreatedAt, Title, Category, "/Projects/Devlog", null, RouteValues, ReadingMinutes, CommitSha);
 
     /// <summary>
     ///     Represents a challenge activity entry.
@@ -84,7 +85,7 @@ public abstract record ActivityEntry(
         DateTimeOffset CreatedAt,
         string Title,
         string Category,
-        Dictionary<string, string> RouteValues,
+        string RawUrl,
         string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Learn/Challenges/Challenge", RouteValues, null, CommitSha);
+        : ActivityEntry(CreatedAt, Title, Category, "/Learn/Challenges/Challenge", RawUrl, new(), null, CommitSha);
 }
