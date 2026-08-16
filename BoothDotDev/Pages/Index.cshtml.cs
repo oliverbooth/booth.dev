@@ -7,6 +7,8 @@ namespace BoothDotDev.Pages;
 
 internal sealed class Index : PageModel
 {
+    private const int RecentActivityCount = 5;
+    private const int ProjectCount = 6;
     private readonly ActivityService _activityService;
     private readonly ProjectService _projectService;
 
@@ -38,7 +40,7 @@ internal sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        RecentActivity = _activityService.GetRecentActivity(3);
-        Projects = [.. _projectService.GetProjects().Concat(_projectService.GetProjects(ProjectStatus.Past)).Take(3)];
+        RecentActivity = _activityService.GetRecentActivity(RecentActivityCount);
+        Projects = [.. _projectService.GetProjects().Concat(_projectService.GetProjects(ProjectStatus.Past)).Take(ProjectCount)];
     }
 }
