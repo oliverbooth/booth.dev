@@ -18,5 +18,6 @@ internal sealed class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.Property(e => e.Published).IsRequired();
         builder.Property(e => e.Updated).IsRequired(false);
         builder.Property(e => e.Visibility).IsRequired();
+        builder.Property(e => e.FontStyle).IsRequired().HasDefaultValue(FontStyle.Serif);
     }
 }

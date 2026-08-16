@@ -24,6 +24,12 @@ public sealed class Note
     public string Content { get; set; } = string.Empty;
 
     /// <summary>
+    ///     Gets or sets the font style of the note.
+    /// </summary>
+    /// <value>The font style of the note.</value>
+    public FontStyle FontStyle { get; set; } = FontStyle.Serif;
+
+    /// <summary>
     ///     Gets the date and time when the note was published.
     /// </summary>
     /// <value>A <see cref="DateTimeOffset" /> representing the date and time when the note was published.</value>
