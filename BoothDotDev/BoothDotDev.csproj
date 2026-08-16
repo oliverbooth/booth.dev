@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(VersionSuffix)' != '' And '$(BuildNumber)' == ''">
