@@ -5,18 +5,23 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Blog;
 
+using Note = BoothDotDev.Data.Models.Note;
+
 [Area("blog")]
 internal sealed class Index : PageModel
 {
     private readonly BlogPostService _blogPostService;
+    private readonly NoteService _noteService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Index" /> class.
     /// </summary>
     /// <param name="blogPostService">The blog post service.</param>
-    public Index(BlogPostService blogPostService)
+    /// <param name="noteService">The note service.</param>
+    public Index(BlogPostService blogPostService, NoteService noteService)
     {
         _blogPostService = blogPostService;
+        _noteService = noteService;
     }
 
     /// <summary>
@@ -30,6 +35,12 @@ internal sealed class Index : PageModel
     /// </summary>
     /// <value>All blog post categories.</value>
     public IReadOnlyList<BlogPostCategory> BlogPostCategories { get; private set; } = [];
+
+    /// <summary>
+    ///     Gets all notes.
+    /// </summary>
+    /// <value>All notes.</value>
+    public IReadOnlyList<Note> Notes { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request for the blog index page.
@@ -47,6 +58,7 @@ internal sealed class Index : PageModel
 
         BlogPosts = _blogPostService.GetAllBlogPosts();
         BlogPostCategories = _blogPostService.GetTopLevelCategories();
+        Notes = _noteService.GetAllNotes();
         return Page();
     }
 

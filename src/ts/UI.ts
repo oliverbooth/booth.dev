@@ -120,12 +120,15 @@ class UI {
             pills.forEach((pill) => {
                 pill.addEventListener("click", () => {
                     const filter = pill.dataset.filter ?? "all";
+                    const filterKind = pill.dataset.filterKind ?? "post";
 
                     pills.forEach((p) => p.classList.remove("active"));
                     pill.classList.add("active");
 
                     sections.forEach((section) => {
-                        const matches = filter === "all" || section.dataset.state === filter;
+                        const sectionKind = section.dataset.kind ?? "post";
+                        const matches = sectionKind === filterKind
+                            && (filterKind === "note" || filter === "all" || section.dataset.state === filter);
                         UI.setSectionVisible(section, matches);
                     });
                 });
