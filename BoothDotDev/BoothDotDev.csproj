@@ -68,6 +68,9 @@
         <Compile Update="Pages\Shared\MainLayout.cs">
             <DependentUpon>_MainLayout.cshtml</DependentUpon>
         </Compile>
+        <Compile Update="Pages\Shared\Partials\ActivityEntryCommit.cshtml.cs">
+          <DependentUpon>_ActivityEntryCommit.cshtml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

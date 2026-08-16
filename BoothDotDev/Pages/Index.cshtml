@@ -1,5 +1,6 @@
 @page
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @model Index
 
 <div class="page-wide">
@@ -78,40 +79,14 @@
 
             @if (entry.RawUrl is { } rawUrl)
             {
-                /* TODO hate this duplicated body. but you can't branch an open tag and have them share a close tag.
-                 * this fucking sucks.
-                 */
-
                 <a href="@rawUrl" class="commit">
-                    <div class="commit-dot@(first ? "" : " muted")"></div>
-                    <div class="commit-meta">
-                        <span class="commit-hash">@entry.CommitSha</span><span class="commit-tag">@entry.Category</span>
-                    </div>
-                    <p class="commit-title">@entry.Title</p>
-                    <p class="commit-sub">
-                        @if (entry.ReadingMinutes.HasValue)
-                        {
-                            <text>@entry.ReadingMinutes min read &middot; </text>
-                        }
-                        @entry.CreatedAt.ToShortString()
-                    </p>
+                    <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
                 </a>
             }
             else
             {
                 <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" class="commit">
-                    <div class="commit-dot@(first ? "" : " muted")"></div>
-                    <div class="commit-meta">
-                        <span class="commit-hash">@entry.CommitSha</span><span class="commit-tag">@entry.Category</span>
-                    </div>
-                    <p class="commit-title">@entry.Title</p>
-                    <p class="commit-sub">
-                        @if (entry.ReadingMinutes.HasValue)
-                        {
-                            <text>@entry.ReadingMinutes min read &middot; </text>
-                        }
-                        @entry.CreatedAt.ToShortString()
-                    </p>
+                    <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
                 </a>
             }
         }
