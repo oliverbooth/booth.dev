@@ -88,4 +88,20 @@ public abstract record ActivityEntry(
         string RawUrl,
         string CommitSha)
         : ActivityEntry(CreatedAt, Title, Category, "/Learn/Challenges/Challenge", RawUrl, new(), null, CommitSha);
+
+    /// <summary>
+    ///     Represents a note activity entry.
+    /// </summary>
+    /// <param name="CreatedAt">The date and time when the activity entry was created.</param>
+    /// <param name="Title">The title of the activity entry.</param>
+    /// <param name="Category">The category of the activity entry.</param>
+    /// <param name="RouteValues">The route values for the activity entry.</param>
+    /// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
+    public sealed record Note(
+        DateTimeOffset CreatedAt,
+        string Title,
+        string Category,
+        string RawUrl,
+        string CommitSha)
+        : ActivityEntry(CreatedAt, Title, Category, "/Note", RawUrl, new(), null, CommitSha);
 }

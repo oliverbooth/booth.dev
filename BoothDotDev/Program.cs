@@ -38,15 +38,16 @@ builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ActivityService>();
-builder.Services.AddSingleton<CodeSnippetService>();
-builder.Services.AddSingleton<MarkdownRenderingService>();
-builder.Services.AddSingleton<DevChallengeService>();
-builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddHostedSingleton<BlogPostService>();
 builder.Services.AddSingleton<BlogUserService>();
+builder.Services.AddSingleton<CodeSnippetService>();
+builder.Services.AddSingleton<DevChallengeService>();
+builder.Services.AddSingleton<MarkdownRenderingService>();
+builder.Services.AddSingleton<NoteService>();
 builder.Services.AddSingleton<ProjectService>();
-builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<ReadingListService>();
+builder.Services.AddSingleton<TemplateService>();
+builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BlueskyService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(

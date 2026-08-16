@@ -42,7 +42,7 @@ public sealed class MarkdownRenderingService
     /// <param name="area">The area.</param>
     /// <returns>The HTML content of the rendered content.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="body" /> is <see langword="null" />.</exception>
-    public string Render(string body, Guid id, DateTimeOffset published, string area)
+    public string Render(string body, Guid id, DateTimeOffset published, string? area = null)
     {
         if (body is null)
         {
@@ -52,7 +52,7 @@ public sealed class MarkdownRenderingService
         using var writer = new StringWriter();
         using var scope = _serviceScopeFactory.CreateScope();
 
-        HtmlRenderer htmlRenderer = CreateHtmlRenderer(writer, area, id, published, scope.ServiceProvider);
+        HtmlRenderer htmlRenderer = CreateHtmlRenderer(writer, area ?? "content", id, published, scope.ServiceProvider);
 
         var document = MD.Parse(body, _markdownPipeline);
         htmlRenderer.Render(document);

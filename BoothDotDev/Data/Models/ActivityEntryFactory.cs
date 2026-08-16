@@ -1,5 +1,6 @@
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
+using DEDrake;
 
 namespace BoothDotDev.Data.Models;
 
@@ -68,5 +69,19 @@ public static class ActivityEntryFactory
             "challenge",
             $"/challenge/{challenge.Id}",
             ((Guid)challenge.Id).ToString("N")[..7]);
+    }
+
+    /// <summary>
+    ///     Creates an <see cref="ActivityEntry.Note" /> from a <see cref="Note" />.
+    /// </summary>
+    /// <param name="note">The <see cref="Note" />.</param>
+    /// <returns>An <see cref="ActivityEntry.Note" /> representing the <paramref name="note" />.</returns>
+    public static ActivityEntry.Note From(Note note)
+    {
+        return new(note.Published,
+            note.Title,
+            "note",
+            $"/note/{(ShortGuid)note.Id}",
+            note.Id.ToString("N")[..7]);
     }
 }

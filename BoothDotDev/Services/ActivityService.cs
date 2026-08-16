@@ -11,6 +11,7 @@ public sealed class ActivityService
     private readonly ProjectService _projectService;
     private readonly TutorialService _tutorialService;
     private readonly DevChallengeService _devChallengeService;
+    private readonly NoteService _noteService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ActivityService" /> class.
@@ -19,15 +20,18 @@ public sealed class ActivityService
     /// <param name="projectService">The project service.</param>
     /// <param name="tutorialService">The tutorial service.</param>
     /// <param name="devChallengeService">The dev challenge service.</param>
+    /// <param name="noteService">The note service.</param>
     public ActivityService(BlogPostService blogPostService,
         ProjectService projectService,
         TutorialService tutorialService,
-        DevChallengeService devChallengeService)
+        DevChallengeService devChallengeService,
+        NoteService noteService)
     {
         _blogPostService = blogPostService;
         _projectService = projectService;
         _tutorialService = tutorialService;
         _devChallengeService = devChallengeService;
+        _noteService = noteService;
     }
 
     /// <summary>
@@ -46,6 +50,7 @@ public sealed class ActivityService
                     ? project
                     : throw new InvalidOperationException($"Project with ID {p.ProjectId} not found."))),
             .. _devChallengeService.GetRecentChallenges(count).Select(ActivityEntryFactory.From),
+            .. _noteService.GetRecentNotes(count).Select(ActivityEntryFactory.From)
         ];
 
         return candidates

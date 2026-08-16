@@ -1,0 +1,33 @@
+@page "/note/{id}"
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@inject MarkdownRenderingService MarkdownRenderingService
+@model Note
+
+@if (Model.RetrievedNote.IsUndefined)
+{
+    return;
+}
+
+@{
+    var note = Model.RetrievedNote.Value;
+    ViewData["Page"] = "Note";
+    ViewData["Post"] = note;
+    var published = note.Published;
+}
+
+<div class="page">
+
+    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
+
+    <span class="eyebrow">Note</span>
+    <h1 style="margin:8px 0 12px;font-size:30px">@note.Title</h1>
+
+    <div class="byline">
+        <span class="meta">@published.ToShortString()</span>
+    </div>
+
+    <div class="prose prose--note" style="margin-top:2.5rem">
+        @Html.Raw(MarkdownRenderingService.Render(note.Content, note.Id, note.Published))
+    </div>
+</div>
