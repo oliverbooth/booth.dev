@@ -50,7 +50,7 @@
             class="meta">@author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</span>
     </div>
 
-    <div class="prose prose--@(category.FontStyle.ToString().ToLower())" style="margin-top:2.5rem">
+    <div class="prose prose--@(category.FontStyle.ToString().ToLowerInvariant())" style="margin-top:2.5rem">
         @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.Published))
     </div>
 
