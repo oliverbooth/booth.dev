@@ -15,14 +15,14 @@ let lastFocusedTrigger: HTMLElement | null = null;
  * Initializes the lightbox component.
  */
 export function initLightbox(): void {
-    const dialog = document.querySelector<HTMLDialogElement>(LIGHTBOX_SELECTOR);
+    const dialog: HTMLDialogElement | null = document.querySelector<HTMLDialogElement>(LIGHTBOX_SELECTOR);
     if (!dialog) {
         return;
     }
 
-    const image = dialog.querySelector<HTMLImageElement>('.lightbox-image');
-    const caption = dialog.querySelector<HTMLElement>('.lightbox-caption');
-    const closeButton = dialog.querySelector<HTMLButtonElement>('.lightbox-close');
+    const image: HTMLImageElement | null = dialog.querySelector<HTMLImageElement>('.lightbox-image');
+    const caption: HTMLElement | null = dialog.querySelector<HTMLElement>('.lightbox-caption');
+    const closeButton: HTMLButtonElement | null = dialog.querySelector<HTMLButtonElement>('.lightbox-close');
 
     if (!image || !caption || !closeButton) {
         throw new Error('Lightbox markup is missing required child elements.');
@@ -56,8 +56,8 @@ function open(trigger: HTMLElement): void {
         return;
     }
 
-    const src = trigger.dataset.lightboxSrc ?? (trigger as HTMLImageElement).src;
-    const captionTemplate = trigger
+    const src: string = trigger.dataset.lightboxSrc ?? (trigger as HTMLImageElement).src;
+    const captionTemplate: HTMLTemplateElement | null | undefined = trigger
         .closest('figure')
         ?.querySelector<HTMLTemplateElement>('[data-lightbox-caption-template]');
 

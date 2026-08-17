@@ -1,6 +1,6 @@
 import {registerShortcut} from './input.ts';
 
-const KONAMI_CODE = [
+const KONAMI_CODE: string[] = [
     'ArrowUp', 'ArrowUp',
     'ArrowDown', 'ArrowDown',
     'ArrowLeft', 'ArrowRight',

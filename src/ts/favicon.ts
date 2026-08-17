@@ -1,13 +1,13 @@
 /**
  * Initializes the favicon based on the user's preferred color scheme.
  */
-export function initFavicon() {
+export function initFavicon(): void {
     setFavicon();
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
 }
 
-function setFavicon() {
-    const darkMode = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+function setFavicon(): void {
+    const darkMode: boolean = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
     const favicon = document.querySelector('link[rel~=\'icon\']') as HTMLLinkElement;
     if (!favicon) {
         return;
