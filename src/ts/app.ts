@@ -1,6 +1,5 @@
 import UI from "./UI";
 import Input from "./Input";
-import Callout from "./Callout";
 import {initLightbox} from './lightbox.ts';
 import {initFavicon} from './favicon.ts';
 
@@ -9,7 +8,6 @@ declare const lucide: any;
 declare const JXG: any;
 
 (() => {
-    Callout.foldAll();
     lucide.createIcons();
     JXG.Options.text.useMathJax = true;
 
