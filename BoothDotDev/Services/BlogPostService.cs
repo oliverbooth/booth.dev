@@ -247,12 +247,13 @@ public sealed class BlogPostService : BackgroundService
     public IReadOnlyList<BlogPost> GetRecentBlogPosts(int count)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
-            .OrderByDescending(p => p.Published)
-            .Take(count)
-            .ToList()
-            .AsReadOnly();
+        return
+        [
+            .. context.BlogPosts
+                .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
+                .OrderByDescending(p => p.Published)
+                .Take(count)
+        ];
     }
 
     /// <summary>
