@@ -1,0 +1,88 @@
+@page "/create"
+@using BoothDotDev.Markdown
+@using BoothDotDev.Markdown.Link
+@using BoothDotDev.Services
+@model BoothDotDev.Pages.Create.Index
+@inject MarkdownRenderingService MarkdownRenderingService
+
+<div class="page-wide">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / Create</p>
+    <h1>Create</h1>
+    <p class="lede">
+        Things I gone done and made that aren't code-related. See <a asp-page="/Projects/Index">my project list</a> for my dev portfolio.
+    </p>
+
+    @*
+   <div class="filter-row">
+       <span class="pill active">All</span>
+       <span class="pill">Music</span>
+       <span class="pill">Art</span>
+       <span class="pill">3D</span>
+   </div>
+
+    <div class="section-head"><h2>Music</h2></div>
+    <div class="stack-list section-list">
+        <a href="#">
+            <div class="track-play track-play--active">
+                <i class="ti ti-player-play-filled" style="font-size:14px"></i>
+            </div>
+            <div class="stack-meta track-meta">
+                <div>
+                    <p class="title">Station Theme (WIP)</p>
+                    <p class="sub">For The Quiet Line</p>
+                </div>
+                <span class="sub">2:14</span>
+            </div>
+        </a>
+        <a href="#">
+            <div class="track-play track-play--idle">
+                <i class="ti ti-player-play" style="font-size:14px"></i>
+            </div>
+            <div class="stack-meta track-meta">
+                <div>
+                    <p class="title">Late night noodling</p>
+                    <p class="sub">Piano improv</p>
+                </div>
+                <span class="sub">3:41</span>
+            </div>
+        </a>
+    </div>
+*@
+
+    <div class="section-head"><h2>Art</h2></div>
+    <div class="masonry">
+        @for (var index = 0; index < Model.ArtworkItems.Count; index++)
+        {
+            const CdnMediaResolver.MediaKind mediaKind = CdnMediaResolver.MediaKind.Image;
+            var first = index == 0;
+            var item = Model.ArtworkItems[index];
+            var context = new MarkdownRenderContext(item.Id, item.Published);
+            var resolver = new CdnMediaResolver(context, null!, "content");
+            var cdnUrl = resolver.ResolveCdnUrl(item.FileName, mediaKind);
+
+            <figure class="masonry-cell @(first ? "tall" : "short")">
+                <img src="@cdnUrl"
+                     title="@item.Title"
+                     alt="@item.FileName"
+                     data-lightbox
+                     data-lightbox-src="@cdnUrl"/>
+                <template data-lightbox-caption-template>
+                    @Html.Raw(MarkdownRenderingService.Render(item.Description!, item.Id, item.Published, "content"))
+                    <p class="lightbox-caption-date">
+                        Made with @item.MadeWith, @item.Published.ToString("MMMM yyyy").
+                    </p>
+                </template>
+            </figure>
+        }
+    </div>
+
+    <dialog id="lightbox" class="lightbox">
+        <button type="button" class="lightbox-close" aria-label="Close">&times;</button>
+        <figure>
+            <img class="lightbox-image" src="" alt=""/>
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+    </dialog>
+
+</div>

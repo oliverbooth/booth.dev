@@ -16,6 +16,7 @@ public sealed class AppDbContext : DbContext
     /// <param name="options">The options for creating a new context.</param>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
+        ArtworkItems = Set<ArtworkItem>();
         BlogPostCategories = Set<BlogPostCategory>();
         BlogPosts = Set<BlogPost>();
         Books = Set<Book>();
@@ -23,6 +24,7 @@ public sealed class AppDbContext : DbContext
         DevChallenges = Set<DevChallenge>();
         DevLogs = Set<ProjectDevlog>();
         LegacyComments = Set<LegacyComment>();
+        MusicItems = Set<MusicItem>();
         Notes = Set<Note>();
         Projects = Set<Project>();
         SiteConfiguration = Set<SiteConfiguration>();
@@ -30,6 +32,12 @@ public sealed class AppDbContext : DbContext
         TutorialFolders = Set<TutorialFolder>();
         Users = Set<User>();
     }
+
+    /// <summary>
+    ///     Gets the collection of artwork items in the database.
+    /// </summary>
+    /// <value>The collection of artwork items.</value>
+    public DbSet<ArtworkItem> ArtworkItems { get; private set; }
 
     /// <summary>
     ///     Gets the collection of blog post categories in the database.
@@ -72,6 +80,12 @@ public sealed class AppDbContext : DbContext
     /// </summary>
     /// <value>The collection of legacy comments.</value>
     public DbSet<LegacyComment> LegacyComments { get; private set; }
+
+    /// <summary>
+    ///     Gets the collection of music items in the database.
+    /// </summary>
+    /// <value>The collection of music items.</value>
+    public DbSet<MusicItem> MusicItems { get; private set; }
 
     /// <summary>
     ///     Gets the collection of notes in the database.
@@ -119,12 +133,14 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
 
+        modelBuilder.ApplyConfiguration(new ArtworkItemConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
+        modelBuilder.ApplyConfiguration(new MusicItemConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());

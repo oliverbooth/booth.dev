@@ -1,6 +1,7 @@
 import UI from "./UI";
 import Input from "./Input";
 import Callout from "./Callout";
+import {initLightbox} from "./lightbox.ts";
 
 declare const Prism: any;
 declare const lucide: any;
@@ -46,6 +47,7 @@ declare const JXG: any;
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
 
     UI.updateUI();
+    initLightbox();
 
     document.addEventListener("click", (event: MouseEvent) => {
         const target = event.target as Element | null;

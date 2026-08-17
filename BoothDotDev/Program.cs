@@ -41,6 +41,7 @@ builder.Services.AddSingleton<ActivityService>();
 builder.Services.AddHostedSingleton<BlogPostService>();
 builder.Services.AddSingleton<BlogUserService>();
 builder.Services.AddSingleton<CodeSnippetService>();
+builder.Services.AddSingleton<CreationService>();
 builder.Services.AddSingleton<DevChallengeService>();
 builder.Services.AddSingleton<MarkdownRenderingService>();
 builder.Services.AddSingleton<NoteService>();
