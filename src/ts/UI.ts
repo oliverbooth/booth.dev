@@ -16,7 +16,6 @@ class UI {
         UI.applyAnsi(element);
         UI.fixCanvas(element);
         UI.runTerminalTypewriters(element);
-        UI.enableFilterPills(element);
         UI.enableCopyButtons(element);
     }
 
@@ -53,44 +52,6 @@ class UI {
             icon.className = originalClasses;
             icon.style.color = "";
         }, 1200);
-    }
-
-    /**
-     * Enables filter pills to toggle visibility of sections based on their data-state attribute.
-     * @param element The element to search for filter rows in.
-     */
-    public static enableFilterPills(element?: Element) {
-        element = element || document.body;
-        element.querySelectorAll<HTMLElement>("[data-filter-scope]").forEach((scope) => {
-            const filterRow = scope.querySelector<HTMLElement>(".filter-row");
-            if (!filterRow) return;
-
-            const pills = Array.from(filterRow.querySelectorAll<HTMLElement>(".pill"));
-            const sections = Array.from(scope.querySelectorAll<HTMLElement>("[data-state]"));
-
-            sections.forEach((section) => section.classList.add("is-visible"));
-
-            pills.forEach((pill) => {
-                pill.addEventListener("click", () => {
-                    const filter = pill.dataset.filter ?? "all";
-                    const filterKind = pill.dataset.filterKind ?? "post";
-
-                    pills.forEach((p) => p.classList.remove("active"));
-                    pill.classList.add("active");
-
-                    sections.forEach((section) => {
-                        const sectionKind = section.dataset.kind ?? "post";
-                        const matches = sectionKind === filterKind
-                            && (filterKind === "note" || filter === "all" || section.dataset.state === filter);
-                        UI.setSectionVisible(section, matches);
-                    });
-                });
-            });
-        });
-    }
-
-    private static setSectionVisible(section: HTMLElement, visible: boolean): void {
-        section.classList.toggle("is-collapsed", !visible);
     }
 
     /**
