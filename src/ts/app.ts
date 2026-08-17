@@ -1,7 +1,8 @@
 import UI from "./UI";
 import Input from "./Input";
 import Callout from "./Callout";
-import {initLightbox} from "./lightbox.ts";
+import {initLightbox} from './lightbox.ts';
+import {initFavicon} from './favicon.ts';
 
 declare const Prism: any;
 declare const lucide: any;
@@ -36,16 +37,7 @@ declare const JXG: any;
         window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
     });
 
-    function setFavicon() {
-        const darkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const favicon = document.querySelector("link[rel~=\"icon\"]");
-        // @ts-ignore
-        favicon.href = `/img/${darkMode ? "favicon.png" : "favicon-dark.png"}`;
-    }
-
-    setFavicon();
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
-
+    initFavicon();
     UI.updateUI();
     initLightbox();
 
