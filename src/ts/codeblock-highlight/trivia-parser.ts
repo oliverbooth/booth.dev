@@ -1,4 +1,4 @@
-import {backward, forward, SpecBound, SpecRange} from "./spec-bound";
+import {backward, forward, SpecBound, SpecRange} from './spec-bound';
 
 /**
  * Represents a line specification in the trivia syntax, consisting of a start bound and an optional end bound.
@@ -55,12 +55,12 @@ export interface TriviaBlock {
  * Represents the possible errors that can occur during the parsing of trivia syntax.
  */
 export type TriviaParseError =
-    | "none"
-    | "emptySpec"
-    | "unexpectedWhitespace"
-    | "invalidNumber"
-    | "invertedRange"
-    | "malformed";
+    | 'none'
+    | 'emptySpec'
+    | 'unexpectedWhitespace'
+    | 'invalidNumber'
+    | 'invertedRange'
+    | 'malformed';
 
 /**
  * Represents the result of parsing trivia syntax.
@@ -76,20 +76,20 @@ export type TriviaParseResult =
  */
 export function parseTrivia(input: string): TriviaParseResult {
     if (input.length === 0) {
-        return {success: false, error: "emptySpec"};
+        return {success: false, error: 'emptySpec'};
     }
 
     if (/\s/.test(input)) {
-        return {success: false, error: "unexpectedWhitespace"};
+        return {success: false, error: 'unexpectedWhitespace'};
     }
 
-    const equalsIndex = input.indexOf("=");
+    const equalsIndex = input.indexOf('=');
     if (equalsIndex <= 0) {
-        return {success: false, error: "malformed"};
+        return {success: false, error: 'malformed'};
     }
 
     if (equalsIndex === input.length - 1) {
-        return {success: false, error: "emptySpec"};
+        return {success: false, error: 'emptySpec'};
     }
 
     const kind = input.slice(0, equalsIndex);
@@ -111,7 +111,7 @@ export function parseTrivia(input: string): TriviaParseResult {
     }
 
     if (tokens.length === 0) {
-        return {success: false, error: "emptySpec"};
+        return {success: false, error: 'emptySpec'};
     }
 
     return {success: true, block: {kind, tokens}};
@@ -122,11 +122,11 @@ function findTokenEnd(text: string, start: number): number {
 
     for (let i = start; i < text.length; i++) {
         const ch = text[i];
-        if (ch === "(") {
+        if (ch === '(') {
             depth++;
-        } else if (ch === ")") {
+        } else if (ch === ')') {
             depth--;
-        } else if (ch === "," && depth === 0) {
+        } else if (ch === ',' && depth === 0) {
             return i;
         }
     }
@@ -146,9 +146,9 @@ type RangeResult = { success: true; range: SpecRange } | { success: false; error
 type BoundResult = { success: true; bound: SpecBound } | { success: false; error: TriviaParseError };
 
 function parseToken(text: string): TokenResult {
-    const atIndex = text.indexOf("@");
+    const atIndex = text.indexOf('@');
     const lineText = atIndex >= 0 ? text.slice(0, atIndex) : text;
-    const columnText = atIndex >= 0 ? text.slice(atIndex + 1) : "";
+    const columnText = atIndex >= 0 ? text.slice(atIndex + 1) : '';
 
     const groupResult = parseLineGroup(lineText);
     if (!groupResult.success) {
@@ -175,7 +175,7 @@ function parseToken(text: string): TokenResult {
 
 function parseLineGroup(text: string): LineGroupResult {
     let span = text;
-    const isGrouped = span.length >= 2 && span[0] === "(" && span[span.length - 1] === ")";
+    const isGrouped = span.length >= 2 && span[0] === '(' && span[span.length - 1] === ')';
     if (isGrouped) {
         span = span.slice(1, -1);
     }
@@ -184,7 +184,7 @@ function parseLineGroup(text: string): LineGroupResult {
     let start = 0;
 
     while (start < span.length) {
-        const commaIndex = span.indexOf(",", start);
+        const commaIndex = span.indexOf(',', start);
         const end = commaIndex < 0 ? span.length : commaIndex;
 
         const lineResult = parseLineSpec(span.slice(start, end));
@@ -197,27 +197,27 @@ function parseLineGroup(text: string): LineGroupResult {
     }
 
     if (lines.length === 0) {
-        return {success: false, error: "malformed"};
+        return {success: false, error: 'malformed'};
     }
 
-    // an unparenthesized comma-separated list isn't valid here - a bare "L1,L2" is split into two
+    // an unparenthesized comma-separated list isn't valid here - a bare 'L1,L2' is split into two
     // separate tokens at the block level before this function ever runs, so this only triggers on
     // a malformed nested construction
     if (!isGrouped && lines.length > 1) {
-        return {success: false, error: "malformed"};
+        return {success: false, error: 'malformed'};
     }
 
     return {success: true, lines, isGrouped};
 }
 
 function parseLineSpec(text: string): LineResult {
-    if (text.length === 0 || text[0] !== "L") {
-        return {success: false, error: "malformed"};
+    if (text.length === 0 || text[0] !== 'L') {
+        return {success: false, error: 'malformed'};
     }
 
     const span = text.slice(1);
 
-    const dashIndex = span.indexOf("-");
+    const dashIndex = span.indexOf('-');
     if (dashIndex < 0) {
         const boundResult = parseBound(span);
         if (!boundResult.success) {
@@ -230,8 +230,8 @@ function parseLineSpec(text: string): LineResult {
     const startText = span.slice(0, dashIndex);
     let endText = span.slice(dashIndex + 1);
 
-    if (endText.length === 0 || endText[0] !== "L") {
-        return {success: false, error: "malformed"};
+    if (endText.length === 0 || endText[0] !== 'L') {
+        return {success: false, error: 'malformed'};
     }
 
     endText = endText.slice(1);
@@ -247,7 +247,7 @@ function parseLineSpec(text: string): LineResult {
     }
 
     if (!startResult.bound.isFromEnd && !endResult.bound.isFromEnd && endResult.bound.value < startResult.bound.value) {
-        return {success: false, error: "invertedRange"};
+        return {success: false, error: 'invertedRange'};
     }
 
     return {success: true, line: {start: startResult.bound, end: endResult.bound}};
@@ -255,7 +255,7 @@ function parseLineSpec(text: string): LineResult {
 
 function parseColumnSpec(text: string): ColumnsResult {
     let span = text;
-    const isGrouped = span.length >= 2 && span[0] === "(" && span[span.length - 1] === ")";
+    const isGrouped = span.length >= 2 && span[0] === '(' && span[span.length - 1] === ')';
     if (isGrouped) {
         span = span.slice(1, -1);
     }
@@ -264,7 +264,7 @@ function parseColumnSpec(text: string): ColumnsResult {
     let start = 0;
 
     while (start < span.length) {
-        const commaIndex = span.indexOf(",", start);
+        const commaIndex = span.indexOf(',', start);
         const end = commaIndex < 0 ? span.length : commaIndex;
 
         const rangeResult = parseRange(span.slice(start, end));
@@ -277,16 +277,16 @@ function parseColumnSpec(text: string): ColumnsResult {
     }
 
     if (ranges.length === 0) {
-        return {success: false, error: "malformed"};
+        return {success: false, error: 'malformed'};
     }
 
     return {success: true, columns: ranges};
 }
 
 function parseRange(text: string): RangeResult {
-    const dotDotIndex = text.indexOf("..");
+    const dotDotIndex = text.indexOf('..');
     if (dotDotIndex < 0) {
-        return {success: false, error: "malformed"};
+        return {success: false, error: 'malformed'};
     }
 
     const startResult = parseBound(text.slice(0, dotDotIndex));
@@ -300,7 +300,7 @@ function parseRange(text: string): RangeResult {
     }
 
     if (!startResult.bound.isFromEnd && !endResult.bound.isFromEnd && endResult.bound.value < startResult.bound.value) {
-        return {success: false, error: "invertedRange"};
+        return {success: false, error: 'invertedRange'};
     }
 
     return {success: true, range: {start: startResult.bound, end: endResult.bound}};
@@ -308,18 +308,18 @@ function parseRange(text: string): RangeResult {
 
 function parseBound(text: string): BoundResult {
     let span = text;
-    const isFromEnd = span.length > 0 && span[0] === "^";
+    const isFromEnd = span.length > 0 && span[0] === '^';
     if (isFromEnd) {
         span = span.slice(1);
     }
 
     if (!/^\d+$/.test(span)) {
-        return {success: false, error: "invalidNumber"};
+        return {success: false, error: 'invalidNumber'};
     }
 
     const value = Number.parseInt(span, 10);
     if (value <= 0) {
-        return {success: false, error: "invalidNumber"};
+        return {success: false, error: 'invalidNumber'};
     }
 
     return {success: true, bound: isFromEnd ? backward(value) : forward(value)};

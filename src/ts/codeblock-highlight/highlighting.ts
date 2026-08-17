@@ -1,5 +1,5 @@
-import {resolveBound, resolveRange, SpecRange} from "./spec-bound";
-import {HighlightToken, parseTrivia, TriviaBlock} from "./trivia-parser";
+import {resolveBound, resolveRange, SpecRange} from './spec-bound';
+import {HighlightToken, parseTrivia, TriviaBlock} from './trivia-parser';
 
 /**
  * Represents a range of absolute character offsets.
@@ -31,7 +31,7 @@ export function applyCodeBlockHighlights(codeElement: HTMLElement): void {
         return;
     }
 
-    const sourceText = (codeElement.textContent ?? "").replace(/\n$/, "");
+    const sourceText = (codeElement.textContent ?? '').replace(/\n$/, '');
     const lineOffsets = computeLineOffsets(sourceText);
 
     const ranges = resolveAbsoluteRanges(block, lineOffsets, sourceText);
@@ -49,8 +49,8 @@ export function applyCodeBlockHighlights(codeElement: HTMLElement): void {
 function extractHighlightBlock(infoAttr: string): TriviaBlock | null {
     // the attribute already contains only the single h=... block (extracted server-side),
     // but parse defensively in case that ever changes
-    for (const part of infoAttr.split(" ").filter(p => p.length > 0)) {
-        if (!part.startsWith("h=")) {
+    for (const part of infoAttr.split(' ').filter(p => p.length > 0)) {
+        if (!part.startsWith('h=')) {
             continue;
         }
 
@@ -63,11 +63,11 @@ function extractHighlightBlock(infoAttr: string): TriviaBlock | null {
 
 function computeLineOffsets(sourceText: string): number[] {
     const offsets: number[] = [0];
-    let index = sourceText.indexOf("\n");
+    let index = sourceText.indexOf('\n');
 
     while (index !== -1) {
         offsets.push(index + 1);
-        index = sourceText.indexOf("\n", index + 1);
+        index = sourceText.indexOf('\n', index + 1);
     }
 
     return offsets;
@@ -96,8 +96,8 @@ function resolveTokenRanges(
         const lineSpec = token.lines[spanIndex];
         const isLastSpanInToken = spanIndex === token.lines.length - 1;
 
-        const lineStart = resolveBound(lineSpec.start, "start", lineCount);
-        const lineEndInclusive = lineSpec.end === null ? lineStart : resolveBound(lineSpec.end, "start", lineCount);
+        const lineStart = resolveBound(lineSpec.start, 'start', lineCount);
+        const lineEndInclusive = lineSpec.end === null ? lineStart : resolveBound(lineSpec.end, 'start', lineCount);
 
         if (lineStart >= lineCount || lineStart < 0) {
             continue;
@@ -185,8 +185,8 @@ function wrapAbsoluteRange(root: HTMLElement, range: AbsoluteRange): void {
     domRange.setStart(startPos.node, startPos.offset);
     domRange.setEnd(endPos.node, endPos.offset);
 
-    const mark = document.createElement("mark");
-    mark.className = "hl-mark";
+    const mark = document.createElement('mark');
+    mark.className = 'hl-mark';
 
     try {
         mark.appendChild(domRange.extractContents());
@@ -197,7 +197,7 @@ function wrapAbsoluteRange(root: HTMLElement, range: AbsoluteRange): void {
 }
 
 export function applyAllCodeBlockHighlights(): void {
-    document.querySelectorAll<HTMLElement>("code[data-highlight]").forEach(codeElement => {
+    document.querySelectorAll<HTMLElement>('code[data-highlight]').forEach(codeElement => {
         applyCodeBlockHighlights(codeElement);
     });
 }

@@ -40,17 +40,17 @@ export function backward(value: number): SpecBound {
  * @param length The total length being indexed into (a line count, or a single line's character count).
  * @returns The resolved 0-indexed position.
  */
-export function resolveBound(bound: SpecBound, role: "start" | "end", length: number): number {
-    if (role === "start") {
+export function resolveBound(bound: SpecBound, role: 'start' | 'end', length: number): number {
+    if (role === 'start') {
         return bound.isFromEnd
-            ? length - bound.value               // back-start: unchanged relative to length
-            : bound.value - 1;                    // forward-start: -1 (1-based -> 0-based)
+            ? length - bound.value // back-start: unchanged relative to length
+            : bound.value - 1;     // forward-start: -1 (1-based -> 0-based)
     }
 
-    // role === "end" (exclusive, for use as an array/slice upper bound)
+    // role === 'end' (exclusive, for use as an array/slice upper bound)
     return bound.isFromEnd
-        ? length - bound.value + 1                // back-end: -1 relative to back-start (inclusive -> exclusive)
-        : bound.value;                            // forward-end: unchanged (1-based inclusive == 0-based exclusive)
+        ? length - bound.value + 1 // back-end: -1 relative to back-start (inclusive -> exclusive)
+        : bound.value;             // forward-end: unchanged (1-based inclusive == 0-based exclusive)
 }
 
 /**
@@ -68,8 +68,8 @@ export interface SpecRange {
  * @returns An object containing the resolved start and end positions.
  */
 export function resolveRange(range: SpecRange, length: number): { start: number; end: number } {
-    const start = clamp(resolveBound(range.start, "start", length), 0, length);
-    const end = clamp(resolveBound(range.end, "end", length), 0, length);
+    const start = clamp(resolveBound(range.start, 'start', length), 0, length);
+    const end = clamp(resolveBound(range.end, 'end', length), 0, length);
     return {start, end: Math.max(start, end)};
 }
 
