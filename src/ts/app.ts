@@ -1,7 +1,7 @@
 import UI from "./UI";
-import Input from "./Input";
 import {initLightbox} from './lightbox.ts';
 import {initFavicon} from './favicon.ts';
+import {initEasterEggs} from "./easter-eggs.ts";
 
 declare const Prism: any;
 declare const lucide: any;
@@ -31,13 +31,11 @@ declare const JXG: any;
         }
     });
 
-    Input.registerShortcut(Input.KONAMI_CODE, () => {
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
-    });
-
     initFavicon();
-    UI.updateUI();
+    initEasterEggs();
     initLightbox();
+
+    UI.updateUI();
 
     document.addEventListener("click", (event: MouseEvent) => {
         const target = event.target as Element | null;
