@@ -1,4 +1,5 @@
-import {applyCodeBlockHighlights} from "./codeblock-highlight/highlighting.ts";
+import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
+import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 
 declare const Prism: typeof import('prismjs');
 
@@ -8,7 +9,7 @@ addPrismLanguages();
  * Initializes the front-end Markdown content features for the given element, or the entire document if no element is provided.
  * @param element The element within which to initialize content features. If not provided, the entire document body will be used.
  */
-export function initContentFeatures(element?: HTMLElement) {
+export function initContentFeatures(element?: HTMLElement): void {
     element ||= document.body;
 
     initPrismCodeblocks(element);
@@ -18,7 +19,7 @@ export function initContentFeatures(element?: HTMLElement) {
  * Initializes Prism code blocks within the given element.
  * @param element The element within which to initialize Prism code blocks.
  */
-function initPrismCodeblocks(element: HTMLElement) {
+function initPrismCodeblocks(element: HTMLElement): void {
     const blocks: NodeListOf<HTMLElement> = element.querySelectorAll<HTMLElement>('pre code');
     for (const block of blocks) {
         addLineNumbers(block);
@@ -48,7 +49,7 @@ function initPrismCodeblocks(element: HTMLElement) {
 /**
  * Defines additional Prism languages for highlighting.
  */
-function addPrismLanguages() {
+function addPrismLanguages(): void {
     Prism.languages.extend('markup', {});
     Prism.languages.hex = {
         'number': {
@@ -67,7 +68,7 @@ function addPrismLanguages() {
 /**
  * Applies ANSI color highlighting to code blocks with the `language-ansi` class.
  */
-function applyAnsiHighlighting(element: HTMLElement) {
+function applyAnsiHighlighting(element: HTMLElement): void {
     const blocks: NodeListOf<HTMLElement> = element.querySelectorAll<HTMLElement>('pre code.language-ansi');
     for (const block of blocks) {
         const originalHtml: string = block.innerHTML || '';
@@ -91,39 +92,48 @@ function applyAnsiHighlighting(element: HTMLElement) {
     }
 }
 
-function ansiToHtml(input: string): string {
-    const ansiColorMap: { [key: string]: string } = {
-        '0': 'unset',
-        '30': '#0c0c0c',
-        '31': '#c50f1f',
-        '32': '#13a10e',
-        '33': '#c19c00',
-        '34': '#0037da',
-        '35': '#881798',
-        '36': '#3a96dd',
-        '37': '#cccccc',
-        '90': '#767676'
-    };
+/**
+ * Renders timestamps in the given element by formatting them according to their specified format.
+ * @param element The element within which to render timestamps.
+ */
+function renderTimestamps(element: Element): void {
+    const timestamps: NodeListOf<HTMLSpanElement> = element.querySelectorAll<HTMLSpanElement>('span[data-timestamp][data-format]');
+    for (const timestamp of timestamps) {
+        const seconds: number = parseInt(timestamp.getAttribute('data-timestamp') || '0');
+        const format: string | null = timestamp.getAttribute('data-format');
+        const date: Date = new Date(seconds * 1000);
 
-    let wasOpen: boolean = false;
-    return input
-        .replace(/\x1b\[(\d+?)m/g, (_, code) => {
-            if (code == '0') {
-                return '</span>';
-            }
+        const shortTimeString: string = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        const shortDateString: string = date.toLocaleDateString([], {day: '2-digit', month: '2-digit', year: 'numeric'});
+        const longTimeString: string = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+        const longDateString: string = date.toLocaleDateString([], {day: 'numeric', month: 'long', year: 'numeric'});
+        const weekday: string = date.toLocaleString([], {weekday: 'long'});
+        timestamp.setAttribute('title', `${weekday}, ${longDateString} ${shortTimeString}`);
 
-            const color: string = ansiColorMap[code];
-            const prefix: string = wasOpen ? '</span>' : '';
-
-            if (wasOpen) {
-                wasOpen = false;
-            }
-            if (color) {
-                wasOpen = true;
-            }
-
-            return color ? `${prefix}<span style="color:${color};">` : '</span>';
-        })
-        .concat('</span>') // close any open tags at the end
-        .replace(/<\/span>(?=<\/span>)/g, ""); // remove redundant closing tags
+        switch (format) {
+            case 't':
+                timestamp.textContent = shortTimeString;
+                break;
+            case 'T':
+                timestamp.textContent = longTimeString;
+                break;
+            case 'd':
+                timestamp.textContent = shortDateString;
+                break;
+            case 'D':
+                timestamp.textContent = longDateString;
+                break;
+            case 'f':
+                timestamp.textContent = `${longDateString} at ${shortTimeString}`;
+                break;
+            case 'F':
+                timestamp.textContent = `${weekday}, ${longDateString} at ${shortTimeString}`;
+                break;
+            case 'R':
+                setInterval(() => {
+                    timestamp.textContent = formatRelativeTimestamp(date);
+                }, 1000);
+                break;
+        }
+    }
 }
