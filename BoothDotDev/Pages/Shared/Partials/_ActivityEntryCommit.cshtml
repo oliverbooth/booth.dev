@@ -9,7 +9,7 @@
 <p class="commit-sub">
     @if (Model.Entry.ReadingMinutes.HasValue)
     {
-        <text>@Model.Entry.ReadingMinutes min read &middot; </text>
+        <text>@Model.Entry.ReadingMinutes.Value min read &middot; </text>
     }
     @Model.Entry.CreatedAt.ToShortString()
 </p>

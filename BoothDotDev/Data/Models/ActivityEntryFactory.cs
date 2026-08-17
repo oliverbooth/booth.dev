@@ -10,78 +10,98 @@ namespace BoothDotDev.Data.Models;
 public static class ActivityEntryFactory
 {
     /// <summary>
-    ///     Creates an <see cref="ActivityEntry.Blog" /> from a <see cref="BlogPost" />.
+    ///     Creates an <see cref="ActivityEntry" /> from a <see cref="BlogPost" />.
     /// </summary>
     /// <param name="post">The <see cref="BlogPost" />.</param>
-    /// <returns>An <see cref="ActivityEntry.Blog" /> representing the <paramref name="post" />.</returns>
-    public static ActivityEntry.Blog From(BlogPost post)
+    /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="post" />.</returns>
+    public static ActivityEntry From(BlogPost post)
     {
-        return new(post.Published,
-            post.Title,
-            "blog",
-            new() { ["slug"] = post.Slug },
-            post.GetEstimatedReadingTime(),
-            post.Id.ToString("N")[..7]);
+        return new ActivityEntry
+        {
+            CreatedAt = post.Published,
+            Title = post.Title,
+            CommitSha = post.Id.ToCommitSha(),
+            PagePath = "/Blog/Article",
+            Category = "blog",
+            RouteValues = new Dictionary<string, string> { ["slug"] = post.Slug },
+            ReadingMinutes = post.GetEstimatedReadingTime()
+        };
     }
 
     /// <summary>
-    ///     Creates an <see cref="ActivityEntry.Tutorial" /> from a <see cref="TutorialArticle" />.
+    ///     Creates an <see cref="ActivityEntry" /> from a <see cref="TutorialArticle" />.
     /// </summary>
     /// <param name="article">The <see cref="TutorialArticle" />.</param>
     /// <param name="tutorialService">The <see cref="TutorialService" />.</param>
-    /// <returns>An <see cref="ActivityEntry.Tutorial" /> representing the <paramref name="article" />.</returns>
-    public static ActivityEntry.Tutorial From(TutorialArticle article, TutorialService tutorialService)
+    /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="article" />.</returns>
+    public static ActivityEntry From(TutorialArticle article, TutorialService tutorialService)
     {
-        return new(article.Published,
-            article.Title,
-            "tutorial",
-            new() { ["slug"] = tutorialService.GetFullSlug(article) },
-            article.GetEstimatedReadingTime(),
-            article.Id.ToString("N")[..7]);
+        return new ActivityEntry
+        {
+            CreatedAt = article.Published,
+            Title = article.Title,
+            CommitSha = article.Id.ToCommitSha(),
+            PagePath = "/Learn/Tutorials/Index",
+            Category = "tutorial",
+            RouteValues = new Dictionary<string, string> { ["slug"] = tutorialService.GetFullSlug(article) },
+            ReadingMinutes = article.GetEstimatedReadingTime()
+        };
     }
 
     /// <summary>
-    ///     Creates an <see cref="ActivityEntry.Devlog" /> from a <see cref="ProjectDevlog" /> and its associated
+    ///     Creates an <see cref="ActivityEntry" /> from a <see cref="ProjectDevlog" /> and its associated
     ///     <see cref="Project" />.
     /// </summary>
     /// <param name="devlog">The <see cref="ProjectDevlog" />.</param>
     /// <param name="project">The associated <see cref="Project" />.</param>
-    /// <returns>An <see cref="ActivityEntry.Devlog" /> representing the <paramref name="devlog" />.</returns>
-    public static ActivityEntry.Devlog From(ProjectDevlog devlog, Project project)
+    /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="devlog" />.</returns>
+    public static ActivityEntry From(ProjectDevlog devlog, Project project)
     {
-        return new(devlog.Published,
-            devlog.Title,
-            "devlog",
-            new() { ["projectSlug"] = project.Slug, ["slug"] = devlog.Slug },
-            devlog.GetEstimatedReadingTime(),
-            devlog.Id.ToString("N")[..7]);
+        return new ActivityEntry
+        {
+            CreatedAt = devlog.Published,
+            Title = devlog.Title,
+            CommitSha = devlog.Id.ToCommitSha(),
+            PagePath = "/Projects/Devlog",
+            Category = "devlog",
+            RouteValues = new Dictionary<string, string> { ["projectSlug"] = project.Slug, ["slug"] = devlog.Slug },
+            ReadingMinutes = devlog.GetEstimatedReadingTime()
+        };
     }
 
     /// <summary>
-    ///     Creates an <see cref="ActivityEntry.Challenge" /> from a <see cref="DevChallenge" />.
+    ///     Creates an <see cref="ActivityEntry" /> from a <see cref="DevChallenge" />.
     /// </summary>
     /// <param name="challenge">The <see cref="DevChallenge" />.</param>
-    /// <returns>An <see cref="ActivityEntry.Challenge" /> representing the <paramref name="challenge" />.</returns>
-    public static ActivityEntry.Challenge From(DevChallenge challenge)
+    /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="challenge" />.</returns>
+    public static ActivityEntry From(DevChallenge challenge)
     {
-        return new(challenge.Date,
-            challenge.Title,
-            "challenge",
-            $"/challenge/{challenge.Id}",
-            ((Guid)challenge.Id).ToString("N")[..7]);
+        return new ActivityEntry
+        {
+            CreatedAt = challenge.Date,
+            Title = challenge.Title,
+            CommitSha = challenge.Id.ToCommitSha(),
+            PagePath = "/Learn/Challenges/Challenge",
+            Category = "challenge",
+            RawUrl = $"/challenge/{challenge.Id}"
+        };
     }
 
     /// <summary>
-    ///     Creates an <see cref="ActivityEntry.Note" /> from a <see cref="Note" />.
+    ///     Creates an <see cref="ActivityEntry" /> from a <see cref="Note" />.
     /// </summary>
     /// <param name="note">The <see cref="Note" />.</param>
-    /// <returns>An <see cref="ActivityEntry.Note" /> representing the <paramref name="note" />.</returns>
-    public static ActivityEntry.Note From(Note note)
+    /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="note" />.</returns>
+    public static ActivityEntry From(Note note)
     {
-        return new(note.Published,
-            note.Title,
-            "note",
-            $"/note/{(ShortGuid)note.Id}",
-            note.Id.ToString("N")[..7]);
+        return new ActivityEntry
+        {
+            CreatedAt = note.Published,
+            Title = note.Title,
+            CommitSha = note.Id.ToCommitSha(),
+            PagePath = "/Learn/Challenges/Note",
+            Category = "note",
+            RawUrl = $"/note/{(ShortGuid)note.Id}"
+        };
     }
 }

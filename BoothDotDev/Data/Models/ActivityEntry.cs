@@ -1,107 +1,64 @@
+using DotNext;
+
 namespace BoothDotDev.Data.Models;
 
 /// <summary>
 ///     Represents an entry in the activity feed.
 /// </summary>
-/// <param name="CreatedAt">The date and time when the activity entry was created.</param>
-/// <param name="Title">The title of the activity entry.</param>
-/// <param name="Category">The category of the activity entry.</param>
-/// <param name="PagePath">The path to the page for the activity entry.</param>
-/// <param name="RouteValues">The route values for the activity entry.</param>
-/// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
-public abstract record ActivityEntry(
-    DateTimeOffset CreatedAt,
-    string Title,
-    string Category,
-    string PagePath,
-    string? RawUrl,
-    Dictionary<string, string> RouteValues,
-    int? ReadingMinutes,
-    string CommitSha)
+public sealed record ActivityEntry
 {
     /// <summary>
-    ///     Represents a blog post activity entry.
+    ///     Gets or initializes the date and time when the activity entry was created.
     /// </summary>
-    /// <param name="CreatedAt">The date and time when the activity entry was created.</param>
-    /// <param name="Title">The title of the activity entry.</param>
-    /// <param name="Category">The category of the activity entry.</param>
-    /// <param name="RouteValues">The route values for the activity entry.</param>
-    /// <param name="ReadingMinutes">The number of minutes it took to read the activity entry.</param>
-    /// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
-    public sealed record Blog(
-        DateTimeOffset CreatedAt,
-        string Title,
-        string Category,
-        Dictionary<string, string> RouteValues,
-        int? ReadingMinutes,
-        string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Blog/Article", null, RouteValues, ReadingMinutes, CommitSha);
+    /// <value>The date and time when the activity entry was created.</value>
+    public required DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>
-    ///     Represents a tutorial article activity entry.
+    ///     Gets or initializes the title of the activity entry.
     /// </summary>
-    /// <param name="CreatedAt">The date and time when the activity entry was created.</param>
-    /// <param name="Title">The title of the activity entry.</param>
-    /// <param name="Category">The category of the activity entry.</param>
-    /// <param name="RouteValues">The route values for the activity entry.</param>
-    /// <param name="ReadingMinutes">The number of minutes it took to read the activity entry.</param>
-    /// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
-    public sealed record Tutorial(
-        DateTimeOffset CreatedAt,
-        string Title,
-        string Category,
-        Dictionary<string, string> RouteValues,
-        int? ReadingMinutes,
-        string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Learn/Tutorials/Index", null, RouteValues, ReadingMinutes, CommitSha);
+    /// <value>The title of the activity entry.</value>
+    public required string Title { get; init; }
 
     /// <summary>
-    ///     Represents a devlog activity entry.
+    ///     Gets or initializes the category of the activity entry.
     /// </summary>
-    /// <param name="CreatedAt">The date and time when the activity entry was created.</param>
-    /// <param name="Title">The title of the activity entry.</param>
-    /// <param name="Category">The category of the activity entry.</param>
-    /// <param name="RouteValues">The route values for the activity entry.</param>
-    /// <param name="ReadingMinutes">The number of minutes it took to read the activity entry.</param>
-    /// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
-    public sealed record Devlog(
-        DateTimeOffset CreatedAt,
-        string Title,
-        string Category,
-        Dictionary<string, string> RouteValues,
-        int? ReadingMinutes,
-        string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Projects/Devlog", null, RouteValues, ReadingMinutes, CommitSha);
+    /// <value>The category of the activity entry.</value>
+    public required string Category { get; init; }
 
     /// <summary>
-    ///     Represents a challenge activity entry.
+    ///     Gets or initializes the path to the page for the activity entry.
     /// </summary>
-    /// <param name="CreatedAt">The date and time when the activity entry was created.</param>
-    /// <param name="Title">The title of the activity entry.</param>
-    /// <param name="Category">The category of the activity entry.</param>
-    /// <param name="RouteValues">The route values for the activity entry.</param>
-    /// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
-    public sealed record Challenge(
-        DateTimeOffset CreatedAt,
-        string Title,
-        string Category,
-        string RawUrl,
-        string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Learn/Challenges/Challenge", RawUrl, new(), null, CommitSha);
+    /// <value>The path to the page for the activity entry.</value>
+    public required string PagePath { get; init; }
 
     /// <summary>
-    ///     Represents a note activity entry.
+    ///     Gets or initializes the raw URL for the activity entry.
     /// </summary>
-    /// <param name="CreatedAt">The date and time when the activity entry was created.</param>
-    /// <param name="Title">The title of the activity entry.</param>
-    /// <param name="Category">The category of the activity entry.</param>
-    /// <param name="RouteValues">The route values for the activity entry.</param>
-    /// <param name="CommitSha">The commit SHA string associated with the activity entry.</param>
-    public sealed record Note(
-        DateTimeOffset CreatedAt,
-        string Title,
-        string Category,
-        string RawUrl,
-        string CommitSha)
-        : ActivityEntry(CreatedAt, Title, Category, "/Note", RawUrl, new(), null, CommitSha);
+    /// <value>The raw URL for the activity entry.</value>
+    public Optional<string> RawUrl { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes a dictionary of route values for the entry's page.
+    /// </summary>
+    /// <value>A dictionary of route values for the entry's page.</value>
+    public Dictionary<string, string> RouteValues { get; init; } = [];
+
+    /// <summary>
+    ///     Gets or initializes the estimated reading time for this activity entry.
+    /// </summary>
+    /// <value>
+    ///     An integer representing the estimated reading time in minutes, or <see langword="null" /> if the reading time is not
+    ///     applicable.
+    /// </value>
+    public Optional<int> ReadingMinutes { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the commit SHA string associated with the activity entry.
+    /// </summary>
+    /// <value>The commit SHA string associated with the activity entry.</value>
+    /// <remarks>
+    ///     This value is not necessarily an actual commit SHA, but may be a string that resembles a commit SHA. For this website,
+    ///     this is typically the first 7 characters of the entity's UUID.
+    /// </remarks>
+    public required string CommitSha { get; init; } = string.Empty;
 }

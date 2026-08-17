@@ -1,5 +1,4 @@
 @page
-@using BoothDotDev.Extensions
 @using BoothDotDev.Pages.Shared.Partials
 @model Index
 
@@ -77,7 +76,7 @@
             var entry = Model.RecentActivity[index];
             var first = index == 0;
 
-            @if (entry.RawUrl is { } rawUrl)
+            @if (entry.RawUrl is { HasValue: true, Value: var rawUrl })
             {
                 <a href="@rawUrl" class="commit">
                     <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
