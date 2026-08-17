@@ -10,7 +10,7 @@ export function initFiltering(): void {
         }
 
         const sections: NodeListOf<HTMLElement> = scope.querySelectorAll<HTMLElement>('[data-state]');
-        sections.forEach((section) => section.classList.add('is-visible'));
+        sections.forEach(section => section.classList.add('is-visible'));
 
         const pills: NodeListOf<HTMLElement> = filterRow.querySelectorAll<HTMLElement>('.pill');
         for (const pill of pills) {
@@ -18,7 +18,7 @@ export function initFiltering(): void {
                 const filter: string = pill.dataset.filter ?? 'all';
                 const filterKind: string = pill.dataset.filterKind ?? 'post';
 
-                pills.forEach((p) => p.classList.remove('active'));
+                pills.forEach(p => p.classList.remove('active'));
                 pill.classList.add('active');
 
                 for (const section of sections) {

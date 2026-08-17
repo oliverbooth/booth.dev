@@ -49,7 +49,7 @@ export function applyCodeBlockHighlights(codeElement: HTMLElement): void {
 function extractHighlightBlock(infoAttr: string): TriviaBlock | null {
     // the attribute already contains only the single h=... block (extracted server-side),
     // but parse defensively in case that ever changes
-    for (const part of infoAttr.split(" ").filter((p) => p.length > 0)) {
+    for (const part of infoAttr.split(" ").filter(p => p.length > 0)) {
         if (!part.startsWith("h=")) {
             continue;
         }
@@ -197,7 +197,7 @@ function wrapAbsoluteRange(root: HTMLElement, range: AbsoluteRange): void {
 }
 
 export function applyAllCodeBlockHighlights(): void {
-    document.querySelectorAll<HTMLElement>("code[data-highlight]").forEach((codeElement) => {
+    document.querySelectorAll<HTMLElement>("code[data-highlight]").forEach(codeElement => {
         applyCodeBlockHighlights(codeElement);
     });
 }

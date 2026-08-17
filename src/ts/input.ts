@@ -4,10 +4,10 @@
  * @param callback The callback to invoke when the shortcut is performed.
  */
 export function registerShortcut(shortcut: string | string[], callback: () => void): void {
-    const keys = typeof shortcut === 'string' ? shortcut.split(' ') : shortcut;
+    const keys: string[] = typeof shortcut === 'string' ? shortcut.split(' ') : shortcut;
 
     let sequence: string[] = [];
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
         sequence.push(e.key);
         sequence = sequence.slice(-keys.length);
 

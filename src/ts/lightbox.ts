@@ -33,7 +33,7 @@ export function initLightbox(): void {
     document.addEventListener('click', onDocumentClick);
     closeButton.addEventListener('click', () => close());
 
-    dialog.addEventListener('click', (event) => {
+    dialog.addEventListener('click', event => {
         if (event.target === dialog) {
             close();
         }
