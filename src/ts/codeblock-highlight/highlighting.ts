@@ -21,7 +21,7 @@ interface AbsoluteRange {
  * @param codeElement The code block element to which to apply highlighting.
  */
 export function applyCodeBlockHighlights(codeElement: HTMLElement): void {
-    const highlightAttr = codeElement.getAttribute("data-highlight");
+    const highlightAttr = codeElement.getAttribute('data-highlight');
     if (highlightAttr === null) {
         return;
     }

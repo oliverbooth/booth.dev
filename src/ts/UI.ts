@@ -10,8 +10,6 @@ class UI {
      */
     public static updateUI(element?: Element) {
         element = element || document.body;
-        UI.addLineNumbers(element);
-        UI.addSyntaxHighlighting(element);
         UI.renderSpoilers(element);
         UI.renderTabs(element);
         UI.renderTimestamps(element);
@@ -20,39 +18,6 @@ class UI {
         UI.runTerminalTypewriters(element);
         UI.enableFilterPills(element);
         UI.enableCopyButtons(element);
-    }
-
-    /**
-     * Adds line numbers to all <pre> <code> blocks that have more than one line.
-     * @param element The element to search for <pre> <code> blocks in.
-     */
-    public static addLineNumbers(element?: Element) {
-        element = element || document.body;
-        element.querySelectorAll("pre code").forEach((block) => {
-            if (block.className.indexOf("|nolinenumbers") > 0) {
-                block.className = block.className.replaceAll("|nolinenumbers", "");
-                return;
-            }
-
-            /*let content = block.textContent;
-            if (content.trim().split("\n").length > 1) {
-                block.parentElement.classList.add("line-numbers");
-            }*/
-        });
-    }
-
-    /**
-     * Adds syntax highlighting to all <pre> <code> blocks in the element.
-     * @param element The element to search for <pre> <code> blocks in.
-     */
-    public static addSyntaxHighlighting(element?: Element) {
-        element = element || document.body;
-        element.querySelectorAll("pre code").forEach((block: HTMLElement) => {
-            Prism.highlightAllUnder(block.parentElement);
-            if (block.dataset.highlight) {
-                applyCodeBlockHighlights(block);
-            }
-        });
     }
 
     /**

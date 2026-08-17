@@ -16,20 +16,26 @@ public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
     {
         if (obj is FencedCodeBlock { Arguments.Length: > 0 } fenced)
         {
-            var highlightSpec = ExtractHighlightBlock(fenced.Arguments!);
+            var arguments = fenced.Arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var highlightSpec = ExtractHighlightBlock(arguments);
 
             if (highlightSpec is not null)
             {
                 obj.GetAttributes().AddPropertyIfNotExist("data-highlight", highlightSpec);
+            }
+
+            if (arguments.Contains("nums"))
+            {
+                obj.GetAttributes().AddPropertyIfNotExist("data-line-numbers", string.Empty);
             }
         }
 
         base.Write(renderer, obj);
     }
 
-    private static string? ExtractHighlightBlock(string arguments)
+    private static string? ExtractHighlightBlock(string[] arguments)
     {
-        foreach (var part in arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+        foreach (var part in arguments)
         {
             if (part.StartsWith("h=", StringComparison.Ordinal))
             {

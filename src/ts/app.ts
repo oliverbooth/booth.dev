@@ -3,27 +3,15 @@ import {initEasterEggs} from './easter-eggs.ts';
 import {initFavicon} from './favicon.ts';
 import {initLightbox} from './lightbox.ts';
 import {initAltTextPopovers} from './images.ts';
-
-declare const Prism: any;
+import {initContentFeatures} from "./content-rendering.ts";
+import {initFiltering} from "./filtering.ts";
 
 (() => {
-    Prism.languages.extend('markup', {});
-    Prism.languages.hex = {
-        'number': {
-            pattern: /(?:[a-fA-F0-9]{3}){1,2}\b/i,
-            lookbehind: true
-        }
-    };
-    Prism.languages.binary = {
-        'number': {
-            pattern: /[10]+/i,
-            lookbehind: true
-        }
-    };
-
     initFavicon();
     initAltTextPopovers();
+    initContentFeatures();
     initEasterEggs();
+    initFiltering();
     initLightbox();
 
     UI.updateUI();
