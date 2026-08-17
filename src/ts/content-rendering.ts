@@ -23,6 +23,7 @@ function initPrismCodeblocks(element: HTMLElement) {
     for (const block of blocks) {
         addLineNumbers(block);
         highlightCodeBlock(block);
+        applyAnsiHighlighting(block);
     }
 
     function addLineNumbers(block: HTMLElement) {
@@ -61,4 +62,68 @@ function addPrismLanguages() {
             lookbehind: true
         }
     };
+}
+
+/**
+ * Applies ANSI color highlighting to code blocks with the `language-ansi` class.
+ */
+function applyAnsiHighlighting(element: HTMLElement) {
+    const blocks: NodeListOf<HTMLElement> = element.querySelectorAll<HTMLElement>('pre code.language-ansi');
+    for (const block of blocks) {
+        const originalHtml: string = block.innerHTML || '';
+        block.innerHTML = ansiToHtml(originalHtml);
+    }
+
+    const toolbars: NodeListOf<HTMLDivElement> = element.querySelectorAll<HTMLDivElement>('.code-toolbar .toolbar');
+
+    for (const toolbar of toolbars) {
+        const prevSibling: Element | null = toolbar.previousElementSibling;
+        const nextSibling: Element | null = toolbar.nextElementSibling;
+
+        if (!prevSibling && !nextSibling) {
+            continue;
+        }
+
+        if ((prevSibling && prevSibling.classList.contains('language-ansi')) ||
+            (nextSibling && nextSibling.classList.contains('language-ansi'))) {
+            toolbar.remove();
+        }
+    }
+}
+
+function ansiToHtml(input: string): string {
+    const ansiColorMap: { [key: string]: string } = {
+        '0': 'unset',
+        '30': '#0c0c0c',
+        '31': '#c50f1f',
+        '32': '#13a10e',
+        '33': '#c19c00',
+        '34': '#0037da',
+        '35': '#881798',
+        '36': '#3a96dd',
+        '37': '#cccccc',
+        '90': '#767676'
+    };
+
+    let wasOpen: boolean = false;
+    return input
+        .replace(/\x1b\[(\d+?)m/g, (_, code) => {
+            if (code == '0') {
+                return '</span>';
+            }
+
+            const color: string = ansiColorMap[code];
+            const prefix: string = wasOpen ? '</span>' : '';
+
+            if (wasOpen) {
+                wasOpen = false;
+            }
+            if (color) {
+                wasOpen = true;
+            }
+
+            return color ? `${prefix}<span style="color:${color};">` : '</span>';
+        })
+        .concat('</span>') // close any open tags at the end
+        .replace(/<\/span>(?=<\/span>)/g, ""); // remove redundant closing tags
 }
