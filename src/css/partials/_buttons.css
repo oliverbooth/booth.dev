@@ -24,6 +24,18 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+    animation: none;
+
+    &:hover {
+      animation: none;
+      transform: scale(1);
+    }
+  }
+}
+
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
