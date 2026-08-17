@@ -5,6 +5,7 @@ import {initLightbox} from './lightbox.ts';
 import {initAltTextPopovers} from './images.ts';
 import {initContentFeatures} from './content-rendering.ts';
 import {initFiltering} from './filtering.ts';
+import {initTerminalTypewriters} from './terminal.ts';
 
 (() => {
     initFavicon();
@@ -13,6 +14,7 @@ import {initFiltering} from './filtering.ts';
     initEasterEggs();
     initFiltering();
     initLightbox();
+    initTerminalTypewriters();
 
     UI.updateUI();
 })();

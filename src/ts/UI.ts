@@ -15,7 +15,6 @@ class UI {
         UI.renderTimestamps(element);
         UI.applyAnsi(element);
         UI.fixCanvas(element);
-        UI.runTerminalTypewriters(element);
         UI.enableCopyButtons(element);
     }
 
@@ -228,72 +227,6 @@ class UI {
                 .concat("</span>") // Close any open tags at the end
                 .replace(/<\/span>(?=<\/span>)/g, ""); // Remove redundant closing tags
         }
-    }
-
-    /**
-     * Runs the typewriter animation for all hero terminals under the given element.
-     * @param element The element to search for terminals in.
-     */
-    public static runTerminalTypewriters(element?: Element) {
-        element = element || document.body;
-        const containers = element.querySelectorAll<HTMLElement>("[data-terminal-typewriter]");
-
-        document.fonts.ready.then(() => {
-            containers.forEach((container) => {
-                UI.runTerminalTypewriter(container);
-            });
-        });
-    }
-
-    private static async runTerminalTypewriter(container: HTMLElement): Promise<void> {
-        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const username = container.dataset.username ?? "user@host";
-
-        const commandLines = Array.from(container.querySelectorAll<HTMLElement>("[data-command]"));
-        const revealBlocks = Array.from(container.querySelectorAll<HTMLElement>("[data-reveal]"));
-        const promptLine = container.querySelector<HTMLElement>("[data-prompt]");
-
-        if (reducedMotion) {
-            [...commandLines, ...revealBlocks].forEach((el) => el.classList.add("is-visible"));
-            if (promptLine) promptLine.classList.add("is-visible");
-            return; // static text already correct in markup, just reveal everything at once
-        }
-
-        const sequence: HTMLElement[] = [];
-        container.childNodes.forEach((node) => {
-            if (node instanceof HTMLElement) sequence.push(node);
-        });
-
-        for (const el of sequence) {
-            if (el.dataset.command !== undefined) {
-                await UI.typeCommand(el, username, el.dataset.command);
-                await UI.sleep(150);
-            } else if (el.hasAttribute("data-prompt")) {
-                UI.renderPrompt(el, username);
-                el.classList.add("is-visible");
-                await UI.sleep(300);
-            } else if (el.hasAttribute("data-reveal")) {
-                el.classList.add("is-visible");
-                await UI.sleep(300);
-            }
-        }
-    }
-
-    private static async typeCommand(el: HTMLElement, username: string, text: string): Promise<void> {
-        el.innerHTML = `<span class="prompt">${username}</span><span class="path">:~$</span> `;
-        el.classList.add("is-visible");
-        for (const char of text) {
-            el.innerHTML += char;
-            await UI.sleep(35 + Math.random() * 25);
-        }
-    }
-
-    private static renderPrompt(el: HTMLElement, username: string): void {
-        el.innerHTML = `<span class="prompt">${username}</span><span class="path">:~$</span> <span class="cursor">&nbsp;</span>`;
-    }
-
-    private static sleep(ms: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
 
