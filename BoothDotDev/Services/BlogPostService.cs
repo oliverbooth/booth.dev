@@ -3,10 +3,17 @@ using System.Diagnostics.CodeAnalysis;
 using System.Timers;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using DotNext;
 using Microsoft.EntityFrameworkCore;
 using Timer = System.Timers.Timer;
 
 namespace BoothDotDev.Services;
+
+/// <summary>
+///     Represents a union type for blog post identifiers, which can be a <see cref="Guid" />, an <see cref="int" />, or a
+///     <see cref="string" />.
+/// </summary>
+public union BlogPostKey(Guid, int, string);
 
 /// <summary>
 ///     Represents an implementation of <see cref="BlogPostService" />.
@@ -240,6 +247,60 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Returns the blog post with the specified key.
+    /// </summary>
+    /// <param name="key">The ID or slug of the blog post to return.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the blog post with the specified ID or slug, or an error if the blog post is not
+    ///     found.
+    /// </returns>
+    public Result<BlogPost> GetPost(BlogPostKey key)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = key switch
+        {
+            Guid guid => context.BlogPosts.Find(guid),
+            int intId => context.BlogPosts.FirstOrDefault(p => p.WordPressId == intId),
+            string slug => context.BlogPosts.FirstOrDefault(p => p.Slug == slug),
+            _ => null
+        };
+
+        if (post is null)
+        {
+            return new Result<BlogPost>.Failure(new Exception($"Blog post with ID '{key}' not found."));
+        }
+
+        CacheAuthor(post);
+        return post;
+    }
+
+    /// <summary>
+    ///     Returns the blog post with the specified slug that was published on the specified date.
+    /// </summary>
+    /// <param name="slug">The slug of the blog post to return.</param>
+    /// <param name="publishDate">The date the blog post was published.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the blog post with the specified ID or slug, or an error if the blog post is not
+    ///     found.
+    /// </returns>
+    public Result<BlogPost> GetPost(string slug, DateOnly publishDate)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = context.BlogPosts.FirstOrDefault(post => post.Published.Year == publishDate.Year &&
+                                                            post.Published.Month == publishDate.Month &&
+                                                            post.Published.Day == publishDate.Day &&
+                                                            post.Slug == slug);
+
+        if (post is null)
+        {
+            return new Result<BlogPost>.Failure(new Exception($"Blog post with slug '{slug}' and date {publishDate} not found."));
+        }
+
+        CacheAuthor(post);
+        return post;
+    }
+
+    /// <summary>
     ///     Returns the most recent blog posts, limited to the specified count.
     /// </summary>
     /// <param name="count">The number of blog posts to return.</param>
@@ -341,113 +402,6 @@ public sealed class BlogPostService : BackgroundService
         }
 
         return results.AsReadOnly();
-    }
-
-    /// <summary>
-    ///     Attempts to find a blog post with the specified ID.
-    /// </summary>
-    /// <param name="id">The ID of the blog post to find.</param>
-    /// <param name="post">
-    ///     When this method returns, contains the blog post with the specified ID, if the blog post is found;
-    ///     otherwise, <see langword="null" />.
-    /// </param>
-    /// <returns>
-    ///     <see langword="true" /> if a blog post with the specified ID is found; otherwise, <see langword="false" />.
-    /// </returns>
-    public bool TryGetPost(Guid id, [NotNullWhen(true)] out BlogPost? post)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        post = context.BlogPosts.Find(id);
-        if (post is null)
-        {
-            return false;
-        }
-
-        CacheAuthor(post);
-        return true;
-    }
-
-    /// <summary>
-    ///     Attempts to find a blog post with the specified WordPress ID.
-    /// </summary>
-    /// <param name="id">The ID of the blog post to find.</param>
-    /// <param name="post">
-    ///     When this method returns, contains the blog post with the specified WordPress ID, if the blog post is found;
-    ///     otherwise, <see langword="null" />.
-    /// </param>
-    /// <returns>
-    ///     <see langword="true" /> if a blog post with the specified WordPress ID is found; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool TryGetPost(int id, [NotNullWhen(true)] out BlogPost? post)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        post = context.BlogPosts.FirstOrDefault(p => p.WordPressId == id);
-        if (post is null)
-        {
-            return false;
-        }
-
-        CacheAuthor(post);
-        return true;
-    }
-
-    /// <summary>
-    ///     Attempts to find a blog post with the specified publish date and URL slug.
-    /// </summary>
-    /// <param name="slug">The URL slug of the blog post to find.</param>
-    /// <param name="post">
-    ///     When this method returns, contains the blog post with the specified publish date and URL slug, if the blog
-    ///     post is found; otherwise, <see langword="null" />.
-    /// </param>
-    /// <returns>
-    ///     <see langword="true" /> if a blog post with the specified publish date and URL slug is found; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
-    public bool TryGetPost(string slug, [NotNullWhen(true)] out BlogPost? post)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        post = context.BlogPosts.FirstOrDefault(post => post.Slug == slug);
-
-        if (post is null)
-        {
-            return false;
-        }
-
-        CacheAuthor(post);
-        return true;
-    }
-
-    /// <summary>
-    ///     Attempts to find a blog post with the specified publish date and URL slug.
-    /// </summary>
-    /// <param name="publishDate">The date the blog post was published.</param>
-    /// <param name="slug">The URL slug of the blog post to find.</param>
-    /// <param name="post">
-    ///     When this method returns, contains the blog post with the specified publish date and URL slug, if the blog
-    ///     post is found; otherwise, <see langword="null" />.
-    /// </param>
-    /// <returns>
-    ///     <see langword="true" /> if a blog post with the specified publish date and URL slug is found; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
-    public bool TryGetPost(DateOnly publishDate, string slug, [NotNullWhen(true)] out BlogPost? post)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        post = context.BlogPosts.FirstOrDefault(post => post.Published.Year == publishDate.Year &&
-                                                        post.Published.Month == publishDate.Month &&
-                                                        post.Published.Day == publishDate.Day &&
-                                                        post.Slug == slug);
-
-        if (post is null)
-        {
-            return false;
-        }
-
-        CacheAuthor(post);
-        return true;
     }
 
     /// <inheritdoc />

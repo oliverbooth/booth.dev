@@ -24,11 +24,14 @@ internal sealed class RawArticle : PageModel
 
     public IActionResult OnGet(string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out var post))
+        var result = _blogPostService.GetPost(slug);
+        if (!result.IsSuccessful)
         {
+            Response.StatusCode = 404;
             return NotFound();
         }
 
+        var post = result.Value;
         Response.Headers.Append("Content-Type", "text/plain; charset=utf-8");
 
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();

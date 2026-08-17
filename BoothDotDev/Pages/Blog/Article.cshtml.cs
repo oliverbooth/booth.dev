@@ -40,12 +40,14 @@ internal sealed class Article : PageModel
 
     public IActionResult OnGet(string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out BlogPost? post))
+        var result = _blogPostService.GetPost(slug);
+        if (!result.IsSuccessful)
         {
             Response.StatusCode = 404;
             return NotFound();
         }
 
+        var post = result.Value;
         if (!string.IsNullOrWhiteSpace(post.Password))
         {
             ShowPasswordPrompt = true;
@@ -62,11 +64,14 @@ internal sealed class Article : PageModel
 
     public IActionResult OnPost([FromRoute] string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out BlogPost? post))
+        var result = _blogPostService.GetPost(slug);
+        if (!result.IsSuccessful)
         {
+            Response.StatusCode = 404;
             return NotFound();
         }
 
+        var post = result.Value;
         ShowPasswordPrompt = true;
 
         if (Request.Form.TryGetValue("password", out StringValues password) && BC.Verify(password, post.Password))
