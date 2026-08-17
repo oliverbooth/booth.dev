@@ -13,6 +13,7 @@ export function initContentFeatures(element?: HTMLElement): void {
     element ||= document.body;
 
     initPrismCodeblocks(element);
+    applyAnsiHighlighting(element);
     renderTimestamps(element);
     renderSpoilers(element);
 }
@@ -26,7 +27,6 @@ function initPrismCodeblocks(element: HTMLElement): void {
     for (const block of blocks) {
         addLineNumbers(block);
         highlightCodeBlock(block);
-        applyAnsiHighlighting(block);
     }
 
     function addLineNumbers(block: HTMLElement) {
