@@ -1,4 +1,3 @@
-import UI from "./UI";
 import {initCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
 import {initEasterEggs} from './easter-eggs.ts';
@@ -17,6 +16,4 @@ import {initTerminalTypewriters} from './terminal.ts';
     initFiltering();
     initLightbox();
     initTerminalTypewriters();
-
-    UI.updateUI();
 })();

@@ -76,5 +76,5 @@ export function ansiToHtml(input: string): string {
             return color ? `${prefix}<span style="color:${color};">` : '</span>';
         })
         .concat('</span>') // close any open tags at the end
-        .replace(/<\/span>(?=<\/span>)/g, ""); // remove redundant closing tags
+        .replace(/<\/span>(?=<\/span>)/g, ''); // remove redundant closing tags
 }

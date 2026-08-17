@@ -13,6 +13,8 @@ export function initContentFeatures(element?: HTMLElement): void {
     element ||= document.body;
 
     initPrismCodeblocks(element);
+    renderTimestamps(element);
+    renderSpoilers(element);
 }
 
 /**
@@ -89,6 +91,19 @@ function applyAnsiHighlighting(element: HTMLElement): void {
             (nextSibling && nextSibling.classList.contains('language-ansi'))) {
             toolbar.remove();
         }
+    }
+}
+
+/**
+ * Renders spoilers in the given element by adding click event listeners to reveal them.
+ * @param element The element within which to render spoilers.
+ */
+function renderSpoilers(element: Element): void {
+    const spoilers: NodeListOf<HTMLElement> = element.querySelectorAll<HTMLElement>('.spoiler');
+    for (const spoiler of spoilers) {
+        spoiler.addEventListener('click', () => {
+            spoiler.classList.add('spoiler-revealed');
+        });
     }
 }
 
