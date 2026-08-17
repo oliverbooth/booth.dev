@@ -1,7 +1,7 @@
 /**
  * Initializes the typewriter animation for all hero terminals under the given element.
  */
-export function initTerminalTypewriters() {
+export function initTerminalTypewriters(): void {
     const containers: NodeListOf<HTMLElement> = document.querySelectorAll<HTMLElement>('[data-terminal-typewriter]');
     document.fonts.ready.then(() => containers.forEach(container => runTerminalTypewriter(container)));
 }
