@@ -57,17 +57,6 @@ class UI {
     }
 
     /**
-     * Adds line and segment highlighting to all <pre> <code> blocks in the element.
-     * @param element The element to search for <pre> <code> blocks in.
-     */
-    public static addHighlighting(element?: Element) {
-        element = element || document.body;
-        element.querySelectorAll("pre code").forEach((block: HTMLElement) => {
-            console.log(block);
-        });
-    }
-
-    /**
      * Adds copy functionality to all .copy-icon elements in the element.
      * @param element The element to search for .copy-icon elements in.
      */
