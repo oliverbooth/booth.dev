@@ -15,7 +15,6 @@ class UI {
         UI.renderSpoilers(element);
         UI.renderTabs(element);
         UI.renderTimestamps(element);
-        UI.updateProjectCards(element);
         UI.applyAnsi(element);
         UI.fixCanvas(element);
         UI.runTerminalTypewriters(element);
@@ -251,13 +250,6 @@ class UI {
         });
     }
 
-    private static updateProjectCards(element?: Element) {
-        element = element || document.body;
-        element.querySelectorAll(".project-card .card-body p").forEach((p: HTMLParagraphElement) => {
-            p.classList.add("card-text");
-        });
-    }
-
     private static applyAnsi(element?: Element) {
         element = element || document.body;
         element.querySelectorAll("pre code.language-ansi").forEach((child: HTMLElement) => {
@@ -368,11 +360,6 @@ class UI {
             el.innerHTML += char;
             await UI.sleep(35 + Math.random() * 25);
         }
-    }
-
-    private static renderStaticCommand(el: HTMLElement, username: string): void {
-        const text = el.dataset.command ?? "";
-        el.innerHTML = `<span class="prompt">${username}</span><span class="path">:~$</span> ${text}`;
     }
 
     private static renderPrompt(el: HTMLElement, username: string): void {
