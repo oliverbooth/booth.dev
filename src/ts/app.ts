@@ -5,13 +5,8 @@ import {initLightbox} from './lightbox.ts';
 import {initAltTextPopovers} from './images.ts';
 
 declare const Prism: any;
-declare const lucide: any;
-declare const JXG: any;
 
 (() => {
-    lucide.createIcons();
-    JXG.Options.text.useMathJax = true;
-
     Prism.languages.extend('markup', {});
     Prism.languages.hex = {
         'number': {
@@ -25,12 +20,6 @@ declare const JXG: any;
             lookbehind: true
         }
     };
-    Prism.languages.insertBefore('custom', 'tag', {
-        'mark': {
-            pattern: /<\/?mark(?:\s+\w+(?:=(?:"[^"]*"|'[^']*'|[^\s'">=]+))?\s*|\s*)\/?>/,
-            greedy: true
-        }
-    });
 
     initFavicon();
     initAltTextPopovers();
