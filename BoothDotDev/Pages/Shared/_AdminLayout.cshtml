@@ -54,9 +54,9 @@
 
         <div class="admin-rail-footer">
             <div class="admin-user">
-                <div class="avatar">@CurrentUserDisplayName[0]</div>
+                <div class="avatar"><img src="@CurrentUser.GetAvatarUrl()" alt="@CurrentUser.DisplayName" /></div>
                 <div>
-                    <p class="name">@CurrentUserDisplayName</p>
+                    <p class="name">@CurrentUser.DisplayName</p>
                     <p class="role">Admin</p>
                 </div>
             </div>

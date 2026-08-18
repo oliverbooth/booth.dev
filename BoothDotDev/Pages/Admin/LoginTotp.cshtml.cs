@@ -81,7 +81,9 @@ public sealed class LoginTotp : PageModel
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, userId.ToString()), new(ClaimTypes.GivenName, result.Value.DisplayName)
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new(ClaimTypes.GivenName, result.Value.DisplayName),
+            new(ClaimTypes.Email, result.Value.EmailAddress)
         };
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(new ClaimsPrincipal(identity));

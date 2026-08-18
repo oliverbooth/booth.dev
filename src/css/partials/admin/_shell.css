@@ -120,6 +120,10 @@
     width: 26px;
     height: 26px;
     font-size: 11px;
+
+    img {
+      border-radius: 50%;
+    }
   }
 
   .name {

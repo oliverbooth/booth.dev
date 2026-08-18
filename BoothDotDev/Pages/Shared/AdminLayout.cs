@@ -1,5 +1,8 @@
 using System.Security.Claims;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.Internal;
 
 namespace BoothDotDev.Pages.Shared;
 
@@ -18,17 +21,26 @@ public abstract class AdminLayout : RazorPage<object>
     }
 
     /// <summary>
-    ///     Gets the display name of the currently signed-in admin user.
+    ///     Gets the current user accessing the admin layout.
     /// </summary>
-    /// <value>The display name of the currently signed-in admin user.</value>
-    public string CurrentUserDisplayName { get; private set; } = string.Empty;
+    /// <value>The current user.</value>
+    public User CurrentUser { get; private set; } = null!;
 
     /// <summary>
     ///     Initializes the admin layout.
     /// </summary>
     public Task InitializeAsync()
     {
-        CurrentUserDisplayName = Context.User.FindFirstValue(ClaimTypes.GivenName) ?? "Admin";
+        var userService = Context.RequestServices.GetRequiredService<UserService>();
+        var id = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = Guid.TryParse(id, out var parsedId) ? parsedId : Guid.Empty;
+        var result = userService.GetUser(userId);
+
+        if (result.IsSuccess)
+        {
+            CurrentUser = result.Value;
+        }
+
         return Task.CompletedTask;
     }
 }
