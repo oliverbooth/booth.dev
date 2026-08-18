@@ -443,9 +443,10 @@ public sealed class BlogPostService : BackgroundService
             return post;
         }
 
-        if (_blogUserService.TryGetUser(post.AuthorId, out User? user))
+        var result = _blogUserService.GetUser(post.AuthorId);
+        if (result.IsSuccess)
         {
-            post.Author = user;
+            post.Author = result.Value;
         }
 
         return post;

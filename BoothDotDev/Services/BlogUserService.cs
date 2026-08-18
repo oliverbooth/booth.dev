@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
@@ -26,21 +27,15 @@ public sealed class BlogUserService
     }
 
     /// <summary>
-    ///     Attempts to find a user with the specified ID.
+    ///     Finds a user with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the user to find.</param>
-    /// <param name="user">
-    ///     When this method returns, contains the user with the specified ID, if the user is found; otherwise,
-    ///     <see langword="null" />.
-    /// </param>
-    /// <returns>
-    ///     <see langword="true" /> if a user with the specified ID is found; otherwise, <see langword="false" />.
-    /// </returns>
-    public bool TryGetUser(Guid id, [NotNullWhen(true)] out User? user)
+    /// <returns>A <see cref="Result{T}" /> containing the user if found; otherwise, an error result.</returns>
+    public Result<User> GetUser(Guid id)
     {
-        if (_userCache.TryGetValue(id, out user))
+        if (_userCache.TryGetValue(id, out var user))
         {
-            return true;
+            return user;
         }
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
@@ -51,6 +46,6 @@ public sealed class BlogUserService
             _userCache.TryAdd(id, user);
         }
 
-        return user is not null;
+        return user is not null ? Result.Ok(user) : Result.Fail("User not found.");
     }
 }
