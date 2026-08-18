@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using FluentResults;
@@ -10,18 +9,18 @@ namespace BoothDotDev.Services;
 /// <summary>
 ///     Represents a service for managing users.
 /// </summary>
-public sealed class BlogUserService
+public sealed class UserService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly ConcurrentDictionary<Guid, User> _userCache = new();
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="BlogUserService" /> class.
+    ///     Initializes a new instance of the <see cref="UserService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">
     ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
-    public BlogUserService(IDbContextFactory<AppDbContext> dbContextFactory)
+    public UserService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }

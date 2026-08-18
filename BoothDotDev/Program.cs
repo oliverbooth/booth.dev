@@ -39,7 +39,7 @@ builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ActivityService>();
 builder.Services.AddHostedSingleton<BlogPostService>();
-builder.Services.AddSingleton<BlogUserService>();
+builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<CodeSnippetService>();
 builder.Services.AddSingleton<CreationService>();
 builder.Services.AddSingleton<DevChallengeService>();

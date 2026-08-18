@@ -27,7 +27,7 @@ public sealed class BlogPostService : BackgroundService
     private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10));
     private readonly ILogger<BlogPostService> _logger;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly BlogUserService _blogUserService;
+    private readonly UserService _userService;
     private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
 
     /// <summary>
@@ -37,14 +37,14 @@ public sealed class BlogPostService : BackgroundService
     /// <param name="dbContextFactory">
     ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
-    /// <param name="blogUserService">The <see cref="BlogUserService" />.</param>
+    /// <param name="userService">The <see cref="UserService" />.</param>
     public BlogPostService(ILogger<BlogPostService> logger,
         IDbContextFactory<AppDbContext> dbContextFactory,
-        BlogUserService blogUserService)
+        UserService userService)
     {
         _logger = logger;
         _dbContextFactory = dbContextFactory;
-        _blogUserService = blogUserService;
+        _userService = userService;
     }
 
     /// <summary>
@@ -443,7 +443,7 @@ public sealed class BlogPostService : BackgroundService
             return post;
         }
 
-        var result = _blogUserService.GetUser(post.AuthorId);
+        var result = _userService.GetUser(post.AuthorId);
         if (result.IsSuccess)
         {
             post.Author = result.Value;
