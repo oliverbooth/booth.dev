@@ -13,21 +13,29 @@ export function initFiltering(): void {
         sections.forEach(section => section.classList.add('is-visible'));
 
         const pills: NodeListOf<HTMLElement> = filterRow.querySelectorAll<HTMLElement>('.pill');
+
+        const applyFilter = (pill: HTMLElement): void => {
+            const filter: string = pill.dataset.filter ?? 'all';
+            const filterKind: string = pill.dataset.filterKind ?? 'post';
+
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+
+            for (const section of sections) {
+                const sectionKind: string = section.dataset.kind ?? 'post';
+                const kindMatches: boolean = sectionKind === filterKind;
+                const stateMatches: boolean = filterKind === 'note' || filter === 'all' || section.dataset.state === filter;
+                section.classList.toggle('is-collapsed', !(kindMatches && stateMatches));
+            }
+        };
+
         for (const pill of pills) {
-            pill.addEventListener('click', () => {
-                const filter: string = pill.dataset.filter ?? 'all';
-                const filterKind: string = pill.dataset.filterKind ?? 'post';
+            pill.addEventListener('click', () => applyFilter(pill));
+        }
 
-                pills.forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-
-                for (const section of sections) {
-                    const sectionKind: string = section.dataset.kind ?? 'post';
-                    const kindMatches: boolean = sectionKind === filterKind;
-                    const stateMatches: boolean = filterKind === 'note' || filter === 'all' || section.dataset.state === filter;
-                    section.classList.toggle('is-collapsed', !(kindMatches && stateMatches));
-                }
-            });
+        const initialPill = filterRow.querySelector<HTMLElement>('.pill.active') ?? pills[0];
+        if (initialPill) {
+            applyFilter(initialPill);
         }
     }
 }
