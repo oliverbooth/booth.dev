@@ -47,6 +47,12 @@
   }
 }
 
+.btn-danger {
+  background: var(--danger-bg);
+  border-color: var(--danger-text);
+  color: var(--danger-text) !important;
+}
+
 @keyframes elastic-btn-hover-on {
   0%   {
     transform: scale(1);

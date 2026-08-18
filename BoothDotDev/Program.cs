@@ -1,6 +1,8 @@
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using X10D.Hosting.DependencyInjection;
@@ -23,6 +25,22 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Configuration.AddYamlFile("data/config.yaml", true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/admin/login";
+        options.LogoutPath = "/admin/logout";
+        options.AccessDeniedPath = "/admin/access-denied";
+        options.Cookie.Name = "admin-auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.ExpireTimeSpan = TimeSpan.FromDays(14);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization(options => options.AddPolicy("Admin", policy => policy.RequireAuthenticatedUser()));
 
 builder.Services.AddMarkdownPipeline();
 builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
@@ -85,7 +103,7 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month
 {
     var blogPostService = app.Services.GetRequiredService<BlogPostService>();
     var date = new DateOnly(year, month, day);
-    
+
     var result = blogPostService.GetPost(slug, date);
     return result.IsSuccess
         ? Results.Redirect($"/blog/{slug}", permanent: true)

@@ -1,0 +1,32 @@
+.mini-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0.9rem 1.1rem;
+
+  .icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background: var(--surface-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+
+  .text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .date {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+}

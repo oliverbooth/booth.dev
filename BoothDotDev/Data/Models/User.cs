@@ -45,6 +45,12 @@ public sealed class User
     public DateTimeOffset Registered { get; private set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
+    ///     Gets or sets the TOTP secret for the user.
+    /// </summary>
+    /// <value>The TOTP secret for the user.</value>
+    public string? TotpSecret { get; set; }
+
+    /// <summary>
     ///     Gets or sets the password hash.
     /// </summary>
     /// <value>The password hash.</value>
@@ -84,18 +90,5 @@ public sealed class User
         }
 
         return new Uri($"https://www.gravatar.com/avatar/{builder}?size={size}");
-    }
-
-    /// <summary>
-    ///     Returns a value indicating whether the specified password is valid for the user.
-    /// </summary>
-    /// <param name="password">The password to test.</param>
-    /// <returns>
-    ///     <see langword="true" /> if the specified password is valid for the user; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool TestCredentials(string password)
-    {
-        return false;
     }
 }

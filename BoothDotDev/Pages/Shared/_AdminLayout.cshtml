@@ -1,0 +1,88 @@
+@inherits AdminLayout
+@using BoothDotDev.Vite
+@inject IWebHostEnvironment WebHostEnvironment
+@{ await InitializeAsync(); }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@PageTitle</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    @if (WebHostEnvironment.IsDevelopment())
+    {
+        <link rel="stylesheet" href="http://localhost:5173/css/style.css">
+        <link rel="stylesheet" href="http://localhost:5173/css/admin.css">
+    }
+    else
+    {
+        <link rel="stylesheet" href="@ViteManifest.Resolve("css/style.css")">
+        <link rel="stylesheet" href="@ViteManifest.Resolve("css/admin.css")">
+    }
+</head>
+
+<body>
+<div class="admin-shell">
+
+    <nav class="admin-rail">
+        <a asp-page="/Admin/Index" class="admin-rail-brand">
+            <span class="mark">
+                <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h"/>
+            </span>
+            <span>Admin</span>
+        </a>
+
+        <div class="admin-nav-group">
+            <a asp-page="/Admin/Index" page-match="/Admin/Index" class="admin-nav-item">
+                <i class="ti ti-layout-dashboard"></i>Dashboard
+            </a>
+        </div>
+
+        <div class="admin-nav-group">
+            <p class="admin-nav-label">Content</p>
+            <a asp-page="/Admin/Posts/Index" page-match="/Admin/Posts" class="admin-nav-item"><i class="ti ti-pencil"></i>Posts</a>
+            <a asp-page="/Admin/Notes/Index" page-match="/Admin/Notes" class="admin-nav-item"><i class="ti ti-message-2"></i>Notes</a>
+            <a asp-page="/Admin/Tutorials/Index" page-match="/Admin/Tutorials" class="admin-nav-item"><i class="ti ti-school"></i>Tutorials</a>
+            <a asp-page="/Admin/Projects/Index" page-match="/Admin/Projects" class="admin-nav-item"><i class="ti ti-code"></i>Projects</a>
+            <a asp-page="/Admin/Creations/Index" page-match="/Admin/Creations" class="admin-nav-item"><i class="ti ti-palette"></i>Creations</a>
+        </div>
+
+        <div class="admin-nav-group">
+            <p class="admin-nav-label">Site</p>
+            <a asp-page="/Index" class="admin-nav-item"><i class="ti ti-external-link"></i>View site</a>
+        </div>
+
+        <div class="admin-rail-footer">
+            <div class="admin-user">
+                <div class="avatar">@CurrentUserDisplayName[0]</div>
+                <div>
+                    <p class="name">@CurrentUserDisplayName</p>
+                    <p class="role">Admin</p>
+                </div>
+            </div>
+            <form asp-page="/Admin/Logout" method="post">
+                <button type="submit" class="admin-nav-item btn btn-danger" style="margin-top:4px">
+                    <i class="ti ti-logout"></i>Sign out
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        @RenderBody()
+    </main>
+
+</div>
+
+@if (WebHostEnvironment.IsDevelopment())
+{
+    <script type="module" src="http://localhost:5173/@@vite/client"></script>
+    <script type="module" src="http://localhost:5173/ts/admin.ts"></script>
+}
+else
+{
+    <script src="@ViteManifest.Resolve("ts/admin.ts")"></script>
+}
+@await RenderSectionAsync("Scripts", false)
+</body>
+</html>
