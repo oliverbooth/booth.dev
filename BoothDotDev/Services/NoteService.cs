@@ -70,7 +70,14 @@ public sealed class NoteService
     /// <returns>A read-only view of the most recent notes.</returns>
     public IReadOnlyList<Note> GetRecentNotes(int count, Visibility visibility = Visibility.Published)
     {
-        using var context = _dbContextFactory.CreateDbContext();
-        return [.. context.Notes.Where(n => n.Visibility == visibility).OrderByDescending(n => n.Published).Take(count)];
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var notes = context.Notes.AsQueryable();
+
+        if (visibility != Visibility.None)
+        {
+            notes = notes.Where(n => n.Visibility == visibility);
+        }
+
+        return [.. notes.OrderByDescending(n => n.Published).Take(count)];
     }
 }

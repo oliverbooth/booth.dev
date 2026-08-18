@@ -222,16 +222,22 @@ public sealed class TutorialService
     ///     Returns the most recent tutorial articles, limited to the specified count.
     /// </summary>
     /// <param name="count">The number of tutorial articles to return.</param>
+    /// <param name="visibility">
+    ///     The visibility of the articles to return. If set to <see cref="Visibility.None" />, returns all articles
+    ///     regardless of visibility.
+    /// </param>
     /// <returns>A read-only list of the most recent tutorial articles.</returns>
-    public IReadOnlyList<TutorialArticle> GetRecentArticles(int count)
+    public IReadOnlyList<TutorialArticle> GetRecentArticles(int count, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.TutorialArticles
-            .Where(a => a.Visibility == Visibility.Published)
-            .OrderByDescending(a => a.Published)
-            .Take(count)
-            .ToList()
-            .AsReadOnly();
+        var articles = context.TutorialArticles.AsQueryable();
+
+        if (visibility != Visibility.None)
+        {
+            articles = articles.Where(p => p.Visibility == visibility);
+        }
+
+        return [.. articles.OrderByDescending(p => p.Published).Take(count)];
     }
 
     /// <summary>

@@ -304,17 +304,22 @@ public sealed class BlogPostService : BackgroundService
     ///     Returns the most recent blog posts, limited to the specified count.
     /// </summary>
     /// <param name="count">The number of blog posts to return.</param>
+    /// <param name="visibility">
+    ///     The visibility of the blog posts to return. If set to <see cref="Visibility.None" />, returns all blog posts
+    ///     regardless of visibility.
+    /// </param>
     /// <returns>A read-only list of the most recent blog posts.</returns>
-    public IReadOnlyList<BlogPost> GetRecentBlogPosts(int count)
+    public IReadOnlyList<BlogPost> GetRecentBlogPosts(int count, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return
-        [
-            .. context.BlogPosts
-                .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
-                .OrderByDescending(p => p.Published)
-                .Take(count)
-        ];
+        var posts = context.BlogPosts.Where(p => !p.IsRedirect);
+
+        if (visibility != Visibility.None)
+        {
+            posts = posts.Where(p => p.Visibility == visibility);
+        }
+
+        return [.. posts.OrderByDescending(p => p.Published).Take(count)];
     }
 
     /// <summary>

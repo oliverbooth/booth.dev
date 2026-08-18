@@ -25,7 +25,8 @@ public static class ActivityEntryFactory
             PagePath = "/Blog/Article",
             Category = "blog",
             RouteValues = new Dictionary<string, string> { ["slug"] = post.Slug },
-            ReadingMinutes = Option.Some(post.GetEstimatedReadingTime())
+            ReadingMinutes = Option.Some(post.GetEstimatedReadingTime()),
+            Visibility = post.Visibility
         };
     }
 
@@ -45,7 +46,8 @@ public static class ActivityEntryFactory
             PagePath = "/Learn/Tutorials/Index",
             Category = "tutorial",
             RouteValues = new Dictionary<string, string> { ["slug"] = tutorialService.GetFullSlug(article) },
-            ReadingMinutes = Option.Some(article.GetEstimatedReadingTime())
+            ReadingMinutes = Option.Some(article.GetEstimatedReadingTime()),
+            Visibility = article.Visibility
         };
     }
 
@@ -66,7 +68,8 @@ public static class ActivityEntryFactory
             PagePath = "/Projects/Devlog",
             Category = "devlog",
             RouteValues = new Dictionary<string, string> { ["projectSlug"] = project.Slug, ["slug"] = devlog.Slug },
-            ReadingMinutes = Option.Some(devlog.GetEstimatedReadingTime())
+            ReadingMinutes = Option.Some(devlog.GetEstimatedReadingTime()),
+            Visibility = devlog.Visibility
         };
     }
 
@@ -84,7 +87,8 @@ public static class ActivityEntryFactory
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",
             Category = "challenge",
-            RawUrl = Option.Some($"/challenge/{challenge.Id}")
+            RawUrl = Option.Some($"/challenge/{challenge.Id}"),
+            Visibility = challenge.Visibility
         };
     }
 
@@ -102,7 +106,8 @@ public static class ActivityEntryFactory
             CommitSha = note.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Note",
             Category = "note",
-            RawUrl = Option.Some($"/note/{(ShortGuid)note.Id}")
+            RawUrl = Option.Some($"/note/{(ShortGuid)note.Id}"),
+            Visibility = note.Visibility
         };
     }
 }

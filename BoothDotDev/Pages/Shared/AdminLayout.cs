@@ -2,7 +2,6 @@ using System.Security.Claims;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Mvc.Razor.Internal;
 
 namespace BoothDotDev.Pages.Shared;
 

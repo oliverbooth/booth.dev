@@ -61,4 +61,10 @@ public sealed record ActivityEntry
     ///     this is typically the first 7 characters of the entity's UUID.
     /// </remarks>
     public required string CommitSha { get; init; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or initializes the visibility of the activity entry.
+    /// </summary>
+    /// <value>The visibility of the activity entry.</value>
+    public required Visibility Visibility { get; init; } = Visibility.Published;
 }

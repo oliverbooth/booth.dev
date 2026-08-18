@@ -56,7 +56,7 @@ public sealed class ProjectService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.DevLogs.Where(d => d.ProjectId == project.Id).OrderByDescending(d => d.Published)];
     }
-    
+
     /// <summary>
     ///     Gets the count of projects.
     /// </summary>
@@ -120,16 +120,22 @@ public sealed class ProjectService
     ///     Returns the most recent devlogs, limited to the specified count.
     /// </summary>
     /// <param name="count">The number of devlogs to return.</param>
+    /// <param name="visibility">
+    ///     The visibility of the devlogs to return. If set to <see cref="Visibility.None" />, returns all devlogs
+    ///     regardless of visibility.
+    /// </param>
     /// <returns>A read-only list of the most recent devlogs.</returns>
-    public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(int count)
+    public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(int count, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.DevLogs
-            .Where(p => p.Visibility == Visibility.Published)
-            .OrderByDescending(p => p.Published)
-            .Take(count)
-            .ToList()
-            .AsReadOnly();
+        var devlogs = context.DevLogs.AsQueryable();
+
+        if (visibility != Visibility.None)
+        {
+            devlogs = devlogs.Where(p => p.Visibility == visibility);
+        }
+
+        return [.. devlogs.OrderByDescending(p => p.Published).Take(count)];
     }
 
     /// <summary>
