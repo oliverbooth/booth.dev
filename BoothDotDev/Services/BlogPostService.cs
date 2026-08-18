@@ -24,7 +24,7 @@ public sealed class BlogPostService : BackgroundService
     /// </summary>
     public const int DefaultPageSize = 5;
 
-    private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10).TotalMilliseconds);
+    private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10));
     private readonly ILogger<BlogPostService> _logger;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly BlogUserService _blogUserService;
