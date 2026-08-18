@@ -84,7 +84,7 @@
                                 throw new UnreachableException();
                         }
                 </span></td>
-                <td>@activity.CreatedAt.ToShortString()</td>
+                <td>@((activity.UpdatedAt ?? activity.PublishedAt).ToShortString())</td>
                 <td>
                     <div class="row-actions">
                         @if (activity.RawUrl.HasValue)

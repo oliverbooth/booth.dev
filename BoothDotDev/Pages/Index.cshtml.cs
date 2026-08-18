@@ -40,7 +40,7 @@ internal sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        RecentActivity = _activityService.GetRecentActivity(RecentActivityCount);
+        RecentActivity = _activityService.GetRecentActivity(new ActivitySearchOptions(RecentActivityCount));
         Projects = [.. _projectService.GetProjects().Concat(_projectService.GetProjects(ProjectStatus.Past)).Take(ProjectCount)];
     }
 }

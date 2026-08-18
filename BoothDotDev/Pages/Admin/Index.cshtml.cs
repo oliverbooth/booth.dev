@@ -80,6 +80,7 @@ public sealed class Index : PageModel
         ProjectCount = _projectService.GetProjectCount();
         TutorialCount = _tutorialService.GetArticleCount();
 
-        RecentActivity = _activityService.GetRecentActivity(RecentActivityCount, Visibility.None);
+        var searchOptions = new ActivitySearchOptions(RecentActivityCount, Visibility.None, ActivitySortStrategy.Updated);
+        RecentActivity = _activityService.GetRecentActivity(searchOptions);
     }
 }

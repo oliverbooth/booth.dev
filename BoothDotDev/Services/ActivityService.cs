@@ -38,27 +38,33 @@ public sealed class ActivityService
     /// <summary>
     ///     Gets a read-only list of recent activity entries.
     /// </summary>
-    /// <param name="count">The number of entries to return.</param>
-    /// <param name="visibility">The visibility of the activity entries to return.</param>
+    /// <param name="searchOptions">The options for searching and retrieving activity entries.</param>
     /// <returns>A read-only list of recent activity entries.</returns>
-    public IReadOnlyList<ActivityEntry> GetRecentActivity(int count, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<ActivityEntry> GetRecentActivity(ActivitySearchOptions searchOptions)
     {
         List<ActivityEntry> candidates =
         [
-            .. _blogPostService.GetRecentBlogPosts(count, visibility)
+            .. _blogPostService.GetRecentBlogPosts(searchOptions)
                 .Select(ActivityEntryFactory.From),
-            .. _tutorialService.GetRecentArticles(count, visibility)
+            .. _tutorialService.GetRecentArticles(searchOptions)
                 .Select(a => ActivityEntryFactory.From(a, _tutorialService)),
-            .. _projectService.GetRecentDevlogs(count, visibility)
-                    .Select(p => (Devlog: p, Project: _projectService.TryGetProject(p.ProjectId, out var project) ? project : null))
-                    .Where(x => x.Project is not null)
-                    .Select(x => ActivityEntryFactory.From(x.Devlog, x.Project!)),
-            .. _devChallengeService.GetRecentChallenges(count, visibility)
+            .. _projectService.GetRecentDevlogs(searchOptions)
+                .Select(p => (Devlog: p, Project: _projectService.TryGetProject(p.ProjectId, out var project) ? project : null))
+                .Where(x => x.Project is not null)
+                .Select(x => ActivityEntryFactory.From(x.Devlog, x.Project!)),
+            .. _devChallengeService.GetRecentChallenges(searchOptions)
                 .Select(ActivityEntryFactory.From),
-            .. _noteService.GetRecentNotes(count, visibility)
+            .. _noteService.GetRecentNotes(searchOptions)
                 .Select(ActivityEntryFactory.From)
         ];
 
-        return [.. candidates.OrderByDescending(e => e.CreatedAt).Take(count)];
+        var ordered = searchOptions.SortStrategy switch
+        {
+            ActivitySortStrategy.Published => candidates.OrderByDescending(e => e.PublishedAt),
+            ActivitySortStrategy.Updated => candidates.OrderByDescending(e => e.UpdatedAt ?? e.PublishedAt),
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOptions.SortStrategy), searchOptions.SortStrategy, null)
+        };
+
+        return [.. ordered.Take(searchOptions.Count)];
     }
 }

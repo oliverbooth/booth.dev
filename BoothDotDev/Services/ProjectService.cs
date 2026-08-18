@@ -119,23 +119,26 @@ public sealed class ProjectService
     /// <summary>
     ///     Returns the most recent devlogs, limited to the specified count.
     /// </summary>
-    /// <param name="count">The number of devlogs to return.</param>
-    /// <param name="visibility">
-    ///     The visibility of the devlogs to return. If set to <see cref="Visibility.None" />, returns all devlogs
-    ///     regardless of visibility.
-    /// </param>
+    /// <param name="searchOptions">The options for searching and retrieving devlogs.</param>
     /// <returns>A read-only list of the most recent devlogs.</returns>
-    public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(int count, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var devlogs = context.DevLogs.AsQueryable();
 
-        if (visibility != Visibility.None)
+        if (searchOptions.Visibility != Visibility.None)
         {
-            devlogs = devlogs.Where(p => p.Visibility == visibility);
+            devlogs = devlogs.Where(p => p.Visibility == searchOptions.Visibility);
         }
 
-        return [.. devlogs.OrderByDescending(p => p.Published).Take(count)];
+        var ordered = searchOptions.SortStrategy switch
+        {
+            ActivitySortStrategy.Published => devlogs.OrderByDescending(p => p.Published),
+            ActivitySortStrategy.Updated => devlogs.OrderByDescending(p => p.Updated ?? p.Published),
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
+        };
+
+        return [.. ordered.Take(searchOptions.Count)];
     }
 
     /// <summary>

@@ -65,23 +65,20 @@ public sealed class DevChallengeService
     /// <summary>
     ///     Returns the most recent dev challenges, limited to the specified count.
     /// </summary>
-    /// <param name="count">The number of dev challenges to return.</param>
-    /// <param name="visibility">
-    ///     The visibility of the dev challenges to return. If set to <see cref="Visibility.None" />, returns all dev challenges
-    ///     regardless of visibility.
-    /// </param>
+    /// <param name="searchOptions">The options for searching and retrieving dev challenges.</param>
     /// <returns>A read-only list of the most recent dev challenges.</returns>
-    public IReadOnlyList<DevChallenge> GetRecentChallenges(int count, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<DevChallenge> GetRecentChallenges(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var challenges = context.DevChallenges.AsQueryable();
 
-        if (visibility != Visibility.None)
+        if (searchOptions.Visibility != Visibility.None)
         {
-            challenges = challenges.Where(c => c.Visibility == visibility);
+            challenges = challenges.Where(c => c.Visibility == searchOptions.Visibility);
         }
 
-        return [.. challenges.OrderByDescending(c => c.Date).Take(count)];
+        var ordered = challenges.OrderByDescending(c => c.Date);
+        return [.. ordered.Take(searchOptions.Count)];
     }
 
     /// <summary>

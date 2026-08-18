@@ -65,19 +65,26 @@ public sealed class NoteService
     /// <summary>
     ///     Gets the most recent notes.
     /// </summary>
-    /// <param name="count">The number of notes to retrieve.</param>
-    /// <param name="visibility">The visibility of the notes to retrieve.</param>
+    /// <param name="searchOptions">The options for searching and retrieving notes.</param>
     /// <returns>A read-only view of the most recent notes.</returns>
-    public IReadOnlyList<Note> GetRecentNotes(int count, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<Note> GetRecentNotes(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var notes = context.Notes.AsQueryable();
 
-        if (visibility != Visibility.None)
+        if (searchOptions.Visibility != Visibility.None)
         {
-            notes = notes.Where(n => n.Visibility == visibility);
+            notes = notes.Where(n => n.Visibility == searchOptions.Visibility);
         }
 
-        return [.. notes.OrderByDescending(n => n.Published).Take(count)];
+
+        var ordered = searchOptions.SortStrategy switch
+        {
+            ActivitySortStrategy.Published => notes.OrderByDescending(n => n.Published),
+            ActivitySortStrategy.Updated => notes.OrderByDescending(n => n.Updated ?? n.Published),
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
+        };
+
+        return [.. ordered.Take(searchOptions.Count)];
     }
 }

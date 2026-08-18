@@ -303,23 +303,26 @@ public sealed class BlogPostService : BackgroundService
     /// <summary>
     ///     Returns the most recent blog posts, limited to the specified count.
     /// </summary>
-    /// <param name="count">The number of blog posts to return.</param>
-    /// <param name="visibility">
-    ///     The visibility of the blog posts to return. If set to <see cref="Visibility.None" />, returns all blog posts
-    ///     regardless of visibility.
-    /// </param>
+    /// <param name="searchOptions">The options for searching and retrieving blog posts.</param>
     /// <returns>A read-only list of the most recent blog posts.</returns>
-    public IReadOnlyList<BlogPost> GetRecentBlogPosts(int count, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<BlogPost> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts.Where(p => !p.IsRedirect);
 
-        if (visibility != Visibility.None)
+        if (searchOptions.Visibility != Visibility.None)
         {
-            posts = posts.Where(p => p.Visibility == visibility);
+            posts = posts.Where(p => p.Visibility == searchOptions.Visibility);
         }
 
-        return [.. posts.OrderByDescending(p => p.Published).Take(count)];
+        var ordered = searchOptions.SortStrategy switch
+        {
+            ActivitySortStrategy.Published => posts.OrderByDescending(p => p.Published),
+            ActivitySortStrategy.Updated => posts.OrderByDescending(p => p.Updated ?? p.Published),
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
+        };
+
+        return [.. ordered.Take(searchOptions.Count)];
     }
 
     /// <summary>

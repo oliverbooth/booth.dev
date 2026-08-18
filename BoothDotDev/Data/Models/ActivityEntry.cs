@@ -8,12 +8,6 @@ namespace BoothDotDev.Data.Models;
 public sealed record ActivityEntry
 {
     /// <summary>
-    ///     Gets or initializes the date and time when the activity entry was created.
-    /// </summary>
-    /// <value>The date and time when the activity entry was created.</value>
-    public required DateTimeOffset CreatedAt { get; init; }
-
-    /// <summary>
     ///     Gets or initializes the title of the activity entry.
     /// </summary>
     /// <value>The title of the activity entry.</value>
@@ -51,6 +45,18 @@ public sealed record ActivityEntry
     ///     applicable.
     /// </value>
     public Option<int> ReadingMinutes { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the date and time when the activity entry was published.
+    /// </summary>
+    /// <value>The date and time when the activity entry was published.</value>
+    public required DateTimeOffset PublishedAt { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the date and time when the activity entry was last updated.
+    /// </summary>
+    /// <value>The date and time when the activity entry was last updated.</value>
+    public DateTimeOffset? UpdatedAt { get; init; }
 
     /// <summary>
     ///     Gets or initializes the commit SHA string associated with the activity entry.

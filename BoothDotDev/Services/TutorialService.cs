@@ -221,23 +221,26 @@ public sealed class TutorialService
     /// <summary>
     ///     Returns the most recent tutorial articles, limited to the specified count.
     /// </summary>
-    /// <param name="count">The number of tutorial articles to return.</param>
-    /// <param name="visibility">
-    ///     The visibility of the articles to return. If set to <see cref="Visibility.None" />, returns all articles
-    ///     regardless of visibility.
-    /// </param>
+    /// <param name="searchOptions">The options for searching and retrieving tutorial articles.</param>
     /// <returns>A read-only list of the most recent tutorial articles.</returns>
-    public IReadOnlyList<TutorialArticle> GetRecentArticles(int count, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<TutorialArticle> GetRecentArticles(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var articles = context.TutorialArticles.AsQueryable();
 
-        if (visibility != Visibility.None)
+        if (searchOptions.Visibility != Visibility.None)
         {
-            articles = articles.Where(p => p.Visibility == visibility);
+            articles = articles.Where(p => p.Visibility == searchOptions.Visibility);
         }
 
-        return [.. articles.OrderByDescending(p => p.Published).Take(count)];
+        var ordered = searchOptions.SortStrategy switch
+        {
+            ActivitySortStrategy.Published => articles.OrderByDescending(p => p.Published),
+            ActivitySortStrategy.Updated => articles.OrderByDescending(p => p.Updated ?? p.Published),
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
+        };
+
+        return [.. ordered.Take(searchOptions.Count)];
     }
 
     /// <summary>
