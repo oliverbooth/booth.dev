@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFramework>net11.0</TargetFramework>
         <LangVersion>preview</LangVersion>
-        <Optimize>true</Optimize>
+        <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
         <ImplicitUsings>true</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
