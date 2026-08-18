@@ -41,7 +41,7 @@ internal sealed class Article : PageModel
     public IActionResult OnGet(string slug)
     {
         var result = _blogPostService.GetPost(slug);
-        if (!result.IsSuccessful)
+        if (result.IsFailed)
         {
             Response.StatusCode = 404;
             return NotFound();
@@ -65,7 +65,7 @@ internal sealed class Article : PageModel
     public IActionResult OnPost([FromRoute] string slug)
     {
         var result = _blogPostService.GetPost(slug);
-        if (!result.IsSuccessful)
+        if (result.IsFailed)
         {
             Response.StatusCode = 404;
             return NotFound();

@@ -1,9 +1,8 @@
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using System.Timers;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using DotNext;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Timer = System.Timers.Timer;
 
@@ -262,12 +261,11 @@ public sealed class BlogPostService : BackgroundService
             Guid guid => context.BlogPosts.Find(guid),
             int intId => context.BlogPosts.FirstOrDefault(p => p.WordPressId == intId),
             string slug => context.BlogPosts.FirstOrDefault(p => p.Slug == slug),
-            _ => null
         };
 
         if (post is null)
         {
-            return new Result<BlogPost>.Failure(new Exception($"Blog post with ID '{key}' not found."));
+            return Result.Fail($"Blog post with the key '{key}' not found.");
         }
 
         CacheAuthor(post);
@@ -293,7 +291,7 @@ public sealed class BlogPostService : BackgroundService
 
         if (post is null)
         {
-            return new Result<BlogPost>.Failure(new Exception($"Blog post with slug '{slug}' and date {publishDate} not found."));
+            return Result.Fail($"Blog post with slug '{slug}' and date {publishDate} not found.");
         }
 
         CacheAuthor(post);

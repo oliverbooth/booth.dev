@@ -25,7 +25,7 @@ internal sealed class RawArticle : PageModel
     public IActionResult OnGet(string slug)
     {
         var result = _blogPostService.GetPost(slug);
-        if (!result.IsSuccessful)
+        if (result.IsFailed)
         {
             Response.StatusCode = 404;
             return NotFound();

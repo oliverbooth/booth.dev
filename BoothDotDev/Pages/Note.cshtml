@@ -4,13 +4,13 @@
 @inject MarkdownRenderingService MarkdownRenderingService
 @model Note
 
-@if (Model.RetrievedNote.IsUndefined)
+@if (!Model.RetrievedNote.HasValue)
 {
     return;
 }
 
 @{
-    var note = Model.RetrievedNote.Value;
+    var note = Model.RetrievedNote.ValueOr((Data.Models.Note)null!);
     ViewData["Page"] = "Note";
     ViewData["Post"] = note;
     var published = note.Published;

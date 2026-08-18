@@ -88,7 +88,7 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month
     var date = new DateOnly(year, month, day);
     
     var result = blogPostService.GetPost(slug, date);
-    return result.IsSuccessful
+    return result.IsSuccess
         ? Results.Redirect($"/blog/{slug}", permanent: true)
         : Results.NotFound();
 });
@@ -97,7 +97,7 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}/raw", (int year, int m
     var blogPostService = app.Services.GetRequiredService<BlogPostService>();
     var date = new DateOnly(year, month, day);
     var result = blogPostService.GetPost(slug, date);
-    return result.IsSuccessful
+    return result.IsSuccess
         ? Results.Redirect($"/blog/{slug}/raw", permanent: true)
         : Results.NotFound();
 });

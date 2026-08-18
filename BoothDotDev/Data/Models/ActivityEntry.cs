@@ -1,4 +1,4 @@
-using DotNext;
+using Optional;
 
 namespace BoothDotDev.Data.Models;
 
@@ -35,7 +35,7 @@ public sealed record ActivityEntry
     ///     Gets or initializes the raw URL for the activity entry.
     /// </summary>
     /// <value>The raw URL for the activity entry.</value>
-    public Optional<string> RawUrl { get; init; }
+    public Option<string> RawUrl { get; init; }
 
     /// <summary>
     ///     Gets or initializes a dictionary of route values for the entry's page.
@@ -50,7 +50,7 @@ public sealed record ActivityEntry
     ///     An integer representing the estimated reading time in minutes, or <see langword="null" /> if the reading time is not
     ///     applicable.
     /// </value>
-    public Optional<int> ReadingMinutes { get; init; }
+    public Option<int> ReadingMinutes { get; init; }
 
     /// <summary>
     ///     Gets or initializes the commit SHA string associated with the activity entry.

@@ -76,9 +76,9 @@
             var entry = Model.RecentActivity[index];
             var first = index == 0;
 
-            @if (entry.RawUrl is { HasValue: true, Value: var rawUrl })
+            if (entry.RawUrl.HasValue)
             {
-                <a href="@rawUrl" class="commit">
+                <a href="@entry.RawUrl.ValueOr(string.Empty)" class="commit">
                     <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
                 </a>
             }

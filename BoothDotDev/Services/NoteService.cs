@@ -1,6 +1,6 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using DotNext;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace BoothDotDev.Services;
@@ -41,7 +41,7 @@ public sealed class NoteService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var note = dbContext.Notes.FirstOrDefault(note => note.Id == id);
-        return note ?? new Result<Note>(new Exception($"The note with ID {id} was not found"));
+        return note is not null ? Result.Ok(note) : Result.Fail($"The note with ID {id} was not found");
     }
 
     /// <summary>

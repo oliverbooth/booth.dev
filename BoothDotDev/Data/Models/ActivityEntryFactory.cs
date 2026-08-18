@@ -1,6 +1,7 @@
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
 using DEDrake;
+using Optional;
 
 namespace BoothDotDev.Data.Models;
 
@@ -24,7 +25,7 @@ public static class ActivityEntryFactory
             PagePath = "/Blog/Article",
             Category = "blog",
             RouteValues = new Dictionary<string, string> { ["slug"] = post.Slug },
-            ReadingMinutes = post.GetEstimatedReadingTime()
+            ReadingMinutes = Option.Some(post.GetEstimatedReadingTime())
         };
     }
 
@@ -44,7 +45,7 @@ public static class ActivityEntryFactory
             PagePath = "/Learn/Tutorials/Index",
             Category = "tutorial",
             RouteValues = new Dictionary<string, string> { ["slug"] = tutorialService.GetFullSlug(article) },
-            ReadingMinutes = article.GetEstimatedReadingTime()
+            ReadingMinutes = Option.Some(article.GetEstimatedReadingTime())
         };
     }
 
@@ -65,7 +66,7 @@ public static class ActivityEntryFactory
             PagePath = "/Projects/Devlog",
             Category = "devlog",
             RouteValues = new Dictionary<string, string> { ["projectSlug"] = project.Slug, ["slug"] = devlog.Slug },
-            ReadingMinutes = devlog.GetEstimatedReadingTime()
+            ReadingMinutes = Option.Some(devlog.GetEstimatedReadingTime())
         };
     }
 
@@ -83,7 +84,7 @@ public static class ActivityEntryFactory
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",
             Category = "challenge",
-            RawUrl = $"/challenge/{challenge.Id}"
+            RawUrl = Option.Some($"/challenge/{challenge.Id}")
         };
     }
 
@@ -101,7 +102,7 @@ public static class ActivityEntryFactory
             CommitSha = note.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Note",
             Category = "note",
-            RawUrl = $"/note/{(ShortGuid)note.Id}"
+            RawUrl = Option.Some($"/note/{(ShortGuid)note.Id}")
         };
     }
 }

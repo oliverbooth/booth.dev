@@ -1,8 +1,8 @@
 using BoothDotDev.Services;
 using DEDrake;
-using DotNext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Optional;
 
 namespace BoothDotDev.Pages;
 
@@ -28,7 +28,7 @@ public sealed class Note : PageModel
     /// <value>
     ///     An <see cref="Optional{T}" /> containing the retrieved note, or <see cref="Optional{T}.None" /> if no note was found.
     /// </value>
-    public Optional<Data.Models.Note> RetrievedNote { get; private set; } = Optional<Data.Models.Note>.None;
+    public Option<Data.Models.Note> RetrievedNote { get; private set; } = Option.None<Data.Models.Note>();
 
     /// <summary>
     ///     Handles the GET request for the note page with the specified ID.
@@ -37,15 +37,14 @@ public sealed class Note : PageModel
     public IActionResult OnGet([FromRoute(Name = "id")] string id)
     {
         var guid = ShortGuid.Parse(id);
-        Console.WriteLine($"GUID IS {guid}, as guid: {(Guid)guid}");
         var result = _noteService.GetNoteById(guid);
 
-        if (!result.IsSuccessful)
+        if (result.IsFailed)
         {
             return NotFound();
         }
 
-        RetrievedNote = result.Value;
+        RetrievedNote = Option.Some(result.Value);
         return Page();
     }
 }

@@ -65,13 +65,13 @@ internal sealed class Index : PageModel
     private IActionResult HandleNewRoute(Guid postId)
     {
         var result = _blogPostService.GetPost(postId);
-        return result.IsSuccessful ? RedirectToPost(result.Value) : NotFound();
+        return result.IsSuccess ? RedirectToPost(result.Value) : NotFound();
     }
 
     private IActionResult HandleWordPressRoute(int wpPostId)
     {
         var result = _blogPostService.GetPost(wpPostId);
-        return result.IsSuccessful ? RedirectToPost(result.Value) : NotFound();
+        return result.IsSuccess ? RedirectToPost(result.Value) : NotFound();
     }
 
     private RedirectResult RedirectToPost(BlogPost post)
