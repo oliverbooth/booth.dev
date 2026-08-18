@@ -14,7 +14,7 @@ export function initFiltering(): void {
 
         const pills: NodeListOf<HTMLElement> = filterRow.querySelectorAll<HTMLElement>('.pill');
 
-        const applyFilter = (pill: HTMLElement): void => {
+        const applyFilter = (pill: HTMLElement, updateHistory: boolean): void => {
             const filter: string = pill.dataset.filter ?? 'all';
             const filterKind: string = pill.dataset.filterKind ?? 'post';
 
@@ -27,15 +27,27 @@ export function initFiltering(): void {
                 const stateMatches: boolean = filterKind === 'note' || filter === 'all' || section.dataset.state === filter;
                 section.classList.toggle('is-collapsed', !(kindMatches && stateMatches));
             }
+
+            if (updateHistory) {
+                const hash = filterKind === 'note' ? '#filter=notes' : filter === 'all' ? '' : `#filter=${filter}`;
+                const url = window.location.pathname + window.location.search + hash;
+                history.replaceState(null, '', url);
+            }
         };
 
         for (const pill of pills) {
-            pill.addEventListener('click', () => applyFilter(pill));
+            pill.addEventListener('click', () => applyFilter(pill, true));
         }
 
-        const initialPill = filterRow.querySelector<HTMLElement>('.pill.active') ?? pills[0];
+        // on load: read the hash (if any) and select the matching pill, instead of always defaulting to .active
+        const hashFilter = window.location.hash.replace('#filter=', '');
+        const matchingPill = hashFilter
+            ? Array.from(pills).find(p => (p.dataset.filterKind === 'note' && hashFilter === 'notes') || p.dataset.filter === hashFilter)
+            : null;
+
+        const initialPill = matchingPill ?? filterRow.querySelector<HTMLElement>('.pill.active') ?? pills[0];
         if (initialPill) {
-            applyFilter(initialPill);
+            applyFilter(initialPill, false); // false: don't rewrite history on initial load, we're just reading it
         }
     }
 }
