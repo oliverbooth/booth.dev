@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Text;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using FluentResults;

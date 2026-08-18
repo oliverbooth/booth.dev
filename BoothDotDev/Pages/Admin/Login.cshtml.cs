@@ -4,7 +4,6 @@ using BoothDotDev.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Optional;
 
 namespace BoothDotDev.Pages.Admin;
 

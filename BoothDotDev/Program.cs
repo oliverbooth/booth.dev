@@ -1,7 +1,6 @@
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
