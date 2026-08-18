@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Optional;
 
 namespace BoothDotDev.Services;
 
@@ -44,6 +45,19 @@ public sealed class ProjectService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.Projects.OrderBy(p => p.Rank).ThenBy(p => p.Name)];
+    }
+
+    /// <summary>
+    ///     Gets the number of devlogs for the specified project.
+    /// </summary>
+    /// <param name="project">The project to get devlogs for.</param>
+    /// <returns>The number of devlogs for the specified project.</returns>
+    public int GetDevlogCount(Option<Project> project = default)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return project.HasValue
+            ? context.DevLogs.Count(d => d.ProjectId == project.ValueOr((Project)null!).Id)
+            : context.DevLogs.Count();
     }
 
     /// <summary>

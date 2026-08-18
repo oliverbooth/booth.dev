@@ -47,6 +47,12 @@ public sealed class Index : PageModel
     public int BlogPostCount { get; private set; }
 
     /// <summary>
+    ///     Gets the total number of devlogs.
+    /// </summary>
+    /// <value>The total number of devlogs.</value>
+    public int DevlogCount { get; private set; }
+
+    /// <summary>
     ///     Gets the total number of notes.
     /// </summary>
     /// <value>The total number of notes.</value>
@@ -78,6 +84,7 @@ public sealed class Index : PageModel
         BlogPostCount = _blogPostService.GetBlogPostCount();
         NoteCount = _noteService.GetNoteCount();
         ProjectCount = _projectService.GetProjectCount();
+        DevlogCount = _projectService.GetDevlogCount();
         TutorialCount = _tutorialService.GetArticleCount();
 
         var searchOptions = new ActivitySearchOptions(RecentActivityCount, Visibility.None, ActivitySortStrategy.Updated);
