@@ -54,7 +54,7 @@
   i { color: var(--accent) !important; }
 }
 
-.title-icon--bmac {
+.tile-icon-box--bmac {
   background: var(--buy-me-a-coffee-tint);
   i { color: black !important; }
 }
