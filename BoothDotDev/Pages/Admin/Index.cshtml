@@ -1,4 +1,5 @@
 @page "/admin"
+@using System.Diagnostics
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using Humanizer
@@ -56,19 +57,33 @@
             var badgeClass = activity.Visibility switch
             {
                 Visibility.Published => "published",
-                Visibility.Private => "scheduled",
-                _ => "draft"
+                Visibility.Private => "private",
+                _ => "unlisted"
             };
             <tr>
                 <td>
                     <div class="row-title">@activity.Title</div>
                 </td>
                 <td>@activity.Category.Humanize()</td>
-                <td><span class="badge badge-@badgeClass">@if (activity.Visibility == Visibility.Published)
+                <td><span class="badge badge-@badgeClass">
+                    @switch (activity.Visibility)
                         {
-                            <span class="dot"></span>
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
                         }
-                        @activity.Visibility.Humanize()</span></td>
+                </span></td>
                 <td>@activity.CreatedAt.ToShortString()</td>
                 <td>
                     <div class="row-actions">

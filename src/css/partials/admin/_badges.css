@@ -12,12 +12,12 @@
   background: var(--success-bg);
 }
 
-.badge-draft {
+.badge-unlisted {
   color: var(--text-secondary);
   background: var(--surface-1);
 }
 
-.badge-scheduled {
-  color: #e0a634;
-  background: rgba(224, 166, 52, 0.14);
+.badge-private {
+  color: var(--danger-text, #e0575c);
+  background: var(--danger-bg, rgba(224, 87, 92, 0.14));
 }

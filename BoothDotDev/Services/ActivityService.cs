@@ -45,20 +45,20 @@ public sealed class ActivityService
     {
         List<ActivityEntry> candidates =
         [
-            .. _blogPostService.GetRecentBlogPosts(count, visibility).Select(ActivityEntryFactory.From),
-            .. _tutorialService.GetRecentArticles(count, visibility).Select(a => ActivityEntryFactory.From(a, _tutorialService)),
-            .. _projectService.GetRecentDevlogs(count, visibility).Select(p => ActivityEntryFactory.From(p,
-                _projectService.TryGetProject(p.ProjectId, out var project)
-                    ? project
-                    : throw new InvalidOperationException($"Project with ID {p.ProjectId} not found."))),
-            .. _devChallengeService.GetRecentChallenges(count, visibility).Select(ActivityEntryFactory.From),
-            .. _noteService.GetRecentNotes(count, visibility).Select(ActivityEntryFactory.From)
+            .. _blogPostService.GetRecentBlogPosts(count, visibility)
+                .Select(ActivityEntryFactory.From),
+            .. _tutorialService.GetRecentArticles(count, visibility)
+                .Select(a => ActivityEntryFactory.From(a, _tutorialService)),
+            .. _projectService.GetRecentDevlogs(count, visibility)
+                    .Select(p => (Devlog: p, Project: _projectService.TryGetProject(p.ProjectId, out var project) ? project : null))
+                    .Where(x => x.Project is not null)
+                    .Select(x => ActivityEntryFactory.From(x.Devlog, x.Project!)),
+            .. _devChallengeService.GetRecentChallenges(count, visibility)
+                .Select(ActivityEntryFactory.From),
+            .. _noteService.GetRecentNotes(count, visibility)
+                .Select(ActivityEntryFactory.From)
         ];
 
-        return candidates
-            .OrderByDescending(e => e.CreatedAt)
-            .Take(count)
-            .ToList()
-            .AsReadOnly();
+        return [.. candidates.OrderByDescending(e => e.CreatedAt).Take(count)];
     }
 }
