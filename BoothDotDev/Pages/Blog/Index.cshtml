@@ -26,10 +26,12 @@
             {
                 var post = Model.BlogPosts[index];
                 var first = index == 0;
+                var categoryResult = BlogPostService.GetParentCategory(post);
+                var category = categoryResult.IsSuccess ? categoryResult.Value : null;
 
                 <a asp-page="/Blog/Article" asp-route-slug="@post.Slug"
                    class="commit"
-                   data-state="@BlogPostService.GetParentCategory(post).Id">
+                   data-state="@category?.Id">
                     <div class="collapse-inner">
                         <div class="commit-dot@(first ? "" : " muted")"></div>
                         <div class="commit-meta">

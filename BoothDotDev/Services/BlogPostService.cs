@@ -205,10 +205,12 @@ public sealed class BlogPostService : BackgroundService
     ///     Gets the parent-most category of the specified blog post.
     /// </summary>
     /// <param name="post">The blog post whose parent category to retrieve.</param>
-    /// <returns>The parent-most category of the specified blog post.</returns>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the parent-most category of the specified blog post, or an error if the category
+    ///     does not exist.
+    /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="post" /> is <see langword="null" />.</exception>
-    /// <exception cref="InvalidOperationException">The blog post does not have a valid parent category.</exception>
-    public BlogPostCategory GetParentCategory(BlogPost post)
+    public Result<BlogPostCategory> GetParentCategory(BlogPost post)
     {
         if (post is null)
         {
@@ -218,17 +220,17 @@ public sealed class BlogPostService : BackgroundService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         BlogPostCategory? current = context.BlogPostCategories.Find(post.CategoryId);
 
-        while (current is not null)
+        if (current is null)
         {
-            if (context.BlogPostCategories.Find(current.ParentCategoryId) is not { } parent)
-            {
-                break;
-            }
+            return Result.Fail($"Blog post '{post.Id}' references category '{post.CategoryId}', which does not exist.");
+        }
 
+        while (context.BlogPostCategories.Find(current.ParentCategoryId) is { } parent)
+        {
             current = parent;
         }
 
-        return current ?? throw new InvalidOperationException("The blog post does not have a valid parent category.");
+        return current;
     }
 
     /// <summary>
