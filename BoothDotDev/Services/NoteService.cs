@@ -28,8 +28,8 @@ public sealed class NoteService
     /// <returns>A read-only view of all notes.</returns>
     public IReadOnlyList<Note> GetAllNotes(Visibility visibility = Visibility.Published)
     {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        return [.. dbContext.Notes.Where(n => n.Visibility == visibility).OrderByDescending(n => n.Published)];
+        using var context = _dbContextFactory.CreateDbContext();
+        return [.. context.Notes.Where(n => n.Visibility == visibility).OrderByDescending(n => n.Published)];
     }
 
     /// <summary>
@@ -39,9 +39,27 @@ public sealed class NoteService
     /// <returns>A <see cref="Result{T}" /> containing the note if found; otherwise, an error result.</returns>
     public Result<Note> GetNoteById(Guid id)
     {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        var note = dbContext.Notes.FirstOrDefault(note => note.Id == id);
+        using var context = _dbContextFactory.CreateDbContext();
+        var note = context.Notes.FirstOrDefault(note => note.Id == id);
         return note is not null ? Result.Ok(note) : Result.Fail($"The note with ID {id} was not found");
+    }
+
+    /// <summary>
+    ///     Gets the count of notes based on their visibility.
+    /// </summary>
+    /// <param name="visibility">
+    ///     The visibility of the notes to count. If set to <see cref="Visibility.None" />, counts all notes regardless of
+    ///     visibility.
+    /// </param>
+    /// <returns>The count of notes based on their visibility.</returns>
+    public int GetNoteCount(Visibility visibility = Visibility.None)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        return visibility switch
+        {
+            Visibility.None => context.Notes.Count(),
+            _ => context.Notes.Count(n => n.Visibility == visibility)
+        };
     }
 
     /// <summary>
@@ -52,7 +70,7 @@ public sealed class NoteService
     /// <returns>A read-only view of the most recent notes.</returns>
     public IReadOnlyList<Note> GetRecentNotes(int count, Visibility visibility = Visibility.Published)
     {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        return [.. dbContext.Notes.Where(n => n.Visibility == visibility).OrderByDescending(n => n.Published).Take(count)];
+        using var context = _dbContextFactory.CreateDbContext();
+        return [.. context.Notes.Where(n => n.Visibility == visibility).OrderByDescending(n => n.Published).Take(count)];
     }
 }

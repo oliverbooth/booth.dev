@@ -4,3 +4,21 @@
 @{
     Layout = "_AdminLayout";
 }
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p>An overview of everything on the site.</p>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card"><p class="label">Posts</p><p class="value">@Model.BlogPostCount</p></div>
+        <div class="stat-card"><p class="label">Notes</p><p class="value">@Model.NoteCount</p></div>
+        <div class="stat-card"><p class="label">Tutorials</p><p class="value">@Model.TutorialCount</p></div>
+        <div class="stat-card"><p class="label">Projects</p><p class="value">@Model.ProjectCount</p></div>
+    </div>
+
+</div>

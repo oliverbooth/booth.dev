@@ -23,6 +23,24 @@ public sealed class TutorialService
     }
 
     /// <summary>
+    ///     Gets the total number of articles, optionally filtered by visibility.
+    /// </summary>
+    /// <param name="visibility">
+    ///     The visibility to filter by. If set to <see cref="Visibility.None" />, counts all articles regardless of
+    ///     visibility.
+    /// </param>
+    /// <returns>The total number of articles.</returns>
+    public int GetArticleCount(Visibility visibility = Visibility.None)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return visibility switch
+        {
+            Visibility.None => context.TutorialArticles.Count(),
+            _ => context.TutorialArticles.Count(a => a.Visibility == visibility)
+        };
+    }
+
+    /// <summary>
     ///     Gets the articles within a tutorial folder.
     /// </summary>
     /// <param name="folder">The folder whose articles to retrieve.</param>

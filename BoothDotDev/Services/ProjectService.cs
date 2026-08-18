@@ -56,6 +56,16 @@ public sealed class ProjectService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.DevLogs.Where(d => d.ProjectId == project.Id).OrderByDescending(d => d.Published)];
     }
+    
+    /// <summary>
+    ///     Gets the count of projects.
+    /// </summary>
+    /// <returns>The count of projects.</returns>
+    public int GetProjectCount()
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        return context.Projects.Count();
+    }
 
     /// <summary>
     ///     Gets all projects with the specified status.
