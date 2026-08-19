@@ -1,7 +1,5 @@
 @page "/admin/login"
 @model Login
-@using BoothDotDev.Vite
-@inject IWebHostEnvironment WebHostEnvironment
 @{
     Layout = null;
     ViewData["Title"] = "Sign in";
@@ -13,23 +11,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Sign in - @Strings.MyName Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
-    @if (WebHostEnvironment.IsDevelopment())
-    {
-        <link rel="stylesheet" href="http://localhost:5173/css/style.css">
-        <link rel="stylesheet" href="http://localhost:5173/css/admin.css">
-    }
-    else
-    {
-        <link rel="stylesheet" href="@ViteManifest.Resolve("css/style.css")">
-        <link rel="stylesheet" href="@ViteManifest.Resolve("css/admin.css")">
-    }
+    <link rel="stylesheet" asp-vite="css/style.css" />
+    <link rel="stylesheet" asp-vite="css/admin.css" />
 </head>
 <body>
 
 <div class="login-shell">
     <div class="login-card">
         <div class="login-mark">
-            <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h"/>
+            <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h" />
         </div>
         <h1>Sign in</h1>
         <p class="sub">@Strings.MyName &middot; admin</p>
@@ -39,7 +29,7 @@
 
             <div class="field">
                 <label asp-for="Input.Email">Email</label>
-                <input asp-for="Input.Email" type="email" autocomplete="username" required autofocus/>
+                <input asp-for="Input.Email" type="email" autocomplete="username" required autofocus />
             </div>
 
             <div class="field">
@@ -54,14 +44,7 @@
     </div>
 </div>
 
-@if (WebHostEnvironment.IsDevelopment())
-{
-    <script type="module" src="http://localhost:5173/@@vite/client"></script>
-    <script type="module" src="http://localhost:5173/ts/admin.ts"></script>
-}
-else
-{
-    <script src="@ViteManifest.Resolve("ts/admin.ts")"></script>
-}
+<vite-hmr-client />
+<script asp-vite="ts/admin.ts"></script>
 </body>
 </html>

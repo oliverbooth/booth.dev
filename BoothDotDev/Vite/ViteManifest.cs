@@ -1,20 +1,48 @@
 using System.Reflection;
 using System.Text.Json;
+using Microsoft.AspNetCore.Html;
 
 namespace BoothDotDev.Vite;
 
 internal static class ViteManifest
 {
+    /// <summary>
+    ///     The base URL for the Vite development server, used for hot module replacement (HMR) in development mode.
+    /// </summary>
+    public const string BaseViteHmrUrl = "http://localhost:5173";
+
     private static Dictionary<string, ManifestEntry>? _manifest;
+
+    /// <summary>
+    ///     Returns an HTML script tag for the Vite client script if the application is running in development mode. Otherwise,
+    ///     returns an empty HTML string.
+    /// </summary>
+    /// <param name="environment">The web host environment.</param>
+    /// <returns>The HTML script tag for the Vite client script.</returns>
+    public static IHtmlContent ClientScriptTag(IWebHostEnvironment environment)
+    {
+        if (!environment.IsDevelopment())
+        {
+            return HtmlString.Empty;
+        }
+
+        return new HtmlString($"""<script type="module" src="{BaseViteHmrUrl}/@vite/client"></script>""");
+    }
 
     /// <summary>
     ///     Resolves the given source path to the corresponding file path in the Vite manifest.
     /// </summary>
     /// <param name="sourcePath">The source path to resolve.</param>
+    /// <param name="environment">The web host environment.</param>
     /// <returns>The resolved file path.</returns>
     /// <exception cref="InvalidOperationException">No manifest entry is found for the given source path.</exception>
-    public static string Resolve(string sourcePath)
+    public static string Resolve(string sourcePath, IWebHostEnvironment environment)
     {
+        if (environment.IsDevelopment())
+        {
+            return $"{BaseViteHmrUrl}/{sourcePath}";
+        }
+
         _manifest ??= LoadManifest();
         return _manifest.TryGetValue(sourcePath, out var entry)
             ? $"/{entry.File}"

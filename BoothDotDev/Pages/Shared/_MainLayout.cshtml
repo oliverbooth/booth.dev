@@ -1,8 +1,6 @@
 @inherits MainLayout
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
-@using BoothDotDev.Vite
-@inject IWebHostEnvironment WebHostEnvironment
 @{ await InitializeAsync(); }
 <!DOCTYPE html>
 <html lang="en">
@@ -54,15 +52,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraph.min.css">
     <link rel="stylesheet" href="~/css/prism.css" asp-append-version="true">
-    @if (WebHostEnvironment.IsDevelopment())
-    {
-        <link rel="stylesheet" href="http://localhost:5173/css/style.css">
-    }
-    else
-    {
-        <link rel="stylesheet" href="@ViteManifest.Resolve("css/style.css")">
-    }
-    <link rel="stylesheet" href="@ViteManifest.Resolve("css/prism.vs.css")">
+    <link rel="stylesheet" asp-vite="css/style.css" />
+    <link rel="stylesheet" asp-vite="css/prism.vs.css" />
     <noscript>
         <style>
             [data-reveal],
@@ -139,15 +130,8 @@
 <script src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.min.js"></script>
 <script src="~/js/prism.js" asp-append-version="true" data-manual></script>
-@if (WebHostEnvironment.IsDevelopment())
-{
-    <script type="module" src="http://localhost:5173/@@vite/client"></script>
-    <script type="module" src="http://localhost:5173/ts/app.ts"></script>
-}
-else
-{
-    <script src="@ViteManifest.Resolve("ts/app.ts")"></script>
-}
+<vite-hmr-client />
+<script asp-vite="ts/app.ts"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>

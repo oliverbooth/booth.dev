@@ -1,6 +1,4 @@
 @inherits AdminLayout
-@using BoothDotDev.Vite
-@inject IWebHostEnvironment WebHostEnvironment
 @{ await InitializeAsync(); }
 <!DOCTYPE html>
 <html lang="en">
@@ -9,16 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@PageTitle</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
-    @if (WebHostEnvironment.IsDevelopment())
-    {
-        <link rel="stylesheet" href="http://localhost:5173/css/style.css">
-        <link rel="stylesheet" href="http://localhost:5173/css/admin.css">
-    }
-    else
-    {
-        <link rel="stylesheet" href="@ViteManifest.Resolve("css/style.css")">
-        <link rel="stylesheet" href="@ViteManifest.Resolve("css/admin.css")">
-    }
+    <link rel="stylesheet" asp-vite="css/style.css" />
+    <link rel="stylesheet" asp-vite="css/admin.css" />
 </head>
 
 <body>
@@ -54,7 +44,7 @@
 
         <div class="admin-rail-footer">
             <div class="admin-user">
-                <div class="avatar"><img src="@CurrentUser.GetAvatarUrl()" alt="@CurrentUser.DisplayName" /></div>
+                <div class="avatar"><img src="@CurrentUser.GetAvatarUrl()" alt="@CurrentUser.DisplayName"/></div>
                 <div>
                     <p class="name">@CurrentUser.DisplayName</p>
                     <p class="role">Admin</p>
@@ -74,15 +64,8 @@
 
 </div>
 
-@if (WebHostEnvironment.IsDevelopment())
-{
-    <script type="module" src="http://localhost:5173/@@vite/client"></script>
-    <script type="module" src="http://localhost:5173/ts/admin.ts"></script>
-}
-else
-{
-    <script src="@ViteManifest.Resolve("ts/admin.ts")"></script>
-}
+<vite-hmr-client />
+<script asp-vite="admin.ts"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>
