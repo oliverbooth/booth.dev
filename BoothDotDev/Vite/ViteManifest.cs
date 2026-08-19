@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json;
-using Microsoft.AspNetCore.Html;
 
 namespace BoothDotDev.Vite;
 
@@ -12,22 +11,6 @@ internal static class ViteManifest
     public const string BaseViteHmrUrl = "http://localhost:5173";
 
     private static Dictionary<string, ManifestEntry>? _manifest;
-
-    /// <summary>
-    ///     Returns an HTML script tag for the Vite client script if the application is running in development mode. Otherwise,
-    ///     returns an empty HTML string.
-    /// </summary>
-    /// <param name="environment">The web host environment.</param>
-    /// <returns>The HTML script tag for the Vite client script.</returns>
-    public static IHtmlContent ClientScriptTag(IWebHostEnvironment environment)
-    {
-        if (!environment.IsDevelopment())
-        {
-            return HtmlString.Empty;
-        }
-
-        return new HtmlString($"""<script type="module" src="{BaseViteHmrUrl}/@vite/client"></script>""");
-    }
 
     /// <summary>
     ///     Resolves the given source path to the corresponding file path in the Vite manifest.
