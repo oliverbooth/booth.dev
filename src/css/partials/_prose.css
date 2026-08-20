@@ -128,3 +128,9 @@
   font-weight: 500;
   flex-shrink: 0;
 }
+
+abbr[title] {
+  text-decoration: none;
+  border-bottom: 1px dotted var(--text-secondary);
+  cursor: pointer;
+}
