@@ -1,3 +1,5 @@
+import {initContentFeatures} from '../content-rendering.ts';
+
 const DEBOUNCE_MS = 400;
 
 interface PreviewResponse {
@@ -6,9 +8,7 @@ interface PreviewResponse {
 }
 
 /**
- * Initializes the live preview pane for the post authoring interface. Body edits (including those made through the
- * CodeMirror editor, which mirrors into the underlying textarea) are debounced and sent to the server for rendering
- * through the real Markdown pipeline; title and category changes that don't need the server are reflected instantly.
+ * Initializes the live preview pane for the post authoring interface.
  */
 export function initLivePreview(): void {
     const editorRoot = document.querySelector<HTMLElement>('#post-editor');
@@ -24,7 +24,6 @@ export function initLivePreview(): void {
         return;
     }
 
-    // Only reveal the split layout once JS has actually taken over — there's no server-rendered fallback for it.
     editorRoot.classList.add('admin-page--split');
     pane.hidden = false;
 
@@ -60,8 +59,8 @@ export function initLivePreview(): void {
  * Posts the form to the Preview handler and applies the result to the preview pane.
  * @param form The post edit form.
  * @param previewBody The element to render the previewed body into.
- * @param signal An abort signal that fires if a newer preview request supersedes this one — without it, a slower
- * older request resolving after a newer one would stomp the newer, correct preview.
+ * @param signal An abort signal that fires if a newer preview request supersedes this one — without it, a slower older request resolving
+ * after a newer one would stomp the newer, correct preview.
  */
 async function fetchPreview(form: HTMLFormElement, previewBody: HTMLElement, signal: AbortSignal): Promise<void> {
     const url = new URL(form.action);
@@ -82,6 +81,8 @@ async function fetchPreview(form: HTMLFormElement, previewBody: HTMLElement, sig
         const {html, proseClass} = await response.json() as PreviewResponse;
         previewBody.className = `prose ${proseClass}`;
         previewBody.innerHTML = html;
+
+        initContentFeatures(previewBody);
     } catch (error) {
         if ((error as Error).name !== 'AbortError') {
             throw error;
