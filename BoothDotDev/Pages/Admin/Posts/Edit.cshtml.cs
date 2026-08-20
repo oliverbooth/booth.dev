@@ -1,5 +1,6 @@
 using BoothDotDev.Data;
 using BoothDotDev.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Optional;
@@ -9,6 +10,7 @@ namespace BoothDotDev.Pages.Admin.Posts;
 /// <summary>
 ///     Represents the page model for editing a blog post in the admin section.
 /// </summary>
+[Authorize(Policy = "Admin")]
 public sealed class Edit : PageModel
 {
     private readonly BlogPostService _blogPostService;

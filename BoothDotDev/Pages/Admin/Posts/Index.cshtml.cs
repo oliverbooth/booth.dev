@@ -1,6 +1,7 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Posts;
@@ -8,6 +9,7 @@ namespace BoothDotDev.Pages.Admin.Posts;
 /// <summary>
 ///     Represents the page model for the admin posts page.
 /// </summary>
+[Authorize(Policy = "Admin")]
 public sealed class Index : PageModel
 {
     private readonly BlogPostService _blogPostService;
