@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using BoothDotDev.Markdown.Link;
@@ -59,7 +60,7 @@ public sealed class Edit : PageModel
         if (!id.HasValue)
         {
             CreatingNew = true;
-            Input = new EditModel { PublishedAt = DateTimeOffset.Now, Visibility = Visibility.Private };
+            Input = new EditModel { PublishedAt = DateTimeOffset.UtcNow, Visibility = Visibility.Private };
             return Page();
         }
 
@@ -85,6 +86,40 @@ public sealed class Edit : PageModel
         }
 
         return Page();
+    }
+
+    /// <summary>
+    ///     Handles the POST request for saving the blog post.
+    /// </summary>
+    /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostSave(Guid? id)
+    {
+        CreatingNew = id is null;
+
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        var tags = Input.Tags.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var authorId = Guid.TryParse(claim, out var parsedAuthorId) ? parsedAuthorId : Guid.Empty;
+
+        var result = id is null
+            ? _blogPostService.CreatePost(authorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags)
+            : _blogPostService.UpdatePost(id.Value, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags);
+
+        if (result.IsFailed)
+        {
+            ModelState.AddModelError(string.Empty, string.Join(Environment.NewLine, result.Errors.Select(e => e.Message)));
+            return Page();
+        }
+
+        return RedirectToPage(new { id = result.Value.Id });
     }
 
     /// <summary>

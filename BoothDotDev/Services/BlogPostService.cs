@@ -47,6 +47,102 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Creates a new blog post.
+    /// </summary>
+    /// <param name="authorId">The ID of the author creating the post.</param>
+    /// <param name="title">The title of the post.</param>
+    /// <param name="slug">The URL slug of the post.</param>
+    /// <param name="body">The body of the post.</param>
+    /// <param name="excerpt">The excerpt of the post, if any.</param>
+    /// <param name="categoryId">The ID of the post's category.</param>
+    /// <param name="visibility">The visibility of the post.</param>
+    /// <param name="publishedAt">The publication date and time of the post.</param>
+    /// <param name="tags">The tags associated with the post.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the newly-created blog post.</returns>
+    public Result<BlogPost> CreatePost(Guid authorId,
+        string title,
+        string slug,
+        string body,
+        string? excerpt,
+        Guid categoryId,
+        Visibility visibility,
+        DateTimeOffset publishedAt,
+        IReadOnlyList<string> tags)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+
+        var post = new BlogPost
+        {
+            AuthorId = authorId,
+            Title = title,
+            Slug = slug,
+            Body = body,
+            Excerpt = excerpt,
+            CategoryId = categoryId,
+            Visibility = visibility,
+            Published = publishedAt.ToUniversalTime(),
+            Updated = null,
+            Tags = [.. tags]
+        };
+
+        context.BlogPosts.Add(post);
+        context.SaveChanges();
+
+        _postCache[post.Id] = post;
+        return post;
+    }
+
+    /// <summary>
+    ///     Updates an existing blog post.
+    /// </summary>
+    /// <param name="id">The ID of the post to update.</param>
+    /// <param name="title">The title of the post.</param>
+    /// <param name="slug">The URL slug of the post.</param>
+    /// <param name="body">The body of the post.</param>
+    /// <param name="excerpt">The excerpt of the post, if any.</param>
+    /// <param name="categoryId">The ID of the post's category.</param>
+    /// <param name="visibility">The visibility of the post.</param>
+    /// <param name="publishedAt">The publication date and time of the post.</param>
+    /// <param name="tags">The tags associated with the post.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated blog post, or an error if no post with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<BlogPost> UpdatePost(Guid id,
+        string title,
+        string slug,
+        string body,
+        string? excerpt,
+        Guid categoryId,
+        Visibility visibility,
+        DateTimeOffset publishedAt,
+        IReadOnlyList<string> tags)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = context.BlogPosts.Find(id);
+
+        if (post is null)
+        {
+            return Result.Fail($"Blog post with ID '{id}' not found.");
+        }
+
+        post.Title = title;
+        post.Slug = slug;
+        post.Body = body;
+        post.Excerpt = excerpt;
+        post.CategoryId = categoryId;
+        post.Visibility = visibility;
+        post.Published = publishedAt.ToUniversalTime();
+        post.Updated = DateTimeOffset.UtcNow;
+        post.Tags = [.. tags];
+
+        context.SaveChanges();
+
+        _postCache[post.Id] = post;
+        return post;
+    }
+
+    /// <summary>
     ///     Returns a collection of all blog posts.
     /// </summary>
     /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>
