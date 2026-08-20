@@ -1,7 +1,6 @@
 @page "/admin"
 @using System.Diagnostics
 @using BoothDotDev.Data
-@using BoothDotDev.Extensions
 @using Humanizer
 @model BoothDotDev.Pages.Admin.Index
 
@@ -58,12 +57,14 @@
         <tbody>
         @foreach (var activity in Model.RecentActivity)
         {
+            var timestamp = activity.UpdatedAt ?? activity.PublishedAt;
             var badgeClass = activity.Visibility switch
             {
                 Visibility.Published => "published",
                 Visibility.Private => "private",
                 _ => "unlisted"
             };
+
             <tr>
                 <td>
                     <div class="row-title">@activity.Title</div>
@@ -88,7 +89,7 @@
                                 throw new UnreachableException();
                         }
                 </span></td>
-                <td>@((activity.UpdatedAt ?? activity.PublishedAt).ToShortString())</td>
+                <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
                 <td>
                     <div class="row-actions">
                         @if (activity.RawUrl.HasValue)
