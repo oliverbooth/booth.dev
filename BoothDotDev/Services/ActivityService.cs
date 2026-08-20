@@ -44,18 +44,11 @@ public sealed class ActivityService
     {
         List<ActivityEntry> candidates =
         [
-            .. _blogPostService.GetRecentBlogPosts(searchOptions)
-                .Select(ActivityEntryFactory.From),
-            .. _tutorialService.GetRecentArticles(searchOptions)
-                .Select(a => ActivityEntryFactory.From(a, _tutorialService)),
-            .. _projectService.GetRecentDevlogs(searchOptions)
-                .Select(p => (Devlog: p, Project: _projectService.TryGetProject(p.ProjectId, out var project) ? project : null))
-                .Where(x => x.Project is not null)
-                .Select(x => ActivityEntryFactory.From(x.Devlog, x.Project!)),
-            .. _devChallengeService.GetRecentChallenges(searchOptions)
-                .Select(ActivityEntryFactory.From),
-            .. _noteService.GetRecentNotes(searchOptions)
-                .Select(ActivityEntryFactory.From)
+            .. GetRecentBlogPosts(searchOptions),
+            .. GetRecentTutorialArticles(searchOptions),
+            .. GetRecentDevlogs(searchOptions),
+            .. GetRecentChallenges(searchOptions),
+            .. GetRecentNotes(searchOptions)
         ];
 
         var ordered = searchOptions.SortStrategy switch
@@ -66,5 +59,36 @@ public sealed class ActivityService
         };
 
         return [.. ordered.Take(searchOptions.Count)];
+    }
+
+    private IEnumerable<ActivityEntry> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
+    {
+        return _blogPostService.GetRecentBlogPosts(searchOptions)
+            .Select(ActivityEntryFactory.From);
+    }
+
+    private IEnumerable<ActivityEntry> GetRecentTutorialArticles(ActivitySearchOptions searchOptions)
+    {
+        return _tutorialService.GetRecentArticles(searchOptions)
+            .Select(a => ActivityEntryFactory.From(a, _tutorialService));
+    }
+
+    private IEnumerable<ActivityEntry> GetRecentDevlogs(ActivitySearchOptions searchOptions)
+    {
+        return _projectService.GetRecentDevlogs(searchOptions)
+            .Select(p => (Devlog: p, Project: _projectService.TryGetProject(p.ProjectId, out var project) ? project : null))
+            .Where(x => x.Project is not null)
+            .Select(x => ActivityEntryFactory.From(x.Devlog, x.Project!));
+    }
+
+    private IEnumerable<ActivityEntry> GetRecentChallenges(ActivitySearchOptions searchOptions)
+    {
+        return _devChallengeService.GetRecentChallenges(searchOptions).Select(ActivityEntryFactory.From);
+    }
+
+    private IEnumerable<ActivityEntry> GetRecentNotes(ActivitySearchOptions searchOptions)
+    {
+        return _noteService.GetRecentNotes(searchOptions)
+            .Select(ActivityEntryFactory.From);
     }
 }
