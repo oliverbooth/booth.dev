@@ -24,6 +24,8 @@
   input[type="email"],
   input[type="password"],
   input[type="date"],
+  input[type="datetime"],
+  input[type="datetime-local"],
   select,
   textarea {
     width: 100%;
@@ -79,4 +81,14 @@
   gap: 8px;
   padding-top: 1rem;
   border-top: 0.5px solid var(--border);
+}
+
+.input-with-button {
+  display: flex;
+  gap: 0.5rem;
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
 }

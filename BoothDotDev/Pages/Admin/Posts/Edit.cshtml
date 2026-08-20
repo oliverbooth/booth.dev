@@ -1,0 +1,118 @@
+@page "/admin/posts/edit/{id:guid?}"
+@using BoothDotDev.Data
+@using BoothDotDev.Data.Models
+@using BoothDotDev.Services
+@using X10D.Linq
+@model BoothDotDev.Pages.Admin.Posts.Edit
+@inject BlogPostService BlogPostService
+
+@{
+    Layout = "_AdminLayout";
+    var postModel = Model.CurrentModel;
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Posts/Index">Posts</a> / Edit</p>
+
+    <div class="admin-header">
+        <div><h1>@postModel.Title</h1></div>
+        <div style="display:flex;gap:8px">
+            <button class="btn">Preview</button>
+            <button class="btn btn-primary">Save changes</button>
+        </div>
+    </div>
+
+    <form class="form-grid" method="post">
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="CurrentModel.Title" />
+        </div>
+
+        <div class="field">
+            <label for="slug">Slug</label>
+            <div class="input-with-button">
+                <input type="text" id="slug" asp-for="CurrentModel.Slug" />
+                <button type="button" id="generate-slug" class="btn icon-btn" aria-label="Generate slug from title">
+                    <i class="ti ti-refresh"></i>
+                </button>
+            </div>
+            <p class="hint" id="slug-preview">booth.dev/blog/@postModel.Slug</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="category">Category</label>
+                <select id="category">
+                    @{
+                        var categories = BlogPostService.GetAllCategories();
+                        var stack = new Stack<(BlogPostCategory Category, string PathPrefix)>(
+                            categories.Select(c => (c, string.Empty)));
+
+                        while (stack.Count > 0)
+                        {
+                            var (current, pathPrefix) = stack.Pop();
+                            var displayName = pathPrefix.Length == 0 ? current.Name : $"{pathPrefix} / {current.Name}";
+
+                            <option value="@current.Id" selected="@(Model.CurrentModel.CategoryId == current.Id)">
+                                @displayName
+                            </option>
+
+                            foreach (var child in current.Children)
+                            {
+                                stack.Push((child, displayName));
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="status">Status</label>
+                <select id="status">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except(Visibility.None);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility" selected="@(Model.CurrentModel.Visibility == visibility)">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="date">Published date</label>
+                <div class="input-with-button">
+                    <input type="datetime-local" id="date" asp-for="CurrentModel.PublishedAt">
+                    <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                        <i class="ti ti-clock"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="excerpt">Excerpt (markdown supported)</label>
+            <textarea id="excerpt" rows="5" asp-for="CurrentModel.Excerpt" data-markdown></textarea>
+            <p class="hint">Shown in list views and link previews.</p>
+        </div>
+
+        <div class="field">
+            <label for="body">Body (markdown supported)</label>
+            <textarea id="body" rows="30" asp-for="CurrentModel.Body" data-markdown></textarea>
+        </div>
+
+        <div class="field">
+            <label for="tags">Tags</label>
+            <input type="text" id="tags" asp-for="CurrentModel.Tags" />
+            <p class="hint">Comma separated.</p>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary">Save changes</button>
+            <button class="btn">Save as draft</button>
+            <button class="btn icon-btn danger" aria-label="Delete post"><i class="ti ti-trash"></i>Delete</button>
+        </div>
+
+    </form>
+
+</div>

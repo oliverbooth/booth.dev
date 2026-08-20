@@ -9,13 +9,12 @@ using Timer = System.Timers.Timer;
 namespace BoothDotDev.Services;
 
 /// <summary>
-///     Represents a union type for blog post identifiers, which can be a <see cref="Guid" />, an <see cref="int" />, or a
-///     <see cref="string" />.
+///     Represents a key used to identify a blog post either by its ID, its legacy WordPress ID, or its URL slug.
 /// </summary>
 public union BlogPostKey(Guid, int, string);
 
 /// <summary>
-///     Represents an implementation of <see cref="BlogPostService" />.
+///     Represents a service for retrieving and managing blog posts.
 /// </summary>
 public sealed class BlogPostService : BackgroundService
 {
@@ -69,6 +68,24 @@ public sealed class BlogPostService : BackgroundService
         }
 
         return [.. posts.AsEnumerable().Select(CacheAuthor)];
+    }
+
+    /// <summary>
+    ///     Returns a collection of all blog post categories, including their child categories.
+    /// </summary>
+    /// <returns>A read-only list of all blog post categories with their child categories.</returns>
+    public IReadOnlyList<BlogPostCategory> GetAllCategories()
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var all = context.BlogPostCategories.ToList();
+        var byParent = all.ToLookup(c => c.ParentCategoryId);
+
+        foreach (var category in all)
+        {
+            category.Children = [.. byParent[category.Id]];
+        }
+
+        return [.. all.Where(c => c.ParentCategoryId is null)];
     }
 
     /// <summary>
