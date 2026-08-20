@@ -1,4 +1,5 @@
 @page "/create"
+@using BoothDotDev.Data
 @using BoothDotDev.Markdown
 @using BoothDotDev.Markdown.Link
 @using BoothDotDev.Services
@@ -54,7 +55,7 @@
     <div class="masonry">
         @for (var index = 0; index < Model.ArtworkItems.Count; index++)
         {
-            const CdnMediaResolver.MediaKind mediaKind = CdnMediaResolver.MediaKind.Image;
+            const MediaKind mediaKind = MediaKind.Image;
             var first = index == 0;
             var item = Model.ArtworkItems[index];
             var context = new MarkdownRenderContext(item.Id, item.Published);
@@ -66,7 +67,7 @@
                      title="@item.Title"
                      alt="@item.FileName"
                      data-lightbox
-                     data-lightbox-src="@cdnUrl"/>
+                     data-lightbox-src="@cdnUrl" />
                 <template data-lightbox-caption-template>
                     @Html.Raw(MarkdownRenderingService.Render(item.Description!, item.Id, item.Published, "content"))
                     <p class="lightbox-caption-date">
@@ -80,7 +81,7 @@
     <dialog id="lightbox" class="lightbox">
         <button type="button" class="lightbox-close" aria-label="Close">&times;</button>
         <figure>
-            <img class="lightbox-image" src="" alt=""/>
+            <img class="lightbox-image" src="" alt="" />
             <figcaption class="lightbox-caption"></figcaption>
         </figure>
     </dialog>
