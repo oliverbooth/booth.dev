@@ -70,6 +70,12 @@ export function initMarkdownEditors(): void {
                 syntaxHighlighting(highlightStyle),
                 viewTheme,
                 EditorView.lineWrapping,
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        textarea.value = update.state.doc.toString();
+                        textarea.dispatchEvent(new Event('input', {bubbles: true}));
+                    }
+                }),
             ],
         });
 

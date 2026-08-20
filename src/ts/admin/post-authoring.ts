@@ -1,4 +1,5 @@
 import {initMarkdownEditors} from './markdown-editor.ts';
+import {initLivePreview} from './post-preview.ts';
 
 /**
  * Initializes the post authoring interface.
@@ -7,6 +8,7 @@ export function initPostAuthoring(): void {
     initMarkdownEditors();
     initSlugGenerator();
     initSetNowButton();
+    initLivePreview();
 }
 
 /**
