@@ -51,23 +51,28 @@ public sealed class BlogPostService : BackgroundService
     ///     Returns a collection of all blog posts.
     /// </summary>
     /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>
+    /// <param name="visibility">The visibility filter for the posts.</param>
     /// <returns>A collection of all blog posts.</returns>
     /// <remarks>
     ///     This method may slow down execution if there are a large number of blog posts being requested. It is
     ///     recommended to use <see cref="GetBlogPosts" /> instead.
     /// </remarks>
-    public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1)
+    public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<BlogPost> ordered = context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
-            .OrderByDescending(post => post.Published);
-        if (limit > -1)
+        var posts = context.BlogPosts.AsQueryable();
+        if (visibility != Visibility.None)
         {
-            ordered = ordered.Take(limit);
+            posts = posts.Where(p => p.Visibility == visibility);
         }
 
-        return [.. ordered.AsEnumerable().Select(CacheAuthor)];
+        posts = posts.OrderByDescending(post => post.Published);
+        if (limit > -1)
+        {
+            posts = posts.Take(limit);
+        }
+
+        return [.. posts.AsEnumerable().Select(CacheAuthor)];
     }
 
     /// <summary>
