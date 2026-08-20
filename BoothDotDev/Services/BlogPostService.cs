@@ -53,10 +53,6 @@ public sealed class BlogPostService : BackgroundService
     /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>
     /// <param name="visibility">The visibility filter for the posts.</param>
     /// <returns>A collection of all blog posts.</returns>
-    /// <remarks>
-    ///     This method may slow down execution if there are a large number of blog posts being requested. It is
-    ///     recommended to use <see cref="GetBlogPosts" /> instead.
-    /// </remarks>
     public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
@@ -101,36 +97,6 @@ public sealed class BlogPostService : BackgroundService
         return visibility == Visibility.None
             ? context.BlogPosts.Count(p => !p.IsRedirect)
             : context.BlogPosts.Count(p => !p.IsRedirect && p.Visibility == visibility);
-    }
-
-    /// <summary>
-    ///     Returns a collection of blog posts from the specified page, optionally limiting the number of posts
-    ///     returned per page.
-    /// </summary>
-    /// <param name="page">The zero-based index of the page to return.</param>
-    /// <param name="pageSize">The maximum number of posts to return per page.</param>
-    /// <param name="tags">The tags of the posts to return.</param>
-    /// <returns>A collection of blog posts.</returns>
-    public IReadOnlyList<BlogPost> GetBlogPosts(int page, int pageSize = DefaultPageSize, string[]? tags = null)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IEnumerable<BlogPost> posts = context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
-            .OrderByDescending(post => post.Published);
-
-        if (tags is { Length: > 0 })
-        {
-            for (var index = 0; index < tags.Length; index++)
-            {
-                string tag = tags[index];
-                tags[index] = tag.Replace('+', '-');
-            }
-
-            posts = posts.AsEnumerable().Where(p => p.Tags.Intersect(tags).Any());
-        }
-
-        posts = posts.Skip(page * pageSize).Take(pageSize);
-        return [.. posts.AsEnumerable().Select(CacheAuthor)];
     }
 
     /// <summary>
@@ -338,83 +304,6 @@ public sealed class BlogPostService : BackgroundService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.BlogPostCategories.Where(category => category.ParentCategory == null)];
-    }
-
-    /// <summary>
-    ///     Searches blog posts for the specified search text.
-    /// </summary>
-    /// <param name="searchText">The text to search for.</param>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    /// <returns>A collection of blog posts that match the search text.</returns>
-    public async Task<IReadOnlyCollection<BlogPost>> SearchBlogPostsAsync(string searchText,
-        CancellationToken cancellationToken)
-    {
-        const StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            return [];
-        }
-
-        string[] terms =
-        [
-            .. searchText
-                .Split(' ', splitOptions)
-                .Select(t => t.Trim())
-                .Where(t => t.Length > 0)
-        ];
-
-        if (terms.Length == 0)
-        {
-            return [];
-        }
-
-        const int maxResults = 50;
-        var results = new HashSet<BlogPost>(maxResults);
-
-        BlogPost[] posts = [.. _postCache.Values.OrderByDescending(p => p.Published)];
-        foreach (BlogPost post in posts)
-        {
-            if (post.Visibility != Visibility.Published || post.IsRedirect)
-            {
-                continue;
-            }
-
-            bool matches = terms.All(term => post.Title.Contains(term, StringComparison.OrdinalIgnoreCase));
-
-            if (matches)
-            {
-                results.Add(post);
-            }
-
-            if (results.Count >= maxResults)
-            {
-                break;
-            }
-        }
-
-        foreach (BlogPost post in posts)
-        {
-            if (post.Visibility != Visibility.Published || post.IsRedirect)
-            {
-                continue;
-            }
-
-            bool matches = terms.All(term =>
-                post.Body.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                (post.Excerpt != null && post.Excerpt.Contains(term, StringComparison.OrdinalIgnoreCase)));
-
-            if (matches)
-            {
-                results.Add(post);
-            }
-
-            if (results.Count >= maxResults)
-            {
-                break;
-            }
-        }
-
-        return results.AsReadOnly();
     }
 
     /// <inheritdoc />
