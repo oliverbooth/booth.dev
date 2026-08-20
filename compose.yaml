@@ -10,6 +10,7 @@ services:
     volumes:
       - /var/log/boothdotdev/site:/app/logs
       - /etc/boothdotdev/site:/app/data
+      - ${CDN_PATH}:/app/cdn
     ports:
       - "2845:8080"
     restart: unless-stopped
