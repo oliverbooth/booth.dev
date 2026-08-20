@@ -176,49 +176,6 @@ public sealed class TutorialService
     }
 
     /// <summary>
-    ///     Gets the number of legacy comments for the specified article.
-    /// </summary>
-    /// <param name="article">The article whose legacy comments to count.</param>
-    /// <returns>The total number of legacy comments.</returns>
-    public int GetLegacyCommentCount(TutorialArticle article)
-    {
-        if (article.RedirectFrom is not { } postId)
-        {
-            return 0;
-        }
-
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Count(c => c.PostId == postId);
-    }
-
-    /// <summary>
-    ///     Gets the legacy comments for the specified article.
-    /// </summary>
-    /// <param name="article">The article whose legacy comments to retrieve.</param>
-    /// <returns>A read-only view of the legacy comments.</returns>
-    public IReadOnlyList<LegacyComment> GetLegacyComments(TutorialArticle article)
-    {
-        if (article.RedirectFrom is not { } postId)
-        {
-            return ArraySegment<LegacyComment>.Empty;
-        }
-
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return [.. context.LegacyComments.Where(c => c.PostId == postId && c.ParentComment == null)];
-    }
-
-    /// <summary>
-    ///     Gets the replies to the specified legacy comment.
-    /// </summary>
-    /// <param name="comment">The comment whose replies to retrieve.</param>
-    /// <returns>A read-only view of the replies.</returns>
-    public IReadOnlyList<LegacyComment> GetLegacyReplies(LegacyComment comment)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
-    }
-
-    /// <summary>
     ///     Returns the most recent tutorial articles, limited to the specified count.
     /// </summary>
     /// <param name="searchOptions">The options for searching and retrieving tutorial articles.</param>

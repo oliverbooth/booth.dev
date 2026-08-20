@@ -4,6 +4,7 @@
 @using BoothDotDev.Services
 @using Humanizer
 @inject BlogPostService BlogPostService
+@inject CommentService CommentService
 @inject MarkdownRenderingService MarkdownRenderingService
 @model Article
 
@@ -129,7 +130,7 @@
     }
 
     @{
-        var commentCount = BlogPostService.GetLegacyCommentCount(post);
+        var commentCount = CommentService.GetLegacyCommentCount(post);
         if (commentCount > 0)
         {
             <div class="legacy-comments-heading">
@@ -140,7 +141,7 @@
             </div>
 
             var nestLevelMap = new Dictionary<LegacyComment, int>();
-            var legacyComments = BlogPostService.GetLegacyComments(post);
+            var legacyComments = CommentService.GetLegacyComments(post);
             var comments = legacyComments.OrderByDescending(c => c.CreatedAt);
             var commentStack = new Stack<LegacyComment>(comments);
 
@@ -148,7 +149,7 @@
                 @while (commentStack.Count > 0)
                 {
                     var comment = commentStack.Pop();
-                    var replies = BlogPostService.GetLegacyReplies(comment);
+                    var replies = CommentService.GetLegacyReplies(comment);
                     foreach (var reply in replies.OrderByDescending(c => c.CreatedAt))
                     {
                         if (nestLevelMap.TryGetValue(comment, out var currentLevel))

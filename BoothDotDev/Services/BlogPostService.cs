@@ -111,39 +111,6 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
-    ///     Returns the number of legacy comments for the specified post.
-    /// </summary>
-    /// <param name="post">The post whose legacy comments to count.</param>
-    /// <returns>The total number of legacy comments.</returns>
-    public int GetLegacyCommentCount(BlogPost post)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.LegacyComments.Count(c => c.PostId == post.Id);
-    }
-
-    /// <summary>
-    ///     Returns the collection of legacy comments for the specified post.
-    /// </summary>
-    /// <param name="post">The post whose legacy comments to retrieve.</param>
-    /// <returns>A read-only view of the legacy comments.</returns>
-    public IReadOnlyList<LegacyComment> GetLegacyComments(BlogPost post)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return [.. context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null)];
-    }
-
-    /// <summary>
-    ///     Returns the collection of replies to the specified legacy comment.
-    /// </summary>
-    /// <param name="comment">The comment whose replies to retrieve.</param>
-    /// <returns>A read-only view of the replies.</returns>
-    public IReadOnlyList<LegacyComment> GetLegacyReplies(LegacyComment comment)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
-    }
-
-    /// <summary>
     ///     Returns the next blog post from the specified blog post.
     /// </summary>
     /// <param name="blogPost">The blog post whose next post to return.</param>

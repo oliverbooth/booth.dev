@@ -6,6 +6,7 @@
 @using Markdig
 @model TutorialArticle?
 @inject TutorialService TutorialService
+@inject CommentService CommentService
 @inject MarkdownRenderingService MarkdownRenderingService
 @inject MarkdownPipeline MarkdownPipeline
 
@@ -135,7 +136,7 @@
     }
 
     @{
-        var commentCount = TutorialService.GetLegacyCommentCount(article);
+        var commentCount = CommentService.GetLegacyCommentCount(article);
         if (commentCount > 0)
         {
             <div class="legacy-comments-heading">
@@ -146,7 +147,7 @@
             </div>
 
             var nestLevelMap = new Dictionary<LegacyComment, int>();
-            var legacyComments = TutorialService.GetLegacyComments(article);
+            var legacyComments = CommentService.GetLegacyComments(article);
             var comments = legacyComments.OrderByDescending(c => c.CreatedAt);
             var commentStack = new Stack<LegacyComment>(comments);
 
@@ -154,7 +155,7 @@
                 @while (commentStack.Count > 0)
                 {
                     var comment = commentStack.Pop();
-                    var replies = TutorialService.GetLegacyReplies(comment);
+                    var replies = CommentService.GetLegacyReplies(comment);
                     foreach (var reply in replies.OrderByDescending(c => c.CreatedAt))
                     {
                         if (nestLevelMap.TryGetValue(comment, out var currentLevel))
