@@ -1,7 +1,9 @@
-import {EditorView, basicSetup} from 'codemirror';
+import {EditorView} from 'codemirror';
+import {defaultKeymap, history, historyKeymap} from '@codemirror/commands';
 import {markdown} from '@codemirror/lang-markdown';
 import {languages} from '@codemirror/language-data';
 import {syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from '@codemirror/language';
+import {keymap} from '@codemirror/view';
 import {tags} from '@lezer/highlight';
 
 const highlightStyle = HighlightStyle.define([
@@ -11,21 +13,15 @@ const highlightStyle = HighlightStyle.define([
     {tag: tags.monospace, fontFamily: 'var(--font-mono)', fontSize: '0.85em'},
     {tag: tags.link, color: 'var(--accent)', textDecoration: 'underline'},
     {tag: tags.angleBracket, color: 'var(--text-muted)'},
-
-    // fenced code block tokens — mirrors prism.vs.css
     {tag: tags.comment, color: 'var(--prism-comment)'},
     {tag: tags.string, color: 'var(--prism-string)'},
     {tag: [tags.function(tags.variableName), tags.function(tags.propertyName)], color: 'var(--prism-function)'},
     {tag: tags.className, color: 'var(--prism-class-name)'},
     {tag: [tags.keyword, tags.controlKeyword, tags.operatorKeyword], color: 'var(--prism-keyword)'},
     {tag: tags.punctuation, color: 'var(--prism-foreground)'},
-
-    // markup/HTML-flavored tags, since your prose allows raw HTML
     {tag: tags.tagName, color: 'var(--prism-markup-tag)'},
     {tag: tags.attributeName, color: 'var(--prism-attr-name)'},
     {tag: tags.attributeValue, color: 'var(--prism-markup-attr-value)'},
-
-    // CSS-flavored tags, in case fenced ```css blocks appear in a post
     {tag: tags.propertyName, color: 'var(--prism-css-property)'},
 ]);
 
@@ -65,6 +61,15 @@ export function initMarkdownEditors(): void {
         const view = new EditorView({
             doc: textarea.value,
             extensions: [
+                history(),
+                // `markdown()` binds its own Prec.high Enter handler for continuing lists/blockquotes, but its own
+                // docs say it must not be the only Enter binding — it deliberately no-ops outside that context and
+                // falls through to whatever's next. Without defaultKeymap providing that fallback, "next" was
+                // nothing: Enter fell all the way through to unintercepted native contenteditable behavior, which is
+                // exactly the kind of thing that gets flaky creating consecutive empty blocks at the end of a
+                // document. defaultKeymap's own insertNewlineAndIndent is the real fallback; historyKeymap gives
+                // undo/redo, which was equally absent.
+                keymap.of([...defaultKeymap, ...historyKeymap]),
                 markdown({codeLanguages: languages}),
                 syntaxHighlighting(defaultHighlightStyle, {fallback: true}),
                 syntaxHighlighting(highlightStyle),

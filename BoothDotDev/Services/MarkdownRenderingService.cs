@@ -10,6 +10,8 @@ using Markdig;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Renderers.Html.Inlines;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using MD = Markdig.Markdown;
 
 namespace BoothDotDev.Services;
@@ -172,6 +174,47 @@ public sealed class MarkdownRenderingService
 
         List<TocItem> items = MarkdownTocBuilder.BuildToc(markdown);
         return MarkdownTocBuilder.RenderTocAsHtml(items, request);
+    }
+
+    /// <summary>
+    ///     Finds every bare filename referenced as CDN media in a Markdown body — both <c>![alt](filename)</c> and
+    ///     <c>![[filename]]</c> formats.
+    /// </summary>
+    /// <param name="body">The Markdown content to scan.</param>
+    /// <returns>The distinct filenames referenced, in first-seen order.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="body" /> is <see langword="null" />.</exception>
+    /// <remarks>
+    ///     This method excludes <c>.md</c>/<c>.html</c> embeds, which transclude a local document rather than resolving through
+    ///     the CDN.
+    /// </remarks>
+    public IReadOnlyList<string> FindMediaReferences(string body)
+    {
+        if (body is null)
+        {
+            throw new ArgumentNullException(nameof(body));
+        }
+
+        MarkdownDocument document = MD.Parse(body, _markdownPipeline);
+        var references = new List<string>();
+
+        foreach (LinkInline link in document.Descendants<LinkInline>())
+        {
+            if (link.IsImage && !string.IsNullOrEmpty(link.Url))
+            {
+                references.Add(link.Url);
+            }
+        }
+
+        foreach (EmbedInline embed in document.Descendants<EmbedInline>())
+        {
+            var extension = Path.GetExtension(embed.FileName).ToLowerInvariant();
+            if (extension is not (".html" or ".md"))
+            {
+                references.Add(embed.FileName);
+            }
+        }
+
+        return references.Distinct(StringComparer.Ordinal).ToList();
     }
 
     private HtmlRenderer CreateHtmlRenderer(TextWriter writer,

@@ -21,3 +21,9 @@
   color: var(--danger-text, #e0575c);
   background: var(--danger-bg, rgba(224, 87, 92, 0.14));
 }
+
+.badge-missing {
+  color: var(--warning-text);
+  background: var(--warning-bg);
+  flex-shrink: 0;
+}

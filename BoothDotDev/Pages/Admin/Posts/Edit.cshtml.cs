@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
+using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,19 +14,25 @@ namespace BoothDotDev.Pages.Admin.Posts;
 ///     Represents the page model for editing a blog post in the admin section.
 /// </summary>
 [Authorize(Policy = "Admin")]
+[RequestSizeLimit(CdnMediaService.MaxUploadSizeBytes)]
 public sealed class Edit : PageModel
 {
+    private const string Area = "blog";
+
     private readonly BlogPostService _blogPostService;
+    private readonly CdnMediaService _cdnMediaService;
     private readonly MarkdownRenderingService _markdownRenderingService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
     /// </summary>
     /// <param name="blogPostService">The blog post service.</param>
+    /// <param name="cdnMediaService">The CDN media service.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
-    public Edit(BlogPostService blogPostService, MarkdownRenderingService markdownRenderingService)
+    public Edit(BlogPostService blogPostService, CdnMediaService cdnMediaService, MarkdownRenderingService markdownRenderingService)
     {
         _blogPostService = blogPostService;
+        _cdnMediaService = cdnMediaService;
         _markdownRenderingService = markdownRenderingService;
     }
 
@@ -108,6 +116,130 @@ public sealed class Edit : PageModel
     }
 
     /// <summary>
+    ///     Handles the POST request for listing the files currently attached to the post via the CDN.
+    /// </summary>
+    /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
+    /// <returns>A JSON payload of the post's attached media files.</returns>
+    public IActionResult OnPostListMedia(Guid? id)
+    {
+        if (id is not { } postId)
+        {
+            return BadRequest("Save the post before managing media.");
+        }
+
+        return new JsonResult(MediaListPayload(postId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for uploading a new file to the post's CDN media folder.
+    /// </summary>
+    /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
+    /// <param name="file">The uploaded file.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
+    /// <returns>A JSON payload of the post's attached media files, including the newly-uploaded one.</returns>
+    public async Task<IActionResult> OnPostUploadMediaAsync(Guid? id, IFormFile? file, CancellationToken cancellationToken)
+    {
+        if (id is not { } postId)
+        {
+            return BadRequest("Save the post before managing media.");
+        }
+
+        if (file is null)
+        {
+            return BadRequest("No file was uploaded.");
+        }
+
+        var result = await _cdnMediaService.UploadAsync(postId, Input.PublishedAt, file, Area, cancellationToken);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(e => e.Message));
+        }
+
+        return new JsonResult(MediaListPayload(postId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for deleting a file from the post's CDN media folder.
+    /// </summary>
+    /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
+    /// <param name="fileName">The bare filename to delete.</param>
+    /// <returns>A JSON payload of the post's remaining attached media files.</returns>
+    public IActionResult OnPostDeleteMedia(Guid? id, string fileName)
+    {
+        if (id is not { } postId)
+        {
+            return BadRequest("Save the post before managing media.");
+        }
+
+        var result = _cdnMediaService.DeleteFile(postId, Input.PublishedAt, fileName, Area);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(e => e.Message));
+        }
+
+        return new JsonResult(MediaListPayload(postId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for renaming a file in the post's CDN media folder.
+    /// </summary>
+    /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
+    /// <param name="fileName">The current bare filename.</param>
+    /// <param name="newFileName">The new bare filename. Its extension must match the current one.</param>
+    /// <returns>A JSON payload of the post's attached media files, reflecting the rename.</returns>
+    public IActionResult OnPostRenameMedia(Guid? id, string fileName, string newFileName)
+    {
+        if (id is not { } postId)
+        {
+            return BadRequest("Save the post before managing media.");
+        }
+
+        var result = _cdnMediaService.RenameFile(postId, Input.PublishedAt, fileName, newFileName, Area);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(e => e.Message));
+        }
+
+        return new JsonResult(MediaListPayload(postId));
+    }
+
+    /// <summary>
+    ///     Builds the JSON payload describing a post's attached media files, in the shape the media manager's
+    ///     <c>fetch</c> calls expect.
+    /// </summary>
+    /// <param name="id">The post's ID.</param>
+    /// <returns>An anonymous object suitable for a <see cref="JsonResult" />.</returns>
+    private object MediaListPayload(Guid id)
+    {
+        var uploaded = _cdnMediaService.ListFiles(id, Input.PublishedAt, Area);
+        var uploadedNames = uploaded.Select(f => f.FileName).ToHashSet(StringComparer.Ordinal);
+
+        var uploadedEntries = uploaded.Select(f => new
+        {
+            f.FileName,
+            Url = (string?)f.Url,
+            Kind = f.Kind.ToString().ToLowerInvariant(),
+            SizeBytes = (long?)f.SizeBytes,
+            ModifiedAt = (DateTimeOffset?)f.ModifiedAt,
+            Missing = false
+        });
+
+        var missingEntries = _markdownRenderingService.FindMediaReferences(Input.Body)
+            .Where(name => !uploadedNames.Contains(name))
+            .Select(name => new
+            {
+                FileName = name,
+                Url = (string?)null,
+                Kind = CdnMediaResolver.ResolveMediaKind(name).ToString().ToLowerInvariant(),
+                SizeBytes = (long?)null,
+                ModifiedAt = (DateTimeOffset?)null,
+                Missing = true
+            });
+
+        return new { files = uploadedEntries.Concat(missingEntries) };
+    }
+
+    /// <summary>
     ///     Represents the model for editing a blog post.
     /// </summary>
     public sealed class EditModel
@@ -116,6 +248,7 @@ public sealed class Edit : PageModel
         ///     Gets or sets the body of the blog post.
         /// </summary>
         /// <value>The body of the blog post.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Body { get; set; } = string.Empty;
 
         /// <summary>
@@ -140,18 +273,21 @@ public sealed class Edit : PageModel
         ///     Gets or sets the URL slug of the blog post.
         /// </summary>
         /// <value>The URL slug of the blog post.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Slug { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the tags associated with the blog post.
         /// </summary>
         /// <value>The tags associated with the blog post.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Tags { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the title of the blog post.
         /// </summary>
         /// <value>The title of the blog post.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Title { get; set; } = string.Empty;
 
         /// <summary>

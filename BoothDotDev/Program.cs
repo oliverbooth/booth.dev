@@ -10,6 +10,7 @@ var workingDir = AppContext.BaseDirectory;
 
 Directory.CreateDirectory(Path.Combine(workingDir, "data"));
 Directory.CreateDirectory(Path.Combine(workingDir, "logs"));
+Directory.CreateDirectory(Path.Combine(workingDir, "cdn"));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -56,6 +57,7 @@ builder.Services.AddDbContextFactory<AppDbContext>((services, options) =>
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ActivityService>();
 builder.Services.AddHostedSingleton<BlogPostService>();
+builder.Services.AddSingleton<CdnMediaService>();
 builder.Services.AddSingleton<CommentService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<CodeSnippetService>();

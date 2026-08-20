@@ -1,3 +1,4 @@
+using BoothDotDev.Data;
 using BoothDotDev.Services;
 using BoothDotDev.Views;
 using Microsoft.AspNetCore.StaticFiles;
@@ -10,24 +11,6 @@ namespace BoothDotDev.Markdown.Link;
 /// </summary>
 public sealed class CdnMediaResolver
 {
-    /// <summary>
-    ///     Represents the kind of media a resolved CDN URL points to, used to select the correct rendering partial.
-    /// </summary>
-    public enum MediaKind
-    {
-        /// <summary>The media is an image (png, jpg, jpeg, gif, webp, svg).</summary>
-        Image,
-
-        /// <summary>The media is a video (mp4, webm, mov).</summary>
-        Video,
-
-        /// <summary>The media is an audio file (mp3, wav, ogg, flac).</summary>
-        Audio,
-
-        /// <summary>The media is of an unrecognized or unsupported type.</summary>
-        Misc
-    }
-
     private const string BaseUrl = "https://cdn.booth.dev";
     private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
     private readonly MarkdownRenderContext _renderContext;
@@ -92,8 +75,22 @@ public sealed class CdnMediaResolver
     /// <returns>The fully-qualified CDN URL.</returns>
     public string ResolveCdnUrl(string? url, MediaKind mediaKind)
     {
-        return
-            $"{BaseUrl}/{_area}/{mediaKind.ToString().ToLowerInvariant()}/{_renderContext.Date:yyyy/MM}/{_renderContext.Id:N}/{url}";
+        return BuildCdnUrl(_area, mediaKind, _renderContext.Date, _renderContext.Id, url ?? string.Empty);
+    }
+
+    /// <summary>
+    ///     Builds the fully-qualified CDN URL for a filename from its raw path components, for callers that don't have a
+    ///     <see cref="MarkdownRenderContext" /> of their own (e.g. admin media management).
+    /// </summary>
+    /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
+    /// <param name="mediaKind">The <see cref="MediaKind" /> of the file, used to select the CDN path segment.</param>
+    /// <param name="date">The published date of the containing post, used in the CDN path.</param>
+    /// <param name="id">The ID of the containing post, used in the CDN path.</param>
+    /// <param name="filename">The bare filename to resolve.</param>
+    /// <returns>The fully-qualified CDN URL.</returns>
+    public static string BuildCdnUrl(string area, MediaKind mediaKind, DateTimeOffset date, Guid id, string filename)
+    {
+        return $"{BaseUrl}/{area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{id:N}/{filename}";
     }
 
     /// <summary>

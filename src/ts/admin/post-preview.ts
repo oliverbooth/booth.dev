@@ -52,6 +52,8 @@ export function initLivePreview(): void {
     });
     categorySelect?.addEventListener('change', requestPreview);
 
+    document.addEventListener('booth:media-changed', requestPreview);
+
     requestPreview();
 }
 
