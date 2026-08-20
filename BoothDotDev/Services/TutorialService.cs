@@ -1,8 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
+using System.Diagnostics;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using Cysharp.Text;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using X10D.Text;
 
 namespace BoothDotDev.Services;
 
@@ -87,28 +90,15 @@ public sealed class TutorialService
     }
 
     /// <summary>
-    ///     Gets a folder by its ID.
+    ///     Retrieves a folder by its ID.
     /// </summary>
-    /// <param name="id">The ID of the folder to get.</param>
-    /// <returns>The folder, or <see langword="null" /> if not found.</returns>
-    public TutorialFolder? GetFolder(Guid id)
+    /// <param name="id">The ID of the folder to retrieve.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the folder if that folder was found, or a failure if not found.</returns>
+    public Result<TutorialFolder> GetFolder(Guid id)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return context.TutorialFolders.FirstOrDefault(f => f.Id == id);
-    }
-
-    /// <summary>
-    ///     Gets a folder by its slug.
-    /// </summary>
-    /// <param name="slug">The slug of the folder.</param>
-    /// <param name="parent">The parent folder.</param>
-    /// <returns>The folder, or <see langword="null" /> if not found.</returns>
-    public TutorialFolder? GetFolder(string? slug, TutorialFolder? parent = null)
-    {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return parent is null
-            ? context.TutorialFolders.FirstOrDefault(a => a.Slug == slug)
-            : context.TutorialFolders.FirstOrDefault(a => a.Slug == slug && a.Parent == parent.Id);
+        var folder = context.TutorialFolders.FirstOrDefault(f => f.Id == id);
+        return folder is not null ? folder : Result.Fail("Folder not found");
     }
 
     /// <summary>
@@ -129,13 +119,13 @@ public sealed class TutorialService
 
         while (folder.Parent is { } parentId)
         {
-            TutorialFolder? current = GetFolder(parentId);
-            if (current is null)
+            Result<TutorialFolder> currentResult = GetFolder(parentId);
+            if (currentResult.IsFailed)
             {
                 break;
             }
 
-            folderStack.Push(current);
+            folderStack.Push(currentResult.Value);
         }
 
         using var builder = ZString.CreateUtf8StringBuilder();
@@ -166,13 +156,13 @@ public sealed class TutorialService
             throw new ArgumentNullException(nameof(article));
         }
 
-        TutorialFolder? folder = GetFolder(article.Folder);
-        if (folder is null)
+        Result<TutorialFolder> folderResult = GetFolder(article.Folder);
+        if (folderResult.IsFailed)
         {
             return article.Slug;
         }
 
-        return $"{GetFullSlug(folder)}/{article.Slug}";
+        return $"{GetFullSlug(folderResult.Value)}/{article.Slug}";
     }
 
     /// <summary>
@@ -194,96 +184,114 @@ public sealed class TutorialService
         {
             ActivitySortStrategy.Published => articles.OrderByDescending(p => p.Published),
             ActivitySortStrategy.Updated => articles.OrderByDescending(p => p.Updated ?? p.Published),
-            _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
+            _ => throw new InvalidEnumArgumentException(nameof(searchOptions.SortStrategy),
+                (int)searchOptions.SortStrategy,
+                typeof(ActivitySortStrategy))
         };
 
         return [.. ordered.Take(searchOptions.Count)];
     }
 
     /// <summary>
-    ///     Attempts to find an article by its ID.
+    ///     Retrieves an article by its ID.
     /// </summary>
     /// <param name="id">The ID of the article.</param>
-    /// <param name="article">
-    ///     When this method returns, contains the article whose ID matches the specified <paramref name="id" />, or
-    ///     <see langword="null" /> if no such article was found.
-    /// </param>
-    /// <returns><see langword="true" /> if a matching article was found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetArticle(Guid id, [NotNullWhen(true)] out TutorialArticle? article)
+    /// <returns>A <see cref="Result{T}" /> containing the article if that article was found, or a failure if not found.</returns>
+    public Result<TutorialArticle> GetArticle(Guid id)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        article = context.TutorialArticles.FirstOrDefault(a => a.Id == id);
-        return article is not null;
+        var article = context.TutorialArticles.FirstOrDefault(a => a.Id == id);
+        return article is not null ? article : Result.Fail("Article not found");
     }
 
     /// <summary>
-    ///     Attempts to find an article by its slug.
+    ///     Retrieves an article by its slug, optionally within a specified parent folder.
     /// </summary>
-    /// <param name="slug">The slug of the article.</param>
-    /// <param name="article">
-    ///     When this method returns, contains the article whose slug matches the specified <paramref name="slug" />, or
-    ///     <see langword="null" /> if no such article was found.
-    /// </param>
-    /// <returns><see langword="true" /> if a matching article was found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetArticle(string? slug, [NotNullWhen(true)] out TutorialArticle? article)
+    /// <param name="slug">The slug of the article, which may include folder slugs separated by '/'.</param>
+    /// <param name="parentFolder">The parent folder within which to search for the article.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the article if that article was found, or a failure if not found.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    public Result<TutorialArticle> GetArticle(string slug, TutorialFolder? parentFolder = null)
     {
         if (slug is null)
         {
-            article = null;
-            return false;
+            throw new ArgumentNullException(nameof(slug));
         }
 
         var tokens = slug.Split('/');
-        TutorialFolder? folder = null;
+        TutorialFolder? folder = parentFolder;
 
         for (var index = 0; index < tokens.Length - 1; index++)
         {
-            folder = GetFolder(tokens[index], folder);
+            var folderResult = GetFolder(tokens[index], folder);
+            if (folderResult.IsFailed)
+            {
+                return Result.Fail("Folder not found");
+            }
+
+            folder = folderResult.Value;
         }
 
         if (folder is null)
         {
-            article = null;
-            return false;
+            return Result.Fail("Folder not found");
         }
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         slug = tokens[^1];
-        article = context.TutorialArticles.FirstOrDefault(a => a.Slug == slug && a.Folder == folder.Id);
-        return article is not null;
+        var article = context.TutorialArticles.FirstOrDefault(a => a.Slug == slug && a.Folder == folder.Id);
+        return article is not null ? article : Result.Fail("Article not found");
     }
 
     /// <summary>
-    ///     Attempts to find a folder by its slug.
+    ///     Retrieves a folder by its full slug, which may include parent folder slugs separated by '/'.
     /// </summary>
-    /// <param name="slug">The slug of the folder.</param>
-    /// <param name="folder">
-    ///     When this method returns, contains the folder whose slug matches the specified <paramref name="slug" />, or
-    ///     <see langword="null" /> if no such folder was found.
-    /// </param>
-    /// <returns><see langword="true" /> if a matching folder was found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetFolder(string? slug, [NotNullWhen(true)] out TutorialFolder? folder)
+    /// <param name="slug">The full slug of the folder, which may include parent folder slugs separated by '/'.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the folder if that folder was found, or a failure if not found.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    public Result<TutorialFolder> GetFolder(ReadOnlySpan<char> slug)
     {
-        if (slug is null)
-        {
-            folder = null;
-            return false;
-        }
-
-        var tokens = slug.Split('/');
         TutorialFolder? currentFolder = null;
 
-        foreach (var token in tokens)
+        var folderCount = slug.CountSubstring('/') + 1;
+        Span<Range> ranges = stackalloc Range[folderCount];
+        var rangeCount = slug.SplitAny(ranges, "/");
+
+        if (folderCount != rangeCount)
         {
-            currentFolder = GetFolder(token, currentFolder);
-            if (currentFolder is null)
-            {
-                folder = null;
-                return false;
-            }
+            throw new UnreachableException($"Split count mismatch: expected {folderCount} tokens, got {rangeCount}.");
         }
 
-        folder = currentFolder;
-        return folder is not null;
+        for (var index = 0; index < rangeCount; index++)
+        {
+            ReadOnlySpan<char> token = slug[ranges[index]];
+            var folderResult = GetFolder(token, currentFolder);
+            if (folderResult.IsFailed)
+            {
+                return Result.Fail("Folder not found");
+            }
+
+            currentFolder = folderResult.Value;
+        }
+
+        return currentFolder is not null ? currentFolder : Result.Fail("Folder not found");
+    }
+
+    /// <summary>
+    ///     Retrieves a folder by its slug.
+    /// </summary>
+    /// <param name="slug">The slug of the folder.</param>
+    /// <param name="parent">The parent folder.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the folder if that folder was found, or a failure if not found.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="slug" /> is <see langword="null" />.</exception>
+    public Result<TutorialFolder> GetFolder(ReadOnlySpan<char> slug, TutorialFolder? parent)
+    {
+        var slugString = slug.ToString();
+
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var folder = parent is null
+            ? context.TutorialFolders.FirstOrDefault(a => a.Slug == slugString)
+            : context.TutorialFolders.FirstOrDefault(a => a.Slug == slugString && a.Parent == parent.Id);
+        return folder is not null ? folder : Result.Fail("Folder not found");
     }
 }

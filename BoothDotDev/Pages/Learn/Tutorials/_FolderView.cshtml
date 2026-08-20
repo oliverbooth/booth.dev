@@ -16,10 +16,14 @@
     var parent = Model?.Parent;
     while (parent is not null)
     {
-        var folder = TutorialService.GetFolder(parent.Value)
-            ?? throw new InvalidOperationException($"Folder chain references missing parent {parent.Value}.");
-        parents.Push(folder);
-        parent = folder.Parent;
+        var folderResult = TutorialService.GetFolder(parent.Value);
+        if (folderResult.IsFailed)
+        {
+            throw new InvalidOperationException($"Folder chain references missing parent {parent.Value}.");
+        }
+
+        parents.Push(folderResult.Value);
+        parent = folderResult.Value.Parent;
     }
 
     var folders = TutorialService.GetFolders(Model, Visibility.Published);

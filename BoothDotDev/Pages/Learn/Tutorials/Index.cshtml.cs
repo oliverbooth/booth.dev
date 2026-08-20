@@ -32,7 +32,7 @@ public sealed class Index : PageModel
     /// </summary>
     /// <value>The current tutorial folder.</value>
     public TutorialFolder? CurrentFolder { get; private set; }
-    
+
     /// <summary>
     ///     Gets a value indicating whether to show the folder view.
     /// </summary>
@@ -53,16 +53,18 @@ public sealed class Index : PageModel
             return Page();
         }
 
-        if (_tutorialService.TryGetFolder(slug, out var folder))
+        var folderResult = _tutorialService.GetFolder(slug);
+        if (folderResult.IsSuccess)
         {
-            CurrentFolder = folder;
+            CurrentFolder = folderResult.Value;
             ShowFolderView = true;
             return Page();
         }
 
-        if (_tutorialService.TryGetArticle(slug, out var article))
+        var articleResult = _tutorialService.GetArticle(slug);
+        if (articleResult.IsSuccess)
         {
-            CurrentArticle = article;
+            CurrentArticle = articleResult.Value;
             ShowFolderView = false;
             return Page();
         }

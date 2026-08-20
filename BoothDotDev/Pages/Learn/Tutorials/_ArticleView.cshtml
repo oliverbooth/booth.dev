@@ -1,9 +1,10 @@
-@using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
+@using FluentResults
 @using Humanizer
 @using Markdig
+@using Optional
 @model TutorialArticle?
 @inject TutorialService TutorialService
 @inject CommentService CommentService
@@ -25,10 +26,14 @@
     Guid? parent = article.Folder;
     while (parent is not null)
     {
-        var folder = TutorialService.GetFolder(parent.Value)
-            ?? throw new InvalidOperationException($"TutorialArticle {article.Id} references a folder chain with a missing parent {parent.Value}.");
-        parents.Push(folder);
-        parent = folder.Parent;
+        var folderResult = TutorialService.GetFolder(parent.Value);
+        if (folderResult.IsFailed)
+        {
+            throw new InvalidOperationException($"TutorialArticle {article.Id} references a folder chain with a missing parent {parent.Value}.");
+        }
+
+        parents.Push(folderResult.Value);
+        parent = folderResult.Value.Parent;
     }
 }
 
@@ -68,21 +73,30 @@
 
     @if (article.HasOtherParts)
     {
-        var previousPart = article.PreviousPart is { } prevId && TutorialService.TryGetArticle(prevId, out var prev) && prev.Visibility == Visibility.Published
-            ? prev
-            : null;
-        var nextPart = article.NextPart is { } nextId && TutorialService.TryGetArticle(nextId, out var next) && next.Visibility == Visibility.Published
-            ? next
-            : null;
+        var previousPart = Option.None<TutorialArticle>();
+        var nextPart = Option.None<TutorialArticle>();
 
-        @if (previousPart is not null || nextPart is not null)
+        var previousResult = article.PreviousPart is { } prevId ? TutorialService.GetArticle(prevId) : Result.Fail("Previous part not found");
+        var nextResult = article.NextPart is { } nextId ? TutorialService.GetArticle(nextId) : Result.Fail("Next part not found");
+        if (previousResult.IsSuccess)
+        {
+            previousPart = Option.Some(previousResult.Value);
+        }
+
+        if (nextResult.IsSuccess)
+        {
+            nextPart = Option.Some(nextResult.Value);
+        }
+
+        @if (previousPart.HasValue || nextPart.HasValue)
         {
             <div class="post-nav">
-                @if (previousPart is not null)
+                @if (previousPart.HasValue)
                 {
-                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart)" class="post-nav-link">
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart.Value)"
+                       class="post-nav-link">
                         <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
-                        <span class="post-nav-title">@previousPart.Title</span>
+                        <span class="post-nav-title">@previousPart.Value.Title</span>
                     </a>
                 }
                 else
@@ -90,11 +104,12 @@
                     <div class="post-nav-empty"></div>
                 }
 
-                @if (nextPart is not null)
+                @if (nextPart.HasValue)
                 {
-                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart)" class="post-nav-link post-nav-link--next">
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart.Value)"
+                       class="post-nav-link post-nav-link--next">
                         <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
-                        <span class="post-nav-title">@nextPart.Title</span>
+                        <span class="post-nav-title">@nextPart.Value.Title</span>
                     </a>
                 }
                 else
