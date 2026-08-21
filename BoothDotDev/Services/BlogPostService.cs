@@ -70,11 +70,15 @@ public sealed class BlogPostService : BackgroundService
             EnableComments = request.EnableComments
         };
 
-        var draft = NewDraft(post.Id, request.Content);
-        post.CurrentDraft = draft;
-
+        // two SaveChanges calls, not one: BlogPost -> BlogPostDraft (via BlogPostId) and BlogPostDraft ->
+        // BlogPost (via CurrentDraftId) form a cycle between two rows that are both new, which EF can't
+        // resolve in a single call even though CurrentDraftId is nullable.
         context.BlogPosts.Add(post);
+        context.SaveChanges();
+
+        var draft = NewDraft(post.Id, request.Content);
         context.BlogPostDrafts.Add(draft);
+        post.CurrentDraftId = draft.Id;
         context.SaveChanges();
 
         _postCache[post.Id] = post;

@@ -35,11 +35,15 @@ public sealed class NoteService
             Published = request.PublishedAt.ToUniversalTime()
         };
 
-        var draft = NewDraft(note.Id, request.Content);
-        note.CurrentDraft = draft;
-
+        // two SaveChanges calls, not one: Note -> NoteDraft (via NoteId) and NoteDraft -> Note (via
+        // CurrentDraftId) form a cycle between two rows that are both new, which EF can't resolve in a
+        // single call even though CurrentDraftId is nullable.
         context.Notes.Add(note);
+        context.SaveChanges();
+
+        var draft = NewDraft(note.Id, request.Content);
         context.NoteDrafts.Add(draft);
+        note.CurrentDraftId = draft.Id;
         context.SaveChanges();
 
         return note;
