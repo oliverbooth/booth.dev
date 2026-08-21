@@ -55,7 +55,7 @@
 .icon-btn {
   width: 30px;
   height: 30px;
-  border-radius: 7px;
+  border-radius: var(--radius);
   border: 0.5px solid var(--border-strong);
   background: transparent;
   color: var(--text-secondary);
