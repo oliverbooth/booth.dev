@@ -13,7 +13,7 @@
     var postModel = Model.Input;
 }
 
-<div class="admin-page" id="post-editor">
+<div class="admin-page admin-page--split" id="post-editor">
 
     <p class="crumb"><a asp-page="/Admin/Posts/Index">Posts</a> / Edit</p>
 
@@ -194,7 +194,7 @@
         var proseClass = (previewCategory?.FontStyle ?? FontStyle.SansSerif).ToProseClass();
     }
 
-    <aside class="admin-preview" id="preview-pane" hidden>
+    <aside class="admin-preview" id="preview-pane">
         <span class="eyebrow">Preview</span>
         <h1 id="preview-title">@postModel.Title</h1>
         <div class="prose @proseClass" id="preview-body"></div>

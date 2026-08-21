@@ -24,9 +24,6 @@ export function initLivePreview(): void {
         return;
     }
 
-    editorRoot.classList.add('admin-page--split');
-    pane.hidden = false;
-
     if (titleInput) {
         titleInput.addEventListener('input', () => {
             previewTitle.textContent = titleInput.value;
