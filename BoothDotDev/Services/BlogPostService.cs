@@ -49,35 +49,13 @@ public sealed class BlogPostService : BackgroundService
     /// <summary>
     ///     Creates a new blog post, along with its first draft, which immediately becomes the post's current draft.
     /// </summary>
-    /// <param name="authorId">The ID of the author creating the post.</param>
-    /// <param name="title">The title of the post.</param>
-    /// <param name="slug">The URL slug of the post.</param>
-    /// <param name="body">The body of the post.</param>
-    /// <param name="excerpt">The excerpt of the post, if any.</param>
-    /// <param name="categoryId">The ID of the post's category.</param>
-    /// <param name="visibility">The visibility of the post.</param>
-    /// <param name="publishedAt">The publication date and time of the post.</param>
-    /// <param name="tags">The tags associated with the post.</param>
-    /// <param name="enableComments">A value indicating whether comments are enabled for the post.</param>
-    /// <param name="showTableOfContents">A value indicating whether to show the table of contents for the post.</param>
-    /// <param name="tableOfContentsExpanded">A value indicating whether the table of contents is expanded by default.</param>
+    /// <param name="request">The post's parent-level fields and the content of its first draft.</param>
     /// <returns>A <see cref="Result{T}" /> containing the newly-created blog post.</returns>
-    public Result<BlogPost> CreatePost(Guid authorId,
-        string title,
-        string slug,
-        string body,
-        string? excerpt,
-        Guid categoryId,
-        Visibility visibility,
-        DateTimeOffset publishedAt,
-        IReadOnlyList<string> tags,
-        bool enableComments,
-        bool showTableOfContents,
-        bool tableOfContentsExpanded)
+    public Result<BlogPost> CreatePost(BlogPostSaveRequest request)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
 
-        var slugCheck = CheckSlugAvailable(context, slug, excludePostId: null);
+        var slugCheck = CheckSlugAvailable(context, request.Slug, excludePostId: null);
         if (slugCheck.IsFailed)
         {
             return slugCheck;
@@ -85,14 +63,14 @@ public sealed class BlogPostService : BackgroundService
 
         var post = new BlogPost
         {
-            AuthorId = authorId,
-            Slug = slug,
-            Published = publishedAt.ToUniversalTime(),
+            AuthorId = request.AuthorId,
+            Slug = request.Slug,
+            Published = request.PublishedAt.ToUniversalTime(),
             Updated = null,
-            EnableComments = enableComments
+            EnableComments = request.EnableComments
         };
 
-        var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags, showTableOfContents, tableOfContentsExpanded);
+        var draft = NewDraft(post.Id, request.Content);
         post.CurrentDraft = draft;
 
         context.BlogPosts.Add(post);
@@ -109,35 +87,12 @@ public sealed class BlogPostService : BackgroundService
     ///     slug, publication date, comments) aren't versioned at all, so they're saved immediately regardless.
     /// </summary>
     /// <param name="id">The ID of the post to save a draft for.</param>
-    /// <param name="authorId">The ID of the post's author.</param>
-    /// <param name="title">The title of the post.</param>
-    /// <param name="slug">The URL slug of the post.</param>
-    /// <param name="body">The body of the post.</param>
-    /// <param name="excerpt">The excerpt of the post, if any.</param>
-    /// <param name="categoryId">The ID of the post's category.</param>
-    /// <param name="visibility">The visibility of the post.</param>
-    /// <param name="publishedAt">The publication date and time of the post.</param>
-    /// <param name="tags">The tags associated with the post.</param>
-    /// <param name="enableComments">A value indicating whether comments are enabled for the post.</param>
-    /// <param name="showTableOfContents">A value indicating whether to show the table of contents for the post.</param>
-    /// <param name="tableOfContentsExpanded">A value indicating whether the table of contents is expanded by default.</param>
+    /// <param name="request">The post's parent-level fields and the content of the new draft.</param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the post the draft was saved for, or an error if no post with the
     ///     specified <paramref name="id" /> exists.
     /// </returns>
-    public Result<BlogPost> SaveDraft(Guid id,
-        Guid authorId,
-        string title,
-        string slug,
-        string body,
-        string? excerpt,
-        Guid categoryId,
-        Visibility visibility,
-        DateTimeOffset publishedAt,
-        IReadOnlyList<string> tags,
-        bool enableComments,
-        bool showTableOfContents,
-        bool tableOfContentsExpanded)
+    public Result<BlogPost> SaveDraft(Guid id, BlogPostSaveRequest request)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
@@ -147,19 +102,19 @@ public sealed class BlogPostService : BackgroundService
             return Result.Fail($"Blog post with ID '{id}' not found.");
         }
 
-        var slugCheck = CheckSlugAvailable(context, slug, excludePostId: id);
+        var slugCheck = CheckSlugAvailable(context, request.Slug, excludePostId: id);
         if (slugCheck.IsFailed)
         {
             return slugCheck;
         }
 
-        var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags, showTableOfContents, tableOfContentsExpanded);
+        var draft = NewDraft(post.Id, request.Content);
         context.BlogPostDrafts.Add(draft);
 
-        post.AuthorId = authorId;
-        post.Slug = slug;
-        post.Published = publishedAt.ToUniversalTime();
-        post.EnableComments = enableComments;
+        post.AuthorId = request.AuthorId;
+        post.Slug = request.Slug;
+        post.Published = request.PublishedAt.ToUniversalTime();
+        post.EnableComments = request.EnableComments;
 
         context.SaveChanges();
 
@@ -171,35 +126,12 @@ public sealed class BlogPostService : BackgroundService
     ///     Saves a new draft of an existing blog post and publishes it, making it the post's current draft.
     /// </summary>
     /// <param name="id">The ID of the post to publish.</param>
-    /// <param name="authorId">The ID of the post's author.</param>
-    /// <param name="title">The title of the post.</param>
-    /// <param name="slug">The URL slug of the post.</param>
-    /// <param name="body">The body of the post.</param>
-    /// <param name="excerpt">The excerpt of the post, if any.</param>
-    /// <param name="categoryId">The ID of the post's category.</param>
-    /// <param name="visibility">The visibility of the post.</param>
-    /// <param name="publishedAt">The publication date and time of the post.</param>
-    /// <param name="tags">The tags associated with the post.</param>
-    /// <param name="enableComments">A value indicating whether comments are enabled for the post.</param>
-    /// <param name="showTableOfContents">A value indicating whether to show the table of contents for the post.</param>
-    /// <param name="tableOfContentsExpanded">A value indicating whether the table of contents is expanded by default.</param>
+    /// <param name="request">The post's parent-level fields and the content of the new draft.</param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the updated blog post, or an error if no post with the specified
     ///     <paramref name="id" /> exists.
     /// </returns>
-    public Result<BlogPost> PublishPost(Guid id,
-        Guid authorId,
-        string title,
-        string slug,
-        string body,
-        string? excerpt,
-        Guid categoryId,
-        Visibility visibility,
-        DateTimeOffset publishedAt,
-        IReadOnlyList<string> tags,
-        bool enableComments,
-        bool showTableOfContents,
-        bool tableOfContentsExpanded)
+    public Result<BlogPost> PublishPost(Guid id, BlogPostSaveRequest request)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
@@ -209,19 +141,19 @@ public sealed class BlogPostService : BackgroundService
             return Result.Fail($"Blog post with ID '{id}' not found.");
         }
 
-        var slugCheck = CheckSlugAvailable(context, slug, excludePostId: id);
+        var slugCheck = CheckSlugAvailable(context, request.Slug, excludePostId: id);
         if (slugCheck.IsFailed)
         {
             return slugCheck;
         }
 
-        var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags, showTableOfContents, tableOfContentsExpanded);
+        var draft = NewDraft(post.Id, request.Content);
         context.BlogPostDrafts.Add(draft);
 
-        post.AuthorId = authorId;
-        post.Slug = slug;
-        post.Published = publishedAt.ToUniversalTime();
-        post.EnableComments = enableComments;
+        post.AuthorId = request.AuthorId;
+        post.Slug = request.Slug;
+        post.Published = request.PublishedAt.ToUniversalTime();
+        post.EnableComments = request.EnableComments;
         post.CurrentDraft = draft;
         post.Updated = DateTimeOffset.UtcNow;
 
@@ -650,27 +582,21 @@ public sealed class BlogPostService : BackgroundService
     /// <summary>
     ///     Builds a new, unsaved draft snapshot for the specified blog post.
     /// </summary>
-    private static BlogPostDraft NewDraft(Guid blogPostId,
-        string title,
-        string body,
-        string? excerpt,
-        Guid categoryId,
-        Visibility visibility,
-        IReadOnlyList<string> tags,
-        bool showTableOfContents,
-        bool tableOfContentsExpanded)
+    /// <param name="blogPostId">The ID of the blog post the draft belongs to.</param>
+    /// <param name="content">The content for the new draft.</param>
+    private static BlogPostDraft NewDraft(Guid blogPostId, BlogPostDraftContent content)
     {
         return new BlogPostDraft
         {
             BlogPostId = blogPostId,
-            Title = title,
-            Body = body,
-            Excerpt = excerpt,
-            CategoryId = categoryId,
-            Visibility = visibility,
-            ShowTableOfContents = showTableOfContents,
-            TableOfContentsExpanded = tableOfContentsExpanded,
-            Tags = [.. tags]
+            Title = content.Title,
+            Body = content.Body,
+            Excerpt = content.Excerpt,
+            CategoryId = content.CategoryId,
+            Visibility = content.Visibility,
+            ShowTableOfContents = content.ShowTableOfContents,
+            TableOfContentsExpanded = content.TableOfContentsExpanded,
+            Tags = [.. content.Tags]
         };
     }
 

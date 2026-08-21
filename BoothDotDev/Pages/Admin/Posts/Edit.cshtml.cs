@@ -163,14 +163,10 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var tags = ParseTags();
+        var request = BuildSaveRequest();
         var result = id is null
-            ? _blogPostService.CreatePost(Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
-                Input.ShowTableOfContents, Input.TableOfContentsExpanded)
-            : _blogPostService.PublishPost(id.Value, Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
-                Input.ShowTableOfContents, Input.TableOfContentsExpanded);
+            ? _blogPostService.CreatePost(request)
+            : _blogPostService.PublishPost(id.Value, request);
 
         return RedirectOnSuccess(result);
     }
@@ -190,17 +186,13 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var tags = ParseTags();
+        var request = BuildSaveRequest();
 
         // A brand-new post has no prior draft to leave untouched, so its first save — draft or not — always
         // becomes the post's current draft. There's nothing else for it to sensibly point at.
         var result = id is null
-            ? _blogPostService.CreatePost(Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
-                Input.ShowTableOfContents, Input.TableOfContentsExpanded)
-            : _blogPostService.SaveDraft(id.Value, Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
-                Input.ShowTableOfContents, Input.TableOfContentsExpanded);
+            ? _blogPostService.CreatePost(request)
+            : _blogPostService.SaveDraft(id.Value, request);
 
         return RedirectOnSuccess(result);
     }
@@ -394,6 +386,25 @@ public sealed class Edit : PageModel
     private string[] ParseTags()
     {
         return Input.Tags.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    /// <summary>
+    ///     Builds a save request from the current state of <see cref="Input" />, for either creating a post or
+    ///     saving a new draft of one.
+    /// </summary>
+    /// <returns>The built <see cref="BlogPostSaveRequest" />.</returns>
+    private BlogPostSaveRequest BuildSaveRequest()
+    {
+        var content = new BlogPostDraftContent(Input.Title,
+            Input.Body,
+            Input.Excerpt,
+            Input.CategoryId,
+            Input.Visibility,
+            ParseTags(),
+            Input.ShowTableOfContents,
+            Input.TableOfContentsExpanded);
+
+        return new BlogPostSaveRequest(Input.AuthorId, Input.Slug, Input.PublishedAt, Input.EnableComments, content);
     }
 
     /// <summary>
