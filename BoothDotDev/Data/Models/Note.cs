@@ -33,7 +33,7 @@ public sealed class Note
     ///     Gets the date and time when the note was published.
     /// </summary>
     /// <value>A <see cref="DateTimeOffset" /> representing the date and time when the note was published.</value>
-    public DateTimeOffset Published { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset Published { get; internal set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     ///     Gets or sets the date and time when the note was last updated.
@@ -46,4 +46,13 @@ public sealed class Note
     /// </summary>
     /// <value>The visibility of the note.</value>
     public Visibility Visibility { get; set; } = Visibility.Published;
+
+    /// <summary>
+    ///     Gets or sets the date and time the note was trashed.
+    /// </summary>
+    /// <value>
+    ///     A <see cref="DateTimeOffset" /> representing when the note was trashed, or <see langword="null" /> if it
+    ///     isn't trashed.
+    /// </value>
+    public DateTimeOffset? TrashedAt { get; set; }
 }
