@@ -1,4 +1,4 @@
-﻿using System.Xml.Serialization;
+using System.Xml.Serialization;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Data.Models.Rss;
 using BoothDotDev.Services;

@@ -1,4 +1,4 @@
-﻿namespace BoothDotDev.CodeBlockTrivia.Highlighting;
+namespace BoothDotDev.CodeBlockTrivia.Highlighting;
 
 /// <summary>
 ///     Represents a single 1-indexed bound, either from the start or from the end, as parsed from a highlight trivia spec

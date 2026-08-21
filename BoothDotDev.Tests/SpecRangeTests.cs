@@ -1,4 +1,4 @@
-﻿using BoothDotDev.CodeBlockTrivia.Highlighting;
+using BoothDotDev.CodeBlockTrivia.Highlighting;
 
 namespace BoothDotDev.Tests;
 

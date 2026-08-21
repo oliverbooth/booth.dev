@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore.Migrations;
 

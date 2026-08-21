@@ -1,4 +1,4 @@
-﻿using BoothDotDev.Data;
+using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
