@@ -5,13 +5,6 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a blog post.
 /// </summary>
-/// <remarks>
-///     This type holds only the identity and addressing details of a post that never fork per edit. The
-///     post's actual content — title, body, category, visibility, and so on — lives on whichever
-///     <see cref="BlogPostDraft" /> <see cref="CurrentDraftId" /> currently points to. Every save creates a new,
-///     immutable <see cref="BlogPostDraft" /> row; nothing here is ever mutated in place except which draft is
-///     "live".
-/// </remarks>
 public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
 {
     /// <summary>

@@ -3,13 +3,6 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a single immutable snapshot of a blog post's content, taken at the moment it was saved.
 /// </summary>
-/// <remarks>
-///     Rows in this table are never updated after they're inserted — every save, whether "Save as draft" or
-///     "Save changes", creates a new row. A <see cref="BlogPost" /> points at whichever row is currently live via
-///     <see cref="BlogPost.CurrentDraftId" />. Rolling back to an old revision doesn't touch this table either;
-///     it loads an old draft's content back into the editor, and the next ordinary save is what persists it as a
-///     new row.
-/// </remarks>
 public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
 {
     /// <summary>

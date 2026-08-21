@@ -26,6 +26,7 @@ public sealed class AppDbContext : DbContext
         DevLogs = Set<ProjectDevlog>();
         LegacyComments = Set<LegacyComment>();
         MusicItems = Set<MusicItem>();
+        NoteDrafts = Set<NoteDraft>();
         Notes = Set<Note>();
         Projects = Set<Project>();
         SiteConfiguration = Set<SiteConfiguration>();
@@ -95,6 +96,12 @@ public sealed class AppDbContext : DbContext
     public DbSet<MusicItem> MusicItems { get; private set; }
 
     /// <summary>
+    ///     Gets the collection of note drafts in the database.
+    /// </summary>
+    /// <value>The collection of note drafts.</value>
+    public DbSet<NoteDraft> NoteDrafts { get; private set; }
+
+    /// <summary>
     ///     Gets the collection of notes in the database.
     /// </summary>
     /// <value>The collection of notes.</value>
@@ -150,6 +157,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
         modelBuilder.ApplyConfiguration(new MusicItemConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
+        modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());

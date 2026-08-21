@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
@@ -52,6 +53,18 @@ public sealed class Edit : PageModel
     public bool CreatingNew { get; private set; }
 
     /// <summary>
+    ///     Gets the ID of the draft that is currently live (published) for this note.
+    /// </summary>
+    /// <value>The ID of the currently-live draft, or <see langword="null" /> if a new note is being created.</value>
+    public Guid? CurrentDraftId { get; private set; }
+
+    /// <summary>
+    ///     Gets the note's full draft history, newest first, for the revision history panel.
+    /// </summary>
+    /// <value>The note's drafts, ordered newest first.</value>
+    public IReadOnlyList<NoteDraft> DraftHistory { get; private set; } = [];
+
+    /// <summary>
     ///     Gets the ID of the note being edited.
     /// </summary>
     /// <value>The ID of the note being edited, or <see langword="null" /> if a new note is being created.</value>
@@ -64,11 +77,22 @@ public sealed class Edit : PageModel
     public bool IsTrashed { get; private set; }
 
     /// <summary>
+    ///     Gets the ID of the draft currently loaded into the editor.
+    /// </summary>
+    /// <value>The ID of the draft being viewed, or <see langword="null" /> if a new note is being created.</value>
+    public Guid? ViewingDraftId { get; private set; }
+
+    /// <summary>
     ///     Handles the GET request.
     /// </summary>
     /// <param name="id">The ID of the note to edit. If <see langword="null" />, a new note will be created.</param>
+    /// <param name="draftId">
+    ///     The ID of a specific draft to view. If <see langword="null" />, the note's newest draft is loaded — not
+    ///     necessarily the currently-live one, so reopening the editor resumes from wherever editing was last left
+    ///     off rather than silently discarding unpublished draft work.
+    /// </param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    public IActionResult OnGet(Guid? id)
+    public IActionResult OnGet(Guid? id, Guid? draftId)
     {
         if (!id.HasValue)
         {
@@ -82,21 +106,34 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var result = _noteService.GetNoteById(id.Value, includeTrashed: true);
-        if (result.IsFailed)
+        var noteResult = _noteService.GetNoteById(id.Value, includeTrashed: true);
+        if (noteResult.IsFailed)
         {
             return NotFound();
         }
 
-        var note = result.Value;
+        var draftResult = draftId.HasValue
+            ? _noteService.GetDraft(id.Value, draftId.Value)
+            : _noteService.GetNewestDraft(id.Value);
+
+        if (draftResult.IsFailed)
+        {
+            return NotFound();
+        }
+
+        var note = noteResult.Value;
+        var draft = draftResult.Value;
         NoteId = note.Id;
+        CurrentDraftId = note.CurrentDraftId;
+        DraftHistory = _noteService.GetDraftHistory(id.Value);
         IsTrashed = note.TrashedAt is not null;
+        ViewingDraftId = draft.Id;
         Input = new EditModel
         {
-            Title = note.Title,
-            Content = note.Content,
-            FontStyle = note.FontStyle,
-            Visibility = note.Visibility,
+            Title = draft.Title,
+            Content = draft.Content,
+            FontStyle = draft.FontStyle,
+            Visibility = draft.Visibility,
             PublishedAt = note.Published
         };
 
@@ -104,7 +141,7 @@ public sealed class Edit : PageModel
     }
 
     /// <summary>
-    ///     Handles the POST request for saving the note.
+    ///     Handles the POST request for saving and publishing the note, making it the note's current draft.
     /// </summary>
     /// <param name="id">The ID of the note being edited. If <see langword="null" />, a new note is being created.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
@@ -117,9 +154,36 @@ public sealed class Edit : PageModel
             return Page();
         }
 
+        var request = BuildSaveRequest();
         var result = id is null
-            ? _noteService.CreateNote(Input.Title, Input.Content, Input.FontStyle, Input.Visibility, Input.PublishedAt)
-            : _noteService.UpdateNote(id.Value, Input.Title, Input.Content, Input.FontStyle, Input.Visibility, Input.PublishedAt);
+            ? _noteService.CreateNote(request)
+            : _noteService.PublishNote(id.Value, request);
+
+        return RedirectOnSuccess(result);
+    }
+
+    /// <summary>
+    ///     Handles the POST request for saving a draft of the note, without publishing it. The note's
+    ///     currently-live draft, if any, is left unchanged.
+    /// </summary>
+    /// <param name="id">The ID of the note being edited. If <see langword="null" />, a new note is being created.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostSaveDraft(Guid? id)
+    {
+        CreatingNew = id is null;
+
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        var request = BuildSaveRequest();
+
+        // A brand-new note has no prior draft to leave untouched, so its first save — draft or not — always
+        // becomes the note's current draft. There's nothing else for it to sensibly point at.
+        var result = id is null
+            ? _noteService.CreateNote(request)
+            : _noteService.SaveDraft(id.Value, request);
 
         return RedirectOnSuccess(result);
     }
@@ -298,6 +362,17 @@ public sealed class Edit : PageModel
             });
 
         return new { files = uploadedEntries.Concat(missingEntries) };
+    }
+
+    /// <summary>
+    ///     Builds a save request from the current state of <see cref="Input" />, for either creating a note or
+    ///     saving a new draft of one.
+    /// </summary>
+    /// <returns>The built <see cref="NoteSaveRequest" />.</returns>
+    private NoteSaveRequest BuildSaveRequest()
+    {
+        var content = new NoteDraftContent(Input.Title, Input.Content, Input.FontStyle, Input.Visibility);
+        return new NoteSaveRequest(Input.PublishedAt, content);
     }
 
     /// <summary>

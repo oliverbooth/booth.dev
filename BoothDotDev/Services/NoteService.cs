@@ -22,60 +22,81 @@ public sealed class NoteService
     }
 
     /// <summary>
-    ///     Creates a new note.
+    ///     Creates a new note, along with its first draft, which immediately becomes the note's current draft.
     /// </summary>
-    /// <param name="title">The title of the note.</param>
-    /// <param name="content">The content of the note.</param>
-    /// <param name="fontStyle">The font style of the note.</param>
-    /// <param name="visibility">The visibility of the note.</param>
-    /// <param name="publishedAt">The publication date and time of the note.</param>
+    /// <param name="request">The note's parent-level fields and the content of its first draft.</param>
     /// <returns>A <see cref="Result{T}" /> containing the newly-created note.</returns>
-    public Result<Note> CreateNote(string title, string content, FontStyle fontStyle, Visibility visibility, DateTimeOffset publishedAt)
+    public Result<Note> CreateNote(NoteSaveRequest request)
     {
         using var context = _dbContextFactory.CreateDbContext();
 
         var note = new Note
         {
-            Title = title,
-            Content = content,
-            FontStyle = fontStyle,
-            Visibility = visibility,
-            Published = publishedAt.ToUniversalTime()
+            Published = request.PublishedAt.ToUniversalTime()
         };
 
+        var draft = NewDraft(note.Id, request.Content);
+        note.CurrentDraft = draft;
+
         context.Notes.Add(note);
+        context.NoteDrafts.Add(draft);
         context.SaveChanges();
+
         return note;
     }
 
     /// <summary>
-    ///     Updates an existing note.
+    ///     Saves a new draft of an existing note, without publishing it.
     /// </summary>
-    /// <param name="id">The ID of the note to update.</param>
-    /// <param name="title">The title of the note.</param>
-    /// <param name="content">The content of the note.</param>
-    /// <param name="fontStyle">The font style of the note.</param>
-    /// <param name="visibility">The visibility of the note.</param>
-    /// <param name="publishedAt">The publication date and time of the note.</param>
+    /// <param name="id">The ID of the note to save a draft for.</param>
+    /// <param name="request">The note's parent-level fields and the content of the new draft.</param>
     /// <returns>
-    ///     A <see cref="Result{T}" /> containing the updated note, or an error if no note with the specified
+    ///     A <see cref="Result{T}" /> containing the note the draft was saved for, or an error if no note with the specified
     ///     <paramref name="id" /> exists.
     /// </returns>
-    public Result<Note> UpdateNote(Guid id, string title, string content, FontStyle fontStyle, Visibility visibility, DateTimeOffset publishedAt)
+    public Result<Note> SaveDraft(Guid id, NoteSaveRequest request)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var note = context.Notes.Find(id);
 
         if (note is null)
         {
-            return Result.Fail($"The note with ID {id} was not found");
+            return Result.Fail($"Note with ID '{id}' not found.");
         }
 
-        note.Title = title;
-        note.Content = content;
-        note.FontStyle = fontStyle;
-        note.Visibility = visibility;
-        note.Published = publishedAt.ToUniversalTime();
+        var draft = NewDraft(note.Id, request.Content);
+        context.NoteDrafts.Add(draft);
+
+        note.Published = request.PublishedAt.ToUniversalTime();
+
+        context.SaveChanges();
+        return note;
+    }
+
+    /// <summary>
+    ///     Saves a new draft of an existing note and publishes it, making it the note's current draft.
+    /// </summary>
+    /// <param name="id">The ID of the note to publish.</param>
+    /// <param name="request">The note's parent-level fields and the content of the new draft.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated note, or an error if no note with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<Note> PublishNote(Guid id, NoteSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var note = context.Notes.Find(id);
+
+        if (note is null)
+        {
+            return Result.Fail($"Note with ID '{id}' not found.");
+        }
+
+        var draft = NewDraft(note.Id, request.Content);
+        context.NoteDrafts.Add(draft);
+
+        note.Published = request.PublishedAt.ToUniversalTime();
+        note.CurrentDraftId = draft.Id;
         note.Updated = DateTimeOffset.UtcNow;
 
         context.SaveChanges();
@@ -137,10 +158,10 @@ public sealed class NoteService
     public IReadOnlyList<Note> GetAllNotes(Visibility visibility = Visibility.Published)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var notes = context.Notes.Where(n => n.TrashedAt == null);
+        var notes = context.Notes.Include(n => n.CurrentDraft).Where(n => n.TrashedAt == null);
         if (visibility != Visibility.None)
         {
-            notes = notes.Where(n => n.Visibility == visibility);
+            notes = notes.Where(n => n.CurrentDraft!.Visibility == visibility);
         }
 
         return [.. notes.OrderByDescending(n => n.Published)];
@@ -158,7 +179,7 @@ public sealed class NoteService
     public Result<Note> GetNoteById(Guid id, bool includeTrashed = false)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var note = context.Notes.FirstOrDefault(note => note.Id == id);
+        var note = context.Notes.Include(n => n.CurrentDraft).FirstOrDefault(note => note.Id == id);
 
         if (note is null || (note.TrashedAt is not null && !includeTrashed))
         {
@@ -182,7 +203,7 @@ public sealed class NoteService
         return visibility switch
         {
             Visibility.None => context.Notes.Count(n => n.TrashedAt == null),
-            _ => context.Notes.Count(n => n.TrashedAt == null && n.Visibility == visibility)
+            _ => context.Notes.Count(n => n.TrashedAt == null && n.CurrentDraft!.Visibility == visibility)
         };
     }
 
@@ -194,11 +215,11 @@ public sealed class NoteService
     public IReadOnlyList<Note> GetRecentNotes(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var notes = context.Notes.Where(n => n.TrashedAt == null);
+        var notes = context.Notes.Include(n => n.CurrentDraft).Where(n => n.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
         {
-            notes = notes.Where(n => n.Visibility == searchOptions.Visibility);
+            notes = notes.Where(n => n.CurrentDraft!.Visibility == searchOptions.Visibility);
         }
 
         var ordered = searchOptions.SortStrategy switch
@@ -218,6 +239,75 @@ public sealed class NoteService
     public IReadOnlyList<Note> GetTrashedNotes()
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return [.. context.Notes.Where(n => n.TrashedAt != null).OrderByDescending(n => n.TrashedAt)];
+        return
+        [
+            .. context.Notes.Include(n => n.CurrentDraft).Where(n => n.TrashedAt != null).OrderByDescending(n => n.TrashedAt)
+        ];
+    }
+
+    /// <summary>
+    ///     Returns a note's full draft history, newest first.
+    /// </summary>
+    /// <param name="id">The ID of the note whose draft history to return.</param>
+    /// <returns>The note's drafts, newest first.</returns>
+    public IReadOnlyList<NoteDraft> GetDraftHistory(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        return [.. context.NoteDrafts.Where(d => d.NoteId == id).OrderByDescending(d => d.CreatedAt)];
+    }
+
+    /// <summary>
+    ///     Returns a specific draft of the specified note, for viewing without publishing it.
+    /// </summary>
+    /// <param name="id">The ID of the note the draft belongs to.</param>
+    /// <param name="draftId">The ID of the draft to return.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the requested draft, or an error if it doesn't exist or doesn't belong to the
+    ///     specified note.
+    /// </returns>
+    public Result<NoteDraft> GetDraft(Guid id, Guid draftId)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var draft = context.NoteDrafts.Find(draftId);
+
+        if (draft is null || draft.NoteId != id)
+        {
+            return Result.Fail($"Draft '{draftId}' not found for note '{id}'.");
+        }
+
+        return draft;
+    }
+
+    /// <summary>
+    ///     Returns the newest draft of the specified note, which may or may not be the note's current (published) draft.
+    /// </summary>
+    /// <param name="id">The ID of the note whose newest draft to return.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the note's newest draft, or an error if the note has no drafts.</returns>
+    public Result<NoteDraft> GetNewestDraft(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var draft = context.NoteDrafts.Where(d => d.NoteId == id).OrderByDescending(d => d.CreatedAt).FirstOrDefault();
+
+        if (draft is null)
+        {
+            return Result.Fail($"Note '{id}' has no drafts.");
+        }
+
+        return draft;
+    }
+
+    /// <summary>
+    ///     Builds a new, unsaved draft snapshot for the specified note.
+    /// </summary>
+    private static NoteDraft NewDraft(Guid noteId, NoteDraftContent content)
+    {
+        return new NoteDraft
+        {
+            NoteId = noteId,
+            Title = content.Title,
+            Content = content.Content,
+            FontStyle = content.FontStyle,
+            Visibility = content.Visibility
+        };
     }
 }
