@@ -32,6 +32,16 @@ public sealed class UserService
     }
 
     /// <summary>
+    ///     Returns a read-only view of all users.
+    /// </summary>
+    /// <returns>A read-only view of all users, ordered by display name.</returns>
+    public IReadOnlyList<User> GetAllUsers()
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return [.. context.Users.OrderBy(u => u.DisplayName)];
+    }
+
+    /// <summary>
     ///     Finds a user with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the user to find.</param>

@@ -91,7 +91,14 @@ public sealed class Edit : PageModel
         if (!id.HasValue)
         {
             CreatingNew = true;
-            Input = new EditModel { PublishedAt = DateTimeOffset.UtcNow, Visibility = Visibility.Private };
+            Input = new EditModel
+            {
+                AuthorId = ResolveAuthorId(),
+                EnableComments = true,
+                PublishedAt = DateTimeOffset.UtcNow,
+                TableOfContentsExpanded = true,
+                Visibility = Visibility.Private
+            };
             return Page();
         }
 
@@ -118,8 +125,12 @@ public sealed class Edit : PageModel
         ViewingDraftId = draft.Id;
         Input = new EditModel
         {
+            AuthorId = post.AuthorId,
             Body = draft.Body,
+            EnableComments = post.EnableComments,
             Slug = post.Slug,
+            ShowTableOfContents = draft.ShowTableOfContents,
+            TableOfContentsExpanded = draft.TableOfContentsExpanded,
             Title = draft.Title,
             Excerpt = draft.Excerpt,
             Tags = string.Join(", ", draft.Tags),
@@ -147,10 +158,12 @@ public sealed class Edit : PageModel
 
         var tags = ParseTags();
         var result = id is null
-            ? _blogPostService.CreatePost(ResolveAuthorId(), Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags)
-            : _blogPostService.PublishPost(id.Value, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags);
+            ? _blogPostService.CreatePost(Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
+                Input.ShowTableOfContents, Input.TableOfContentsExpanded)
+            : _blogPostService.PublishPost(id.Value, Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
+                Input.ShowTableOfContents, Input.TableOfContentsExpanded);
 
         return RedirectOnSuccess(result);
     }
@@ -175,10 +188,12 @@ public sealed class Edit : PageModel
         // A brand-new post has no prior draft to leave untouched, so its first save — draft or not — always
         // becomes the post's current draft. There's nothing else for it to sensibly point at.
         var result = id is null
-            ? _blogPostService.CreatePost(ResolveAuthorId(), Input.Title, Input.Slug, Input.Body, Input.Excerpt,
-                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags)
-            : _blogPostService.SaveDraft(id.Value, Input.Title, Input.Body, Input.Excerpt, Input.CategoryId,
-                Input.Visibility, tags);
+            ? _blogPostService.CreatePost(Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
+                Input.ShowTableOfContents, Input.TableOfContentsExpanded)
+            : _blogPostService.SaveDraft(id.Value, Input.AuthorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags, Input.EnableComments,
+                Input.ShowTableOfContents, Input.TableOfContentsExpanded);
 
         return RedirectOnSuccess(result);
     }
@@ -376,6 +391,12 @@ public sealed class Edit : PageModel
     public sealed class EditModel
     {
         /// <summary>
+        ///     Gets or sets the ID of the author attributed to the blog post.
+        /// </summary>
+        /// <value>The ID of the post's author.</value>
+        public Guid AuthorId { get; set; }
+
+        /// <summary>
         ///     Gets or sets the body of the blog post.
         /// </summary>
         /// <value>The body of the blog post.</value>
@@ -387,6 +408,12 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The ID of the category associated with the blog post.</value>
         public Guid CategoryId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether comments are enabled for the blog post.
+        /// </summary>
+        /// <value><see langword="true" /> if comments are enabled; otherwise, <see langword="false" />.</value>
+        public bool EnableComments { get; set; }
 
         /// <summary>
         ///     Gets or sets the excerpt of the blog post.
@@ -401,11 +428,25 @@ public sealed class Edit : PageModel
         public DateTimeOffset PublishedAt { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether to show the table of contents for the blog post.
+        /// </summary>
+        /// <value><see langword="true" /> if the table of contents should be shown; otherwise, <see langword="false" />.</value>
+        public bool ShowTableOfContents { get; set; }
+
+        /// <summary>
         ///     Gets or sets the URL slug of the blog post.
         /// </summary>
         /// <value>The URL slug of the blog post.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Slug { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the table of contents is expanded by default.
+        /// </summary>
+        /// <value>
+        ///     <see langword="true" /> if the table of contents is expanded by default; otherwise, <see langword="false" />.
+        /// </value>
+        public bool TableOfContentsExpanded { get; set; }
 
         /// <summary>
         ///     Gets or sets the tags associated with the blog post.

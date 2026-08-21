@@ -7,6 +7,7 @@
 @using X10D.Linq
 @model BoothDotDev.Pages.Admin.Posts.Edit
 @inject BlogPostService BlogPostService
+@inject UserService UserService
 
 @{
     Layout = "_AdminLayout";
@@ -18,6 +19,8 @@
     <p class="crumb"><a asp-page="/Admin/Posts/Index">Posts</a> / Edit</p>
 
     <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
 
         <div class="admin-header">
             <div><h1>@postModel.Title</h1></div>
@@ -75,6 +78,15 @@
                 </select>
             </div>
             <div class="field">
+                <label for="author">Author</label>
+                <select id="author" asp-for="Input.AuthorId">
+                    @foreach (var user in UserService.GetAllUsers())
+                    {
+                        <option value="@user.Id">@user.DisplayName</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
                 <label asp-for="Input.Visibility">Visibility</label>
                 <select asp-for="Input.Visibility">
                     @{
@@ -112,6 +124,24 @@
             <label for="tags">Tags</label>
             <input type="text" id="tags" asp-for="Input.Tags" />
             <p class="hint">Comma separated.</p>
+        </div>
+
+        <div class="field">
+            <label>Settings</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.EnableComments" />
+                    Enable comments
+                </label>
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.ShowTableOfContents" />
+                    Show table of contents
+                </label>
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.TableOfContentsExpanded" />
+                    Table of contents expanded by default
+                </label>
+            </div>
         </div>
 
         <div class="form-actions">
