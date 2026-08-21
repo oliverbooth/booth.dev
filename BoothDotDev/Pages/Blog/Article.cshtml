@@ -55,6 +55,16 @@
             class="meta">@author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</span>
     </div>
 
+    @if (post.ShowTableOfContents)
+    {
+        <details class="callout" data-callout="note" style="margin-top:1.5rem" open="@(post.TableOfContentsExpanded ? "open" : null)">
+            <summary class="callout-title"><i class="ti ti-list"></i> Table of Contents</summary>
+            <div class="callout-body">
+                @Html.Raw(MarkdownRenderingService.RenderTableOfContents(post.Body, Request))
+            </div>
+        </details>
+    }
+
     <div class="prose @category.FontStyle.ToProseClass()" style="margin-top:2.5rem">
         @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.Published))
     </div>
