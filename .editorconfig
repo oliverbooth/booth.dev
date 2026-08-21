@@ -1,6 +1,6 @@
 # All files
 [*]
-guidelines = 130
+ij_visual_guides = 130
 insert_final_newline = true
 
 [*.{ts,js}]
