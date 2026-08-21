@@ -8,19 +8,19 @@ interface PreviewResponse {
 }
 
 /**
- * Initializes the live preview pane for the post authoring interface.
+ * Initializes the live preview pane for an admin content editor (posts, notes, tutorials, challenges, ...). Looks
+ * for a `Preview` page handler on whatever form is present, so it works unmodified on any editor that implements
+ * one.
  */
-export function initLivePreview(): void {
-    const editorRoot = document.querySelector<HTMLElement>('#post-editor');
+export function initContentPreview(): void {
     const form = document.querySelector<HTMLFormElement>('.form-grid');
     const pane = document.querySelector<HTMLElement>('#preview-pane');
     const titleInput = document.querySelector<HTMLInputElement>('#title');
-    const bodyInput = document.querySelector<HTMLTextAreaElement>('#body');
-    const categorySelect = document.querySelector<HTMLSelectElement>('#category');
+    const bodyInput = document.querySelector<HTMLTextAreaElement>('textarea[data-preview-source]');
     const previewTitle = document.querySelector<HTMLElement>('#preview-title');
     const previewBody = document.querySelector<HTMLElement>('#preview-body');
 
-    if (!editorRoot || !form || !pane || !bodyInput || !previewTitle || !previewBody) {
+    if (!form || !pane || !bodyInput || !previewTitle || !previewBody) {
         return;
     }
 
@@ -47,7 +47,14 @@ export function initLivePreview(): void {
             requestPreview();
         }
     });
-    categorySelect?.addEventListener('change', requestPreview);
+
+    // Any <select> in the editor (category, font style, ...) can affect the rendered prose class, so re-fetch on
+    // any of them changing rather than hardcoding which fields matter for which content type.
+    form.addEventListener('change', (event) => {
+        if (event.target instanceof HTMLSelectElement) {
+            requestPreview();
+        }
+    });
 
     document.addEventListener('booth:media-changed', requestPreview);
 
@@ -56,7 +63,7 @@ export function initLivePreview(): void {
 
 /**
  * Posts the form to the Preview handler and applies the result to the preview pane.
- * @param form The post edit form.
+ * @param form The content edit form.
  * @param previewBody The element to render the previewed body into.
  * @param signal An abort signal that fires if a newer preview request supersedes this one — without it, a slower older request resolving
  * after a newer one would stomp the newer, correct preview.

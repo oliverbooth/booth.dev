@@ -1,0 +1,106 @@
+@page "/admin/notes/edit/{id:guid?}"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model BoothDotDev.Pages.Admin.Notes.Edit
+
+@{
+    Layout = "_AdminLayout";
+    var noteModel = Model.Input;
+}
+
+<div class="admin-page admin-page--split">
+
+    <p class="crumb"><a asp-page="/Admin/Notes/Index">Notes</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This note is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the public site and every listing. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New note" : noteModel.Title)</h1></div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Save</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title" />
+        </div>
+
+        <div class="field">
+            <label for="content">Content (markdown supported)</label>
+            <textarea id="content" rows="16" asp-for="Input.Content" data-markdown data-preview-source></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Input.Visibility">Visibility</label>
+                <select asp-for="Input.Visibility">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label asp-for="Input.FontStyle">Font style</label>
+                <select asp-for="Input.FontStyle">
+                    @foreach (var fontStyle in Enum.GetValues<FontStyle>())
+                    {
+                        <option value="@fontStyle">@fontStyle</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="date">Published date</label>
+                <div class="input-with-button">
+                    <input type="datetime-local" id="date" asp-for="Input.PublishedAt">
+                    <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                        <i class="ti ti-clock"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Save</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
+        </div>
+
+    </form>
+
+    <aside class="admin-preview" id="preview-pane">
+        <span class="eyebrow">Preview</span>
+        <h1 id="preview-title">@noteModel.Title</h1>
+        <div class="prose @noteModel.FontStyle.ToProseClass()" id="preview-body"></div>
+    </aside>
+
+</div>

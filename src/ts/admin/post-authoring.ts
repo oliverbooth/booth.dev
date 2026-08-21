@@ -1,5 +1,4 @@
 import {initMarkdownEditors} from './markdown-editor.ts';
-import {initLivePreview} from './post-preview.ts';
 import {initMediaManager} from './post-media.ts';
 
 /**
@@ -9,7 +8,6 @@ export function initPostAuthoring(): void {
     initMarkdownEditors();
     initSlugGenerator();
     initSetNowButton();
-    initLivePreview();
     initMediaManager();
 }
 
