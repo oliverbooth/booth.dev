@@ -22,7 +22,7 @@
         <div class="admin-header">
             <div><h1>@postModel.Title</h1></div>
             <div style="display:flex;gap:8px">
-                <button type="submit" class="btn btn-primary" asp-page-handler="Save">Save changes</button>
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
             </div>
         </div>
 
@@ -109,8 +109,8 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary" asp-page-handler="Save">Save changes</button>
-            <button type="submit" class="btn" asp-page-handler="SaveDraft">Save as draft</button>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            <button type="submit" class="btn" asp-page-handler="SaveDraft"><i class="ti ti-device-floppy"></i> Save as draft</button>
             <button class="btn icon-btn danger" aria-label="Delete post"><i class="ti ti-trash"></i>Delete</button>
         </div>
 
