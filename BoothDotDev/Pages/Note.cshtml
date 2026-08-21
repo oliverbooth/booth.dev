@@ -18,7 +18,13 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+        }
+    </div>
 
     <span class="eyebrow">Note</span>
     <h1 style="margin:8px 0 12px;font-size:30px">@note.Title</h1>

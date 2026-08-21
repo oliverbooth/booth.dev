@@ -25,7 +25,13 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+        }
+    </div>
 
     @if (post.Visibility == Visibility.Private)
     {
