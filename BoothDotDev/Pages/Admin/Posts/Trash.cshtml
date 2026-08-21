@@ -1,0 +1,103 @@
+@page "/admin/posts/trash"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using BoothDotDev.Services
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Posts.Trash
+@inject BlogPostService BlogPostService
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Posts/Index">Posts</a> / Trash</p>
+
+    <div class="admin-header">
+        <div>
+            <h1>Trash</h1>
+            <p>Trashed posts are hidden from the public site until restored</p>
+        </div>
+        <a asp-page="/Admin/Posts/Index" class="btn btn-primary"><i class="ti ti-arrow-left" style="font-size:15px"></i>Back to posts</a>
+    </div>
+
+    @if (Model.BlogPosts.Count == 0)
+    {
+        <p class="table-empty-state">Trash is empty</p>
+    }
+    else
+    {
+        <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search trash&hellip;">
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Visibility</th>
+                <th>Trashed</th>
+                <th style="text-align:right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var post in Model.BlogPosts)
+            {
+                var badgeClass = post.Visibility switch
+                {
+                    Visibility.Published => "published",
+                    Visibility.Private => "private",
+                    _ => "unlisted"
+                };
+
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@post.Title</div>
+                        <div class="row-sub" data-search>/blog/@post.Slug</div>
+                    </td>
+                    <td>@BlogPostService.GetCategory(post.CategoryId)?.Name</td>
+                    <td><span class="badge badge-@badgeClass">
+                        @switch (post.Visibility)
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span></td>
+                    <td><abbr title="@post.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@post.TrashedAt!.Value.Humanize()</abbr></td>
+                    <td>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                            <form method="post" asp-page-handler="Restore" asp-route-id="@post.Id">
+                                <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="5" class="table-empty-state">No posts found</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    }
+
+</div>
