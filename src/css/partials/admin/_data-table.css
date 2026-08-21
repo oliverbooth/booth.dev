@@ -44,6 +44,12 @@
     color: var(--text-muted);
     margin-top: 2px;
   }
+
+  .table-empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 24px 14px;
+  }
 }
 
 .row-actions {
@@ -102,6 +108,10 @@
     tr {
       border-bottom: 0.5px solid var(--border);
       padding: 10px 0;
+
+      &[hidden] {
+        display: none;
+      }
     }
 
     td {

@@ -20,10 +20,11 @@
         <a asp-page="/Admin/Posts/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New post</a>
     </div>
 
+    <div data-search-scope>
     <div class="table-toolbar">
         <div class="search-input">
             <i class="ti ti-search"></i>
-            <input type="text" placeholder="Search posts&hellip;">
+            <input type="text" id="search" placeholder="Search posts&hellip;">
         </div>
         @*<div class="filter-row" style="margin:0">
             <span class="pill active">All</span>
@@ -52,11 +53,11 @@
                 Visibility.Private => "private",
                 _ => "unlisted"
             };
-            
+
             <tr>
                 <td>
-                    <div class="row-title">@post.Title</div>
-                    <div class="row-sub">/blog/@post.Slug</div>
+                    <div class="row-title" data-search>@post.Title</div>
+                    <div class="row-sub" data-search>/blog/@post.Slug</div>
                 </td>
                 <td>@BlogPostService.GetCategory(post.CategoryId)?.Name</td>
                 <td><span class="badge badge-@badgeClass">
@@ -88,7 +89,11 @@
                 </td>
             </tr>
         }
+        <tr data-search-empty hidden>
+            <td colspan="5" class="table-empty-state">No posts found</td>
+        </tr>
         </tbody>
     </table>
+    </div>
 
 </div>
