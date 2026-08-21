@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
+using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using FluentResults;
 using Microsoft.AspNetCore.Authorization;
@@ -15,20 +16,26 @@ using Note = Data.Models.Note;
 ///     Represents the page model for editing a note in the admin section.
 /// </summary>
 [Authorize(Policy = "Admin")]
+[RequestSizeLimit(CdnMediaService.MaxUploadSizeBytes)]
 public sealed class Edit : PageModel
 {
+    private const string Area = "note";
+
     private readonly NoteService _noteService;
     private readonly MarkdownRenderingService _markdownRenderingService;
+    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
     /// </summary>
     /// <param name="noteService">The note service.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
-    public Edit(NoteService noteService, MarkdownRenderingService markdownRenderingService)
+    /// <param name="cdnMediaService">The CDN media service.</param>
+    public Edit(NoteService noteService, MarkdownRenderingService markdownRenderingService, CdnMediaService cdnMediaService)
     {
         _noteService = noteService;
         _markdownRenderingService = markdownRenderingService;
+        _cdnMediaService = cdnMediaService;
     }
 
     /// <summary>
@@ -133,7 +140,7 @@ public sealed class Edit : PageModel
             return BadRequest(ModelState);
         }
 
-        var html = _markdownRenderingService.Render(Input.Content, id ?? Guid.Empty, Input.PublishedAt);
+        var html = _markdownRenderingService.Render(Input.Content, id ?? Guid.Empty, Input.PublishedAt, Area);
         var proseClass = Input.FontStyle.ToProseClass();
 
         return new JsonResult(new { html, proseClass });
@@ -167,6 +174,130 @@ public sealed class Edit : PageModel
         }
 
         return RedirectOnSuccess(_noteService.RestoreNote(noteId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for listing the files currently attached to the note via the CDN.
+    /// </summary>
+    /// <param name="id">The ID of the note being edited. If <see langword="null" />, a new note is being created.</param>
+    /// <returns>A JSON payload of the note's attached media files.</returns>
+    public IActionResult OnPostListMedia(Guid? id)
+    {
+        if (id is not { } noteId)
+        {
+            return BadRequest("Save the note before managing media.");
+        }
+
+        return new JsonResult(MediaListPayload(noteId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for uploading a new file to the note's CDN media folder.
+    /// </summary>
+    /// <param name="id">The ID of the note being edited. If <see langword="null" />, a new note is being created.</param>
+    /// <param name="file">The uploaded file.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
+    /// <returns>A JSON payload of the note's attached media files, including the newly-uploaded one.</returns>
+    public async Task<IActionResult> OnPostUploadMediaAsync(Guid? id, IFormFile? file, CancellationToken cancellationToken)
+    {
+        if (id is not { } noteId)
+        {
+            return BadRequest("Save the note before managing media.");
+        }
+
+        if (file is null)
+        {
+            return BadRequest("No file was uploaded.");
+        }
+
+        var result = await _cdnMediaService.UploadAsync(noteId, Input.PublishedAt, file, Area, cancellationToken);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(e => e.Message));
+        }
+
+        return new JsonResult(MediaListPayload(noteId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for deleting a file from the note's CDN media folder.
+    /// </summary>
+    /// <param name="id">The ID of the note being edited. If <see langword="null" />, a new note is being created.</param>
+    /// <param name="fileName">The bare filename to delete.</param>
+    /// <returns>A JSON payload of the note's remaining attached media files.</returns>
+    public IActionResult OnPostDeleteMedia(Guid? id, string fileName)
+    {
+        if (id is not { } noteId)
+        {
+            return BadRequest("Save the note before managing media.");
+        }
+
+        var result = _cdnMediaService.DeleteFile(noteId, Input.PublishedAt, fileName, Area);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(e => e.Message));
+        }
+
+        return new JsonResult(MediaListPayload(noteId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for renaming a file in the note's CDN media folder.
+    /// </summary>
+    /// <param name="id">The ID of the note being edited. If <see langword="null" />, a new note is being created.</param>
+    /// <param name="fileName">The current bare filename.</param>
+    /// <param name="newFileName">The new bare filename. Its extension must match the current one.</param>
+    /// <returns>A JSON payload of the note's attached media files, reflecting the rename.</returns>
+    public IActionResult OnPostRenameMedia(Guid? id, string fileName, string newFileName)
+    {
+        if (id is not { } noteId)
+        {
+            return BadRequest("Save the note before managing media.");
+        }
+
+        var result = _cdnMediaService.RenameFile(noteId, Input.PublishedAt, fileName, newFileName, Area);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors.Select(e => e.Message));
+        }
+
+        return new JsonResult(MediaListPayload(noteId));
+    }
+
+    /// <summary>
+    ///     Builds the JSON payload describing a note's attached media files, in the shape the media manager's
+    ///     <c>fetch</c> calls expect.
+    /// </summary>
+    /// <param name="id">The note's ID.</param>
+    /// <returns>An anonymous object suitable for a <see cref="JsonResult" />.</returns>
+    private object MediaListPayload(Guid id)
+    {
+        var uploaded = _cdnMediaService.ListFiles(id, Input.PublishedAt, Area);
+        var uploadedNames = uploaded.Select(f => f.FileName).ToHashSet(StringComparer.Ordinal);
+
+        var uploadedEntries = uploaded.Select(f => new
+        {
+            f.FileName,
+            Url = (string?)f.Url,
+            Kind = f.Kind.ToString().ToLowerInvariant(),
+            SizeBytes = (long?)f.SizeBytes,
+            ModifiedAt = (DateTimeOffset?)f.ModifiedAt,
+            Missing = false
+        });
+
+        var missingEntries = _markdownRenderingService.FindMediaReferences(Input.Content)
+            .Where(name => !uploadedNames.Contains(name))
+            .Select(name => new
+            {
+                FileName = name,
+                Url = (string?)null,
+                Kind = CdnMediaResolver.ResolveMediaKind(name).ToString().ToLowerInvariant(),
+                SizeBytes = (long?)null,
+                ModifiedAt = (DateTimeOffset?)null,
+                Missing = true
+            });
+
+        return new { files = uploadedEntries.Concat(missingEntries) };
     }
 
     /// <summary>

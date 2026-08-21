@@ -78,6 +78,7 @@ public sealed class MarkdownRenderingService
             BlogPost => "blog",
             TutorialArticle => "tutorial",
             ProjectDevlog => "devlog",
+            Note => "note",
             _ => "content"
         };
 

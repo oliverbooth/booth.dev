@@ -23,13 +23,15 @@ const KIND_ICONS: Record<MediaKind, string> = {
 const REFRESH_DEBOUNCE_MS = 400;
 
 /**
- * Initializes the media manager beneath the article's edit form.
+ * Initializes the media manager beneath an admin content editor's form (posts, notes, tutorials,
+ * challenges, ...). Self-gates on the presence of its expected markup, so it's a no-op on editors
+ * that don't have a media manager section.
  */
 export function initMediaManager(): void {
-    const section = document.querySelector<HTMLElement>('#post-media');
+    const section = document.querySelector<HTMLElement>('#content-media');
     const form = document.querySelector<HTMLFormElement>('.form-grid');
     const list = document.querySelector<HTMLUListElement>('#media-list');
-    const bodyInput = document.querySelector<HTMLTextAreaElement>('#body');
+    const bodyInput = document.querySelector<HTMLTextAreaElement>('textarea[data-preview-source]');
     const fileInput = document.querySelector<HTMLInputElement>('#media-file-input');
     const uploadButton = document.querySelector<HTMLButtonElement>('#media-upload-btn');
     const errorBox = document.querySelector<HTMLElement>('#media-error');

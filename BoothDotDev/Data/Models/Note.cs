@@ -3,7 +3,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a note.
 /// </summary>
-public sealed class Note
+public sealed class Note : IMarkdownBody
 {
     /// <summary>
     ///     Gets the unique identifier for the note.
@@ -22,6 +22,12 @@ public sealed class Note
     /// </summary>
     /// <value>The content of the note.</value>
     public string Content { get; set; } = string.Empty;
+
+    /// <inheritdoc />
+    string IMarkdownBody.Body
+    {
+        get => Content;
+    }
 
     /// <summary>
     ///     Gets or sets the font style of the note.

@@ -6,6 +6,7 @@ import {initAltTextPopovers} from './images.ts';
 import {initSearch} from './search.ts';
 import {initConfirmForms} from './confirm.ts';
 import {initContentPreview} from './admin/content-preview.ts';
+import {initMediaManager} from './admin/media-manager.ts';
 
 (() => {
     initAltTextPopovers();
@@ -16,4 +17,5 @@ import {initContentPreview} from './admin/content-preview.ts';
     initSearch();
     initConfirmForms();
     initContentPreview();
+    initMediaManager();
 })();

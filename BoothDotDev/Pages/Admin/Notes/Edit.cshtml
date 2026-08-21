@@ -95,6 +95,35 @@
             }
         </div>
 
+        <section class="admin-media" id="content-media">
+            <div class="admin-header">
+                <div><h2>Media</h2></div>
+                @if (!Model.CreatingNew)
+                {
+                    <div style="display:flex;gap:8px">
+                        <input type="file" id="media-file-input" hidden>
+                        <button type="button" class="btn btn-primary" id="media-upload-btn">
+                            <i class="ti ti-upload"></i>Upload file
+                        </button>
+                    </div>
+                }
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this note before attaching media.</p>
+            }
+            else
+            {
+                <p class="hint">
+                    Reference an uploaded file from the content above by its filename, e.g. <code>![alt text](filename.png)</code>.
+                    Images have their EXIF metadata stripped automatically on upload.
+                </p>
+                <p class="hint" id="media-error" hidden></p>
+                <ul class="media-list" id="media-list"></ul>
+            }
+        </section>
+
     </form>
 
     <aside class="admin-preview" id="preview-pane">

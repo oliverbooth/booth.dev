@@ -28,6 +28,6 @@
     </div>
 
     <div class="prose @note.FontStyle.ToProseClass()" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(note.Content, note.Id, note.Published))
+        @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.Published))
     </div>
 </div>

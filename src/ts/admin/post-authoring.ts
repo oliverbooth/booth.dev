@@ -1,5 +1,4 @@
 import {initMarkdownEditors} from './markdown-editor.ts';
-import {initMediaManager} from './post-media.ts';
 
 /**
  * Initializes the post authoring interface.
@@ -8,7 +7,6 @@ export function initPostAuthoring(): void {
     initMarkdownEditors();
     initSlugGenerator();
     initSetNowButton();
-    initMediaManager();
 }
 
 /**
