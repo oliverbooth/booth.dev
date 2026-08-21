@@ -22,6 +22,12 @@
         <div class="admin-header">
             <div><h1>@postModel.Title</h1></div>
             <div style="display:flex;gap:8px">
+                @if (!Model.CreatingNew)
+                {
+                    <a asp-page="/Blog/Article" asp-route-slug="@postModel.Slug" target="_blank" class="btn">
+                        <i class="ti ti-eye"></i> View post
+                    </a>
+                }
                 <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
             </div>
         </div>
