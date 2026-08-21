@@ -58,6 +58,9 @@ public sealed class BlogPostService : BackgroundService
     /// <param name="visibility">The visibility of the post.</param>
     /// <param name="publishedAt">The publication date and time of the post.</param>
     /// <param name="tags">The tags associated with the post.</param>
+    /// <param name="enableComments">A value indicating whether comments are enabled for the post.</param>
+    /// <param name="showTableOfContents">A value indicating whether to show the table of contents for the post.</param>
+    /// <param name="tableOfContentsExpanded">A value indicating whether the table of contents is expanded by default.</param>
     /// <returns>A <see cref="Result{T}" /> containing the newly-created blog post.</returns>
     public Result<BlogPost> CreatePost(Guid authorId,
         string title,
