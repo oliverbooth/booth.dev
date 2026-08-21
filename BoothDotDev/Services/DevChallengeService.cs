@@ -52,7 +52,7 @@ public sealed class DevChallengeService
     public IReadOnlyList<DevChallenge> GetDevChallenges(Visibility visibility)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<DevChallenge> challenges = context.DevChallenges.OrderBy(c => c.Date);
+        IQueryable<DevChallenge> challenges = context.DevChallenges.OrderBy(c => c.PublishedAt);
 
         if (visibility != Visibility.None)
         {
@@ -77,7 +77,7 @@ public sealed class DevChallengeService
             challenges = challenges.Where(c => c.Visibility == searchOptions.Visibility);
         }
 
-        var ordered = challenges.OrderByDescending(c => c.Date);
+        var ordered = challenges.OrderByDescending(c => c.PublishedAt);
         return [.. ordered.Take(searchOptions.Count)];
     }
 

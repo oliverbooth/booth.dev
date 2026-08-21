@@ -8,12 +8,6 @@ namespace BoothDotDev.Data.Models;
 public sealed class DevChallenge
 {
     /// <summary>
-    ///     Gets the date of the challenge.
-    /// </summary>
-    /// <value>The date of the challenge.</value>
-    public DateTimeOffset Date { get; private set; }
-
-    /// <summary>
     ///     Gets or sets the description of the challenge.
     /// </summary>
     /// <value>The description of the challenge.</value>
@@ -36,6 +30,12 @@ public sealed class DevChallenge
     /// </summary>
     /// <value>The password for the challenge.</value>
     public string? Password { get; set; }
+
+    /// <summary>
+    ///     Gets the date the challenge was published.
+    /// </summary>
+    /// <value>The date the challenge was published.</value>
+    public DateTimeOffset PublishedAt { get; private set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the solution should be shown.

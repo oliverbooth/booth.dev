@@ -18,7 +18,7 @@ internal sealed class DevChallengeConfiguration : IEntityTypeConfiguration<DevCh
 
         builder.Property(e => e.Id).HasConversion<ShortGuidToGuidConverter>().IsRequired();
         builder.Property(e => e.OldId).IsRequired(false);
-        builder.Property(e => e.Date).IsRequired();
+        builder.Property(e => e.PublishedAt).IsRequired();
         builder.Property(e => e.Title).IsRequired();
         builder.Property(e => e.Description).IsRequired();
         builder.Property(e => e.Solution).IsRequired(false);

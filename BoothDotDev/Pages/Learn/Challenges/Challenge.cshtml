@@ -23,7 +23,7 @@
 
     <div class="byline">
         <span class="meta">
-            Published @challenge.Date.ToShortString()
+            Published @challenge.PublishedAt.ToShortString()
             &middot;
             @if (hasSolution)
             {
@@ -37,7 +37,7 @@
     </div>
 
     <div class="prose" style="margin-top:2rem">
-        @Html.Raw(MarkdownRenderingService.Render(challenge.Description, challenge.Id, challenge.Date, "challenge"))
+        @Html.Raw(MarkdownRenderingService.Render(challenge.Description, challenge.Id, challenge.PublishedAt, "challenge"))
     </div>
 
     @if (hasSolution)
@@ -45,7 +45,7 @@
         <details class="callout" data-callout="success" style="margin-top:2rem">
             <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
             <div class="callout-body">
-                @Html.Raw(MarkdownRenderingService.Render(challenge.Solution!, challenge.Id, challenge.Date, "challenge"))
+                @Html.Raw(MarkdownRenderingService.Render(challenge.Solution!, challenge.Id, challenge.PublishedAt, "challenge"))
             </div>
         </details>
     }
