@@ -22,6 +22,16 @@
 
         <div asp-validation-summary="All"></div>
 
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This post is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the public site and every listing. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
         <div class="admin-header">
             <div><h1>@postModel.Title</h1></div>
             <div style="display:flex;gap:8px">
@@ -147,7 +157,21 @@
         <div class="form-actions">
             <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
             <button type="submit" class="btn" asp-page-handler="SaveDraft"><i class="ti ti-device-floppy"></i> Save as draft</button>
-            <button class="btn icon-btn danger" aria-label="Delete post"><i class="ti ti-trash"></i>Delete</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
         </div>
 
         <section class="admin-media" id="post-media">

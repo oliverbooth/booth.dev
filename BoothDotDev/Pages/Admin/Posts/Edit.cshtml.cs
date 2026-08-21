@@ -71,6 +71,12 @@ public sealed class Edit : PageModel
     public Guid? PostId { get; private set; }
 
     /// <summary>
+    ///     Gets a value indicating whether the post being edited is trashed.
+    /// </summary>
+    /// <value><see langword="true" /> if the post is trashed; otherwise, <see langword="false" />.</value>
+    public bool IsTrashed { get; private set; }
+
+    /// <summary>
     ///     Gets the ID of the draft currently loaded into the editor.
     /// </summary>
     /// <value>The ID of the draft being viewed, or <see langword="null" /> if a new post is being created.</value>
@@ -102,7 +108,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var postResult = _blogPostService.GetPost(id.Value);
+        var postResult = _blogPostService.GetPost(id.Value, includeTrashed: true);
         if (postResult.IsFailed)
         {
             return NotFound();
@@ -122,6 +128,7 @@ public sealed class Edit : PageModel
         PostId = post.Id;
         CurrentDraftId = post.CurrentDraftId;
         DraftHistory = _blogPostService.GetDraftHistory(id.Value);
+        IsTrashed = post.TrashedAt is not null;
         ViewingDraftId = draft.Id;
         Input = new EditModel
         {
@@ -196,6 +203,36 @@ public sealed class Edit : PageModel
                 Input.ShowTableOfContents, Input.TableOfContentsExpanded);
 
         return RedirectOnSuccess(result);
+    }
+
+    /// <summary>
+    ///     Handles the POST request for moving the blog post to the trash.
+    /// </summary>
+    /// <param name="id">The ID of the post to trash.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostDelete(Guid? id)
+    {
+        if (id is not { } postId)
+        {
+            return BadRequest("Save the post before it can be trashed.");
+        }
+
+        return RedirectOnSuccess(_blogPostService.TrashPost(postId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for restoring the blog post from the trash.
+    /// </summary>
+    /// <param name="id">The ID of the post to restore.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostRestore(Guid? id)
+    {
+        if (id is not { } postId)
+        {
+            return BadRequest("Save the post before it can be restored.");
+        }
+
+        return RedirectOnSuccess(_blogPostService.RestorePost(postId));
     }
 
     /// <summary>

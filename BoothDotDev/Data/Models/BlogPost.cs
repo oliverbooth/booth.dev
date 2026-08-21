@@ -148,6 +148,17 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     }
 
     /// <summary>
+    ///     Gets or sets the date and time the post was moved to the trash.
+    /// </summary>
+    /// <value>The date and time the post was trashed, or <see langword="null" /> if the post is not trashed.</value>
+    /// <remarks>
+    ///     A trashed post is hidden from every listing and 404s on its public URL regardless of
+    ///     <see cref="Visibility" />, but is otherwise untouched and can be restored. It is not the same as
+    ///     <see cref="Visibility.Private" />, which the author can still browse to directly.
+    /// </remarks>
+    public DateTimeOffset? TrashedAt { get; set; }
+
+    /// <summary>
     ///     Gets or sets the date and time the post was last updated, i.e. the last time <see cref="CurrentDraftId" />
     ///     changed.
     /// </summary>

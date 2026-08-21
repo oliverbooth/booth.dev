@@ -23,10 +23,12 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.RedirectUrl).HasConversion<UriToStringConverter>().HasMaxLength(255).IsRequired(false);
         builder.Property(e => e.EnableComments).IsRequired();
         builder.Property(e => e.CurrentDraftId).IsRequired(false);
+        builder.Property(e => e.TrashedAt).IsRequired(false);
 
         builder.HasOne<User>().WithMany().HasForeignKey(e => e.AuthorId);
         builder.HasOne(e => e.CurrentDraft).WithMany().HasForeignKey(e => e.CurrentDraftId);
 
         builder.HasIndex(e => e.Slug).IsUnique();
+        builder.HasIndex(e => e.TrashedAt);
     }
 }

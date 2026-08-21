@@ -211,6 +211,57 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Moves a blog post to the trash. It's excluded from every listing and 404s on its public URL, but
+    ///     nothing about it is otherwise touched, and it can be restored with <see cref="RestorePost" />.
+    /// </summary>
+    /// <param name="id">The ID of the post to trash.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the trashed post, or an error if no post with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<BlogPost> TrashPost(Guid id)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = context.BlogPosts.Find(id);
+
+        if (post is null)
+        {
+            return Result.Fail($"Blog post with ID '{id}' not found.");
+        }
+
+        post.TrashedAt = DateTimeOffset.UtcNow;
+        context.SaveChanges();
+
+        _postCache[post.Id] = post;
+        return post;
+    }
+
+    /// <summary>
+    ///     Restores a trashed blog post, making it visible in listings and on its public URL again.
+    /// </summary>
+    /// <param name="id">The ID of the post to restore.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the restored post, or an error if no post with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<BlogPost> RestorePost(Guid id)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = context.BlogPosts.Find(id);
+
+        if (post is null)
+        {
+            return Result.Fail($"Blog post with ID '{id}' not found.");
+        }
+
+        post.TrashedAt = null;
+        context.SaveChanges();
+
+        _postCache[post.Id] = post;
+        return post;
+    }
+
+    /// <summary>
     ///     Returns a collection of all blog posts.
     /// </summary>
     /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>
@@ -219,7 +270,7 @@ public sealed class BlogPostService : BackgroundService
     public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var posts = context.BlogPosts.Include(p => p.CurrentDraft).AsQueryable();
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => p.TrashedAt == null);
         if (visibility != Visibility.None)
         {
             posts = posts.Where(p => p.CurrentDraft!.Visibility == visibility);
@@ -261,7 +312,7 @@ public sealed class BlogPostService : BackgroundService
     public int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var posts = context.BlogPosts.Include(p => p.CurrentDraft).AsQueryable();
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => p.TrashedAt == null);
 
         if (tags is { Length: > 0 })
         {
@@ -357,7 +408,7 @@ public sealed class BlogPostService : BackgroundService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Include(p => p.CurrentDraft)
-            .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect)
+            .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
             .OrderBy(post => post.Published)
             .FirstOrDefault(post => post.Published > blogPost.Published);
     }
@@ -419,7 +470,7 @@ public sealed class BlogPostService : BackgroundService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Include(p => p.CurrentDraft)
-            .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect)
+            .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < blogPost.Published);
     }
@@ -428,14 +479,19 @@ public sealed class BlogPostService : BackgroundService
     ///     Returns the blog post with the specified key.
     /// </summary>
     /// <param name="key">The ID or slug of the blog post to return.</param>
+    /// <param name="includeTrashed">
+    ///     <see langword="true" /> to return the post even if it's trashed; otherwise, <see langword="false" />.
+    ///     Trashed posts are excluded by default since this lookup mostly backs public-facing pages — the admin
+    ///     editor is the one legitimate caller that needs to keep working for a trashed post, so it opts in.
+    /// </param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the blog post with the specified ID or slug, or an error if the blog post is not
     ///     found.
     /// </returns>
-    public Result<BlogPost> GetPost(BlogPostKey key)
+    public Result<BlogPost> GetPost(BlogPostKey key, bool includeTrashed = false)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var posts = context.BlogPosts.Include(p => p.CurrentDraft);
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => includeTrashed || p.TrashedAt == null);
         var post = key switch
         {
             Guid guid => posts.FirstOrDefault(p => p.Id == guid),
@@ -469,7 +525,8 @@ public sealed class BlogPostService : BackgroundService
             .FirstOrDefault(post => post.Published.Year == publishDate.Year &&
                                      post.Published.Month == publishDate.Month &&
                                      post.Published.Day == publishDate.Day &&
-                                     post.Slug == slug);
+                                     post.Slug == slug &&
+                                     post.TrashedAt == null);
 
         if (post is null)
         {
@@ -488,7 +545,7 @@ public sealed class BlogPostService : BackgroundService
     public IReadOnlyList<BlogPost> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => !p.IsRedirect);
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => !p.IsRedirect && p.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
         {
@@ -513,6 +570,21 @@ public sealed class BlogPostService : BackgroundService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return [.. context.BlogPostCategories.Where(category => category.ParentCategory == null)];
+    }
+
+    /// <summary>
+    ///     Returns every trashed blog post, newest-trashed first.
+    /// </summary>
+    /// <returns>A read-only list of trashed blog posts.</returns>
+    public IReadOnlyList<BlogPost> GetTrashedPosts()
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var posts = context.BlogPosts
+            .Include(p => p.CurrentDraft)
+            .Where(p => p.TrashedAt != null)
+            .OrderByDescending(p => p.TrashedAt);
+
+        return [.. posts.AsEnumerable().Select(CacheAuthor)];
     }
 
     /// <inheritdoc />
