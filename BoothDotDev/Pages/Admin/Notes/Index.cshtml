@@ -1,6 +1,8 @@
 @page "/admin/notes"
 @using System.Diagnostics
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using DEDrake
 @using Humanizer
 @model BoothDotDev.Pages.Admin.Notes.Index
 
@@ -76,6 +78,7 @@
                 <td>
                     <div class="row-actions">
                         <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                        <a href="@(((ShortGuid)note.Id).ToRoute("note"))" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
                         <form method="post" asp-page-handler="Delete" asp-route-id="@note.Id">
                             <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
                         </form>

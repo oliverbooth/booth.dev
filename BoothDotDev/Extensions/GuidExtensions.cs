@@ -40,8 +40,8 @@ public static class GuidExtensions
         ///     Builds a raw URL for a route containing a <see cref="ShortGuid" /> segment, bypassing tag-helper link
         ///     generation.
         /// </summary>
-        /// <param name="basePath">The base path of the route.</param>
-        /// <returns>A raw URL for the route.</returns>
+        /// <param name="basePath">The base path of the route, with or without a leading slash.</param>
+        /// <returns>An absolute (site-root-relative) URL for the route.</returns>
         /// <remarks>
         ///     This is necessary because <c>RouteOptions.LowercaseUrls</c> lowercases generated URLs
         ///     indiscriminately, which silently corrupts case-sensitive ShortGuid values (base64 is case-sensitive).
@@ -49,7 +49,7 @@ public static class GuidExtensions
         /// </remarks>
         public string ToRoute(string basePath)
         {
-            return $"{basePath}/{id}";
+            return $"/{basePath.TrimStart('/')}/{id}";
         }
     }
 }

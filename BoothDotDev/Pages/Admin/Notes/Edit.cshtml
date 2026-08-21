@@ -1,6 +1,7 @@
 @page "/admin/notes/edit/{id:guid?}"
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using DEDrake
 @using Humanizer
 @model BoothDotDev.Pages.Admin.Notes.Edit
 
@@ -30,6 +31,12 @@
         <div class="admin-header">
             <div><h1>@(Model.CreatingNew ? "New note" : noteModel.Title)</h1></div>
             <div style="display:flex;gap:8px">
+                @if (!Model.CreatingNew)
+                {
+                    <a href="@(((ShortGuid)Model.NoteId!.Value).ToRoute("note"))" target="_blank" class="btn">
+                        <i class="ti ti-eye"></i> View note
+                    </a>
+                }
                 <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
             </div>
         </div>
