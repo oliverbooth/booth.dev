@@ -8,13 +8,16 @@ using X10D.Hosting.DependencyInjection;
 
 var workingDir = AppContext.BaseDirectory;
 
-Directory.CreateDirectory(Path.Combine(workingDir, "data"));
-Directory.CreateDirectory(Path.Combine(workingDir, "logs"));
-Directory.CreateDirectory(Path.Combine(workingDir, "cdn"));
+var dataDir = Path.Combine(workingDir, "data");
+var logsDir = Path.Combine(workingDir, "logs");
+var cdnDir = Path.Combine(workingDir, "cdn");
+Directory.CreateDirectory(dataDir);
+Directory.CreateDirectory(logsDir);
+Directory.CreateDirectory(cdnDir);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File(Path.Combine(workingDir, "logs", "latest.log"), rollingInterval: RollingInterval.Day)
+    .WriteTo.File(Path.Combine(logsDir, "latest.log"), rollingInterval: RollingInterval.Day)
 #if DEBUG
     .MinimumLevel.Debug()
 #endif
@@ -22,7 +25,7 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
-builder.Configuration.AddYamlFile("data/config.yaml", true, true);
+builder.Configuration.AddYamlFile(Path.Combine(dataDir, "config.yaml"), true, true);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
