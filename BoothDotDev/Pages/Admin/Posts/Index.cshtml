@@ -87,7 +87,9 @@
                     <div class="row-actions">
                         <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
                         <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
-                        <button class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@post.Id">
+                            <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
+                        </form>
                     </div>
                 </td>
             </tr>

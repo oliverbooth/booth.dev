@@ -2,6 +2,7 @@ using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Posts;
@@ -35,5 +36,16 @@ public sealed class Index : PageModel
     public void OnGet()
     {
         BlogPosts = _blogPostService.GetAllBlogPosts(visibility: Visibility.None);
+    }
+
+    /// <summary>
+    ///     Handles the POST request for moving a blog post to the trash.
+    /// </summary>
+    /// <param name="id">The ID of the post to trash.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostDelete(Guid id)
+    {
+        _blogPostService.TrashPost(id);
+        return RedirectToPage();
     }
 }
