@@ -4,15 +4,15 @@ using Npgsql.NameTranslation;
 namespace BoothDotDev.Data;
 
 /// <summary>
-///     Provides configuration for <see cref="AppDbContext" />.
+///     Provides methods for configuring the <see cref="AppDbContext" /> database context.
 /// </summary>
 public static class AppDbContextConfig
 {
     /// <summary>
-    ///     Configures the Blog database context.
+    ///     Configures the <see cref="AppDbContext" /> database context with the specified connection string.
     /// </summary>
-    /// <param name="builder">The options builder for the context.</param>
-    /// <param name="connectionString">The connection string for the database.</param>
+    /// <param name="builder">The <see cref="DbContextOptionsBuilder" /> to configure.</param>
+    /// <param name="connectionString">The connection string to use.</param>
     public static void Configure(DbContextOptionsBuilder builder, string connectionString)
     {
         builder.UseNpgsql(connectionString, options =>
