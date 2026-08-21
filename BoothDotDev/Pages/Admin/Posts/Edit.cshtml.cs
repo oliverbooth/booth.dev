@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
+using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -51,11 +53,40 @@ public sealed class Edit : PageModel
     public bool CreatingNew { get; private set; }
 
     /// <summary>
+    ///     Gets the ID of the draft that is currently live (published) for this post.
+    /// </summary>
+    /// <value>The ID of the currently-live draft, or <see langword="null" /> if a new post is being created.</value>
+    public Guid? CurrentDraftId { get; private set; }
+
+    /// <summary>
+    ///     Gets the post's full draft history, newest first, for the revision history panel.
+    /// </summary>
+    /// <value>The post's drafts, ordered newest first.</value>
+    public IReadOnlyList<BlogPostDraft> DraftHistory { get; private set; } = [];
+
+    /// <summary>
+    ///     Gets the ID of the post being edited.
+    /// </summary>
+    /// <value>The ID of the post being edited, or <see langword="null" /> if a new post is being created.</value>
+    public Guid? PostId { get; private set; }
+
+    /// <summary>
+    ///     Gets the ID of the draft currently loaded into the editor.
+    /// </summary>
+    /// <value>The ID of the draft being viewed, or <see langword="null" /> if a new post is being created.</value>
+    public Guid? ViewingDraftId { get; private set; }
+
+    /// <summary>
     ///     Handles the GET request.
     /// </summary>
     /// <param name="id">The ID of the post to edit. If <see langword="null" />, a new post will be created.</param>
+    /// <param name="draftId">
+    ///     The ID of a specific draft to view. If <see langword="null" />, the post's newest draft is loaded — not
+    ///     necessarily the currently-live one, so reopening the editor resumes from wherever editing was last left
+    ///     off rather than silently discarding unpublished draft work.
+    /// </param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    public IActionResult OnGet(Guid? id)
+    public IActionResult OnGet(Guid? id, Guid? draftId)
     {
         if (!id.HasValue)
         {
@@ -64,32 +95,44 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var result = _blogPostService.GetPost(id.Value);
-        if (result.IsSuccess)
-        {
-            var post = result.Value;
-            Input = new EditModel
-            {
-                Body = post.Body,
-                Slug = post.Slug,
-                Title = post.Title,
-                Excerpt = post.Excerpt,
-                Tags = string.Join(", ", post.Tags),
-                CategoryId = post.CategoryId,
-                Visibility = post.Visibility,
-                PublishedAt = post.Published
-            };
-        }
-        else
+        var postResult = _blogPostService.GetPost(id.Value);
+        if (postResult.IsFailed)
         {
             return NotFound();
         }
+
+        var draftResult = draftId.HasValue
+            ? _blogPostService.GetDraft(id.Value, draftId.Value)
+            : _blogPostService.GetNewestDraft(id.Value);
+
+        if (draftResult.IsFailed)
+        {
+            return NotFound();
+        }
+
+        var post = postResult.Value;
+        var draft = draftResult.Value;
+        PostId = post.Id;
+        CurrentDraftId = post.CurrentDraftId;
+        DraftHistory = _blogPostService.GetDraftHistory(id.Value);
+        ViewingDraftId = draft.Id;
+        Input = new EditModel
+        {
+            Body = draft.Body,
+            Slug = post.Slug,
+            Title = draft.Title,
+            Excerpt = draft.Excerpt,
+            Tags = string.Join(", ", draft.Tags),
+            CategoryId = draft.CategoryId,
+            Visibility = draft.Visibility,
+            PublishedAt = post.Published
+        };
 
         return Page();
     }
 
     /// <summary>
-    ///     Handles the POST request for saving the blog post.
+    ///     Handles the POST request for saving and publishing the blog post, making it the post's current draft.
     /// </summary>
     /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
@@ -102,24 +145,42 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var tags = Input.Tags.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-        var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var authorId = Guid.TryParse(claim, out var parsedAuthorId) ? parsedAuthorId : Guid.Empty;
-
+        var tags = ParseTags();
         var result = id is null
-            ? _blogPostService.CreatePost(authorId, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+            ? _blogPostService.CreatePost(ResolveAuthorId(), Input.Title, Input.Slug, Input.Body, Input.Excerpt,
                 Input.CategoryId, Input.Visibility, Input.PublishedAt, tags)
-            : _blogPostService.UpdatePost(id.Value, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+            : _blogPostService.PublishPost(id.Value, Input.Title, Input.Slug, Input.Body, Input.Excerpt,
                 Input.CategoryId, Input.Visibility, Input.PublishedAt, tags);
 
-        if (result.IsFailed)
+        return RedirectOnSuccess(result);
+    }
+
+    /// <summary>
+    ///     Handles the POST request for saving a draft of the blog post, without publishing it. The post's
+    ///     currently-live draft, if any, is left unchanged.
+    /// </summary>
+    /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostSaveDraft(Guid? id)
+    {
+        CreatingNew = id is null;
+
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, string.Join(Environment.NewLine, result.Errors.Select(e => e.Message)));
             return Page();
         }
 
-        return RedirectToPage(new { id = result.Value.Id });
+        var tags = ParseTags();
+
+        // A brand-new post has no prior draft to leave untouched, so its first save — draft or not — always
+        // becomes the post's current draft. There's nothing else for it to sensibly point at.
+        var result = id is null
+            ? _blogPostService.CreatePost(ResolveAuthorId(), Input.Title, Input.Slug, Input.Body, Input.Excerpt,
+                Input.CategoryId, Input.Visibility, Input.PublishedAt, tags)
+            : _blogPostService.SaveDraft(id.Value, Input.Title, Input.Body, Input.Excerpt, Input.CategoryId,
+                Input.Visibility, tags);
+
+        return RedirectOnSuccess(result);
     }
 
     /// <summary>
@@ -272,6 +333,41 @@ public sealed class Edit : PageModel
             });
 
         return new { files = uploadedEntries.Concat(missingEntries) };
+    }
+
+    /// <summary>
+    ///     Splits <see cref="EditModel.Tags" /> into individual tag values.
+    /// </summary>
+    /// <returns>The individual tag values.</returns>
+    private string[] ParseTags()
+    {
+        return Input.Tags.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    /// <summary>
+    ///     Resolves the ID of the currently signed-in admin, for attribution as a post's author.
+    /// </summary>
+    /// <returns>The ID of the currently signed-in admin.</returns>
+    private Guid ResolveAuthorId()
+    {
+        var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(claim, out var parsedAuthorId) ? parsedAuthorId : Guid.Empty;
+    }
+
+    /// <summary>
+    ///     Redirects back to this post's edit page on success, or re-renders the form with an error on failure.
+    /// </summary>
+    /// <param name="result">The result of a save operation.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    private IActionResult RedirectOnSuccess(Result<BlogPost> result)
+    {
+        if (result.IsFailed)
+        {
+            ModelState.AddModelError(string.Empty, string.Join(Environment.NewLine, result.Errors.Select(e => e.Message)));
+            return Page();
+        }
+
+        return RedirectToPage(new { id = result.Value.Id });
     }
 
     /// <summary>

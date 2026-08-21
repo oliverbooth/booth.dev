@@ -13,7 +13,7 @@ public enum Visibility
     None = -1,
 
     /// <summary>
-    ///     The post is private and only visible to the author, or those with the password.
+    ///     The post is private and only visible to the author.
     /// </summary>
     [PgName("private")]
     Private,

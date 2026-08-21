@@ -1,9 +1,8 @@
+using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Primitives;
-using BC = BCrypt.Net.BCrypt;
 
 namespace BoothDotDev.Pages.Blog;
 
@@ -31,13 +30,10 @@ internal sealed class Article : PageModel
     public BlogPost Post { get; private set; } = null!;
 
     /// <summary>
-    ///     Gets a value indicating whether to show the password prompt.
+    ///     Handles the GET request.
     /// </summary>
-    /// <value>
-    ///     <see langword="true" /> if the password prompt should be shown; otherwise, <see langword="false" />.
-    /// </value>
-    public bool ShowPasswordPrompt { get; private set; }
-
+    /// <param name="slug">The slug of the post to display.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
     public IActionResult OnGet(string slug)
     {
         var result = _blogPostService.GetPost(slug);
@@ -48,35 +44,13 @@ internal sealed class Article : PageModel
         }
 
         var post = result.Value;
-        if (!string.IsNullOrWhiteSpace(post.Password))
-        {
-            ShowPasswordPrompt = true;
-        }
 
-        if (post.IsRedirect)
-        {
-            return Redirect(post.RedirectUrl!.ToString());
-        }
-
-        Post = post;
-        return Page();
-    }
-
-    public IActionResult OnPost([FromRoute] string slug)
-    {
-        var result = _blogPostService.GetPost(slug);
-        if (result.IsFailed)
+        // Now that drafts exist, there's no legitimate reason for a signed-out visitor to reach a private post
+        // by its public URL — the editor's preview pane covers previewing unpublished work.
+        if (post.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
         {
             Response.StatusCode = 404;
             return NotFound();
-        }
-
-        var post = result.Value;
-        ShowPasswordPrompt = true;
-
-        if (Request.Form.TryGetValue("password", out StringValues password) && BC.Verify(password, post.Password))
-        {
-            ShowPasswordPrompt = false;
         }
 
         if (post.IsRedirect)

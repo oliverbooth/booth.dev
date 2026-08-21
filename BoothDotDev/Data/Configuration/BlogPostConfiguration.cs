@@ -19,21 +19,13 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.AuthorId).IsRequired();
         builder.Property(e => e.Published).IsRequired();
         builder.Property(e => e.Updated).IsRequired(false);
-        builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
-        builder.Property(e => e.Body).IsRequired();
-        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false);
         builder.Property(e => e.IsRedirect).IsRequired();
         builder.Property(e => e.RedirectUrl).HasConversion<UriToStringConverter>().HasMaxLength(255).IsRequired(false);
         builder.Property(e => e.EnableComments).IsRequired();
-        builder.Property(e => e.Visibility).IsRequired();
-        builder.Property(e => e.Password).HasMaxLength(255).IsRequired(false);
-        builder.Property(e => e.Tags).IsRequired();
-        builder.Property(e => e.CategoryId).IsRequired();
-        builder.Property(e => e.ShowTableOfContents).HasColumnName("show_toc").IsRequired().HasDefaultValue(false);
-        builder.Property(e => e.TableOfContentsExpanded).HasColumnName("toc_open").IsRequired().HasDefaultValue(true);
+        builder.Property(e => e.CurrentDraftId).IsRequired(false);
 
         builder.HasOne<User>().WithMany().HasForeignKey(e => e.AuthorId);
-        builder.HasOne<BlogPostCategory>().WithMany().HasForeignKey(e => e.CategoryId);
+        builder.HasOne(e => e.CurrentDraft).WithMany().HasForeignKey(e => e.CurrentDraftId);
 
         builder.HasIndex(e => e.Slug).IsUnique();
     }

@@ -3,6 +3,7 @@
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
+@using Humanizer
 @using X10D.Linq
 @model BoothDotDev.Pages.Admin.Posts.Edit
 @inject BlogPostService BlogPostService
@@ -109,7 +110,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary" asp-page-handler="Save">Save changes</button>
-            <button class="btn">Save as draft</button>
+            <button type="submit" class="btn" asp-page-handler="SaveDraft">Save as draft</button>
             <button class="btn icon-btn danger" aria-label="Delete post"><i class="ti ti-trash"></i>Delete</button>
         </div>
 
@@ -139,6 +140,44 @@
                 </p>
                 <p class="hint" id="media-error" hidden></p>
                 <ul class="media-list" id="media-list"></ul>
+            }
+        </section>
+
+        <section class="admin-drafts" id="post-drafts">
+            <div class="admin-header">
+                <div><h2>Revision history</h2></div>
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this post to start its revision history.</p>
+            }
+            else
+            {
+                <p class="hint">
+                    Viewing an older revision loads it into the form above - nothing is saved until you hit Save changes or Save as draft.
+                </p>
+                <ul class="draft-list">
+                    @foreach (var draft in Model.DraftHistory)
+                    {
+                        var isPublished = draft.Id == Model.CurrentDraftId;
+                        var isViewing = draft.Id == Model.ViewingDraftId;
+
+                        <li class="draft-item">
+                            <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)"
+                               asp-page="Edit" asp-route-id="@Model.PostId" asp-route-draftId="@draft.Id">
+                                <div class="draft-item-body">
+                                    <p class="name">@draft.Title</p>
+                                    <p class="meta">@draft.CreatedAt.Humanize()</p>
+                                </div>
+                                @if (isPublished)
+                                {
+                                    <span class="badge badge-published">Published</span>
+                                }
+                            </a>
+                        </li>
+                    }
+                </ul>
             }
         </section>
 

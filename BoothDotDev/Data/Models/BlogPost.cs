@@ -5,6 +5,13 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a blog post.
 /// </summary>
+/// <remarks>
+///     This type holds only the identity and addressing details of a post that never fork per edit. The
+///     post's actual content — title, body, category, visibility, and so on — lives on whichever
+///     <see cref="BlogPostDraft" /> <see cref="CurrentDraftId" /> currently points to. Every save creates a new,
+///     immutable <see cref="BlogPostDraft" /> row; nothing here is ever mutated in place except which draft is
+///     "live".
+/// </remarks>
 public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
 {
     /// <summary>
@@ -15,16 +22,36 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public User Author { get; internal set; } = null!;
 
     /// <summary>
-    ///     Gets or sets the body of the post.
+    ///     Gets the body of the post, as of its current draft.
     /// </summary>
     /// <value>The body of the post.</value>
-    public string Body { get; set; } = string.Empty;
+    [NotMapped]
+    public string Body
+    {
+        get => Draft.Body;
+    }
 
     /// <summary>
-    ///     Gets or sets the category ID of the post.
+    ///     Gets the category ID of the post, as of its current draft.
     /// </summary>
     /// <value>The category ID of the post.</value>
-    public Guid CategoryId { get; set; }
+    [NotMapped]
+    public Guid CategoryId
+    {
+        get => Draft.CategoryId;
+    }
+
+    /// <summary>
+    ///     Gets the draft that is currently live for this post.
+    /// </summary>
+    /// <value>The currently-live draft.</value>
+    public BlogPostDraft? CurrentDraft { get; internal set; }
+
+    /// <summary>
+    ///     Gets the ID of the draft that is currently live for this post.
+    /// </summary>
+    /// <value>The ID of the currently-live draft.</value>
+    public Guid? CurrentDraftId { get; internal set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether comments are enabled for the post.
@@ -35,10 +62,14 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public bool EnableComments { get; set; }
 
     /// <summary>
-    ///     Gets or sets the excerpt of this post, if it has one.
+    ///     Gets the excerpt of this post, as of its current draft, if it has one.
     /// </summary>
     /// <value>The excerpt, or <see langword="null" /> if this post has no excerpt.</value>
-    public string? Excerpt { get; set; }
+    [NotMapped]
+    public string? Excerpt
+    {
+        get => Draft.Excerpt;
+    }
 
     /// <summary>
     ///     Gets the ID of the post.
@@ -55,12 +86,6 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public bool IsRedirect { get; set; }
 
     /// <summary>
-    ///     Gets or sets the password of the post.
-    /// </summary>
-    /// <value>The password of the post.</value>
-    public string? Password { get; set; }
-
-    /// <summary>
     ///     Gets the date and time the post was published.
     /// </summary>
     /// <value>The publication date and time.</value>
@@ -73,12 +98,16 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public Uri? RedirectUrl { get; set; }
 
     /// <summary>
-    ///     Gets or sets a value indicating whether to show the table of contents for the post.
+    ///     Gets a value indicating whether to show the table of contents for the post, as of its current draft.
     /// </summary>
     /// <value>
     ///     <see langword="true" /> if the table of contents should be shown; otherwise, <see langword="false" />.
     /// </value>
-    public bool ShowTableOfContents { get; set; }
+    [NotMapped]
+    public bool ShowTableOfContents
+    {
+        get => Draft.ShowTableOfContents;
+    }
 
     /// <summary>
     ///     Gets or sets the slug of the post.
@@ -87,36 +116,53 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public string Slug { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Gets or sets a value indicating whether the table of contents is expanded by default.
+    ///     Gets a value indicating whether the table of contents is expanded by default, as of its current draft.
     /// </summary>
     /// <value>
     ///     <see langword="true" /> if the table of contents is expanded by default; otherwise, <see langword="false" />.
     /// </value>
-    public bool TableOfContentsExpanded { get; set; } = true;
+    [NotMapped]
+    public bool TableOfContentsExpanded
+    {
+        get => Draft.TableOfContentsExpanded;
+    }
 
     /// <summary>
-    ///     Gets or sets the tags of the post.
+    ///     Gets the tags of the post, as of its current draft.
     /// </summary>
     /// <value>The tags of the post.</value>
-    public List<string> Tags { get; set; } = [];
+    [NotMapped]
+    public List<string> Tags
+    {
+        get => Draft.Tags;
+    }
 
     /// <summary>
-    ///     Gets or sets the title of the post.
+    ///     Gets the title of the post, as of its current draft.
     /// </summary>
     /// <value>The title of the post.</value>
-    public string Title { get; set; } = string.Empty;
+    [NotMapped]
+    public string Title
+    {
+        get => Draft.Title;
+    }
 
     /// <summary>
-    ///     Gets or sets the date and time the post was last updated.
+    ///     Gets or sets the date and time the post was last updated, i.e. the last time <see cref="CurrentDraftId" />
+    ///     changed.
     /// </summary>
     /// <value>The update date and time, or <see langword="null" /> if the post has not been updated.</value>
     public DateTimeOffset? Updated { get; set; }
 
     /// <summary>
-    ///     Gets or sets the visibility of the post.
+    ///     Gets the visibility of the post, as of its current draft.
     /// </summary>
     /// <value>The visibility of the post.</value>
-    public Visibility Visibility { get; set; }
+    [NotMapped]
+    public Visibility Visibility
+    {
+        get => Draft.Visibility;
+    }
 
     /// <summary>
     ///     Gets the WordPress ID of the post.
@@ -131,6 +177,19 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     /// </summary>
     /// <value>The ID of the author of this blog post.</value>
     internal Guid AuthorId { get; set; }
+
+    /// <summary>
+    ///     Gets the currently-live draft, throwing if it has not been loaded.
+    /// </summary>
+    /// <value>The currently-live draft.</value>
+    /// <exception cref="InvalidOperationException">
+    ///     <see cref="CurrentDraft" /> was not eager-loaded by the query that produced this instance.
+    /// </exception>
+    private BlogPostDraft Draft
+    {
+        get => CurrentDraft ?? throw new InvalidOperationException(
+            $"The current draft for blog post '{Id}' was not loaded. Ensure the query includes '{nameof(CurrentDraft)}'.");
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="BlogPost" /> are equal.

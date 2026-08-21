@@ -18,6 +18,7 @@ public sealed class AppDbContext : DbContext
     {
         ArtworkItems = Set<ArtworkItem>();
         BlogPostCategories = Set<BlogPostCategory>();
+        BlogPostDrafts = Set<BlogPostDraft>();
         BlogPosts = Set<BlogPost>();
         Books = Set<Book>();
         CodeSnippets = Set<CodeSnippet>();
@@ -44,6 +45,12 @@ public sealed class AppDbContext : DbContext
     /// </summary>
     /// <value>The collection of blog post categories.</value>
     public DbSet<BlogPostCategory> BlogPostCategories { get; private set; }
+
+    /// <summary>
+    ///     Gets the collection of blog post drafts in the database.
+    /// </summary>
+    /// <value>The collection of blog post drafts.</value>
+    public DbSet<BlogPostDraft> BlogPostDrafts { get; private set; }
 
     /// <summary>
     ///     Gets the collection of blog posts in the database.
@@ -136,6 +143,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ArtworkItemConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
+        modelBuilder.ApplyConfiguration(new BlogPostDraftConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());

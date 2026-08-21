@@ -47,7 +47,7 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
-    ///     Creates a new blog post.
+    ///     Creates a new blog post, along with its first draft, which immediately becomes the post's current draft.
     /// </summary>
     /// <param name="authorId">The ID of the author creating the post.</param>
     /// <param name="title">The title of the post.</param>
@@ -74,18 +74,16 @@ public sealed class BlogPostService : BackgroundService
         var post = new BlogPost
         {
             AuthorId = authorId,
-            Title = title,
             Slug = slug,
-            Body = body,
-            Excerpt = excerpt,
-            CategoryId = categoryId,
-            Visibility = visibility,
             Published = publishedAt.ToUniversalTime(),
-            Updated = null,
-            Tags = [.. tags]
+            Updated = null
         };
 
+        var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags);
+        post.CurrentDraft = draft;
+
         context.BlogPosts.Add(post);
+        context.BlogPostDrafts.Add(draft);
         context.SaveChanges();
 
         _postCache[post.Id] = post;
@@ -93,9 +91,48 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
-    ///     Updates an existing blog post.
+    ///     Saves a new draft of an existing blog post, without publishing it. The post's current draft is left
+    ///     unchanged, so the public site is unaffected.
     /// </summary>
-    /// <param name="id">The ID of the post to update.</param>
+    /// <param name="id">The ID of the post to save a draft for.</param>
+    /// <param name="title">The title of the post.</param>
+    /// <param name="body">The body of the post.</param>
+    /// <param name="excerpt">The excerpt of the post, if any.</param>
+    /// <param name="categoryId">The ID of the post's category.</param>
+    /// <param name="visibility">The visibility of the post.</param>
+    /// <param name="tags">The tags associated with the post.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the post the draft was saved for, or an error if no post with the
+    ///     specified <paramref name="id" /> exists.
+    /// </returns>
+    public Result<BlogPost> SaveDraft(Guid id,
+        string title,
+        string body,
+        string? excerpt,
+        Guid categoryId,
+        Visibility visibility,
+        IReadOnlyList<string> tags)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = context.BlogPosts.Find(id);
+
+        if (post is null)
+        {
+            return Result.Fail($"Blog post with ID '{id}' not found.");
+        }
+
+        var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags);
+        context.BlogPostDrafts.Add(draft);
+        context.SaveChanges();
+
+        _postCache[post.Id] = post;
+        return post;
+    }
+
+    /// <summary>
+    ///     Saves a new draft of an existing blog post and publishes it, making it the post's current draft.
+    /// </summary>
+    /// <param name="id">The ID of the post to publish.</param>
     /// <param name="title">The title of the post.</param>
     /// <param name="slug">The URL slug of the post.</param>
     /// <param name="body">The body of the post.</param>
@@ -108,7 +145,7 @@ public sealed class BlogPostService : BackgroundService
     ///     A <see cref="Result{T}" /> containing the updated blog post, or an error if no post with the specified
     ///     <paramref name="id" /> exists.
     /// </returns>
-    public Result<BlogPost> UpdatePost(Guid id,
+    public Result<BlogPost> PublishPost(Guid id,
         string title,
         string slug,
         string body,
@@ -126,15 +163,13 @@ public sealed class BlogPostService : BackgroundService
             return Result.Fail($"Blog post with ID '{id}' not found.");
         }
 
-        post.Title = title;
+        var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags);
+        context.BlogPostDrafts.Add(draft);
+
         post.Slug = slug;
-        post.Body = body;
-        post.Excerpt = excerpt;
-        post.CategoryId = categoryId;
-        post.Visibility = visibility;
         post.Published = publishedAt.ToUniversalTime();
+        post.CurrentDraft = draft;
         post.Updated = DateTimeOffset.UtcNow;
-        post.Tags = [.. tags];
 
         context.SaveChanges();
 
@@ -151,10 +186,10 @@ public sealed class BlogPostService : BackgroundService
     public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1, Visibility visibility = Visibility.Published)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var posts = context.BlogPosts.AsQueryable();
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).AsQueryable();
         if (visibility != Visibility.None)
         {
-            posts = posts.Where(p => p.Visibility == visibility);
+            posts = posts.Where(p => p.CurrentDraft!.Visibility == visibility);
         }
 
         posts = posts.OrderByDescending(post => post.Published);
@@ -193,6 +228,8 @@ public sealed class BlogPostService : BackgroundService
     public int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).AsQueryable();
+
         if (tags is { Length: > 0 })
         {
             for (var index = 0; index < tags.Length; index++)
@@ -202,14 +239,14 @@ public sealed class BlogPostService : BackgroundService
             }
 
             return visibility == Visibility.None
-                ? context.BlogPosts.AsEnumerable().Count(p => !p.IsRedirect && p.Tags.Intersect(tags).Any())
-                : context.BlogPosts.AsEnumerable().Count(p =>
-                    !p.IsRedirect && p.Visibility == visibility && p.Tags.Intersect(tags).Any());
+                ? posts.AsEnumerable().Count(p => !p.IsRedirect && p.CurrentDraft!.Tags.Intersect(tags).Any())
+                : posts.AsEnumerable().Count(p =>
+                    !p.IsRedirect && p.CurrentDraft!.Visibility == visibility && p.CurrentDraft.Tags.Intersect(tags).Any());
         }
 
         return visibility == Visibility.None
-            ? context.BlogPosts.Count(p => !p.IsRedirect)
-            : context.BlogPosts.Count(p => !p.IsRedirect && p.Visibility == visibility);
+            ? posts.Count(p => !p.IsRedirect)
+            : posts.Count(p => !p.IsRedirect && p.CurrentDraft!.Visibility == visibility);
     }
 
     /// <summary>
@@ -224,6 +261,60 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Returns the draft history of the specified blog post, newest first.
+    /// </summary>
+    /// <param name="id">The ID of the post whose draft history to return.</param>
+    /// <returns>A read-only list of the post's drafts, ordered newest first.</returns>
+    public IReadOnlyList<BlogPostDraft> GetDraftHistory(Guid id)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        return [.. context.BlogPostDrafts.Where(d => d.BlogPostId == id).OrderByDescending(d => d.CreatedAt)];
+    }
+
+    /// <summary>
+    ///     Returns a specific draft of the specified blog post, for viewing without publishing it.
+    /// </summary>
+    /// <param name="id">The ID of the post the draft belongs to.</param>
+    /// <param name="draftId">The ID of the draft to return.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the requested draft, or an error if it doesn't exist or doesn't belong to the
+    ///     specified post.
+    /// </returns>
+    public Result<BlogPostDraft> GetDraft(Guid id, Guid draftId)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var draft = context.BlogPostDrafts.Find(draftId);
+
+        if (draft is null || draft.BlogPostId != id)
+        {
+            return Result.Fail($"Draft '{draftId}' not found for blog post '{id}'.");
+        }
+
+        return draft;
+    }
+
+    /// <summary>
+    ///     Returns the newest draft of the specified blog post, which may or may not be the post's current (published) draft.
+    /// </summary>
+    /// <param name="id">The ID of the post whose newest draft to return.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the post's newest draft, or an error if the post has no drafts.</returns>
+    public Result<BlogPostDraft> GetNewestDraft(Guid id)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var draft = context.BlogPostDrafts
+            .Where(d => d.BlogPostId == id)
+            .OrderByDescending(d => d.CreatedAt)
+            .FirstOrDefault();
+
+        if (draft is null)
+        {
+            return Result.Fail($"Blog post '{id}' has no drafts.");
+        }
+
+        return draft;
+    }
+
+    /// <summary>
     ///     Returns the next blog post from the specified blog post.
     /// </summary>
     /// <param name="blogPost">The blog post whose next post to return.</param>
@@ -232,7 +323,8 @@ public sealed class BlogPostService : BackgroundService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
+            .Include(p => p.CurrentDraft)
+            .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderBy(post => post.Published)
             .FirstOrDefault(post => post.Published > blogPost.Published);
     }
@@ -293,7 +385,8 @@ public sealed class BlogPostService : BackgroundService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
-            .Where(p => p.Visibility == Visibility.Published && !p.IsRedirect)
+            .Include(p => p.CurrentDraft)
+            .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect)
             .OrderByDescending(post => post.Published)
             .FirstOrDefault(post => post.Published < blogPost.Published);
     }
@@ -309,11 +402,12 @@ public sealed class BlogPostService : BackgroundService
     public Result<BlogPost> GetPost(BlogPostKey key)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft);
         var post = key switch
         {
-            Guid guid => context.BlogPosts.Find(guid),
-            int intId => context.BlogPosts.FirstOrDefault(p => p.WordPressId == intId),
-            string slug => context.BlogPosts.FirstOrDefault(p => p.Slug == slug),
+            Guid guid => posts.FirstOrDefault(p => p.Id == guid),
+            int intId => posts.FirstOrDefault(p => p.WordPressId == intId),
+            string slug => posts.FirstOrDefault(p => p.Slug == slug),
         };
 
         if (post is null)
@@ -337,10 +431,12 @@ public sealed class BlogPostService : BackgroundService
     public Result<BlogPost> GetPost(string slug, DateOnly publishDate)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var post = context.BlogPosts.FirstOrDefault(post => post.Published.Year == publishDate.Year &&
-                                                            post.Published.Month == publishDate.Month &&
-                                                            post.Published.Day == publishDate.Day &&
-                                                            post.Slug == slug);
+        var post = context.BlogPosts
+            .Include(p => p.CurrentDraft)
+            .FirstOrDefault(post => post.Published.Year == publishDate.Year &&
+                                     post.Published.Month == publishDate.Month &&
+                                     post.Published.Day == publishDate.Day &&
+                                     post.Slug == slug);
 
         if (post is null)
         {
@@ -359,11 +455,11 @@ public sealed class BlogPostService : BackgroundService
     public IReadOnlyList<BlogPost> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var posts = context.BlogPosts.Where(p => !p.IsRedirect);
+        var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => !p.IsRedirect);
 
         if (searchOptions.Visibility != Visibility.None)
         {
-            posts = posts.Where(p => p.Visibility == searchOptions.Visibility);
+            posts = posts.Where(p => p.CurrentDraft!.Visibility == searchOptions.Visibility);
         }
 
         var ordered = searchOptions.SortStrategy switch
@@ -403,13 +499,36 @@ public sealed class BlogPostService : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 
+    /// <summary>
+    ///     Builds a new, unsaved draft snapshot for the specified blog post.
+    /// </summary>
+    private static BlogPostDraft NewDraft(Guid blogPostId,
+        string title,
+        string body,
+        string? excerpt,
+        Guid categoryId,
+        Visibility visibility,
+        IReadOnlyList<string> tags)
+    {
+        return new BlogPostDraft
+        {
+            BlogPostId = blogPostId,
+            Title = title,
+            Body = body,
+            Excerpt = excerpt,
+            CategoryId = categoryId,
+            Visibility = visibility,
+            Tags = [.. tags]
+        };
+    }
+
     private void InvalidateCache(object? sender, ElapsedEventArgs e)
     {
         _logger.LogInformation("Invalidating blog post cache...");
         _postCache.Clear();
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        foreach (BlogPost post in context.BlogPosts)
+        foreach (BlogPost post in context.BlogPosts.Include(p => p.CurrentDraft))
         {
             _postCache[post.Id] = post;
         }
