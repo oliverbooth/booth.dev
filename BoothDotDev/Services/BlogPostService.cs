@@ -77,6 +77,12 @@ public sealed class BlogPostService : BackgroundService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
 
+        var slugCheck = CheckSlugAvailable(context, slug, excludePostId: null);
+        if (slugCheck.IsFailed)
+        {
+            return slugCheck;
+        }
+
         var post = new BlogPost
         {
             AuthorId = authorId,
@@ -141,6 +147,12 @@ public sealed class BlogPostService : BackgroundService
             return Result.Fail($"Blog post with ID '{id}' not found.");
         }
 
+        var slugCheck = CheckSlugAvailable(context, slug, excludePostId: id);
+        if (slugCheck.IsFailed)
+        {
+            return slugCheck;
+        }
+
         var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags, showTableOfContents, tableOfContentsExpanded);
         context.BlogPostDrafts.Add(draft);
 
@@ -195,6 +207,12 @@ public sealed class BlogPostService : BackgroundService
         if (post is null)
         {
             return Result.Fail($"Blog post with ID '{id}' not found.");
+        }
+
+        var slugCheck = CheckSlugAvailable(context, slug, excludePostId: id);
+        if (slugCheck.IsFailed)
+        {
+            return slugCheck;
         }
 
         var draft = NewDraft(post.Id, title, body, excerpt, categoryId, visibility, tags, showTableOfContents, tableOfContentsExpanded);
@@ -605,6 +623,28 @@ public sealed class BlogPostService : BackgroundService
         CacheInvalidationTimer.Stop();
         CacheInvalidationTimer.Elapsed -= InvalidateCache;
         return base.StopAsync(cancellationToken);
+    }
+
+    /// <summary>
+    ///     Checks whether a slug is free to use, i.e. not already taken by a different blog post.
+    /// </summary>
+    /// <param name="context">The database context to check against.</param>
+    /// <param name="slug">The slug to check.</param>
+    /// <param name="excludePostId">
+    ///     The ID of the post being saved, excluded from the collision check so a post keeping its own unchanged slug doesn't
+    ///     collide with itself. <see langword="null" /> when creating a brand-new post.
+    /// </param>
+    /// <returns>A failed <see cref="Result" /> if another post already has this slug; otherwise, a successful one.</returns>
+    /// <remarks>
+    ///     Slugs are enforced unique at the database level, but that surfaces as an unhandled exception on save rather than a
+    ///     friendly validation error.
+    /// </remarks>
+    private static Result CheckSlugAvailable(AppDbContext context, string slug, Guid? excludePostId)
+    {
+        var slugTaken = context.BlogPosts.Any(p => p.Slug == slug && p.Id != excludePostId);
+        return slugTaken
+            ? Result.Fail($"The slug '{slug}' is already in use by another post. Choose a different one.")
+            : Result.Ok();
     }
 
     /// <summary>
