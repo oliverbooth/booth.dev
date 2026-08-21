@@ -66,12 +66,12 @@ public sealed class User
     ///     Gets the URL of the author's avatar.
     /// </summary>
     /// <param name="size">The size of the avatar.</param>
-    /// <returns>The URL of the author's avatar.</returns>
-    public Uri GetAvatarUrl(int size = 28)
+    /// <returns>The URL of the author's avatar. 404s if no custom Gravatar is configured, rather than falling back to Gravatar's default silhouette.</returns>
+    private Uri GetAvatarUrl(int size = 28)
     {
         if (string.IsNullOrWhiteSpace(EmailAddress))
         {
-            return new Uri($"https://www.gravatar.com/avatar/0?size={size}");
+            return new Uri($"https://www.gravatar.com/avatar/0?size={size}&d=404");
         }
 
         ReadOnlySpan<char> span = EmailAddress.AsSpan();
@@ -89,6 +89,6 @@ public sealed class User
             builder.Append(hash[index].TryFormat(hex, out _, "x2") ? hex : "00");
         }
 
-        return new Uri($"https://www.gravatar.com/avatar/{builder}?size={size}");
+        return new Uri($"https://www.gravatar.com/avatar/{builder}?size={size}&d=404");
     }
 }

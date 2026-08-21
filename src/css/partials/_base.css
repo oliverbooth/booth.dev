@@ -141,6 +141,12 @@ button:focus-visible,
   margin-top: 2rem;
 }
 
+.avatar {
+  img {
+    border-radius: 50%;
+  }
+}
+
 @media (max-width: 860px) {
   h1 {
     font-size: 26px;

@@ -6,6 +6,7 @@ import {initFiltering} from './filtering.ts';
 import {initAltTextPopovers} from './images.ts';
 import {initLightbox} from './lightbox.ts';
 import {initTerminalTypewriters} from './terminal.ts';
+import {initAvatarFallback} from './avatar-fallback.ts';
 
 (() => {
     initFavicon();
@@ -16,4 +17,5 @@ import {initTerminalTypewriters} from './terminal.ts';
     initFiltering();
     initLightbox();
     initTerminalTypewriters();
+    initAvatarFallback();
 })();
