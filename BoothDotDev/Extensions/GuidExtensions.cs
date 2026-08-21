@@ -19,7 +19,7 @@ public static class GuidExtensions
         /// <returns>A commit SHA-like string representation of the <see cref="Guid" />.</returns>
         public string ToCommitSha(int length = DefaultCommitShaLength)
         {
-            return length is <= 0 or > 32 ? id.ToString("N") : id.ToString("N")[..length];
+            return length is <= 0 or > 32 ? id.ToString("N") : id.ToString("N")[^length..];
         }
     }
 
@@ -33,7 +33,7 @@ public static class GuidExtensions
         /// <returns>A commit SHA-like string representation of the <see cref="ShortGuid" />.</returns>
         public string ToCommitSha(int length = DefaultCommitShaLength)
         {
-            return length is <= 0 or > 32 ? ((Guid)id).ToString("N") : ((Guid)id).ToString("N")[..length];
+            return length is <= 0 or > 32 ? ((Guid)id).ToString("N") : ((Guid)id).ToString("N")[^length..];
         }
 
         /// <summary>
