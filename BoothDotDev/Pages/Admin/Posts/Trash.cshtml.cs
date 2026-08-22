@@ -47,4 +47,30 @@ public sealed class Trash : PageModel
         _blogPostService.RestorePost(id);
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting a single trashed blog post.
+    /// </summary>
+    /// <param name="id">The ID of the post to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDelete(Guid id)
+    {
+        _blogPostService.PermanentlyDeletePost(id);
+        return RedirectToPage();
+    }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting every selected trashed blog post.
+    /// </summary>
+    /// <param name="ids">The IDs of the posts to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDeleteBulk(List<Guid> ids)
+    {
+        foreach (var id in ids)
+        {
+            _blogPostService.PermanentlyDeletePost(id);
+        }
+
+        return RedirectToPage();
+    }
 }

@@ -30,3 +30,21 @@
     font-size: 15px;
   }
 }
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border: 0.5px solid rgba(226, 75, 74, 0.35);
+  background: var(--danger-bg);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.bulk-actions[hidden] {
+  display: none;
+}

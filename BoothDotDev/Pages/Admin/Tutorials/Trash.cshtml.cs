@@ -47,4 +47,30 @@ public sealed class Trash : PageModel
         _tutorialService.RestoreArticle(id);
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting a single trashed article.
+    /// </summary>
+    /// <param name="id">The ID of the article to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDelete(Guid id)
+    {
+        _tutorialService.PermanentlyDeleteArticle(id);
+        return RedirectToPage();
+    }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting every selected trashed article.
+    /// </summary>
+    /// <param name="ids">The IDs of the articles to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDeleteBulk(List<Guid> ids)
+    {
+        foreach (var id in ids)
+        {
+            _tutorialService.PermanentlyDeleteArticle(id);
+        }
+
+        return RedirectToPage();
+    }
 }

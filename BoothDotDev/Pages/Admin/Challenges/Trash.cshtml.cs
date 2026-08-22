@@ -49,4 +49,30 @@ public sealed class Trash : PageModel
         _devChallengeService.RestoreChallenge(ShortGuid.Parse(id));
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting a single trashed challenge.
+    /// </summary>
+    /// <param name="id">The ID of the challenge to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDelete(string id)
+    {
+        _devChallengeService.PermanentlyDeleteChallenge(ShortGuid.Parse(id));
+        return RedirectToPage();
+    }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting every selected trashed challenge.
+    /// </summary>
+    /// <param name="ids">The IDs of the challenges to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDeleteBulk(List<string> ids)
+    {
+        foreach (var id in ids)
+        {
+            _devChallengeService.PermanentlyDeleteChallenge(ShortGuid.Parse(id));
+        }
+
+        return RedirectToPage();
+    }
 }

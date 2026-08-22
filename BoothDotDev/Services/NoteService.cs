@@ -10,15 +10,20 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class NoteService
 {
+    private const string Area = "note";
+
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NoteService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The <see cref="IDbContextFactory{TContext}" />.</param>
-    public NoteService(IDbContextFactory<AppDbContext> dbContextFactory)
+    /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
+    public NoteService(IDbContextFactory<AppDbContext> dbContextFactory, CdnMediaService cdnMediaService)
     {
         _dbContextFactory = dbContextFactory;
+        _cdnMediaService = cdnMediaService;
     }
 
     /// <summary>
@@ -152,6 +157,37 @@ public sealed class NoteService
         note.TrashedAt = null;
         context.SaveChanges();
         return note;
+    }
+
+    /// <summary>
+    ///     Permanently deletes a trashed note - the note row, every draft in its revision history (cascade), and every file it
+    ///     had uploaded to the CDN. This cannot be undone.
+    /// </summary>
+    /// <param name="id">The ID of the note to permanently delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if no note with the specified <paramref name="id" /> exists
+    ///     or it isn't currently trashed.
+    /// </returns>
+    public Result PermanentlyDeleteNote(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var note = context.Notes.Find(id);
+
+        if (note is null)
+        {
+            return Result.Fail($"The note with ID {id} was not found");
+        }
+
+        if (note.TrashedAt is null)
+        {
+            return Result.Fail("Only trashed notes can be permanently deleted.");
+        }
+
+        _cdnMediaService.DeleteAllMedia(id, note.PublishedAt, Area);
+
+        context.Notes.Remove(note);
+        context.SaveChanges();
+        return Result.Ok();
     }
 
     /// <summary>

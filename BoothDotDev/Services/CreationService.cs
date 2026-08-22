@@ -10,15 +10,20 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class CreationService
 {
+    private const string Area = "content";
+
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CreationService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The database context factory.</param>
-    public CreationService(IDbContextFactory<AppDbContext> dbContextFactory)
+    /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
+    public CreationService(IDbContextFactory<AppDbContext> dbContextFactory, CdnMediaService cdnMediaService)
     {
         _dbContextFactory = dbContextFactory;
+        _cdnMediaService = cdnMediaService;
     }
 
     /// <summary>
@@ -232,6 +237,37 @@ public sealed class CreationService
     }
 
     /// <summary>
+    ///     Permanently deletes a trashed artwork item - the item row and its uploaded file on the CDN. This cannot be undone.
+    /// </summary>
+    /// <param name="id">The ID of the artwork item to permanently delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if no item with the specified <paramref name="id" /> exists
+    ///     or it isn't currently trashed.
+    /// </returns>
+    public Result PermanentlyDeleteArtworkItem(Guid id)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var item = dbContext.ArtworkItems.Find(id);
+
+        if (item is null)
+        {
+            return Result.Fail($"The artwork item with ID {id} was not found");
+        }
+
+        if (item.TrashedAt is null)
+        {
+            return Result.Fail("Only trashed items can be permanently deleted.");
+        }
+
+        _cdnMediaService.DeleteAllMedia(id, item.PublishedAt, Area);
+
+        dbContext.ArtworkItems.Remove(item);
+        dbContext.SaveChanges();
+
+        return Result.Ok();
+    }
+
+    /// <summary>
     ///     Creates a new music item.
     /// </summary>
     /// <param name="request">The music item's fields.</param>
@@ -321,6 +357,37 @@ public sealed class CreationService
         dbContext.SaveChanges();
 
         return item;
+    }
+
+    /// <summary>
+    ///     Permanently deletes a trashed music item - the item row and its uploaded file on the CDN. This cannot be undone.
+    /// </summary>
+    /// <param name="id">The ID of the music item to permanently delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if no item with the specified <paramref name="id" /> exists
+    ///     or it isn't currently trashed.
+    /// </returns>
+    public Result PermanentlyDeleteMusicItem(Guid id)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var item = dbContext.MusicItems.Find(id);
+
+        if (item is null)
+        {
+            return Result.Fail($"The music item with ID {id} was not found");
+        }
+
+        if (item.TrashedAt is null)
+        {
+            return Result.Fail("Only trashed items can be permanently deleted.");
+        }
+
+        _cdnMediaService.DeleteAllMedia(id, item.PublishedAt, Area);
+
+        dbContext.MusicItems.Remove(item);
+        dbContext.SaveChanges();
+
+        return Result.Ok();
     }
 
     /// <summary>

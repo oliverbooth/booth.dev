@@ -28,7 +28,7 @@
     }
     else
     {
-        <div data-search-scope>
+        <div data-search-scope data-bulk-select-scope>
         <div class="table-toolbar">
             <div class="search-input">
                 <i class="ti ti-search"></i>
@@ -36,9 +36,19 @@
             </div>
         </div>
 
+        <div class="bulk-actions" data-bulk-actions hidden>
+            <span><span data-selected-count>0</span> selected</span>
+            <button type="submit" form="bulk-delete-form" class="btn icon-btn danger" aria-label="Delete permanently">
+                <i class="ti ti-trash-x"></i> Delete permanently
+            </button>
+        </div>
+        <form id="bulk-delete-form" method="post" asp-page-handler="PermanentlyDeleteBulk"
+              data-confirm="Permanently delete {count} post(s)? This cannot be undone."></form>
+
         <table class="data-table">
             <thead>
             <tr>
+                <th><input type="checkbox" data-select-all aria-label="Select all"></th>
                 <th>Title</th>
                 <th>Category</th>
                 <th>Visibility</th>
@@ -57,6 +67,7 @@
                 };
 
                 <tr>
+                    <td><input type="checkbox" name="ids" value="@post.Id" form="bulk-delete-form" data-row-select aria-label="Select @post.Title"></td>
                     <td>
                         <div class="row-title" data-search>@post.Title</div>
                         <div class="row-sub" data-search>/blog/@post.Slug</div>
@@ -88,12 +99,16 @@
                             <form method="post" asp-page-handler="Restore" asp-route-id="@post.Id">
                                 <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
                             </form>
+                            <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@post.Id"
+                                  data-confirm="Permanently delete '@post.Title'? This cannot be undone.">
+                                <button type="submit" class="icon-btn danger" aria-label="Delete permanently"><i class="ti ti-trash-x"></i></button>
+                            </form>
                         </div>
                     </td>
                 </tr>
             }
             <tr data-search-empty hidden>
-                <td colspan="5" class="table-empty-state">No posts found</td>
+                <td colspan="6" class="table-empty-state">No posts found</td>
             </tr>
             </tbody>
         </table>

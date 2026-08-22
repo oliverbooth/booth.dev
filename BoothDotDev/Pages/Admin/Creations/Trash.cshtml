@@ -26,7 +26,7 @@
     }
     else
     {
-        <div data-search-scope>
+        <div data-search-scope data-bulk-select-scope>
         <div class="table-toolbar">
             <div class="search-input">
                 <i class="ti ti-search"></i>
@@ -34,9 +34,19 @@
             </div>
         </div>
 
+        <div class="bulk-actions" data-bulk-actions hidden>
+            <span><span data-selected-count>0</span> selected</span>
+            <button type="submit" form="bulk-delete-form" class="btn icon-btn danger" aria-label="Delete permanently">
+                <i class="ti ti-trash-x"></i> Delete permanently
+            </button>
+        </div>
+        <form id="bulk-delete-form" method="post" asp-page-handler="PermanentlyDeleteBulk"
+              data-confirm="Permanently delete {count} creation(s)? This cannot be undone."></form>
+
         <table class="data-table">
             <thead>
             <tr>
+                <th><input type="checkbox" data-select-all aria-label="Select all"></th>
                 <th>Title</th>
                 <th>Type</th>
                 <th>Visibility</th>
@@ -57,6 +67,7 @@
                 var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
 
                 <tr>
+                    <td><input type="checkbox" name="selections" value="@creation.Type:@creation.Id" form="bulk-delete-form" data-row-select aria-label="Select @creation.Title"></td>
                     <td>
                         <div class="row-title" data-search>@creation.Title</div>
                     </td>
@@ -87,12 +98,16 @@
                             <form method="post" asp-page-handler="Restore" asp-route-id="@creation.Id" asp-route-type="@creation.Type">
                                 <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
                             </form>
+                            <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@creation.Id" asp-route-type="@creation.Type"
+                                  data-confirm="Permanently delete '@creation.Title'? This cannot be undone.">
+                                <button type="submit" class="icon-btn danger" aria-label="Delete permanently"><i class="ti ti-trash-x"></i></button>
+                            </form>
                         </div>
                     </td>
                 </tr>
             }
             <tr data-search-empty hidden>
-                <td colspan="5" class="table-empty-state">No creations found</td>
+                <td colspan="6" class="table-empty-state">No creations found</td>
             </tr>
             </tbody>
         </table>

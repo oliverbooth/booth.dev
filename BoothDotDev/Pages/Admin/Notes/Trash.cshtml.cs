@@ -48,4 +48,30 @@ public sealed class Trash : PageModel
         _noteService.RestoreNote(id);
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting a single trashed note.
+    /// </summary>
+    /// <param name="id">The ID of the note to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDelete(Guid id)
+    {
+        _noteService.PermanentlyDeleteNote(id);
+        return RedirectToPage();
+    }
+
+    /// <summary>
+    ///     Handles the POST request for permanently deleting every selected trashed note.
+    /// </summary>
+    /// <param name="ids">The IDs of the notes to permanently delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostPermanentlyDeleteBulk(List<Guid> ids)
+    {
+        foreach (var id in ids)
+        {
+            _noteService.PermanentlyDeleteNote(id);
+        }
+
+        return RedirectToPage();
+    }
 }

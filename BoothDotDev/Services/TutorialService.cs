@@ -14,15 +14,20 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class TutorialService
 {
+    private const string Area = "tutorial";
+
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TutorialService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The <see cref="AppDbContext" /> factory.</param>
-    public TutorialService(IDbContextFactory<AppDbContext> dbContextFactory)
+    /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
+    public TutorialService(IDbContextFactory<AppDbContext> dbContextFactory, CdnMediaService cdnMediaService)
     {
         _dbContextFactory = dbContextFactory;
+        _cdnMediaService = cdnMediaService;
     }
 
     /// <summary>
@@ -547,6 +552,37 @@ public sealed class TutorialService
         article.TrashedAt = null;
         context.SaveChanges();
         return article;
+    }
+
+    /// <summary>
+    ///     Permanently deletes a trashed article - the article row, every draft in its revision history (cascade), and every file
+    ///     it had uploaded to the CDN. This cannot be undone.
+    /// </summary>
+    /// <param name="id">The ID of the article to permanently delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if no article with the specified <paramref name="id" />
+    ///     exists or it isn't currently trashed.
+    /// </returns>
+    public Result PermanentlyDeleteArticle(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var article = context.TutorialArticles.Find(id);
+
+        if (article is null)
+        {
+            return Result.Fail($"The article with ID {id} was not found");
+        }
+
+        if (article.TrashedAt is null)
+        {
+            return Result.Fail("Only trashed articles can be permanently deleted.");
+        }
+
+        _cdnMediaService.DeleteAllMedia(id, article.PublishedAt, Area);
+
+        context.TutorialArticles.Remove(article);
+        context.SaveChanges();
+        return Result.Ok();
     }
 
     /// <summary>

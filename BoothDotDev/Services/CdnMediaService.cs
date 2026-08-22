@@ -285,6 +285,35 @@ public sealed class CdnMediaService
         return Result.Ok();
     }
 
+    /// <summary>
+    ///     Permanently deletes every file uploaded for a post, across every media-kind bucket.
+    /// </summary>
+    /// <param name="id">The post's ID.</param>
+    /// <param name="published">The post's published date, forming part of the CDN path.</param>
+    /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
+    /// <remarks>
+    ///     Each post's media lives in its own ID-keyed directory, never shared with any other post, so this is safe to
+    ///     call unconditionally when a post is permanently deleted - there's nothing else that could be referencing
+    ///     the files being removed.
+    /// </remarks>
+    public void DeleteAllMedia(Guid id, DateTimeOffset published, string area)
+    {
+        foreach (MediaKind kind in Enum.GetValues<MediaKind>())
+        {
+            var directory = GetDirectory(area, kind, published, id);
+            if (!Directory.Exists(directory))
+            {
+                continue;
+            }
+
+            Directory.Delete(directory, recursive: true);
+
+            PruneEmptyParents(
+                Path.GetDirectoryName(directory)!,
+                stopAt: Path.Combine(_root, area, kind.ToString().ToLowerInvariant()));
+        }
+    }
+
     private string GetDirectory(string area, MediaKind kind, DateTimeOffset published, Guid id)
     {
         return Path.Combine(

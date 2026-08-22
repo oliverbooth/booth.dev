@@ -24,9 +24,12 @@ public sealed class BlogPostService : BackgroundService
     public const int DefaultPageSize = 5;
 
     private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10));
+    private const string Area = "blog";
+
     private readonly ILogger<BlogPostService> _logger;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly UserService _userService;
+    private readonly CdnMediaService _cdnMediaService;
     private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
 
     /// <summary>
@@ -37,13 +40,16 @@ public sealed class BlogPostService : BackgroundService
     ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
     /// <param name="userService">The <see cref="UserService" />.</param>
+    /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
     public BlogPostService(ILogger<BlogPostService> logger,
         IDbContextFactory<AppDbContext> dbContextFactory,
-        UserService userService)
+        UserService userService,
+        CdnMediaService cdnMediaService)
     {
         _logger = logger;
         _dbContextFactory = dbContextFactory;
         _userService = userService;
+        _cdnMediaService = cdnMediaService;
     }
 
     /// <summary>
@@ -216,6 +222,39 @@ public sealed class BlogPostService : BackgroundService
 
         _postCache[post.Id] = post;
         return post;
+    }
+
+    /// <summary>
+    ///     Permanently deletes a trashed blog post - the post row, every draft in its revision history (cascade), and every file
+    ///     it had uploaded to the CDN. This cannot be undone.
+    /// </summary>
+    /// <param name="id">The ID of the post to permanently delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if no post with the specified <paramref name="id" /> exists
+    ///     or it isn't currently trashed.
+    /// </returns>
+    public Result PermanentlyDeletePost(Guid id)
+    {
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        var post = context.BlogPosts.Find(id);
+
+        if (post is null)
+        {
+            return Result.Fail($"Blog post with ID '{id}' not found.");
+        }
+
+        if (post.TrashedAt is null)
+        {
+            return Result.Fail("Only trashed posts can be permanently deleted.");
+        }
+
+        _cdnMediaService.DeleteAllMedia(id, post.PublishedAt, Area);
+
+        context.BlogPosts.Remove(post);
+        context.SaveChanges();
+
+        _postCache.TryRemove(id, out _);
+        return Result.Ok();
     }
 
     /// <summary>
