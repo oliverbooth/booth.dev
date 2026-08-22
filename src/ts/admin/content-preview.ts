@@ -1,5 +1,7 @@
 import {initContentFeatures} from '../content-rendering.ts';
 
+declare const MathJax: {typesetPromise(elements?: HTMLElement[]): Promise<void>} | undefined;
+
 const DEBOUNCE_MS = 400;
 
 interface PreviewResponse {
@@ -89,6 +91,10 @@ async function fetchPreview(form: HTMLFormElement, previewBody: HTMLElement, sig
         previewBody.innerHTML = html;
 
         initContentFeatures(previewBody);
+
+        if (typeof MathJax !== 'undefined') {
+            void MathJax.typesetPromise([previewBody]);
+        }
     } catch (error) {
         if ((error as Error).name !== 'AbortError') {
             throw error;
