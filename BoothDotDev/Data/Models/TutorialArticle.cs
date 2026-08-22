@@ -99,7 +99,7 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     ///     Gets the date and time at which this article was published.
     /// </summary>
     /// <value>The publish timestamp.</value>
-    public DateTimeOffset Published { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset Published { get; internal set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     ///     Gets the rank of this article within its folder, as of its current draft.
