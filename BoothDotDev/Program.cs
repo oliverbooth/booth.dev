@@ -12,7 +12,7 @@ var workingDir = AppContext.BaseDirectory;
 
 var dataDir = Path.Combine(workingDir, "data");
 var logsDir = Path.Combine(workingDir, "logs");
-var cdnDir = Path.Combine(workingDir, "cdn");
+var cdnDir = CdnPaths.GetRoot();
 Directory.CreateDirectory(dataDir);
 Directory.CreateDirectory(logsDir);
 Directory.CreateDirectory(cdnDir);
