@@ -24,5 +24,10 @@ internal sealed class ProjectDevlogConfiguration : IEntityTypeConfiguration<Proj
         builder.Property(e => e.UpdatedAt).IsRequired(false);
         builder.Property(e => e.Visibility).IsRequired();
         builder.Property(e => e.EnableComments).IsRequired();
+
+        // deliberately RESTRICT, not CASCADE: ProjectService.DeleteProject blocks while any devlog (trashed
+        // or not) still references the project, so this constraint should never actually fire through normal
+        // app usage - it's a DB-level safety net for that same invariant, not a substitute for it
+        builder.HasOne<Project>().WithMany().HasForeignKey(e => e.ProjectId).OnDelete(DeleteBehavior.Restrict);
     }
 }
