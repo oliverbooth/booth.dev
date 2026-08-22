@@ -1,0 +1,99 @@
+@page "/admin/tutorials/folders"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@model BoothDotDev.Pages.Admin.Tutorials.Folders.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Tutorials/Index">Tutorials</a> / Folders</p>
+
+    <div class="admin-header">
+        <div>
+            <h1>Folders</h1>
+            <p>Organise tutorial articles into nested folders</p>
+        </div>
+        <a asp-page="/Admin/Tutorials/Folders/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New folder</a>
+    </div>
+
+    @if (Model.DeleteError is { } error)
+    {
+        <div class="callout" data-callout="danger">
+            <p class="callout-title"><i class="ti ti-alert-triangle"></i> Couldn't delete folder</p>
+            <div class="callout-body"><p>@error</p></div>
+        </div>
+    }
+
+    <div data-search-scope>
+    <div class="table-toolbar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" id="search" placeholder="Search folders&hellip;">
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Path</th>
+            <th>Visibility</th>
+            <th style="text-align:right">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var folder in Model.Folders)
+        {
+            var badgeClass = folder.Visibility switch
+            {
+                Visibility.Published => "published",
+                Visibility.Private => "private",
+                _ => "unlisted"
+            };
+
+            <tr>
+                <td>
+                    <div class="row-title" data-search>@folder.Title</div>
+                </td>
+                <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)" data-search>@Model.GetPath(folder)</span></td>
+                <td><span class="badge badge-@badgeClass">
+                    @switch (folder.Visibility)
+                    {
+                        case Visibility.Published:
+                            <text><span class="dot"></span> Published</text>
+                            break;
+
+                        case Visibility.Private:
+                            <text><i class="ti ti-lock"></i> Private</text>
+                            break;
+
+                        case Visibility.Unlisted:
+                            <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                            break;
+
+                        default:
+                            throw new UnreachableException();
+                    }
+                </span></td>
+                <td>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@folder.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@Model.GetPath(folder)" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@folder.Id" data-confirm="Delete this folder? This can't be undone.">
+                            <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr data-search-empty hidden>
+            <td colspan="4" class="table-empty-state">No folders found</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</div>

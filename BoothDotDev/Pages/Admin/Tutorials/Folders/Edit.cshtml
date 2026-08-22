@@ -1,0 +1,90 @@
+@page "/admin/tutorials/folders/edit/{id:guid?}"
+@using BoothDotDev.Data
+@model BoothDotDev.Pages.Admin.Tutorials.Folders.Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Tutorials/Folders/Index">Folders</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New folder" : Model.Input.Title)</h1></div>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save folder</button>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title" />
+        </div>
+
+        <div class="field">
+            <label for="slug">Slug</label>
+            <input type="text" id="slug" asp-for="Input.Slug" />
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="parent">Parent folder</label>
+                <select id="parent" asp-for="Input.Parent">
+                    <option value="">&mdash; root &mdash;</option>
+                    @foreach (var folder in Model.ParentOptions)
+                    {
+                        <option value="@folder.Id">@Model.GetPath(folder)</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="rank">Order</label>
+                <input type="number" id="rank" asp-for="Input.Rank" />
+                <p class="hint">Lower numbers show first.</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" rows="3" asp-for="Input.Description"></textarea>
+        </div>
+
+        <div class="field">
+            <label for="preview-image">Preview image URL</label>
+            <input type="url" id="preview-image" asp-for="Input.PreviewImageUrl" />
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Visibility">Visibility</label>
+            <select asp-for="Input.Visibility">
+                @{
+                    var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                    foreach (var visibility in visibilities)
+                    {
+                        <option value="@visibility">@visibility</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save folder</button>
+        </div>
+
+    </form>
+
+    @if (!Model.CreatingNew)
+    {
+        <form method="post" asp-page-handler="Delete" data-confirm="Delete this folder? This can't be undone.">
+            <div class="form-actions">
+                <button type="submit" class="btn icon-btn danger" aria-label="Delete folder">
+                    <i class="ti ti-trash"></i> Delete folder
+                </button>
+            </div>
+        </form>
+    }
+
+</div>

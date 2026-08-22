@@ -1,0 +1,98 @@
+@page "/admin/tutorials/trash"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Tutorials.Trash
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Tutorials/Index">Tutorials</a> / Trash</p>
+
+    <div class="admin-header">
+        <div>
+            <h1>Trash</h1>
+            <p>Trashed articles are hidden from the public site until restored</p>
+        </div>
+        <a asp-page="/Admin/Tutorials/Index" class="btn btn-primary"><i class="ti ti-arrow-left" style="font-size:15px"></i>Back to tutorials</a>
+    </div>
+
+    @if (Model.Articles.Count == 0)
+    {
+        <p class="table-empty-state">Trash is empty</p>
+    }
+    else
+    {
+        <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search trash&hellip;">
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Visibility</th>
+                <th>Trashed</th>
+                <th style="text-align:right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var article in Model.Articles)
+            {
+                var badgeClass = article.Visibility switch
+                {
+                    Visibility.Published => "published",
+                    Visibility.Private => "private",
+                    _ => "unlisted"
+                };
+
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@article.Title</div>
+                    </td>
+                    <td><span class="badge badge-@badgeClass">
+                        @switch (article.Visibility)
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span></td>
+                    <td><abbr title="@article.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@article.TrashedAt!.Value.Humanize()</abbr></td>
+                    <td>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                            <form method="post" asp-page-handler="Restore" asp-route-id="@article.Id">
+                                <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="4" class="table-empty-state">No articles found</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    }
+
+</div>
