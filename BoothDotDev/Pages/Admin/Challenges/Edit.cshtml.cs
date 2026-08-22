@@ -159,6 +159,7 @@ public sealed class Edit : PageModel
     public IActionResult OnPostSave(string? id)
     {
         CreatingNew = id is null;
+        ChallengeId = id is not null ? ShortGuid.Parse(id) : (ShortGuid?)null;
 
         if (!ModelState.IsValid)
         {
@@ -182,6 +183,7 @@ public sealed class Edit : PageModel
     public IActionResult OnPostSaveDraft(string? id)
     {
         CreatingNew = id is null;
+        ChallengeId = id is not null ? ShortGuid.Parse(id) : (ShortGuid?)null;
 
         if (!ModelState.IsValid)
         {
@@ -236,7 +238,8 @@ public sealed class Edit : PageModel
             return BadRequest("Save the challenge before it can be trashed.");
         }
 
-        return RedirectOnSuccess(_devChallengeService.TrashChallenge(ShortGuid.Parse(id)));
+        ChallengeId = ShortGuid.Parse(id);
+        return RedirectOnSuccess(_devChallengeService.TrashChallenge(ChallengeId.Value));
     }
 
     /// <summary>
@@ -251,7 +254,8 @@ public sealed class Edit : PageModel
             return BadRequest("Save the challenge before it can be restored.");
         }
 
-        return RedirectOnSuccess(_devChallengeService.RestoreChallenge(ShortGuid.Parse(id)));
+        ChallengeId = ShortGuid.Parse(id);
+        return RedirectOnSuccess(_devChallengeService.RestoreChallenge(ChallengeId.Value));
     }
 
     /// <summary>
