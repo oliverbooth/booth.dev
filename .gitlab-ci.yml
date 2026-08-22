@@ -10,6 +10,7 @@ stages:
 test:
   extends: .default-rules
   stage: verify
+  needs: ["build-assets"]
   image: mcr.microsoft.com/dotnet/sdk:11.0-preview
   script:
     - dotnet test BoothDotDev.slnx --configuration Release --logger "junit;LogFilePath=test-results.xml"
