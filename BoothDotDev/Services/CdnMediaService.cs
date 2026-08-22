@@ -16,23 +16,6 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed partial class CdnMediaService
 {
-    /// <summary>
-    ///     The maximum size, in bytes, of a single upload.
-    /// </summary>
-    public const long MaxUploadSizeBytes = 500L * 1024 * 1024;
-
-    private static readonly HashSet<string> AllowedExtensions =
-    [
-        with(StringComparer.OrdinalIgnoreCase),
-        "png", "jpg", "jpeg", "gif", "webp", "svg",
-        "mp4", "webm", "mov",
-        "mp3", "wav", "ogg", "flac",
-        "pdf", "zip", "txt"
-    ];
-
-    private static readonly HashSet<string> StrippableImageExtensions =
-        [with(StringComparer.OrdinalIgnoreCase), "png", "jpg", "jpeg", "webp"];
-
     private readonly ILogger<CdnMediaService> _logger;
     private readonly string _root;
 
@@ -103,9 +86,9 @@ public sealed partial class CdnMediaService
             return Result.Fail("The uploaded file is empty.");
         }
 
-        if (file.Length > MaxUploadSizeBytes)
+        if (file.Length > CdnUploadPolicy.MaxUploadSizeBytes)
         {
-            return Result.Fail($"The uploaded file exceeds the {MaxUploadSizeBytes / (1024 * 1024)} MB upload limit.");
+            return Result.Fail($"The uploaded file exceeds the {CdnUploadPolicy.MaxUploadSizeBytes / (1024 * 1024)} MB upload limit.");
         }
 
         var nameResult = ValidateFileName(file.FileName);
@@ -116,7 +99,7 @@ public sealed partial class CdnMediaService
 
         var fileName = nameResult.Value;
         var extension = Path.GetExtension(fileName).TrimStart('.');
-        if (!AllowedExtensions.Contains(extension))
+        if (!CdnUploadPolicy.AllowedExtensions.Contains(extension))
         {
             return Result.Fail($"Files with the extension '.{extension}' aren't allowed.");
         }
@@ -138,12 +121,12 @@ public sealed partial class CdnMediaService
             await using (var source = file.OpenReadStream())
             await using (var destination = File.Create(tempPath))
             {
-                if (StrippableImageExtensions.Contains(extension))
+                if (CdnUploadPolicy.StrippableImageExtensions.Contains(extension))
                 {
                     using var raw = new MemoryStream();
                     await source.CopyToAsync(raw, cancellationToken);
                     raw.Position = 0;
-                    StripImageMetadata(raw, destination);
+                    CdnUploadPolicy.StripImageMetadata(raw, destination);
                 }
                 else
                 {
@@ -317,37 +300,6 @@ public sealed partial class CdnMediaService
             published.ToString("yyyy"),
             published.ToString("MM"),
             id.ToString("N"));
-    }
-
-    /// <summary>
-    ///     Decodes an image, bakes in its EXIF orientation, strips all EXIF/IPTC/XMP metadata, and re-encodes it.
-    /// </summary>
-    /// <param name="source">A seekable stream containing the raw uploaded image bytes.</param>
-    /// <param name="destination">The stream to write the sanitized image to.</param>
-    /// <exception cref="UnknownImageFormatException"><paramref name="source" /> isn't a decodable image.</exception>
-    private static void StripImageMetadata(Stream source, Stream destination)
-    {
-        using var image = Image.Load(source);
-        var format = image.Metadata.DecodedImageFormat
-                     ?? throw new UnknownImageFormatException("Could not determine the decoded image's format.");
-
-        // auto-orient the image based on EXIF orientation, lest stripping the EXIF block leave it incorrectly rotated
-        image.Mutate(x => x.AutoOrient());
-
-        image.Metadata.ExifProfile = null;
-        image.Metadata.IptcProfile = null;
-        image.Metadata.XmpProfile = null;
-        // ICC color profile is deliberately kept
-
-        IImageEncoder encoder = format.Name switch
-        {
-            "JPEG" => new JpegEncoder { Quality = 100 },
-            "WEBP" => new WebpEncoder { Quality = 100 },
-            _ => image.Configuration.ImageFormatsManager.GetEncoder(format)
-                 ?? throw new NotSupportedException($"No encoder is registered for image format '{format.Name}'.")
-        };
-
-        image.Save(destination, encoder);
     }
 
     private static void PruneEmptyParents(string directory, string stopAt)
