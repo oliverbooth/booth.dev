@@ -1,7 +1,6 @@
 @page "/admin/challenges/trash"
 @using System.Diagnostics
 @using BoothDotDev.Data
-@using BoothDotDev.Extensions
 @using Humanizer
 @model BoothDotDev.Pages.Admin.Challenges.Trash
 
@@ -80,9 +79,8 @@
                     <td><abbr title="@challenge.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@challenge.TrashedAt!.Value.Humanize()</abbr></td>
                     <td>
                         <div class="row-actions">
-                            <a href="@challenge.Id.ToRoute("/admin/challenges/edit")" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
-                            <form method="post" asp-page-handler="Restore">
-                                <input type="hidden" name="id" value="@challenge.Id" />
+                            <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                            <form method="post" asp-page-handler="Restore" asp-route-id="@challenge.Id">
                                 <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
                             </form>
                         </div>

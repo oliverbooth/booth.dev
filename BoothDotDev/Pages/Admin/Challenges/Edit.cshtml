@@ -1,19 +1,11 @@
 @page "/admin/challenges/edit/{id?}"
 @using BoothDotDev.Data
-@using BoothDotDev.Extensions
 @using Humanizer
 @model BoothDotDev.Pages.Admin.Challenges.Edit
 
 @{
     Layout = "_AdminLayout";
     var challengeModel = Model.Input;
-
-    // asp-page-handler ambiently inherits the current route's {id} and re-embeds it via the same tag-helper
-    // link generation LowercaseUrls corrupts (confirmed: it isn't limited to asp-route-id) - build every
-    // handler button's formaction manually via ToRoute instead, exactly like every other id-in-URL case here.
-    var challengePath = Model.ChallengeId.HasValue
-        ? Model.ChallengeId.Value.ToRoute("/admin/challenges/edit")
-        : "/admin/challenges/edit";
 }
 
 <div class="admin-page admin-page--split">
@@ -39,11 +31,11 @@
             <div style="display:flex;gap:8px">
                 @if (!Model.CreatingNew)
                 {
-                    <a href="@Model.ChallengeId!.Value.ToRoute("/challenge")" target="_blank" class="btn">
+                    <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@Model.ChallengeId" target="_blank" class="btn">
                         <i class="ti ti-eye"></i> View challenge
                     </a>
                 }
-                <button type="submit" class="btn btn-primary" formaction="@($"{challengePath}?handler=Save")"><i class="ti ti-cloud"></i> Publish changes</button>
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
             </div>
         </div>
 
@@ -97,19 +89,19 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary" formaction="@($"{challengePath}?handler=Save")"><i class="ti ti-cloud"></i> Publish changes</button>
-            <button type="submit" class="btn" formaction="@($"{challengePath}?handler=SaveDraft")"><i class="ti ti-device-floppy"></i> Save as draft</button>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            <button type="submit" class="btn" asp-page-handler="SaveDraft"><i class="ti ti-device-floppy"></i> Save as draft</button>
             @if (!Model.CreatingNew)
             {
                 @if (Model.IsTrashed)
                 {
-                    <button type="submit" class="btn" formaction="@($"{challengePath}?handler=Restore")">
+                    <button type="submit" class="btn" asp-page-handler="Restore">
                         <i class="ti ti-trash-off"></i> Restore
                     </button>
                 }
                 else
                 {
-                    <button type="submit" class="btn icon-btn danger" formaction="@($"{challengePath}?handler=Delete")" aria-label="Move to trash">
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
                         <i class="ti ti-trash"></i> Move to trash
                     </button>
                 }
@@ -164,10 +156,10 @@
                     {
                         var isPublished = draft.Id == Model.CurrentDraftId;
                         var isViewing = draft.Id == Model.ViewingDraftId;
-                        var href = $"{Model.ChallengeId!.Value.ToRoute("/admin/challenges/edit")}?draftId={draft.Id}";
 
                         <li class="draft-item">
-                            <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)" href="@href">
+                            <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)"
+                               asp-page="Edit" asp-route-id="@Model.ChallengeId" asp-route-draftId="@draft.Id">
                                 <div class="draft-item-body">
                                     <p class="name">@draft.Title</p>
                                     <p class="meta">@draft.CreatedAt.Humanize()</p>

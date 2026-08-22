@@ -33,7 +33,7 @@ internal sealed class Challenge : PageModel
 
         if (shouldRedirect)
         {
-            return RedirectPermanent($"/challenge/{challenge.Id}");
+            return RedirectToPagePermanent("/Learn/Challenges/Challenge", new { id = challenge.Id });
         }
 
         DevChallenge = challenge;

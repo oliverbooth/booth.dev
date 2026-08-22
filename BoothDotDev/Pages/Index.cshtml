@@ -76,18 +76,9 @@
             var entry = Model.RecentActivity[index];
             var first = index == 0;
 
-            if (entry.RawUrl.HasValue)
-            {
-                <a href="@entry.RawUrl.ValueOr(string.Empty)" class="commit">
-                    <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
-                </a>
-            }
-            else
-            {
-                <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" class="commit">
-                    <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
-                </a>
-            }
+            <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" class="commit">
+                <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
+            </a>
         }
     </div>
 

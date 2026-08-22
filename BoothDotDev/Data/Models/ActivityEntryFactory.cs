@@ -91,7 +91,7 @@ public static class ActivityEntryFactory
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",
             Category = "challenge",
-            RawUrl = Option.Some($"/challenge/{challenge.Id}"),
+            RouteValues = new Dictionary<string, string> { ["id"] = challenge.Id.ToString() },
             Visibility = challenge.Visibility
         };
     }
@@ -109,9 +109,9 @@ public static class ActivityEntryFactory
             UpdatedAt = note.Updated,
             Title = note.Title,
             CommitSha = note.Id.ToCommitSha(),
-            PagePath = "/Learn/Challenges/Note",
+            PagePath = "/Note",
             Category = "note",
-            RawUrl = Option.Some($"/note/{(ShortGuid)note.Id}"),
+            RouteValues = new Dictionary<string, string> { ["id"] = ((ShortGuid)note.Id).ToString() },
             Visibility = note.Visibility
         };
     }

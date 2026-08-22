@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
-using BoothDotDev.Extensions;
 using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using DEDrake;
@@ -412,9 +411,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        // Not RedirectToPage(new { id = ... }) - that goes through the same route-value link generation as
-        // asp-route-id, which would lowercase the ShortGuid via RouteOptions.LowercaseUrls and corrupt it.
-        return Redirect(result.Value.Id.ToRoute("/admin/challenges/edit"));
+        return RedirectToPage(new { id = result.Value.Id });
     }
 
     /// <summary>

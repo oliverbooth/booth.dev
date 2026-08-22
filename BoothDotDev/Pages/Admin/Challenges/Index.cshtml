@@ -1,7 +1,6 @@
 @page "/admin/challenges"
 @using System.Diagnostics
 @using BoothDotDev.Data
-@using BoothDotDev.Extensions
 @using Humanizer
 @model BoothDotDev.Pages.Admin.Challenges.Index
 
@@ -76,10 +75,9 @@
                 <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
                 <td>
                     <div class="row-actions">
-                        <a href="@challenge.Id.ToRoute("/admin/challenges/edit")" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
-                        <a href="@challenge.Id.ToRoute("/challenge")" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
-                        <form method="post" asp-page-handler="Delete">
-                            <input type="hidden" name="id" value="@challenge.Id" />
+                        <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                        <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@challenge.Id">
                             <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
                         </form>
                     </div>

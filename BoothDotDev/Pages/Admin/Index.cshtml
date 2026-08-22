@@ -92,16 +92,9 @@
                 <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
                 <td>
                     <div class="row-actions">
-                        @if (activity.RawUrl.HasValue)
-                        {
-                            <a href="@activity.RawUrl.ValueOr(string.Empty)" class="icon-btn"><i class="ti ti-eye"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-page="@activity.PagePath"
-                               asp-all-route-data="activity.RouteValues"
-                               class="icon-btn"><i class="ti ti-eye"></i></a>
-                        }
+                        <a asp-page="@activity.PagePath" asp-all-route-data="activity.RouteValues" class="icon-btn">
+                            <i class="ti ti-eye"></i>
+                        </a>
                     </div>
                 </td>
             </tr>

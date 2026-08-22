@@ -33,7 +33,7 @@
             <div style="display:flex;gap:8px">
                 @if (!Model.CreatingNew)
                 {
-                    <a href="@(((ShortGuid)Model.NoteId!.Value).ToRoute("note"))" target="_blank" class="btn">
+                    <a asp-page="/Note" asp-route-id="@((ShortGuid)Model.NoteId!.Value)" target="_blank" class="btn">
                         <i class="ti ti-eye"></i> View note
                     </a>
                 }

@@ -47,9 +47,8 @@
             {
                 var note = Model.Notes[index];
                 var first = index == 0;
-                var id = (ShortGuid)note.Id;
 
-                <a href="@id.ToRoute("note")" class="commit" data-kind="note" data-state="note">
+                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="commit" data-kind="note" data-state="note">
                     <div class="collapse-inner">
                         <div class="commit-dot@(first ? "" : " muted")"></div>
                         <div class="commit-meta">

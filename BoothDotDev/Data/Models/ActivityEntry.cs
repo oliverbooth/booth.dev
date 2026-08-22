@@ -26,12 +26,6 @@ public sealed record ActivityEntry
     public required string PagePath { get; init; }
 
     /// <summary>
-    ///     Gets or initializes the raw URL for the activity entry.
-    /// </summary>
-    /// <value>The raw URL for the activity entry.</value>
-    public Option<string> RawUrl { get; init; }
-
-    /// <summary>
     ///     Gets or initializes a dictionary of route values for the entry's page.
     /// </summary>
     /// <value>A dictionary of route values for the entry's page.</value>

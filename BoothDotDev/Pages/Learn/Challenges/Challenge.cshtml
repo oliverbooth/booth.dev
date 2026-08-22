@@ -21,7 +21,7 @@
         </p>
         @if (User.Identity?.IsAuthenticated == true)
         {
-            <a href="@challenge.Id.ToRoute("/admin/challenges/edit")" class="btn"><i class="ti ti-edit"></i> Edit</a>
+            <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
         }
     </div>
 

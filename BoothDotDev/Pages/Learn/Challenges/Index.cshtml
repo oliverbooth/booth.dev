@@ -1,6 +1,5 @@
 @page "/challenges"
 @using BoothDotDev.Data
-@using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using Humanizer
 @model Index
@@ -27,7 +26,7 @@
         {
             var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
 
-            <a href="@challenge.Id.ToRoute("/challenge")" class="card">
+            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="card">
                 <div class="card-icon">
                     <i class="ti ti-code"></i>
                     <span class="card-status-badge@(hasSolution ? "" : " done")">
