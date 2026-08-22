@@ -36,6 +36,14 @@ public abstract class CreativeItem
     public DateTimeOffset Published { get; set; }
 
     /// <summary>
+    ///     Gets or sets the date and time the creative item was moved to the trash.
+    /// </summary>
+    /// <value>
+    ///     The date and time the item was trashed, or <see langword="null" /> if the item is not trashed.
+    /// </value>
+    public DateTimeOffset? TrashedAt { get; set; }
+
+    /// <summary>
     ///     Gets or sets the visibility of the creative item.
     /// </summary>
     /// <value>The visibility.</value>

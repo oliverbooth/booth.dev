@@ -21,18 +21,21 @@ public sealed class CreationService
     }
 
     /// <summary>
-    ///     Gets a read-only view of the published artwork items.
+    ///     Gets a read-only view of the artwork items, excluding trashed ones.
     /// </summary>
     /// <param name="visibility">
-    ///     The visibility of the artwork items to retrieve. A value of <see cref="Visibility.None" /> will retrieve every item
-    ///     regardless of visibility.
+    ///     The visibility of the artwork items to retrieve. A value of <see cref="Visibility.None" /> will retrieve every
+    ///     non-trashed item regardless of visibility.
     /// </param>
     /// <returns>A read-only list of <see cref="ArtworkItem" /> objects.</returns>
     public IReadOnlyList<ArtworkItem> GetArtworkItems(Visibility visibility = Visibility.Published)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        return visibility == Visibility.None
-            ? [.. dbContext.ArtworkItems.OrderByDescending(a => a.Published)]
-            : [.. dbContext.ArtworkItems.Where(a => a.Visibility == visibility).OrderByDescending(a => a.Published)];
+        var items = dbContext.ArtworkItems.Where(a => a.TrashedAt == null);
+        return
+        [
+            .. (visibility == Visibility.None ? items : items.Where(a => a.Visibility == visibility))
+                .OrderByDescending(a => a.Published)
+        ];
     }
 }

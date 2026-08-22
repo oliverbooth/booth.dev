@@ -17,9 +17,12 @@ internal sealed class MusicItemConfiguration : IEntityTypeConfiguration<MusicIte
         builder.Property(e => e.Title).IsRequired().HasMaxLength(255);
         builder.Property(e => e.Description).IsRequired(false).HasMaxLength(10000);
         builder.Property(e => e.Published).IsRequired();
-        builder.Property(e => e.Visibility).IsRequired().HasDefaultValue(Visibility.Published);
+        builder.Property(e => e.Visibility).IsRequired().HasDefaultValue(Visibility.Private);
         builder.Property(e => e.IsWorkInProgress).IsRequired();
         builder.Property(e => e.MadeWith).IsRequired(false).HasMaxLength(255);
         builder.Property(e => e.Duration).IsRequired();
+        builder.Property(e => e.TrashedAt).IsRequired(false);
+
+        builder.HasIndex(e => e.TrashedAt);
     }
 }

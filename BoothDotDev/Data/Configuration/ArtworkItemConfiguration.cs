@@ -22,5 +22,8 @@ internal sealed class ArtworkItemConfiguration : IEntityTypeConfiguration<Artwor
         builder.Property(e => e.IsWorkInProgress).IsRequired();
         builder.Property(e => e.MadeWith).IsRequired(false).HasMaxLength(255);
         builder.Property(e => e.Resolution).IsRequired().HasConversion<SizeToResolutionConverter>();
+        builder.Property(e => e.TrashedAt).IsRequired(false);
+
+        builder.HasIndex(e => e.TrashedAt);
     }
 }
