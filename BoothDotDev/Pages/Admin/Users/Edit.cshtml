@@ -114,17 +114,19 @@
                     <ul class="media-list">
                         @foreach (var passkey in Model.Passkeys)
                         {
-                            <li>
-                                <span>
-                                    @(string.IsNullOrWhiteSpace(passkey.Nickname) ? "Unnamed passkey" : passkey.Nickname)
-                                    <span class="hint">
-                                        &middot; registered @passkey.CreatedAt.Humanize()
+                            <li class="media-item">
+                                <div class="media-item-body">
+                                    <p class="name">@(string.IsNullOrWhiteSpace(passkey.Nickname) ? "Unnamed passkey" : passkey.Nickname)</p>
+                                    <p class="meta">
+                                        Registered @passkey.CreatedAt.Humanize()
                                         @(passkey.LastUsedAt is { } lastUsed ? $"· last used {lastUsed.Humanize()}" : "· never used")
-                                    </span>
-                                </span>
-                                <button type="submit" form="delete-passkey-form" asp-page-handler="DeletePasskey"
-                                        asp-route-id="@Model.UserId" asp-route-credentialId="@passkey.Id"
-                                        class="icon-btn danger" aria-label="Delete passkey"><i class="ti ti-trash"></i></button>
+                                    </p>
+                                </div>
+                                <div class="row-actions">
+                                    <button type="submit" form="delete-passkey-form" asp-page-handler="DeletePasskey"
+                                            asp-route-id="@Model.UserId" asp-route-credentialId="@passkey.Id"
+                                            class="icon-btn danger" aria-label="Delete passkey"><i class="ti ti-trash"></i></button>
+                                </div>
                             </li>
                         }
                     </ul>
