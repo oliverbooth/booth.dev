@@ -26,7 +26,7 @@ public sealed partial class CdnMediaService
     public CdnMediaService(ILogger<CdnMediaService> logger)
     {
         _logger = logger;
-        _root = Path.Combine(AppContext.BaseDirectory, "cdn");
+        _root = CdnPaths.GetRoot();
     }
 
     /// <summary>
