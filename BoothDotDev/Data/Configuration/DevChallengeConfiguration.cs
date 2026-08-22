@@ -18,12 +18,14 @@ internal sealed class DevChallengeConfiguration : IEntityTypeConfiguration<DevCh
 
         builder.Property(e => e.Id).HasConversion<ShortGuidToGuidConverter>().IsRequired();
         builder.Property(e => e.OldId).IsRequired(false);
-        builder.Property(e => e.PublishedAt).IsRequired();
-        builder.Property(e => e.Title).IsRequired();
-        builder.Property(e => e.Description).IsRequired();
-        builder.Property(e => e.Solution).IsRequired(false);
-        builder.Property(e => e.ShowSolution).IsRequired();
-        builder.Property(e => e.Visibility).IsRequired();
         builder.Property(e => e.Password).IsRequired(false);
+        builder.Property(e => e.PublishedAt).IsRequired();
+        builder.Property(e => e.Updated).IsRequired(false);
+        builder.Property(e => e.CurrentDraftId).IsRequired(false);
+        builder.Property(e => e.TrashedAt).IsRequired(false);
+
+        builder.HasOne(e => e.CurrentDraft).WithMany().HasForeignKey(e => e.CurrentDraftId);
+
+        builder.HasIndex(e => e.TrashedAt);
     }
 }

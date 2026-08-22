@@ -1,0 +1,191 @@
+@page "/admin/challenges/edit/{id?}"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Challenges.Edit
+
+@{
+    Layout = "_AdminLayout";
+    var challengeModel = Model.Input;
+}
+
+<div class="admin-page admin-page--split">
+
+    <p class="crumb"><a asp-page="/Admin/Challenges/Index">Challenges</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This challenge is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the public site and every listing. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New challenge" : challengeModel.Title)</h1></div>
+            <div style="display:flex;gap:8px">
+                @if (!Model.CreatingNew)
+                {
+                    <a href="@Model.ChallengeId!.Value.ToRoute("/challenge")" target="_blank" class="btn">
+                        <i class="ti ti-eye"></i> View challenge
+                    </a>
+                }
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title" />
+        </div>
+
+        <div class="field">
+            <label for="description">Description (markdown supported)</label>
+            <textarea id="description" rows="16" asp-for="Input.Description" data-markdown data-preview-source></textarea>
+        </div>
+
+        <div class="field">
+            <label for="solution">Solution (markdown supported)</label>
+            <textarea id="solution" rows="10" asp-for="Input.Solution" data-markdown></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Input.Visibility">Visibility</label>
+                <select asp-for="Input.Visibility">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="date">Published date</label>
+                <div class="input-with-button">
+                    <input type="datetime-local" id="date" asp-for="Input.PublishedAt">
+                    <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                        <i class="ti ti-clock"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" asp-for="Input.NewPassword" autocomplete="new-password" placeholder="Leave blank to keep current password" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Settings</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.ShowSolution" />
+                    Show solution
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            <button type="submit" class="btn" asp-page-handler="SaveDraft"><i class="ti ti-device-floppy"></i> Save as draft</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
+        </div>
+
+        <section class="admin-media" id="content-media">
+            <div class="admin-header">
+                <div><h2>Media</h2></div>
+                @if (!Model.CreatingNew)
+                {
+                    <div style="display:flex;gap:8px">
+                        <input type="file" id="media-file-input" hidden>
+                        <button type="button" class="btn btn-primary" id="media-upload-btn">
+                            <i class="ti ti-upload"></i>Upload file
+                        </button>
+                    </div>
+                }
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this challenge before attaching media.</p>
+            }
+            else
+            {
+                <p class="hint">
+                    Reference an uploaded file from the description or solution above by its filename, e.g.
+                    <code>![alt text](filename.png)</code>. Images have their EXIF metadata stripped automatically on upload.
+                </p>
+                <p class="hint" id="media-error" hidden></p>
+                <ul class="media-list" id="media-list"></ul>
+            }
+        </section>
+
+        <section class="admin-drafts" id="challenge-drafts">
+            <div class="admin-header">
+                <div><h2>Revision history</h2></div>
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this challenge to start its revision history.</p>
+            }
+            else
+            {
+                <p class="hint">
+                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as draft.
+                </p>
+                <ul class="draft-list">
+                    @foreach (var draft in Model.DraftHistory)
+                    {
+                        var isPublished = draft.Id == Model.CurrentDraftId;
+                        var isViewing = draft.Id == Model.ViewingDraftId;
+                        var href = $"{Model.ChallengeId!.Value.ToRoute("/admin/challenges/edit")}?draftId={draft.Id}";
+
+                        <li class="draft-item">
+                            <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)" href="@href">
+                                <div class="draft-item-body">
+                                    <p class="name">@draft.Title</p>
+                                    <p class="meta">@draft.CreatedAt.Humanize()</p>
+                                </div>
+                                @if (isPublished)
+                                {
+                                    <span class="badge badge-published">Published</span>
+                                }
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+    </form>
+
+    <aside class="admin-preview" id="preview-pane">
+        <span class="eyebrow">Preview</span>
+        <h1 id="preview-title">@challengeModel.Title</h1>
+        <div class="prose" id="preview-body"></div>
+    </aside>
+
+</div>

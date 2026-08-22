@@ -86,6 +86,7 @@ public static class ActivityEntryFactory
         return new ActivityEntry
         {
             PublishedAt = challenge.PublishedAt,
+            UpdatedAt = challenge.Updated,
             Title = challenge.Title,
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",

@@ -1,0 +1,100 @@
+@page "/admin/challenges/trash"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Challenges.Trash
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Challenges/Index">Challenges</a> / Trash</p>
+
+    <div class="admin-header">
+        <div>
+            <h1>Trash</h1>
+            <p>Trashed challenges are hidden from the public site until restored</p>
+        </div>
+        <a asp-page="/Admin/Challenges/Index" class="btn btn-primary"><i class="ti ti-arrow-left" style="font-size:15px"></i>Back to challenges</a>
+    </div>
+
+    @if (Model.Challenges.Count == 0)
+    {
+        <p class="table-empty-state">Trash is empty</p>
+    }
+    else
+    {
+        <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search trash&hellip;">
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Visibility</th>
+                <th>Trashed</th>
+                <th style="text-align:right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var challenge in Model.Challenges)
+            {
+                var badgeClass = challenge.Visibility switch
+                {
+                    Visibility.Published => "published",
+                    Visibility.Private => "private",
+                    _ => "unlisted"
+                };
+
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@challenge.Title</div>
+                    </td>
+                    <td><span class="badge badge-@badgeClass">
+                        @switch (challenge.Visibility)
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span></td>
+                    <td><abbr title="@challenge.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@challenge.TrashedAt!.Value.Humanize()</abbr></td>
+                    <td>
+                        <div class="row-actions">
+                            <a href="@challenge.Id.ToRoute("/admin/challenges/edit")" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                            <form method="post" asp-page-handler="Restore">
+                                <input type="hidden" name="id" value="@challenge.Id" />
+                                <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="4" class="table-empty-state">No challenges found</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    }
+
+</div>

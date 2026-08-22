@@ -73,6 +73,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of dev challenge drafts in the database.
+    /// </summary>
+    /// <value>The collection of dev challenge drafts.</value>
+    public DbSet<DevChallengeDraft> DevChallengeDrafts
+    {
+        get => Set<DevChallengeDraft>();
+    }
+
+    /// <summary>
     ///     Gets the collection of dev challenges in the database.
     /// </summary>
     /// <value>The collection of dev challenges.</value>
@@ -188,6 +197,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
+        modelBuilder.ApplyConfiguration(new DevChallengeDraftConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
         modelBuilder.ApplyConfiguration(new MusicItemConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
