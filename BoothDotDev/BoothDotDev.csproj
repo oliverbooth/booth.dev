@@ -88,4 +88,8 @@
         <ProjectReference Include="..\BoothDotDev.CodeBlockTrivia\BoothDotDev.CodeBlockTrivia.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="BoothDotDev.Tests" />
+    </ItemGroup>
+
 </Project>

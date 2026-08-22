@@ -25,6 +25,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\BoothDotDev.CodeBlockTrivia\BoothDotDev.CodeBlockTrivia.csproj" />
+        <ProjectReference Include="..\BoothDotDev\BoothDotDev.csproj" />
     </ItemGroup>
 
 </Project>
