@@ -14,7 +14,7 @@
     ViewData["Page"] = "Build";
     ViewData["Post"] = devlog;
     ViewData["Title"] = devlog.Title;
-    var published = devlog.Published;
+    var published = devlog.PublishedAt;
 }
 
 <div class="page">
@@ -32,7 +32,7 @@
     <div class="byline">
         <span class="meta">
             @published.ToShortString() &middot; @devlog.GetEstimatedReadingTime() min read
-            @if (devlog.Updated is { } updated)
+            @if (devlog.UpdatedAt is { } updated)
             {
                 <text>&middot; updated @updated.ToShortString()</text>
             }
@@ -40,7 +40,7 @@
     </div>
 
     <div class="prose" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(devlog, devlog.Id, devlog.Published))
+        @Html.Raw(MarkdownRenderingService.Render(devlog, devlog.Id, devlog.PublishedAt))
     </div>
 
     @{

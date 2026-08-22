@@ -35,11 +35,11 @@ public sealed class Index : PageModel
     public void OnGet()
     {
         var artwork = _creationService.GetAllArtworkItems()
-            .Select(a => new CreationListItem(a.Id, a.Title, "Artwork", a.Visibility, a.Published));
+            .Select(a => new CreationListItem(a.Id, a.Title, "Artwork", a.Visibility, a.PublishedAt));
         var music = _creationService.GetAllMusicItems()
-            .Select(m => new CreationListItem(m.Id, m.Title, "Music", m.Visibility, m.Published));
+            .Select(m => new CreationListItem(m.Id, m.Title, "Music", m.Visibility, m.PublishedAt));
 
-        Creations = [.. artwork.Concat(music).OrderByDescending(c => c.Published)];
+        Creations = [.. artwork.Concat(music).OrderByDescending(c => c.PublishedAt)];
     }
 
     /// <summary>
@@ -70,5 +70,5 @@ public sealed class Index : PageModel
     /// <param name="Type">The type of the creation, either <c>"Artwork"</c> or <c>"Music"</c>.</param>
     /// <param name="Visibility">The visibility of the creation.</param>
     /// <param name="Published">The publication date and time of the creation.</param>
-    public sealed record CreationListItem(Guid Id, string Title, string Type, Visibility Visibility, DateTimeOffset Published);
+    public sealed record CreationListItem(Guid Id, string Title, string Type, Visibility Visibility, DateTimeOffset PublishedAt);
 }

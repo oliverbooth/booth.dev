@@ -56,7 +56,7 @@ public sealed class Note : IEquatable<Note>, IMarkdownBody
     ///     Gets the date and time when the note was published.
     /// </summary>
     /// <value>A <see cref="DateTimeOffset" /> representing the date and time when the note was published.</value>
-    public DateTimeOffset Published { get; internal set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset PublishedAt { get; internal set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     ///     Gets the title of the note, as of its current draft.
@@ -81,7 +81,7 @@ public sealed class Note : IEquatable<Note>, IMarkdownBody
     ///     Gets or sets the date and time when the note was last updated.
     /// </summary>
     /// <value>A <see cref="DateTimeOffset" /> representing the date and time when the note was last updated.</value>
-    public DateTimeOffset? Updated { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 
     /// <summary>
     ///     Gets the visibility of the note, as of its current draft.

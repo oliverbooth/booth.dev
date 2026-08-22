@@ -36,7 +36,7 @@ public sealed record TutorialArticleDraftContent(
 /// <param name="Content">The content of the draft this save produces.</param>
 public sealed record TutorialArticleSaveRequest(
     string Slug,
-    DateTimeOffset Published,
+    DateTimeOffset PublishedAt,
     bool EnableComments,
     Guid? NextPart,
     Guid? PreviousPart,

@@ -84,7 +84,7 @@ public sealed class Edit : PageModel
             Input = new EditModel
             {
                 Visibility = Visibility.Private,
-                Published = DateTimeOffset.UtcNow.ToLocalTime()
+                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
             };
             return Page();
         }
@@ -102,7 +102,7 @@ public sealed class Edit : PageModel
         {
             Title = item.Title,
             Description = item.Description,
-            Published = item.Published.ToLocalTime(),
+            PublishedAt = item.PublishedAt.ToLocalTime(),
             Visibility = item.Visibility,
             IsWorkInProgress = item.IsWorkInProgress,
             MadeWith = item.MadeWith
@@ -153,7 +153,7 @@ public sealed class Edit : PageModel
         var request = new MusicItemSaveRequest(
             Input.Title,
             Input.Description,
-            Input.Published,
+            Input.PublishedAt,
             Input.Visibility,
             Input.IsWorkInProgress,
             Input.MadeWith,
@@ -192,10 +192,10 @@ public sealed class Edit : PageModel
 
         if (!string.IsNullOrEmpty(item.FileName))
         {
-            _cdnMediaService.DeleteFile(id, item.Published, item.FileName, Area);
+            _cdnMediaService.DeleteFile(id, item.PublishedAt, item.FileName, Area);
         }
 
-        var uploadResult = await _cdnMediaService.UploadAsync(id, item.Published, file, Area, cancellationToken);
+        var uploadResult = await _cdnMediaService.UploadAsync(id, item.PublishedAt, file, Area, cancellationToken);
         if (uploadResult.IsFailed)
         {
             ModelState.AddModelError(string.Empty, string.Join(Environment.NewLine, uploadResult.Errors.Select(e => e.Message)));
@@ -204,7 +204,7 @@ public sealed class Edit : PageModel
             {
                 Title = item.Title,
                 Description = item.Description,
-                Published = item.Published.ToLocalTime(),
+                PublishedAt = item.PublishedAt.ToLocalTime(),
                 Visibility = item.Visibility,
                 IsWorkInProgress = item.IsWorkInProgress,
                 MadeWith = item.MadeWith
@@ -223,8 +223,8 @@ public sealed class Edit : PageModel
             CdnPaths.GetRoot(),
             Area,
             kind.ToString().ToLowerInvariant(),
-            item.Published.ToString("yyyy"),
-            item.Published.ToString("MM"),
+            item.PublishedAt.ToString("yyyy"),
+            item.PublishedAt.ToString("MM"),
             id.ToString("N"),
             fileName);
 
@@ -233,7 +233,7 @@ public sealed class Edit : PageModel
         var request = new MusicItemSaveRequest(
             item.Title,
             item.Description,
-            item.Published,
+            item.PublishedAt,
             item.Visibility,
             item.IsWorkInProgress,
             item.MadeWith,
@@ -278,7 +278,7 @@ public sealed class Edit : PageModel
         }
 
         var kind = CdnMediaResolver.ResolveMediaKind(item.FileName);
-        FileUrl = CdnMediaResolver.BuildCdnUrl(Area, kind, item.Published, item.Id, item.FileName);
+        FileUrl = CdnMediaResolver.BuildCdnUrl(Area, kind, item.PublishedAt, item.Id, item.FileName);
         DurationDisplay = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
     }
 
@@ -320,7 +320,7 @@ public sealed class Edit : PageModel
         ///     Gets or sets the publication date and time of the track.
         /// </summary>
         /// <value>The publication date and time.</value>
-        public DateTimeOffset Published { get; set; }
+        public DateTimeOffset PublishedAt { get; set; }
 
         /// <summary>
         ///     Gets or sets the visibility of the track.

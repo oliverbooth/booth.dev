@@ -26,7 +26,7 @@
         <div class="stack-list section-list">
             @foreach (var item in Model.MusicItems)
             {
-                var musicContext = new MarkdownRenderContext(item.Id, item.Published);
+                var musicContext = new MarkdownRenderContext(item.Id, item.PublishedAt);
                 var musicResolver = new CdnMediaResolver(musicContext, null!, "content");
                 var musicUrl = musicResolver.ResolveCdnUrl(item.FileName, MediaKind.Audio);
                 var duration = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
@@ -57,7 +57,7 @@
             const MediaKind mediaKind = MediaKind.Image;
             var first = index == 0;
             var item = Model.ArtworkItems[index];
-            var context = new MarkdownRenderContext(item.Id, item.Published);
+            var context = new MarkdownRenderContext(item.Id, item.PublishedAt);
             var resolver = new CdnMediaResolver(context, null!, "content");
             var cdnUrl = resolver.ResolveCdnUrl(item.FileName, mediaKind);
 
@@ -75,9 +75,9 @@
                      data-lightbox
                      data-lightbox-src="@cdnUrl" />
                 <template data-lightbox-caption-template>
-                    @Html.Raw(MarkdownRenderingService.Render(item.Description!, item.Id, item.Published, "content"))
+                    @Html.Raw(MarkdownRenderingService.Render(item.Description!, item.Id, item.PublishedAt, "content"))
                     <p class="lightbox-caption-date">
-                        Made with @item.MadeWith, @item.Published.ToString("MMMM yyyy").
+                        Made with @item.MadeWith, @item.PublishedAt.ToString("MMMM yyyy").
                     </p>
                 </template>
             </figure>

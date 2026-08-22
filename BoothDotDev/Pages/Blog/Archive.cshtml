@@ -24,7 +24,7 @@
 @{
     var posts = BlogPostService.GetAllBlogPosts().Where(p => p.Visibility == Visibility.Published);
 
-    foreach (var yearGroup in posts.GroupBy(p => p.Published.Year))
+    foreach (var yearGroup in posts.GroupBy(p => p.PublishedAt.Year))
     {
         <div class="archive-year">
             <h2 class="archive-year-header">
@@ -32,7 +32,7 @@
                 <sup class="archive-count">&nbsp;&nbsp;@yearGroup.Count()</sup>
             </h2>
 
-            @foreach (var monthGroup in yearGroup.GroupBy(p => p.Published.Month))
+            @foreach (var monthGroup in yearGroup.GroupBy(p => p.PublishedAt.Month))
             {
                 <div class="archive-month">
                     <h3 class="archive-month-header">
@@ -44,7 +44,7 @@
                         @foreach (var post in monthGroup)
                         {
                             var author = post.Author;
-                            var published = post.Published;
+                            var published = post.PublishedAt;
                             var wordCount = post.Body.Split().Length;
 
                             <div class="archive-entry">

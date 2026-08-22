@@ -19,7 +19,7 @@
     ViewData["Post"] = post;
     ViewData["Title"] = post.Title;
     var author = post.Author;
-    var published = post.Published;
+    var published = post.PublishedAt;
     var category = BlogPostService.GetCategory(post.CategoryId)!;
 }
 
@@ -72,7 +72,7 @@
     }
 
     <div class="prose @category.FontStyle.ToProseClass()" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.Published))
+        @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.PublishedAt))
     </div>
 
     @if (post.Tags.Count > 0)

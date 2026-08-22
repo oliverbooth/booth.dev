@@ -33,7 +33,7 @@ public sealed class ProjectDevlog : IMarkdownBody
     ///     Gets or sets the publication date and time of the devlog entry.
     /// </summary>
     /// <value>The publication date and time of the devlog entry.</value>
-    public DateTimeOffset Published { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset PublishedAt { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     ///     Gets or sets the slug (URL-friendly identifier) for the devlog entry.
@@ -51,7 +51,7 @@ public sealed class ProjectDevlog : IMarkdownBody
     ///     Gets or sets the last updated date and time of the devlog entry.
     /// </summary>
     /// <value>The last updated date and time of the devlog entry.</value>
-    public DateTimeOffset? Updated { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 
     /// <summary>
     ///     Gets or sets the visibility status of the devlog entry.

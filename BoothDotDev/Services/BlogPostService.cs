@@ -65,8 +65,8 @@ public sealed class BlogPostService : BackgroundService
         {
             AuthorId = request.AuthorId,
             Slug = request.Slug,
-            Published = request.PublishedAt.ToUniversalTime(),
-            Updated = null,
+            PublishedAt = request.PublishedAt.ToUniversalTime(),
+            UpdatedAt = null,
             EnableComments = request.EnableComments
         };
 
@@ -117,7 +117,7 @@ public sealed class BlogPostService : BackgroundService
 
         post.AuthorId = request.AuthorId;
         post.Slug = request.Slug;
-        post.Published = request.PublishedAt.ToUniversalTime();
+        post.PublishedAt = request.PublishedAt.ToUniversalTime();
         post.EnableComments = request.EnableComments;
 
         context.SaveChanges();
@@ -156,10 +156,10 @@ public sealed class BlogPostService : BackgroundService
 
         post.AuthorId = request.AuthorId;
         post.Slug = request.Slug;
-        post.Published = request.PublishedAt.ToUniversalTime();
+        post.PublishedAt = request.PublishedAt.ToUniversalTime();
         post.EnableComments = request.EnableComments;
         post.CurrentDraft = draft;
-        post.Updated = DateTimeOffset.UtcNow;
+        post.UpdatedAt = DateTimeOffset.UtcNow;
 
         context.SaveChanges();
 
@@ -233,7 +233,7 @@ public sealed class BlogPostService : BackgroundService
             posts = posts.Where(p => p.CurrentDraft!.Visibility == visibility);
         }
 
-        posts = posts.OrderByDescending(post => post.Published);
+        posts = posts.OrderByDescending(post => post.PublishedAt);
         if (limit > -1)
         {
             posts = posts.Take(limit);
@@ -366,8 +366,8 @@ public sealed class BlogPostService : BackgroundService
         return context.BlogPosts
             .Include(p => p.CurrentDraft)
             .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
-            .OrderBy(post => post.Published)
-            .FirstOrDefault(post => post.Published > blogPost.Published);
+            .OrderBy(post => post.PublishedAt)
+            .FirstOrDefault(post => post.PublishedAt > blogPost.PublishedAt);
     }
 
     /// <summary>
@@ -428,8 +428,8 @@ public sealed class BlogPostService : BackgroundService
         return context.BlogPosts
             .Include(p => p.CurrentDraft)
             .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
-            .OrderByDescending(post => post.Published)
-            .FirstOrDefault(post => post.Published < blogPost.Published);
+            .OrderByDescending(post => post.PublishedAt)
+            .FirstOrDefault(post => post.PublishedAt < blogPost.PublishedAt);
     }
 
     /// <summary>
@@ -479,9 +479,9 @@ public sealed class BlogPostService : BackgroundService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts
             .Include(p => p.CurrentDraft)
-            .FirstOrDefault(post => post.Published.Year == publishDate.Year &&
-                                     post.Published.Month == publishDate.Month &&
-                                     post.Published.Day == publishDate.Day &&
+            .FirstOrDefault(post => post.PublishedAt.Year == publishDate.Year &&
+                                     post.PublishedAt.Month == publishDate.Month &&
+                                     post.PublishedAt.Day == publishDate.Day &&
                                      post.Slug == slug &&
                                      post.TrashedAt == null);
 
@@ -511,8 +511,8 @@ public sealed class BlogPostService : BackgroundService
 
         var ordered = searchOptions.SortStrategy switch
         {
-            ActivitySortStrategy.Published => posts.OrderByDescending(p => p.Published),
-            ActivitySortStrategy.Updated => posts.OrderByDescending(p => p.Updated ?? p.Published),
+            ActivitySortStrategy.Published => posts.OrderByDescending(p => p.PublishedAt),
+            ActivitySortStrategy.Updated => posts.OrderByDescending(p => p.UpdatedAt ?? p.PublishedAt),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
         };
 

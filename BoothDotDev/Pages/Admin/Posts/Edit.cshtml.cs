@@ -143,7 +143,7 @@ public sealed class Edit : PageModel
             Tags = string.Join(", ", draft.Tags),
             CategoryId = draft.CategoryId,
             Visibility = draft.Visibility,
-            PublishedAt = post.Published.ToLocalTime()
+            PublishedAt = post.PublishedAt.ToLocalTime()
         };
 
         return Page();

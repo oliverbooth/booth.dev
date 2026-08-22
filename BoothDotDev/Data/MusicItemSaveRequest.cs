@@ -14,7 +14,7 @@ namespace BoothDotDev.Data;
 public sealed record MusicItemSaveRequest(
     string Title,
     string? Description,
-    DateTimeOffset Published,
+    DateTimeOffset PublishedAt,
     Visibility Visibility,
     bool IsWorkInProgress,
     string? MadeWith,

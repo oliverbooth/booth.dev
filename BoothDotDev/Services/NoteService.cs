@@ -32,7 +32,7 @@ public sealed class NoteService
 
         var note = new Note
         {
-            Published = request.PublishedAt.ToUniversalTime()
+            PublishedAt = request.PublishedAt.ToUniversalTime()
         };
 
         // two SaveChanges calls, not one: Note -> NoteDraft (via NoteId) and NoteDraft -> Note (via
@@ -71,7 +71,7 @@ public sealed class NoteService
         var draft = NewDraft(note.Id, request.Content);
         context.NoteDrafts.Add(draft);
 
-        note.Published = request.PublishedAt.ToUniversalTime();
+        note.PublishedAt = request.PublishedAt.ToUniversalTime();
 
         context.SaveChanges();
         return note;
@@ -99,9 +99,9 @@ public sealed class NoteService
         var draft = NewDraft(note.Id, request.Content);
         context.NoteDrafts.Add(draft);
 
-        note.Published = request.PublishedAt.ToUniversalTime();
+        note.PublishedAt = request.PublishedAt.ToUniversalTime();
         note.CurrentDraftId = draft.Id;
-        note.Updated = DateTimeOffset.UtcNow;
+        note.UpdatedAt = DateTimeOffset.UtcNow;
 
         context.SaveChanges();
         return note;
@@ -168,7 +168,7 @@ public sealed class NoteService
             notes = notes.Where(n => n.CurrentDraft!.Visibility == visibility);
         }
 
-        return [.. notes.OrderByDescending(n => n.Published)];
+        return [.. notes.OrderByDescending(n => n.PublishedAt)];
     }
 
     /// <summary>
@@ -228,8 +228,8 @@ public sealed class NoteService
 
         var ordered = searchOptions.SortStrategy switch
         {
-            ActivitySortStrategy.Published => notes.OrderByDescending(n => n.Published),
-            ActivitySortStrategy.Updated => notes.OrderByDescending(n => n.Updated ?? n.Published),
+            ActivitySortStrategy.Published => notes.OrderByDescending(n => n.PublishedAt),
+            ActivitySortStrategy.Updated => notes.OrderByDescending(n => n.UpdatedAt ?? n.PublishedAt),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
         };
 

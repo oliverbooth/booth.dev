@@ -272,8 +272,8 @@ public sealed class TutorialService
 
         var ordered = searchOptions.SortStrategy switch
         {
-            ActivitySortStrategy.Published => articles.OrderByDescending(p => p.Published),
-            ActivitySortStrategy.Updated => articles.OrderByDescending(p => p.Updated ?? p.Published),
+            ActivitySortStrategy.Published => articles.OrderByDescending(p => p.PublishedAt),
+            ActivitySortStrategy.Updated => articles.OrderByDescending(p => p.UpdatedAt ?? p.PublishedAt),
             _ => throw new InvalidEnumArgumentException(nameof(searchOptions.SortStrategy),
                 (int)searchOptions.SortStrategy,
                 typeof(ActivitySortStrategy))
@@ -292,7 +292,7 @@ public sealed class TutorialService
         return
         [
             .. context.TutorialArticles.Include(a => a.CurrentDraft).Where(a => a.TrashedAt == null)
-                .OrderByDescending(a => a.Published)
+                .OrderByDescending(a => a.PublishedAt)
         ];
     }
 
@@ -423,7 +423,7 @@ public sealed class TutorialService
         var article = new TutorialArticle
         {
             Slug = request.Slug,
-            Published = request.Published.ToUniversalTime(),
+            PublishedAt = request.PublishedAt.ToUniversalTime(),
             EnableComments = request.EnableComments,
             NextPart = request.NextPart,
             PreviousPart = request.PreviousPart,
@@ -496,7 +496,7 @@ public sealed class TutorialService
 
         ApplyParentFields(article, request);
         article.CurrentDraftId = draft.Id;
-        article.Updated = DateTimeOffset.UtcNow;
+        article.UpdatedAt = DateTimeOffset.UtcNow;
 
         context.SaveChanges();
         return article;
@@ -646,7 +646,7 @@ public sealed class TutorialService
     private static void ApplyParentFields(TutorialArticle article, TutorialArticleSaveRequest request)
     {
         article.Slug = request.Slug;
-        article.Published = request.Published.ToUniversalTime();
+        article.PublishedAt = request.PublishedAt.ToUniversalTime();
         article.EnableComments = request.EnableComments;
         article.NextPart = request.NextPart;
         article.PreviousPart = request.PreviousPart;

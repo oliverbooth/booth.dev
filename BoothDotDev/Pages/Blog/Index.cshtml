@@ -38,7 +38,7 @@
                             <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
                         </div>
                         <p class="commit-title">@post.Title</p>
-                        <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.Published.ToShortString()</p>
+                        <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.PublishedAt.ToShortString()</p>
                     </div>
                 </a>
             }
@@ -55,7 +55,7 @@
                             <span class="commit-hash">@note.Id.ToString()[..7]</span><span class="commit-tag">note</span>
                         </div>
                         <p class="commit-title">@note.Title</p>
-                        <p class="commit-sub">@note.Published.ToShortString()</p>
+                        <p class="commit-sub">@note.PublishedAt.ToShortString()</p>
                     </div>
                 </a>
             }

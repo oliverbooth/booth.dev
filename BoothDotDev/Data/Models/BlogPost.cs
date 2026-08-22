@@ -82,7 +82,7 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     ///     Gets the date and time the post was published.
     /// </summary>
     /// <value>The publication date and time.</value>
-    public DateTimeOffset Published { get; internal set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset PublishedAt { get; internal set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     ///     Gets or sets the URL to which the post redirects.
@@ -156,7 +156,7 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     ///     changed.
     /// </summary>
     /// <value>The update date and time, or <see langword="null" /> if the post has not been updated.</value>
-    public DateTimeOffset? Updated { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 
     /// <summary>
     ///     Gets the visibility of the post, as of its current draft.

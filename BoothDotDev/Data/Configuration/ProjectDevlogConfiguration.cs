@@ -20,8 +20,8 @@ internal sealed class ProjectDevlogConfiguration : IEntityTypeConfiguration<Proj
         builder.Property(e => e.Title).IsRequired().HasMaxLength(200);
         builder.Property(e => e.Slug).IsRequired().HasMaxLength(200);
         builder.Property(e => e.Body).IsRequired();
-        builder.Property(e => e.Published).IsRequired();
-        builder.Property(e => e.Updated).IsRequired(false);
+        builder.Property(e => e.PublishedAt).IsRequired();
+        builder.Property(e => e.UpdatedAt).IsRequired(false);
         builder.Property(e => e.Visibility).IsRequired();
         builder.Property(e => e.EnableComments).IsRequired();
     }

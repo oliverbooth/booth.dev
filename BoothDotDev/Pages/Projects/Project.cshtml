@@ -109,7 +109,7 @@
                             {
                                 <div class="project-devlog-row">
                                     <span><a asp-page="/Projects/DevLog" asp-route-projectSlug="@project.Slug" asp-route-slug="@entry.Slug">@entry.Title</a></span>
-                                    <span class="project-devlog-time">@entry.Published.Humanize()</span>
+                                    <span class="project-devlog-time">@entry.PublishedAt.Humanize()</span>
                                 </div>
                             }
                         </div>

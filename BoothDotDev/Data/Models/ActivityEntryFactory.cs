@@ -19,8 +19,8 @@ public static class ActivityEntryFactory
     {
         return new ActivityEntry
         {
-            PublishedAt = post.Published,
-            UpdatedAt = post.Updated,
+            PublishedAt = post.PublishedAt,
+            UpdatedAt = post.UpdatedAt,
             Title = post.Title,
             CommitSha = post.Id.ToCommitSha(),
             PagePath = "/Blog/Article",
@@ -41,8 +41,8 @@ public static class ActivityEntryFactory
     {
         return new ActivityEntry
         {
-            PublishedAt = article.Published,
-            UpdatedAt = article.Updated,
+            PublishedAt = article.PublishedAt,
+            UpdatedAt = article.UpdatedAt,
             Title = article.Title,
             CommitSha = article.Id.ToCommitSha(),
             PagePath = "/Learn/Tutorials/Index",
@@ -64,8 +64,8 @@ public static class ActivityEntryFactory
     {
         return new ActivityEntry
         {
-            PublishedAt = devlog.Published,
-            UpdatedAt = devlog.Updated,
+            PublishedAt = devlog.PublishedAt,
+            UpdatedAt = devlog.UpdatedAt,
             Title = devlog.Title,
             CommitSha = devlog.Id.ToCommitSha(),
             PagePath = "/Projects/Devlog",
@@ -86,7 +86,7 @@ public static class ActivityEntryFactory
         return new ActivityEntry
         {
             PublishedAt = challenge.PublishedAt,
-            UpdatedAt = challenge.Updated,
+            UpdatedAt = challenge.UpdatedAt,
             Title = challenge.Title,
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",
@@ -105,8 +105,8 @@ public static class ActivityEntryFactory
     {
         return new ActivityEntry
         {
-            PublishedAt = note.Published,
-            UpdatedAt = note.Updated,
+            PublishedAt = note.PublishedAt,
+            UpdatedAt = note.UpdatedAt,
             Title = note.Title,
             CommitSha = note.Id.ToCommitSha(),
             PagePath = "/Note",

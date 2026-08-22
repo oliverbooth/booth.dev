@@ -68,7 +68,7 @@ public sealed class ProjectService
     public IReadOnlyList<ProjectDevlog> GetDevlogs(Project project)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return [.. context.DevLogs.Where(d => d.ProjectId == project.Id).OrderByDescending(d => d.Published)];
+        return [.. context.DevLogs.Where(d => d.ProjectId == project.Id).OrderByDescending(d => d.PublishedAt)];
     }
 
     /// <summary>
@@ -107,8 +107,8 @@ public sealed class ProjectService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.DevLogs
             .Where(p => p.ProjectId == devlog.ProjectId)
-            .OrderBy(post => post.Published)
-            .FirstOrDefault(post => post.Published > devlog.Published);
+            .OrderBy(post => post.PublishedAt)
+            .FirstOrDefault(post => post.PublishedAt > devlog.PublishedAt);
     }
 
     /// <summary>
@@ -126,8 +126,8 @@ public sealed class ProjectService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.DevLogs
             .Where(p => p.ProjectId == devlog.ProjectId)
-            .OrderByDescending(post => post.Published)
-            .FirstOrDefault(post => post.Published < devlog.Published);
+            .OrderByDescending(post => post.PublishedAt)
+            .FirstOrDefault(post => post.PublishedAt < devlog.PublishedAt);
     }
 
     /// <summary>
@@ -147,8 +147,8 @@ public sealed class ProjectService
 
         var ordered = searchOptions.SortStrategy switch
         {
-            ActivitySortStrategy.Published => devlogs.OrderByDescending(p => p.Published),
-            ActivitySortStrategy.Updated => devlogs.OrderByDescending(p => p.Updated ?? p.Published),
+            ActivitySortStrategy.Published => devlogs.OrderByDescending(p => p.PublishedAt),
+            ActivitySortStrategy.Updated => devlogs.OrderByDescending(p => p.UpdatedAt ?? p.PublishedAt),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
         };
 

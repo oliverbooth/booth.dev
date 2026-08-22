@@ -15,8 +15,8 @@ internal sealed class TutorialArticleConfiguration : IEntityTypeConfiguration<Tu
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
-        builder.Property(e => e.Published).IsRequired();
-        builder.Property(e => e.Updated).IsRequired(false);
+        builder.Property(e => e.PublishedAt).IsRequired();
+        builder.Property(e => e.UpdatedAt).IsRequired(false);
         builder.Property(e => e.Slug).IsRequired();
         builder.Property(e => e.NextPart).IsRequired(false);
         builder.Property(e => e.PreviousPart).IsRequired(false);

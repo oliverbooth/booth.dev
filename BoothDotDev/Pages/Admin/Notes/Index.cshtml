@@ -42,7 +42,7 @@
         <tbody>
         @foreach (var note in Model.Notes)
         {
-            var timestamp = note.Updated ?? note.Published;
+            var timestamp = note.UpdatedAt ?? note.PublishedAt;
             var badgeClass = note.Visibility switch
             {
                 Visibility.Published => "published",

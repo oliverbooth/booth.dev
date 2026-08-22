@@ -42,7 +42,7 @@ public sealed class RssController : Controller
 
         foreach (BlogPost post in _blogPostService.GetAllBlogPosts())
         {
-            var url = $"{baseUrl}/{post.Published:yyyy/MM/dd}/{post.Slug}";
+            var url = $"{baseUrl}/{post.PublishedAt:yyyy/MM/dd}/{post.Slug}";
             string excerpt = _markdownRenderingService.RenderExcerpt(post, out _);
             var description = $"{excerpt}<p><a href=\"{url}\">Read more...</a></p>";
 
@@ -52,7 +52,7 @@ public sealed class RssController : Controller
                 Link = url,
                 Comments = $"{url}#comments",
                 Creator = post.Author.DisplayName,
-                PubDate = post.Published.ToString("R"),
+                PubDate = post.PublishedAt.ToString("R"),
                 Guid = post.WordPressId.HasValue ? $"{baseUrl}?p={post.WordPressId.Value}" : $"{baseUrl}?pid={post.Id}",
                 Description = description
             };

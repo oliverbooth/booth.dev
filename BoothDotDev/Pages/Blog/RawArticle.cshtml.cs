@@ -38,10 +38,10 @@ internal sealed class RawArticle : PageModel
         builder.AppendLine("# " + post.Title);
         builder.AppendLine($"Author: {post.Author.DisplayName}");
 
-        builder.AppendLine($"Published: {post.Published:R}");
-        if (post.Updated.HasValue)
+        builder.AppendLine($"Published: {post.PublishedAt:R}");
+        if (post.UpdatedAt.HasValue)
         {
-            builder.AppendLine($"Updated: {post.Updated:R}");
+            builder.AppendLine($"Updated: {post.UpdatedAt:R}");
         }
 
         builder.AppendLine();

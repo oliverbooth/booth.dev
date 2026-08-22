@@ -104,7 +104,7 @@ public sealed class DevChallengeService
 
         challenge.PublishedAt = request.PublishedAt.ToUniversalTime();
         challenge.CurrentDraftId = draft.Id;
-        challenge.Updated = DateTimeOffset.UtcNow;
+        challenge.UpdatedAt = DateTimeOffset.UtcNow;
 
         context.SaveChanges();
         return challenge;
@@ -234,7 +234,7 @@ public sealed class DevChallengeService
         var ordered = searchOptions.SortStrategy switch
         {
             ActivitySortStrategy.Published => challenges.OrderByDescending(c => c.PublishedAt),
-            ActivitySortStrategy.Updated => challenges.OrderByDescending(c => c.Updated ?? c.PublishedAt),
+            ActivitySortStrategy.Updated => challenges.OrderByDescending(c => c.UpdatedAt ?? c.PublishedAt),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOptions), searchOptions.SortStrategy, "Unknown sort strategy")
         };
 

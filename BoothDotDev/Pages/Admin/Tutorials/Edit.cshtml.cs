@@ -138,7 +138,7 @@ public sealed class Edit : PageModel
             Input = new EditModel
             {
                 Visibility = Visibility.Published,
-                Published = DateTimeOffset.UtcNow.ToLocalTime(),
+                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime(),
                 ShowTableOfContents = true,
                 TableOfContentsExpanded = true,
                 Folder = Folders.FirstOrDefault()?.Id ?? Guid.Empty
@@ -180,7 +180,7 @@ public sealed class Edit : PageModel
             Body = draft.Body,
             PreviewImageUrl = draft.PreviewImageUrl?.ToString(),
             Visibility = draft.Visibility,
-            Published = article.Published.ToLocalTime(),
+            PublishedAt = article.PublishedAt.ToLocalTime(),
             EnableComments = article.EnableComments,
             ShowTableOfContents = draft.ShowTableOfContents,
             TableOfContentsExpanded = draft.TableOfContentsExpanded,
@@ -258,7 +258,7 @@ public sealed class Edit : PageModel
         }
 
         var articleId = id ?? Guid.Empty;
-        var html = _markdownRenderingService.Render(Input.Body, articleId, Input.Published, Area);
+        var html = _markdownRenderingService.Render(Input.Body, articleId, Input.PublishedAt, Area);
 
         // Tutorials have no font-style concept, so there's no real prose modifier class to send - an empty
         // string keeps content-preview.ts's `prose ${proseClass}` assembly well-formed without touching the TS.
@@ -331,7 +331,7 @@ public sealed class Edit : PageModel
             return BadRequest("No file was uploaded.");
         }
 
-        var result = await _cdnMediaService.UploadAsync(id.Value, Input.Published, file, Area, cancellationToken);
+        var result = await _cdnMediaService.UploadAsync(id.Value, Input.PublishedAt, file, Area, cancellationToken);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors.Select(e => e.Message));
@@ -353,7 +353,7 @@ public sealed class Edit : PageModel
             return BadRequest("Save the article before managing media.");
         }
 
-        var result = _cdnMediaService.DeleteFile(id.Value, Input.Published, fileName, Area);
+        var result = _cdnMediaService.DeleteFile(id.Value, Input.PublishedAt, fileName, Area);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors.Select(e => e.Message));
@@ -376,7 +376,7 @@ public sealed class Edit : PageModel
             return BadRequest("Save the article before managing media.");
         }
 
-        var result = _cdnMediaService.RenameFile(id.Value, Input.Published, fileName, newFileName, Area);
+        var result = _cdnMediaService.RenameFile(id.Value, Input.PublishedAt, fileName, newFileName, Area);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors.Select(e => e.Message));
@@ -393,7 +393,7 @@ public sealed class Edit : PageModel
     /// <returns>An anonymous object suitable for a <see cref="JsonResult" />.</returns>
     private object MediaListPayload(Guid id)
     {
-        var uploaded = _cdnMediaService.ListFiles(id, Input.Published, Area);
+        var uploaded = _cdnMediaService.ListFiles(id, Input.PublishedAt, Area);
         var uploadedNames = uploaded.Select(f => f.FileName).ToHashSet(StringComparer.Ordinal);
 
         var uploadedEntries = uploaded.Select(f => new
@@ -446,7 +446,7 @@ public sealed class Edit : PageModel
 
         return new TutorialArticleSaveRequest(
             Input.Slug,
-            Input.Published,
+            Input.PublishedAt,
             Input.EnableComments,
             Input.NextPart,
             Input.PreviousPart,
@@ -559,7 +559,7 @@ public sealed class Edit : PageModel
         ///     Gets or sets the publication date and time of the article.
         /// </summary>
         /// <value>The publication date and time of the article.</value>
-        public DateTimeOffset Published { get; set; }
+        public DateTimeOffset PublishedAt { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether comments are enabled for the article.

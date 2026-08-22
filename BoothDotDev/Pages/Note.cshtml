@@ -14,7 +14,7 @@
     var note = Model.RetrievedNote.ValueOr((Data.Models.Note)null!);
     ViewData["Page"] = "Note";
     ViewData["Post"] = note;
-    var published = note.Published;
+    var published = note.PublishedAt;
 }
 
 <div class="page">
@@ -45,6 +45,6 @@
     </div>
 
     <div class="prose @note.FontStyle.ToProseClass()" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.Published))
+        @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
     </div>
 </div>

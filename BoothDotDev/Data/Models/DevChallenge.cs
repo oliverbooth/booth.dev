@@ -91,7 +91,7 @@ public sealed class DevChallenge : IEquatable<DevChallenge>
     ///     Gets or sets the date and time when the challenge was last updated.
     /// </summary>
     /// <value>A <see cref="DateTimeOffset" /> representing the date and time when the challenge was last updated.</value>
-    public DateTimeOffset? Updated { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 
     /// <summary>
     ///     Gets the visibility of the challenge, as of its current draft.

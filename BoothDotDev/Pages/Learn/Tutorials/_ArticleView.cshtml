@@ -21,7 +21,7 @@
     ViewData["Post"] = article;
     ViewData["Title"] = article.Title;
     ViewData["Page"] = "Learn";
-    var published = article.Published;
+    var published = article.PublishedAt;
 
     var parents = new Stack<TutorialFolder>();
     Guid? parent = article.Folder;
@@ -94,7 +94,7 @@
     }
 
     <div class="prose" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(article, article.Id, article.Published))
+        @Html.Raw(MarkdownRenderingService.Render(article, article.Id, article.PublishedAt))
     </div>
 
     @if (article.HasOtherParts)

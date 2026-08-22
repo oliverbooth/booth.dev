@@ -76,7 +76,7 @@
                             throw new UnreachableException();
                     }
                 </span></td>
-                <td><abbr title="@creation.Published.ToString("yyyy-MM-dd HH:mm:ss")">@creation.Published.Humanize()</abbr></td>
+                <td><abbr title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></td>
                 <td>
                     <div class="row-actions">
                         <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>

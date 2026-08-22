@@ -13,8 +13,8 @@ internal sealed class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
-        builder.Property(e => e.Published).IsRequired();
-        builder.Property(e => e.Updated).IsRequired(false);
+        builder.Property(e => e.PublishedAt).IsRequired();
+        builder.Property(e => e.UpdatedAt).IsRequired(false);
         builder.Property(e => e.CurrentDraftId).IsRequired(false);
         builder.Property(e => e.TrashedAt).IsRequired(false);
 

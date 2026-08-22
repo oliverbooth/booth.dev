@@ -134,7 +134,7 @@ public sealed class Edit : PageModel
             Content = draft.Content,
             FontStyle = draft.FontStyle,
             Visibility = draft.Visibility,
-            PublishedAt = note.Published.ToLocalTime()
+            PublishedAt = note.PublishedAt.ToLocalTime()
         };
 
         return Page();

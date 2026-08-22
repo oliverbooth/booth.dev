@@ -78,9 +78,9 @@ internal sealed class Index : PageModel
     {
         var route = new
         {
-            year = post.Published.ToString("yyyy"),
-            month = post.Published.ToString("MM"),
-            day = post.Published.ToString("dd"),
+            year = post.PublishedAt.ToString("yyyy"),
+            month = post.PublishedAt.ToString("MM"),
+            day = post.PublishedAt.ToString("dd"),
             slug = post.Slug
         };
         return Redirect(Url.Page("/Blog/Article", route)!);

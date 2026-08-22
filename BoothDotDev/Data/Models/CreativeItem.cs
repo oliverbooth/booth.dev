@@ -33,7 +33,7 @@ public abstract class CreativeItem
     ///     Gets or sets the date and time when the creative item was published.
     /// </summary>
     /// <value>The published date and time.</value>
-    public DateTimeOffset Published { get; set; }
+    public DateTimeOffset PublishedAt { get; set; }
 
     /// <summary>
     ///     Gets or sets the date and time the creative item was moved to the trash.

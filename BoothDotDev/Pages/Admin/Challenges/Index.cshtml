@@ -41,7 +41,7 @@
         <tbody>
         @foreach (var challenge in Model.Challenges)
         {
-            var timestamp = challenge.Updated ?? challenge.PublishedAt;
+            var timestamp = challenge.UpdatedAt ?? challenge.PublishedAt;
             var badgeClass = challenge.Visibility switch
             {
                 Visibility.Published => "published",

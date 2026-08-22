@@ -17,8 +17,8 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(e => e.WordPressId).HasColumnName("wordpress_id").IsRequired(false);
         builder.Property(e => e.Slug).HasMaxLength(100).IsRequired();
         builder.Property(e => e.AuthorId).IsRequired();
-        builder.Property(e => e.Published).IsRequired();
-        builder.Property(e => e.Updated).IsRequired(false);
+        builder.Property(e => e.PublishedAt).IsRequired();
+        builder.Property(e => e.UpdatedAt).IsRequired(false);
         builder.Property(e => e.IsRedirect).IsRequired();
         builder.Property(e => e.RedirectUrl).HasConversion<UriToStringConverter>().HasMaxLength(255).IsRequired(false);
         builder.Property(e => e.EnableComments).IsRequired();
