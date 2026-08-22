@@ -8,48 +8,47 @@
 
 <div class="page-wide">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / Create</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb"><a asp-page="/Index">Home</a> / Create</p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Creations/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
+        }
+    </div>
     <h1>Create</h1>
     <p class="lede">
         Things I gone done and made that aren't code-related. See <a asp-page="/Projects/Index">my project list</a> for my dev portfolio.
     </p>
 
-    @*
-   <div class="filter-row">
-       <span class="pill active">All</span>
-       <span class="pill">Music</span>
-       <span class="pill">Art</span>
-       <span class="pill">3D</span>
-   </div>
+    @if (Model.MusicItems.Count > 0)
+    {
+        <div class="section-head"><h2>Music</h2></div>
+        <div class="stack-list section-list">
+            @foreach (var item in Model.MusicItems)
+            {
+                var musicContext = new MarkdownRenderContext(item.Id, item.Published);
+                var musicResolver = new CdnMediaResolver(musicContext, null!, "content");
+                var musicUrl = musicResolver.ResolveCdnUrl(item.FileName, MediaKind.Audio);
+                var duration = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
 
-    <div class="section-head"><h2>Music</h2></div>
-    <div class="stack-list section-list">
-        <a href="#">
-            <div class="track-play track-play--active">
-                <i class="ti ti-player-play-filled" style="font-size:14px"></i>
-            </div>
-            <div class="stack-meta track-meta">
-                <div>
-                    <p class="title">Station Theme (WIP)</p>
-                    <p class="sub">For The Quiet Line</p>
+                <div class="stack-meta track-meta">
+                    <div>
+                        <p class="title">@item.Title@(item.IsWorkInProgress ? " (WIP)" : "")</p>
+                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                        {
+                            <p class="sub">@item.Description</p>
+                        }
+                    </div>
+                    <audio controls src="@musicUrl" style="height:32px"></audio>
+                    <span class="sub">@duration</span>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-page="/Admin/Creations/Music/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                    }
                 </div>
-                <span class="sub">2:14</span>
-            </div>
-        </a>
-        <a href="#">
-            <div class="track-play track-play--idle">
-                <i class="ti ti-player-play" style="font-size:14px"></i>
-            </div>
-            <div class="stack-meta track-meta">
-                <div>
-                    <p class="title">Late night noodling</p>
-                    <p class="sub">Piano improv</p>
-                </div>
-                <span class="sub">3:41</span>
-            </div>
-        </a>
-    </div>
-*@
+            }
+        </div>
+    }
 
     <div class="section-head"><h2>Art</h2></div>
     <div class="masonry">
@@ -62,7 +61,14 @@
             var resolver = new CdnMediaResolver(context, null!, "content");
             var cdnUrl = resolver.ResolveCdnUrl(item.FileName, mediaKind);
 
-            <figure class="masonry-cell @(first ? "tall" : "short")">
+            <figure class="masonry-cell @(first ? "tall" : "short")" style="position:relative">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-page="/Admin/Creations/Artwork/Edit" asp-route-id="@item.Id" class="icon-btn"
+                       aria-label="Edit" style="position:absolute;top:8px;right:8px;z-index:1">
+                        <i class="ti ti-edit"></i>
+                    </a>
+                }
                 <img src="@cdnUrl"
                      title="@item.Title"
                      alt="@item.FileName"

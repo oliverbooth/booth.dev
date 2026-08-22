@@ -27,10 +27,17 @@ public sealed class Index : PageModel
     public IReadOnlyList<ArtworkItem> ArtworkItems { get; set; } = [];
 
     /// <summary>
+    ///     Gets the music items.
+    /// </summary>
+    /// <value>The music items.</value>
+    public IReadOnlyList<MusicItem> MusicItems { get; set; } = [];
+
+    /// <summary>
     ///     Handles the HTTP GET request.
     /// </summary>
     public void OnGet()
     {
         ArtworkItems = _creationService.GetArtworkItems();
+        MusicItems = _creationService.GetMusicItems();
     }
 }

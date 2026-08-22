@@ -1,0 +1,97 @@
+@page "/admin/creations"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Creations.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Creations</h1>
+            <p>Create, edit, and delete creations</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a asp-page="/Admin/Creations/Trash" class="btn icon-btn"><i class="ti ti-trash" style="font-size:15px"></i>Trash</a>
+            <a asp-page="/Admin/Creations/Artwork/Edit" class="btn"><i class="ti ti-photo" style="font-size:15px"></i>New artwork</a>
+            <a asp-page="/Admin/Creations/Music/Edit" class="btn btn-primary"><i class="ti ti-music" style="font-size:15px"></i>New music</a>
+        </div>
+    </div>
+
+    <div data-search-scope>
+    <div class="table-toolbar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" id="search" placeholder="Search creations&hellip;">
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Visibility</th>
+            <th>Published</th>
+            <th style="text-align:right">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var creation in Model.Creations)
+        {
+            var badgeClass = creation.Visibility switch
+            {
+                Visibility.Published => "published",
+                Visibility.Private => "private",
+                _ => "unlisted"
+            };
+            var isMusic = creation.Type == "Music";
+            var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
+
+            <tr>
+                <td>
+                    <div class="row-title" data-search>@creation.Title</div>
+                </td>
+                <td><span data-search>@creation.Type</span></td>
+                <td><span class="badge badge-@badgeClass">
+                    @switch (creation.Visibility)
+                    {
+                        case Visibility.Published:
+                            <text><span class="dot"></span> Published</text>
+                            break;
+
+                        case Visibility.Private:
+                            <text><i class="ti ti-lock"></i> Private</text>
+                            break;
+
+                        case Visibility.Unlisted:
+                            <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                            break;
+
+                        default:
+                            throw new UnreachableException();
+                    }
+                </span></td>
+                <td><abbr title="@creation.Published.ToString("yyyy-MM-dd HH:mm:ss")">@creation.Published.Humanize()</abbr></td>
+                <td>
+                    <div class="row-actions">
+                        <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id" asp-route-type="@creation.Type">
+                            <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr data-search-empty hidden>
+            <td colspan="5" class="table-empty-state">No creations found</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</div>

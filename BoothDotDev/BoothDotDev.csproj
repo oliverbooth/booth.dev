@@ -51,6 +51,7 @@
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="ShortGuid" Version="2.0.1" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+        <PackageReference Include="TagLibSharp" Version="2.3.0" />
         <PackageReference Include="X10D" Version="4.0.0" />
         <PackageReference Include="X10D.Hosting" Version="4.0.0" />
         <PackageReference Include="ZString" Version="2.6.0" />

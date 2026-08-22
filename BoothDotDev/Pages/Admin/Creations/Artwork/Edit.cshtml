@@ -1,0 +1,132 @@
+@page "/admin/creations/artwork/edit/{id:guid?}"
+@using BoothDotDev.Data
+@model BoothDotDev.Pages.Admin.Creations.Artwork.Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Creations/Index">Creations</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This item is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the public site. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New artwork" : Model.Input.Title)</h1></div>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save changes</button>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title" />
+        </div>
+
+        <div class="field">
+            <label for="description">Description (markdown supported)</label>
+            <textarea id="description" rows="5" asp-for="Input.Description" data-markdown></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Input.Visibility">Visibility</label>
+                <select asp-for="Input.Visibility">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="date">Published date</label>
+                <div class="input-with-button">
+                    <input type="datetime-local" id="date" asp-for="Input.Published">
+                    <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                        <i class="ti ti-clock"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="made-with">Made with</label>
+            <input type="text" id="made-with" asp-for="Input.MadeWith" placeholder="e.g. Blender, Krita" />
+        </div>
+
+        <div class="field">
+            <label>Settings</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.IsWorkInProgress" />
+                    Work in progress
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save changes</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
+        </div>
+
+    </form>
+
+    <section class="admin-media" id="artwork-file" style="margin-top:2rem">
+        <div class="admin-header">
+            <div><h2>Image file</h2></div>
+        </div>
+
+        @if (Model.CreatingNew)
+        {
+            <p class="hint">Save this item before uploading its image.</p>
+        }
+        else
+        {
+            @if (Model.FileUrl is not null)
+            {
+                <p class="hint">Currently: <code>@Model.ResolutionDisplay</code></p>
+                <img src="@Model.FileUrl" alt="@Model.Input.Title" style="max-width:320px;border-radius:var(--radius);display:block;margin-bottom:12px" />
+            }
+            else
+            {
+                <p class="hint">No image uploaded yet.</p>
+            }
+
+            <form method="post" asp-page-handler="UploadFile" asp-route-id="@Model.ItemId" enctype="multipart/form-data">
+                <div class="field">
+                    <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" required />
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="ti ti-upload"></i> Upload</button>
+            </form>
+        }
+    </section>
+
+</div>
