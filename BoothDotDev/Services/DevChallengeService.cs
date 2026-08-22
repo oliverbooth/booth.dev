@@ -4,7 +4,6 @@ using BoothDotDev.Data.Models;
 using DEDrake;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using BC = BCrypt.Net.BCrypt;
 
 namespace BoothDotDev.Services;
 
@@ -36,8 +35,7 @@ public sealed class DevChallengeService
 
         var challenge = new DevChallenge
         {
-            PublishedAt = request.PublishedAt.ToUniversalTime(),
-            Password = HashPasswordOrNull(request.NewPassword)
+            PublishedAt = request.PublishedAt.ToUniversalTime()
         };
 
         // two SaveChanges calls, not one: DevChallenge -> DevChallengeDraft (via DevChallengeId) and
@@ -77,7 +75,6 @@ public sealed class DevChallengeService
         context.DevChallengeDrafts.Add(draft);
 
         challenge.PublishedAt = request.PublishedAt.ToUniversalTime();
-        challenge.Password = HashPasswordOrNull(request.NewPassword, challenge.Password);
 
         context.SaveChanges();
         return challenge;
@@ -106,7 +103,6 @@ public sealed class DevChallengeService
         context.DevChallengeDrafts.Add(draft);
 
         challenge.PublishedAt = request.PublishedAt.ToUniversalTime();
-        challenge.Password = HashPasswordOrNull(request.NewPassword, challenge.Password);
         challenge.CurrentDraftId = draft.Id;
         challenge.Updated = DateTimeOffset.UtcNow;
 
@@ -159,27 +155,6 @@ public sealed class DevChallengeService
         challenge.TrashedAt = null;
         context.SaveChanges();
         return challenge;
-    }
-
-    /// <summary>
-    ///     Authenticates the challenge with the specified ID and password.
-    /// </summary>
-    /// <param name="id">The ID of the challenge.</param>
-    /// <param name="password">The password of the challenge.</param>
-    /// <returns><see langword="true" /> if the challenge is authenticated; otherwise, <see langword="false" />.</returns>
-    public bool AuthenticateChallenge(string id, string? password)
-    {
-        if (!TryGetDevChallenge(id, out var challenge, out _))
-        {
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(challenge.Password))
-        {
-            return true;
-        }
-
-        return password is not null && BC.Verify(password, challenge.Password);
     }
 
     /// <summary>
@@ -403,19 +378,5 @@ public sealed class DevChallengeService
             ShowSolution = content.ShowSolution,
             Visibility = content.Visibility
         };
-    }
-
-    /// <summary>
-    ///     Hashes a new password if one was given, or falls back to an existing hash otherwise.
-    /// </summary>
-    /// <param name="newPassword">The new, plain-text password, or <see langword="null" />/whitespace to leave it unchanged.</param>
-    /// <param name="existing">The existing password hash to fall back to. Defaults to <see langword="null" /> (no password).</param>
-    /// <returns>
-    ///     The bcrypt hash of <paramref name="newPassword" />, or <paramref name="existing" /> if
-    ///     <paramref name="newPassword" /> is <see langword="null" /> or whitespace.
-    /// </returns>
-    private static string? HashPasswordOrNull(string? newPassword, string? existing = null)
-    {
-        return string.IsNullOrWhiteSpace(newPassword) ? existing : BC.HashPassword(newPassword);
     }
 }

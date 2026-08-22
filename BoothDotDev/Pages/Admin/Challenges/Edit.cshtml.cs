@@ -392,7 +392,7 @@ public sealed class Edit : PageModel
     private DevChallengeSaveRequest BuildSaveRequest()
     {
         var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Solution, Input.ShowSolution, Input.Visibility);
-        return new DevChallengeSaveRequest(Input.PublishedAt, Input.NewPassword, content);
+        return new DevChallengeSaveRequest(Input.PublishedAt, content);
     }
 
     /// <summary>
@@ -455,12 +455,5 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The publication date and time of the challenge.</value>
         public DateTimeOffset PublishedAt { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the new password for the challenge, or <see langword="null" />/whitespace to leave the
-        ///     existing password (if any) unchanged.
-        /// </summary>
-        /// <value>The new password for the challenge.</value>
-        public string? NewPassword { get; set; }
     }
 }

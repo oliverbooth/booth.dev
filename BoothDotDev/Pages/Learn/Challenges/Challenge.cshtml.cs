@@ -1,3 +1,4 @@
+using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,23 +17,23 @@ internal sealed class Challenge : PageModel
 
     public DevChallenge DevChallenge { get; private set; } = null!;
 
-    public IActionResult OnGet([FromRoute] string id, [FromQuery] string? password = null)
+    public IActionResult OnGet([FromRoute] string id)
     {
         if (!_devChallengeService.TryGetDevChallenge(id, out var challenge, out var shouldRedirect))
         {
             return NotFound();
         }
 
-        if (!_devChallengeService.AuthenticateChallenge(challenge.Id, password))
+        // There's no legitimate reason for a signed-out visitor to reach a private challenge by its public
+        // URL — the editor's preview pane covers previewing unpublished work.
+        if (challenge.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
         {
-            return Unauthorized();
+            return NotFound();
         }
 
         if (shouldRedirect)
         {
-            return RedirectPermanent(password is not null
-                ? $"/challenge/{challenge.Id}?password={password}"
-                : $"/challenge/{challenge.Id}");
+            return RedirectPermanent($"/challenge/{challenge.Id}");
         }
 
         DevChallenge = challenge;

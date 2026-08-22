@@ -1,4 +1,5 @@
 @page "/challenge/{id}"
+@using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @inject MarkdownRenderingService MarkdownRenderingService
@@ -12,11 +13,27 @@
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Challenges/Index">Challenges</a> /
-        @challenge.Title
-    </p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb">
+            <a asp-page="/Index">Home</a> /
+            <a asp-page="/Learn/Challenges/Index">Challenges</a> /
+            @challenge.Title
+        </p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a href="@challenge.Id.ToRoute("/admin/challenges/edit")" class="btn"><i class="ti ti-edit"></i> Edit</a>
+        }
+    </div>
+
+    @if (challenge.Visibility == Visibility.Private)
+    {
+        <div class="callout" data-callout="warning">
+            <p class="callout-title"><i class="ti ti-lock"></i> This challenge is private</p>
+            <div class="callout-body">
+                <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
+            </div>
+        </div>
+    }
 
     <span class="eyebrow">Challenge</span>
     <h1 style="margin:8px 0 12px;font-size:30px">@challenge.Title</h1>

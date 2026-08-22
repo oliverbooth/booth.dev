@@ -43,12 +43,6 @@ public sealed class DevChallenge : IEquatable<DevChallenge>
     public int? OldId { get; private set; }
 
     /// <summary>
-    ///     Gets or sets the password for the challenge.
-    /// </summary>
-    /// <value>The password for the challenge.</value>
-    public string? Password { get; set; }
-
-    /// <summary>
     ///     Gets the date and time when the challenge was published.
     /// </summary>
     /// <value>A <see cref="DateTimeOffset" /> representing the date and time when the challenge was published.</value>

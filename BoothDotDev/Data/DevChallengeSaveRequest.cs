@@ -20,9 +20,5 @@ public sealed record DevChallengeDraftContent(
 ///     draft the save produces.
 /// </summary>
 /// <param name="PublishedAt">The publication date and time of the challenge.</param>
-/// <param name="NewPassword">
-///     The new password for the challenge, or <see langword="null" /> or whitespace to leave the existing password
-///     (if any) unchanged.
-/// </param>
 /// <param name="Content">The content of the draft this save produces.</param>
-public sealed record DevChallengeSaveRequest(DateTimeOffset PublishedAt, string? NewPassword, DevChallengeDraftContent Content);
+public sealed record DevChallengeSaveRequest(DateTimeOffset PublishedAt, DevChallengeDraftContent Content);
