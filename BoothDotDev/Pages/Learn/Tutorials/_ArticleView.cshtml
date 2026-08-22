@@ -1,3 +1,4 @@
+@using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
@@ -39,16 +40,41 @@
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-        @while (parents.Count > 0)
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb">
+            <a asp-page="/Index">Home</a> /
+            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
+            @while (parents.Count > 0)
+            {
+                var current = parents.Pop();
+                <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            }
+            / @article.Title
+        </p>
+        @if (User.Identity?.IsAuthenticated == true)
         {
-            var current = parents.Pop();
-            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
         }
-        / @article.Title
-    </p>
+    </div>
+
+    @if (article.Visibility == Visibility.Private)
+    {
+        <div class="callout" data-callout="warning">
+            <p class="callout-title"><i class="ti ti-lock"></i> This article is private</p>
+            <div class="callout-body">
+                <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
+            </div>
+        </div>
+    }
+    else if (article.Visibility == Visibility.Unlisted)
+    {
+        <div class="callout" data-callout="note">
+            <p class="callout-title"><i class="ti ti-eye-off"></i> This article is unlisted</p>
+            <div class="callout-body">
+                <p>It doesn't appear in listings or search, but anyone with this link can view it.</p>
+            </div>
+        </div>
+    }
 
     <span class="eyebrow">Tutorial</span>
     <h1 style="margin:8px 0 12px;font-size:30px">@article.Title</h1>
@@ -125,25 +151,21 @@
     @if (article.EnableComments)
     {
         <div class="giscus"></div>
-
-        @section Scripts
-        {
-            <script src="https://giscus.app/client.js"
-                    data-repo="oliverbooth/booth.dev"
-                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
-                    data-category="Comments"
-                    data-category-id="DIC_kwDODp0rOs4Ce_Nj"
-                    data-mapping="pathname"
-                    data-strict="0"
-                    data-reactions-enabled="1"
-                    data-emit-metadata="0"
-                    data-input-position="bottom"
-                    data-theme="dark"
-                    data-lang="en"
-                    crossorigin="anonymous"
-                    async>
-            </script>
-        }
+        <script src="https://giscus.app/client.js"
+                data-repo="oliverbooth/booth.dev"
+                data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
+                data-category="Comments"
+                data-category-id="DIC_kwDODp0rOs4Ce_Nj"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="dark"
+                data-lang="en"
+                crossorigin="anonymous"
+                async>
+        </script>
     }
     else
     {
