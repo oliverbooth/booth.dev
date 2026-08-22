@@ -154,15 +154,6 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
-    ///     Gets the set of site configuration items.
-    /// </summary>
-    /// <value>The set of site configuration items.</value>
-    public DbSet<SiteConfiguration> SiteConfiguration
-    {
-        get => Set<SiteConfiguration>();
-    }
-
-    /// <summary>
     ///     Gets the collection of tutorial articles in the database.
     /// </summary>
     /// <value>The collection of tutorial articles.</value>
@@ -223,7 +214,6 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
-        modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());
