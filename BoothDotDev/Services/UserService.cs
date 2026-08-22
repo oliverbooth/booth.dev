@@ -42,6 +42,110 @@ public sealed class UserService
     }
 
     /// <summary>
+    ///     Creates a new user.
+    /// </summary>
+    /// <param name="request">The user's display name, email address, and login state.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the newly-created user.</returns>
+    public Result<User> CreateUser(UserSaveRequest request)
+    {
+        if (!request.DisableLogin && string.IsNullOrWhiteSpace(request.NewPassword))
+        {
+            return Result.Fail("A password is required unless login is disabled.");
+        }
+
+        using var context = _dbContextFactory.CreateDbContext();
+        var user = new User
+        {
+            DisplayName = request.DisplayName,
+            EmailAddress = request.EmailAddress,
+            TotpSecret = string.IsNullOrWhiteSpace(request.TotpSecret) ? null : request.TotpSecret
+        };
+
+        ApplyPassword(user, request);
+
+        context.Users.Add(user);
+        context.SaveChanges();
+
+        _userCache[user.Id] = user;
+        return user;
+    }
+
+    /// <summary>
+    ///     Updates an existing user.
+    /// </summary>
+    /// <param name="id">The ID of the user to update.</param>
+    /// <param name="request">The user's display name, email address, and login state.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated user, or an error if no user with the specified
+    ///     <paramref name="id" /> exists, or if login would end up enabled with no password set.
+    /// </returns>
+    public Result<User> UpdateUser(Guid id, UserSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var user = context.Users.Find(id);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with ID '{id}' not found.");
+        }
+
+        // a blank password field during an edit means "leave it unchanged" - but only if there's an existing
+        // password to fall back to. A user with login already disabled has nothing to fall back to, so leaving
+        // it blank while also unchecking "disable login" would silently leave login disabled anyway.
+        var hasExistingPassword = !string.IsNullOrWhiteSpace(user.Password);
+        if (!request.DisableLogin && string.IsNullOrWhiteSpace(request.NewPassword) && !hasExistingPassword)
+        {
+            return Result.Fail("A password is required to enable login.");
+        }
+
+        user.DisplayName = request.DisplayName;
+        user.EmailAddress = request.EmailAddress;
+        user.TotpSecret = string.IsNullOrWhiteSpace(request.TotpSecret) ? null : request.TotpSecret;
+        ApplyPassword(user, request);
+
+        context.SaveChanges();
+
+        _userCache[id] = user;
+        return user;
+    }
+
+    /// <summary>
+    ///     Generates a new random TOTP secret, base32-encoded and ready to hand to an authenticator app.
+    /// </summary>
+    /// <returns>A new random TOTP secret.</returns>
+    public static string GenerateTotpSecret()
+    {
+        return Base32Encoding.ToString(KeyGeneration.GenerateRandomKey(20));
+    }
+
+    /// <summary>
+    ///     Resets a user's TOTP, clearing their secret so they're no longer prompted for a code at login. There's
+    ///     no self-service re-enrollment flow - a new secret has to be configured directly in the database, same as
+    ///     the initial setup.
+    /// </summary>
+    /// <param name="id">The ID of the user whose TOTP to reset.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated user, or an error if no user with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<User> ResetTotp(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var user = context.Users.Find(id);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with ID '{id}' not found.");
+        }
+
+        user.TotpSecret = null;
+        context.SaveChanges();
+
+        _userCache[id] = user;
+        return user;
+    }
+
+    /// <summary>
     ///     Finds a user with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the user to find.</param>
@@ -143,5 +247,29 @@ public sealed class UserService
         }
 
         return Result.Ok(user);
+    }
+
+    /// <summary>
+    ///     Applies a save request's login state to a user: clears the password if login is being disabled, hashes
+    ///     a new password if one was given, or leaves the existing password untouched otherwise.
+    /// </summary>
+    /// <param name="user">The user to update.</param>
+    /// <param name="request">The save request.</param>
+    private static void ApplyPassword(User user, UserSaveRequest request)
+    {
+        if (request.DisableLogin)
+        {
+            user.Password = string.Empty;
+            user.Salt = string.Empty;
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(request.NewPassword))
+        {
+            return;
+        }
+
+        user.Password = BCrypt.HashPassword(request.NewPassword);
+        user.Salt = BCrypt.GenerateSalt();
     }
 }

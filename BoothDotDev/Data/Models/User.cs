@@ -10,6 +10,8 @@ namespace BoothDotDev.Data.Models;
 /// </summary>
 public sealed class User
 {
+    private const int DefaultAvatarSize = 28;
+
     /// <summary>
     ///     Gets the URL of the user's avatar.
     /// </summary>
@@ -17,7 +19,7 @@ public sealed class User
     [NotMapped]
     public Uri AvatarUrl
     {
-        get => GetAvatarUrl();
+        get => GetAvatarUrl(DefaultAvatarSize);
     }
 
     /// <summary>
@@ -67,7 +69,7 @@ public sealed class User
     /// </summary>
     /// <param name="size">The size of the avatar.</param>
     /// <returns>The URL of the author's avatar. 404s if no custom Gravatar is configured, rather than falling back to Gravatar's default silhouette.</returns>
-    private Uri GetAvatarUrl(int size = 28)
+    public Uri GetAvatarUrl(int size)
     {
         if (string.IsNullOrWhiteSpace(EmailAddress))
         {

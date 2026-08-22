@@ -8,6 +8,7 @@ import {initConfirmForms} from './confirm.ts';
 import {initContentPreview} from './admin/content-preview.ts';
 import {initMediaManager} from './admin/media-manager.ts';
 import {initAvatarFallback} from './avatar-fallback.ts';
+import {initUserAuthoring} from './admin/user-authoring.ts';
 
 (() => {
     initAltTextPopovers();
@@ -20,4 +21,5 @@ import {initAvatarFallback} from './avatar-fallback.ts';
     initContentPreview();
     initMediaManager();
     initAvatarFallback();
+    initUserAuthoring();
 })();
