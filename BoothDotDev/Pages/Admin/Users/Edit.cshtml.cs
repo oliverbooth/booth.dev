@@ -1,14 +1,19 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text.Json;
 using BoothDotDev.Data;
 using BoothDotDev.Services;
+using Fido2NetLib;
 using FluentResults;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QRCoder;
 
 namespace BoothDotDev.Pages.Admin.Users;
 
+using PasskeyCredential = Data.Models.PasskeyCredential;
 using User = Data.Models.User;
 
 /// <summary>
@@ -17,15 +22,25 @@ using User = Data.Models.User;
 [Authorize(Policy = "Admin")]
 public sealed class Edit : PageModel
 {
+    private const string PasskeyRegistrationCookieName = "webauthn_reg_challenge";
+    private static readonly TimeSpan PasskeyChallengeLifetime = TimeSpan.FromMinutes(5);
+    private static readonly JsonSerializerOptions CamelCaseJson = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
     private readonly UserService _userService;
+    private readonly PasskeyService _passkeyService;
+    private readonly IDataProtector _protector;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
     /// </summary>
     /// <param name="userService">The <see cref="UserService" />.</param>
-    public Edit(UserService userService)
+    /// <param name="passkeyService">The <see cref="PasskeyService" />.</param>
+    /// <param name="provider">The <see cref="IDataProtectionProvider" /> used to create a data protector.</param>
+    public Edit(UserService userService, PasskeyService passkeyService, IDataProtectionProvider provider)
     {
         _userService = userService;
+        _passkeyService = passkeyService;
+        _protector = provider.CreateProtector("AdminUsers.PasskeyRegistration");
     }
 
     /// <summary>
@@ -59,6 +74,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <value>The QR code SVG markup, or <see langword="null" /> if there's no secret to encode.</value>
     public string? TotpQrCodeSvg { get; private set; }
+
+    /// <summary>
+    ///     Gets the user's registered passkeys, newest first.
+    /// </summary>
+    /// <value>The user's registered passkeys.</value>
+    public IReadOnlyList<PasskeyCredential> Passkeys { get; private set; } = [];
 
     /// <summary>
     ///     Gets the ID of the user being edited.
@@ -154,6 +175,144 @@ public sealed class Edit : PageModel
     }
 
     /// <summary>
+    ///     Handles the POST request for beginning a passkey registration ceremony.
+    /// </summary>
+    /// <param name="id">The ID of the user to register a new passkey for.</param>
+    /// <param name="nickname">A user-supplied label for the new passkey.</param>
+    /// <returns>
+    ///     The credential creation options for the browser to pass to <c>navigator.credentials.create</c>, as raw JSON.
+    /// </returns>
+    public IActionResult OnPostBeginPasskeyRegistration(Guid? id, string? nickname)
+    {
+        if (id is not { } userId)
+        {
+            return BadRequest("Save the user before registering a passkey.");
+        }
+
+        var userResult = _userService.GetUser(userId);
+        if (userResult.IsFailed)
+        {
+            return NotFound();
+        }
+
+        var options = _passkeyService.BeginRegistration(userResult.Value);
+        var pending = new PendingPasskeyRegistration(nickname, options.ToJson(), DateTimeOffset.UtcNow);
+        var payload = _protector.Protect(JsonSerializer.Serialize(pending));
+
+        Response.Cookies.Append(PasskeyRegistrationCookieName, payload,
+            new CookieOptions
+            {
+                HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, MaxAge = PasskeyChallengeLifetime
+            });
+
+        return Content(options.ToJson(), "application/json");
+    }
+
+    /// <summary>
+    ///     Handles the POST request for completing a passkey registration ceremony.
+    /// </summary>
+    /// <param name="id">The ID of the user the passkey is being registered for.</param>
+    /// <param name="credentialJson">
+    ///     The authenticator's attestation response, as returned by <c>navigator.credentials.create</c> and serialized to JSON by
+    ///     the browser-side ceremony.
+    /// </param>
+    /// <returns>A JSON payload indicating success, or an error message on failure.</returns>
+    public async Task<IActionResult> OnPostCompletePasskeyRegistration(Guid? id, string credentialJson)
+    {
+        if (id is not { } userId)
+        {
+            return BadRequest("Save the user before registering a passkey.");
+        }
+
+        var userResult = _userService.GetUser(userId);
+        if (userResult.IsFailed)
+        {
+            return NotFound();
+        }
+
+        if (!TryGetPendingRegistration(out var pending))
+        {
+            return new JsonResult(new { success = false, error = "Registration timed out. Try again." });
+        }
+
+        Response.Cookies.Delete(PasskeyRegistrationCookieName);
+
+        var attestationResponse = JsonSerializer.Deserialize<AuthenticatorAttestationRawResponse>(credentialJson, CamelCaseJson);
+        if (attestationResponse is null)
+        {
+            return new JsonResult(new { success = false, error = "Malformed passkey response." });
+        }
+
+        var originalOptions = CredentialCreateOptions.FromJson(pending.OptionsJson);
+        var result = await _passkeyService.CompleteRegistration(userResult.Value, originalOptions, attestationResponse, pending.Nickname);
+
+        return new JsonResult(result.IsSuccess
+            ? new { success = true }
+            : new { success = false, error = string.Join(' ', result.Errors.Select(e => e.Message)) });
+    }
+
+    /// <summary>
+    ///     Handles the POST request for deleting a passkey.
+    /// </summary>
+    /// <param name="id">The ID of the user the passkey belongs to.</param>
+    /// <param name="credentialId">The ID of the passkey to delete.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostDeletePasskey(Guid? id, Guid credentialId)
+    {
+        if (id is not { } userId)
+        {
+            return BadRequest("Save the user before managing passkeys.");
+        }
+
+        _passkeyService.DeleteCredential(credentialId);
+        return RedirectToPage(new { id = userId });
+    }
+
+    /// <summary>
+    ///     Reads and unprotects the pending passkey registration cookie, if present and not expired.
+    /// </summary>
+    /// <param name="pending">When this method returns, contains the pending registration, if found.</param>
+    /// <returns>
+    ///     <see langword="true" /> if a valid, non-expired pending registration was found; otherwise, <see langword="false" />.
+    /// </returns>
+    private bool TryGetPendingRegistration(out PendingPasskeyRegistration pending)
+    {
+        pending = default!;
+
+        if (!Request.Cookies.TryGetValue(PasskeyRegistrationCookieName, out var cookie))
+        {
+            return false;
+        }
+
+        try
+        {
+            var json = _protector.Unprotect(cookie);
+            var deserialized = JsonSerializer.Deserialize<PendingPasskeyRegistration>(json);
+
+            if (deserialized is null || DateTimeOffset.UtcNow - deserialized.IssuedAt > PasskeyChallengeLifetime)
+            {
+                return false;
+            }
+
+            pending = deserialized;
+            return true;
+        }
+        catch (CryptographicException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Represents a passkey registration ceremony's state, carried between the begin and complete requests via a short-lived,
+    ///     protected cookie.
+    /// </summary>
+    /// <param name="Nickname">The user-supplied label for the passkey being registered.</param>
+    /// <param name="OptionsJson">The credential creation options issued at the start of the ceremony.</param>
+    /// <param name="IssuedAt">The date and time the ceremony began.</param>
+    private sealed record PendingPasskeyRegistration(string? Nickname, string OptionsJson, DateTimeOffset IssuedAt);
+
+    /// <summary>
     ///     Reloads <see cref="AvatarUrl" />, <see cref="HasTotp" />, and <see cref="UserId" /> for an existing user,
     ///     for handlers that need to re-render the page without having gone through <see cref="OnGet" /> first.
     /// </summary>
@@ -180,6 +339,7 @@ public sealed class Edit : PageModel
         UserId = user.Id;
         AvatarUrl = user.GetAvatarUrl(36);
         HasTotp = !string.IsNullOrWhiteSpace(user.TotpSecret);
+        Passkeys = _passkeyService.ListCredentials(user.Id);
     }
 
     /// <summary>

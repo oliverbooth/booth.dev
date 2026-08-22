@@ -1,8 +1,10 @@
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
+using Fido2NetLib;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using X10D.Hosting.DependencyInjection;
 
@@ -63,6 +65,7 @@ builder.Services.AddHostedSingleton<BlogPostService>();
 builder.Services.AddSingleton<CdnMediaService>();
 builder.Services.AddSingleton<CommentService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<PasskeyService>();
 builder.Services.AddSingleton<CodeSnippetService>();
 builder.Services.AddSingleton<CreationService>();
 builder.Services.AddSingleton<DevChallengeService>();
@@ -78,6 +81,16 @@ builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
 builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
+builder.Services.AddSingleton<IFido2>(services =>
+{
+    var webAuthnOptions = services.GetRequiredService<IOptions<WebAuthnOptions>>().Value;
+    return new Fido2(new Fido2Configuration
+    {
+        ServerDomain = webAuthnOptions.RpId,
+        ServerName = BoothDotDev.Strings.MyName,
+        Origins = new HashSet<string>(webAuthnOptions.Origins)
+    });
+});
 builder.Services.AddMemoryCache();
 
 builder.Services.AddRazorPages();

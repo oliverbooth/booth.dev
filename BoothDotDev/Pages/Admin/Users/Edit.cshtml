@@ -1,4 +1,5 @@
 @page "/admin/users/edit/{id:guid?}"
+@using Humanizer
 @model BoothDotDev.Pages.Admin.Users.Edit
 
 @{
@@ -97,6 +98,44 @@
                         @Html.Raw(Model.TotpQrCodeSvg)
                     </div>
                 }
+            </div>
+        }
+
+        @if (!Model.CreatingNew)
+        {
+            <div class="field" id="passkeys">
+                <label>Passkeys</label>
+                @if (Model.Passkeys.Count == 0)
+                {
+                    <p class="hint">No passkeys registered yet.</p>
+                }
+                else
+                {
+                    <ul class="media-list">
+                        @foreach (var passkey in Model.Passkeys)
+                        {
+                            <li>
+                                <span>
+                                    @(string.IsNullOrWhiteSpace(passkey.Nickname) ? "Unnamed passkey" : passkey.Nickname)
+                                    <span class="hint">
+                                        &middot; registered @passkey.CreatedAt.Humanize()
+                                        @(passkey.LastUsedAt is { } lastUsed ? $"· last used {lastUsed.Humanize()}" : "· never used")
+                                    </span>
+                                </span>
+                                <form method="post" asp-page-handler="DeletePasskey" asp-route-credentialId="@passkey.Id" style="display:inline">
+                                    <button type="submit" class="icon-btn danger" aria-label="Delete passkey"><i class="ti ti-trash"></i></button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+                <div class="input-with-button" style="margin-top:8px">
+                    <input type="text" id="passkey-nickname" name="nickname" placeholder="e.g. MacBook Touch ID" autocomplete="off" />
+                    <button type="button" id="passkey-register-btn" class="btn">
+                        <i class="ti ti-fingerprint"></i> Register new passkey
+                    </button>
+                </div>
+                <p class="hint" id="passkey-error" hidden></p>
             </div>
         }
 

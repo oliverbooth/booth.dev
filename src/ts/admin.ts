@@ -9,6 +9,8 @@ import {initContentPreview} from './admin/content-preview.ts';
 import {initMediaManager} from './admin/media-manager.ts';
 import {initAvatarFallback} from './avatar-fallback.ts';
 import {initUserAuthoring} from './admin/user-authoring.ts';
+import {initPasskeyRegistration} from './admin/passkey-registration.ts';
+import {initPasskeyLogin} from './admin/passkey-login.ts';
 
 (() => {
     initAltTextPopovers();
@@ -22,4 +24,6 @@ import {initUserAuthoring} from './admin/user-authoring.ts';
     initMediaManager();
     initAvatarFallback();
     initUserAuthoring();
+    initPasskeyRegistration();
+    initPasskeyLogin();
 })();

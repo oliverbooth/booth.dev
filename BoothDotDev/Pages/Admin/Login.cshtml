@@ -38,6 +38,11 @@
             </div>
 
             <button type="submit" class="btn btn-primary" style="justify-content:center">Sign in</button>
+
+            <p class="login-error" id="passkey-error" hidden></p>
+            <button type="button" class="btn" id="passkey-login-btn" style="justify-content:center;margin-top:8px">
+                <i class="ti ti-fingerprint"></i> Sign in with a passkey
+            </button>
         </form>
 
         <p class="login-footnote">Protected area &middot; <a asp-page="/Index" class="login-footnote-link">back to site</a></p>

@@ -38,6 +38,36 @@ export function formatRelativeTimestamp(timestamp: Date): string {
 }
 
 /**
+ * Converts a base64url string (WebAuthn's on-the-wire encoding for binary fields) to an ArrayBuffer.
+ * @param base64url The base64url string to convert.
+ * @returns The decoded ArrayBuffer.
+ */
+export function base64UrlToBuffer(base64url: string): ArrayBuffer {
+    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+    const padding = (4 - (base64.length % 4)) % 4;
+    const binary = atob(base64 + '='.repeat(padding));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+/**
+ * Converts an ArrayBuffer to a base64url string, the inverse of {@link base64UrlToBuffer}.
+ * @param buffer The ArrayBuffer to convert.
+ * @returns The base64url-encoded string.
+ */
+export function bufferToBase64Url(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (const byte of bytes) {
+        binary += String.fromCharCode(byte);
+    }
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/**
  * Converts ANSI color codes in a string to HTML span elements with inline styles.
  * @param input The input string containing ANSI color codes.
  * @returns The input string with ANSI color codes replaced by HTML span elements.
