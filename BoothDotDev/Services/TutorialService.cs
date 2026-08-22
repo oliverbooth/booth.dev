@@ -26,11 +26,11 @@ public sealed class TutorialService
     }
 
     /// <summary>
-    ///     Gets the total number of articles, optionally filtered by visibility.
+    ///     Gets the total number of articles, optionally filtered by visibility. Trashed articles are excluded.
     /// </summary>
     /// <param name="visibility">
-    ///     The visibility to filter by. If set to <see cref="Visibility.None" />, counts all articles regardless of
-    ///     visibility.
+    ///     The visibility to filter by. If set to <see cref="Visibility.None" />, counts all non-trashed articles
+    ///     regardless of visibility.
     /// </param>
     /// <returns>The total number of articles.</returns>
     public int GetArticleCount(Visibility visibility = Visibility.None)
@@ -38,13 +38,13 @@ public sealed class TutorialService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return visibility switch
         {
-            Visibility.None => context.TutorialArticles.Count(),
-            _ => context.TutorialArticles.Count(a => a.Visibility == visibility)
+            Visibility.None => context.TutorialArticles.Count(a => a.TrashedAt == null),
+            _ => context.TutorialArticles.Count(a => a.TrashedAt == null && a.CurrentDraft!.Visibility == visibility)
         };
     }
 
     /// <summary>
-    ///     Gets the articles within a tutorial folder.
+    ///     Gets the articles within a tutorial folder. Trashed articles are excluded.
     /// </summary>
     /// <param name="folder">The folder whose articles to retrieve.</param>
     /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
@@ -58,14 +58,15 @@ public sealed class TutorialService
         }
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<TutorialArticle> articles = context.TutorialArticles.Where(a => a.Folder == folder.Id);
+        IQueryable<TutorialArticle> articles = context.TutorialArticles.Include(a => a.CurrentDraft)
+            .Where(a => a.TrashedAt == null && a.CurrentDraft!.Folder == folder.Id);
 
         if (visibility != Visibility.None)
         {
-            articles = articles.Where(a => a.Visibility == visibility);
+            articles = articles.Where(a => a.CurrentDraft!.Visibility == visibility);
         }
 
-        return [.. articles.OrderBy(a => a.Rank)];
+        return [.. articles.OrderBy(a => a.CurrentDraft!.Rank)];
     }
 
     /// <summary>
@@ -166,18 +167,18 @@ public sealed class TutorialService
     }
 
     /// <summary>
-    ///     Returns the most recent tutorial articles, limited to the specified count.
+    ///     Returns the most recent tutorial articles, limited to the specified count. Trashed articles are excluded.
     /// </summary>
     /// <param name="searchOptions">The options for searching and retrieving tutorial articles.</param>
     /// <returns>A read-only list of the most recent tutorial articles.</returns>
     public IReadOnlyList<TutorialArticle> GetRecentArticles(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var articles = context.TutorialArticles.AsQueryable();
+        var articles = context.TutorialArticles.Include(a => a.CurrentDraft).Where(a => a.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
         {
-            articles = articles.Where(p => p.Visibility == searchOptions.Visibility);
+            articles = articles.Where(p => p.CurrentDraft!.Visibility == searchOptions.Visibility);
         }
 
         var ordered = searchOptions.SortStrategy switch
@@ -196,16 +197,27 @@ public sealed class TutorialService
     ///     Retrieves an article by its ID.
     /// </summary>
     /// <param name="id">The ID of the article.</param>
+    /// <param name="includeTrashed">
+    ///     Whether to include the article if it's trashed. Only the admin editor should pass <see langword="true" />
+    ///     — every public-facing caller should get the trash exclusion for free.
+    /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the article if that article was found, or a failure if not found.</returns>
-    public Result<TutorialArticle> GetArticle(Guid id)
+    public Result<TutorialArticle> GetArticle(Guid id, bool includeTrashed = false)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var article = context.TutorialArticles.FirstOrDefault(a => a.Id == id);
-        return article is not null ? article : Result.Fail("Article not found");
+        var article = context.TutorialArticles.Include(a => a.CurrentDraft).FirstOrDefault(a => a.Id == id);
+
+        if (article is null || (article.TrashedAt is not null && !includeTrashed))
+        {
+            return Result.Fail("Article not found");
+        }
+
+        return article;
     }
 
     /// <summary>
-    ///     Retrieves an article by its slug, optionally within a specified parent folder.
+    ///     Retrieves an article by its slug, optionally within a specified parent folder. Trashed articles are
+    ///     excluded.
     /// </summary>
     /// <param name="slug">The slug of the article, which may include folder slugs separated by '/'.</param>
     /// <param name="parentFolder">The parent folder within which to search for the article.</param>
@@ -239,7 +251,8 @@ public sealed class TutorialService
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         slug = tokens[^1];
-        var article = context.TutorialArticles.FirstOrDefault(a => a.Slug == slug && a.Folder == folder.Id);
+        var article = context.TutorialArticles.Include(a => a.CurrentDraft)
+            .FirstOrDefault(a => a.Slug == slug && a.TrashedAt == null && a.CurrentDraft!.Folder == folder.Id);
         return article is not null ? article : Result.Fail("Article not found");
     }
 

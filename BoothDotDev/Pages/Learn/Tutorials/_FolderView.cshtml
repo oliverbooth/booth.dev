@@ -34,19 +34,44 @@
 
 <div class="page-wide">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-        @while (parents.Count > 0)
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb">
+            <a asp-page="/Index">Home</a> /
+            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
+            @while (parents.Count > 0)
+            {
+                var current = parents.Pop();
+                <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            }
+            @if (Model is not null)
+            {
+                <text> / @Model.Title</text>
+            }
+        </p>
+        @if (Model is not null && User.Identity?.IsAuthenticated == true)
         {
-            var current = parents.Pop();
-            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@Model.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
         }
-        @if (Model is not null)
-        {
-            <text> / @Model.Title</text>
-        }
-    </p>
+    </div>
+
+    @if (Model?.Visibility == Visibility.Private)
+    {
+        <div class="callout" data-callout="warning">
+            <p class="callout-title"><i class="ti ti-lock"></i> This folder is private</p>
+            <div class="callout-body">
+                <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
+            </div>
+        </div>
+    }
+    else if (Model?.Visibility == Visibility.Unlisted)
+    {
+        <div class="callout" data-callout="note">
+            <p class="callout-title"><i class="ti ti-eye-off"></i> This folder is unlisted</p>
+            <div class="callout-body">
+                <p>It doesn't appear in listings or search, but anyone with this link can view it.</p>
+            </div>
+        </div>
+    }
 
     <h1>@(Model?.Title ?? "Learn")</h1>
 

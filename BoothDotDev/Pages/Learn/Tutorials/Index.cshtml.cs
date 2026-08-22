@@ -1,3 +1,4 @@
+using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +57,16 @@ public sealed class Index : PageModel
         var folderResult = _tutorialService.GetFolder(slug);
         if (folderResult.IsSuccess)
         {
-            CurrentFolder = folderResult.Value;
+            var folder = folderResult.Value;
+
+            // There's no legitimate reason for a signed-out visitor to reach a private folder by its public
+            // URL — the admin editor covers previewing unpublished work.
+            if (folder.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
+            {
+                return NotFound();
+            }
+
+            CurrentFolder = folder;
             ShowFolderView = true;
             return Page();
         }
@@ -64,7 +74,14 @@ public sealed class Index : PageModel
         var articleResult = _tutorialService.GetArticle(slug);
         if (articleResult.IsSuccess)
         {
-            CurrentArticle = articleResult.Value;
+            var article = articleResult.Value;
+
+            if (article.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
+            {
+                return NotFound();
+            }
+
+            CurrentArticle = article;
             ShowFolderView = false;
             return Page();
         }
