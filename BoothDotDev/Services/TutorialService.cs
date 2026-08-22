@@ -423,6 +423,7 @@ public sealed class TutorialService
         var article = new TutorialArticle
         {
             Slug = request.Slug,
+            Published = request.Published.ToUniversalTime(),
             EnableComments = request.EnableComments,
             NextPart = request.NextPart,
             PreviousPart = request.PreviousPart,
@@ -645,6 +646,7 @@ public sealed class TutorialService
     private static void ApplyParentFields(TutorialArticle article, TutorialArticleSaveRequest request)
     {
         article.Slug = request.Slug;
+        article.Published = request.Published.ToUniversalTime();
         article.EnableComments = request.EnableComments;
         article.NextPart = request.NextPart;
         article.PreviousPart = request.PreviousPart;

@@ -101,7 +101,7 @@ public sealed class Edit : PageModel
             {
                 AuthorId = ResolveAuthorId(),
                 EnableComments = true,
-                PublishedAt = DateTimeOffset.UtcNow,
+                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime(),
                 TableOfContentsExpanded = true,
                 Visibility = Visibility.Private
             };
@@ -143,7 +143,7 @@ public sealed class Edit : PageModel
             Tags = string.Join(", ", draft.Tags),
             CategoryId = draft.CategoryId,
             Visibility = draft.Visibility,
-            PublishedAt = post.Published
+            PublishedAt = post.Published.ToLocalTime()
         };
 
         return Page();

@@ -76,7 +76,7 @@
             <div class="field">
                 <label for="date">Published date</label>
                 <div class="input-with-button">
-                    <input type="datetime-local" id="date" asp-for="Input.PublishedAt">
+                    <input type="datetime-local" id="date" step="0.001" asp-for="Input.PublishedAt">
                     <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
                         <i class="ti ti-clock"></i>
                     </button>

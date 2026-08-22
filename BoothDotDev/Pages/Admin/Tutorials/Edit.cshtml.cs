@@ -138,7 +138,7 @@ public sealed class Edit : PageModel
             Input = new EditModel
             {
                 Visibility = Visibility.Published,
-                Published = DateTimeOffset.UtcNow,
+                Published = DateTimeOffset.UtcNow.ToLocalTime(),
                 ShowTableOfContents = true,
                 TableOfContentsExpanded = true,
                 Folder = Folders.FirstOrDefault()?.Id ?? Guid.Empty
@@ -180,7 +180,7 @@ public sealed class Edit : PageModel
             Body = draft.Body,
             PreviewImageUrl = draft.PreviewImageUrl?.ToString(),
             Visibility = draft.Visibility,
-            Published = article.Published,
+            Published = article.Published.ToLocalTime(),
             EnableComments = article.EnableComments,
             ShowTableOfContents = draft.ShowTableOfContents,
             TableOfContentsExpanded = draft.TableOfContentsExpanded,

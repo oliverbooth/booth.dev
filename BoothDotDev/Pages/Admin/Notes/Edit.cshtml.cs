@@ -101,7 +101,7 @@ public sealed class Edit : PageModel
             {
                 Visibility = Visibility.Published,
                 FontStyle = FontStyle.Serif,
-                PublishedAt = DateTimeOffset.UtcNow
+                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
             };
             return Page();
         }
@@ -134,7 +134,7 @@ public sealed class Edit : PageModel
             Content = draft.Content,
             FontStyle = draft.FontStyle,
             Visibility = draft.Visibility,
-            PublishedAt = note.Published
+            PublishedAt = note.Published.ToLocalTime()
         };
 
         return Page();

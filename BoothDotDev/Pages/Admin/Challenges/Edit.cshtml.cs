@@ -99,7 +99,7 @@ public sealed class Edit : PageModel
             Input = new EditModel
             {
                 Visibility = Visibility.Published,
-                PublishedAt = DateTimeOffset.UtcNow
+                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
             };
             return Page();
         }
@@ -144,7 +144,7 @@ public sealed class Edit : PageModel
             Solution = draft.Solution,
             ShowSolution = draft.ShowSolution,
             Visibility = draft.Visibility,
-            PublishedAt = challenge.PublishedAt
+            PublishedAt = challenge.PublishedAt.ToLocalTime()
         };
 
         return Page();

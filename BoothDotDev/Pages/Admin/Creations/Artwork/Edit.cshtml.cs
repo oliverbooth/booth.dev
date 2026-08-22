@@ -86,7 +86,7 @@ public sealed class Edit : PageModel
             Input = new EditModel
             {
                 Visibility = Visibility.Published,
-                Published = DateTimeOffset.UtcNow
+                Published = DateTimeOffset.UtcNow.ToLocalTime()
             };
             return Page();
         }
@@ -104,7 +104,7 @@ public sealed class Edit : PageModel
         {
             Title = item.Title,
             Description = item.Description,
-            Published = item.Published,
+            Published = item.Published.ToLocalTime(),
             Visibility = item.Visibility,
             IsWorkInProgress = item.IsWorkInProgress,
             MadeWith = item.MadeWith
@@ -206,7 +206,7 @@ public sealed class Edit : PageModel
             {
                 Title = item.Title,
                 Description = item.Description,
-                Published = item.Published,
+                Published = item.Published.ToLocalTime(),
                 Visibility = item.Visibility,
                 IsWorkInProgress = item.IsWorkInProgress,
                 MadeWith = item.MadeWith
