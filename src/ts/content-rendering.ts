@@ -3,7 +3,12 @@ import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 
 declare const Prism: typeof import('prismjs');
 
-addPrismLanguages();
+// Prism is loaded as a global via a classic <script> tag in _AdminLayout.cshtml/_MainLayout.cshtml, not
+// bundled into this module graph - pages that skip those layouts (Login.cshtml/LoginTotp.cshtml, which are
+// deliberately minimal and never render code blocks) never define it, so this can't assume it's present.
+if (typeof Prism !== 'undefined') {
+    addPrismLanguages();
+}
 
 /**
  * Initializes the front-end Markdown content features for the given element, or the entire document if no element is provided.
@@ -23,6 +28,10 @@ export function initContentFeatures(element?: HTMLElement): void {
  * @param element The element within which to initialize Prism code blocks.
  */
 function initPrismCodeblocks(element: HTMLElement): void {
+    if (typeof Prism === 'undefined') {
+        return;
+    }
+
     const blocks: NodeListOf<HTMLElement> = element.querySelectorAll<HTMLElement>('pre code');
     for (const block of blocks) {
         addLineNumbers(block);
