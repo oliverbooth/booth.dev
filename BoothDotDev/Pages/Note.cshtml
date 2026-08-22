@@ -1,4 +1,5 @@
 @page "/note/{id}"
+@using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @inject MarkdownRenderingService MarkdownRenderingService
@@ -25,6 +26,16 @@
             <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
         }
     </div>
+
+    @if (note.Visibility == Visibility.Private)
+    {
+        <div class="callout" data-callout="warning">
+            <p class="callout-title"><i class="ti ti-lock"></i> This note is private</p>
+            <div class="callout-body">
+                <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
+            </div>
+        </div>
+    }
 
     <span class="eyebrow">Note</span>
     <h1 style="margin:8px 0 12px;font-size:30px">@note.Title</h1>

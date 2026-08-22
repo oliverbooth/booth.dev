@@ -1,3 +1,4 @@
+using BoothDotDev.Data;
 using BoothDotDev.Services;
 using DEDrake;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +45,13 @@ public sealed class Note : PageModel
             return NotFound();
         }
 
-        RetrievedNote = Option.Some(result.Value);
+        var note = result.Value;
+        if (note.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
+        {
+            return NotFound();
+        }
+
+        RetrievedNote = Option.Some(note);
         return Page();
     }
 }
