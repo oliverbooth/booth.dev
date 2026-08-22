@@ -27,7 +27,7 @@ public sealed class Note : PageModel
     ///     Gets the retrieved note, if any.
     /// </summary>
     /// <value>
-    ///     An <see cref="Optional{T}" /> containing the retrieved note, or <see cref="Optional{T}.None" /> if no note was found.
+    ///     An <see cref="Option{T}" /> containing the retrieved note, or <see cref="Option.None{T}" /> if no note was found.
     /// </value>
     public Option<Data.Models.Note> RetrievedNote { get; private set; } = Option.None<Data.Models.Note>();
 
