@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using BoothDotDev.Data;
 using BoothDotDev.Markdown.Link;
 using FluentResults;
@@ -14,7 +13,7 @@ namespace BoothDotDev.Services;
 ///     Represents a service for managing the files a post has uploaded to the CDN, mirroring the exact folder layout
 ///     that <see cref="CdnMediaResolver" /> resolves Markdown media references against.
 /// </summary>
-public sealed partial class CdnMediaService
+public sealed class CdnMediaService
 {
     private readonly ILogger<CdnMediaService> _logger;
     private readonly string _root;
@@ -328,16 +327,6 @@ public sealed partial class CdnMediaService
 
     private static Result<string> ValidateFileName(string? fileName)
     {
-        var name = Path.GetFileName(fileName ?? string.Empty);
-
-        if (!SafeFileNamePattern().IsMatch(name))
-        {
-            return Result.Fail("File names may only contain letters, numbers, dots, dashes, and underscores.");
-        }
-
-        return name;
+        return CdnNaming.ValidateSegment(Path.GetFileName(fileName ?? string.Empty));
     }
-
-    [GeneratedRegex(@"^[a-zA-Z0-9][a-zA-Z0-9._-]{0,119}$")]
-    private static partial Regex SafeFileNamePattern();
 }
