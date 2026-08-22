@@ -27,6 +27,7 @@
         <PackageReference Include="Alexinea.Extensions.Configuration.Yaml" Version="7.0.0" />
         <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
         <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
+        <PackageReference Include="Fido2" Version="4.0.1" />
         <PackageReference Include="FluentResults" Version="4.0.0" />
         <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
         <PackageReference Include="Humanizer.Core" Version="3.0.10" />

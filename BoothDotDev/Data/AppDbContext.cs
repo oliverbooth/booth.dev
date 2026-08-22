@@ -136,6 +136,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of passkey credentials in the database.
+    /// </summary>
+    /// <value>The collection of passkey credentials.</value>
+    public DbSet<PasskeyCredential> PasskeyCredentials
+    {
+        get => Set<PasskeyCredential>();
+    }
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -202,6 +211,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new MusicItemConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
+        modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());

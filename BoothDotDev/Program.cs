@@ -76,6 +76,8 @@ builder.Services.AddSingleton<BlueskyService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
+builder.Services.Configure<WebAuthnOptions>(
+    builder.Configuration.GetSection(WebAuthnOptions.SectionName));
 builder.Services.AddMemoryCache();
 
 builder.Services.AddRazorPages();
