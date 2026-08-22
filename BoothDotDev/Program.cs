@@ -80,7 +80,6 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 WebApplication app = builder.Build();
 await ConfigureMigrationsAsync<AppDbContext>(app.Services);
