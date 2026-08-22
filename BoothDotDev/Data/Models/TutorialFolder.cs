@@ -15,7 +15,7 @@ public sealed class TutorialFolder : IEquatable<TutorialFolder>
     ///     Gets the ID of this folder.
     /// </summary>
     /// <value>The ID of the folder.</value>
-    public Guid Id { get; private set; }
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the ID of this folder's parent.
