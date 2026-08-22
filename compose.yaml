@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   boothdotdev-db:
-    container_name: boothdotdev-db
+    container_name: booth.dev-db
     image: postgres:latest
     environment:
       POSTGRES_USER: ${DB_USER}
