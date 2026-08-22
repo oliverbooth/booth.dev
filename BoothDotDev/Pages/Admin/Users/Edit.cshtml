@@ -122,9 +122,9 @@
                                         @(passkey.LastUsedAt is { } lastUsed ? $"· last used {lastUsed.Humanize()}" : "· never used")
                                     </span>
                                 </span>
-                                <form method="post" asp-page-handler="DeletePasskey" asp-route-credentialId="@passkey.Id" style="display:inline">
-                                    <button type="submit" class="icon-btn danger" aria-label="Delete passkey"><i class="ti ti-trash"></i></button>
-                                </form>
+                                <button type="submit" form="delete-passkey-form" asp-page-handler="DeletePasskey"
+                                        asp-route-id="@Model.UserId" asp-route-credentialId="@passkey.Id"
+                                        class="icon-btn danger" aria-label="Delete passkey"><i class="ti ti-trash"></i></button>
                             </li>
                         }
                     </ul>
@@ -144,5 +144,10 @@
         </div>
 
     </form>
+
+    @if (!Model.CreatingNew)
+    {
+        <form id="delete-passkey-form" method="post" hidden></form>
+    }
 
 </div>
