@@ -17,7 +17,7 @@ using Note = Data.Models.Note;
 ///     Represents the page model for editing a note in the admin section.
 /// </summary>
 [Authorize(Policy = "Admin")]
-[RequestSizeLimit(CdnMediaService.MaxUploadSizeBytes)]
+[RequestSizeLimit(CdnUploadPolicy.MaxUploadSizeBytes)]
 public sealed class Edit : PageModel
 {
     private const string Area = "note";

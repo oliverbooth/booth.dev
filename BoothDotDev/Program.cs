@@ -63,6 +63,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ActivityService>();
 builder.Services.AddHostedSingleton<BlogPostService>();
 builder.Services.AddSingleton<CdnMediaService>();
+builder.Services.AddSingleton<CdnBrowserService>();
 builder.Services.AddSingleton<CommentService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<PasskeyService>();

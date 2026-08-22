@@ -16,7 +16,7 @@ using DevChallenge = Data.Models.DevChallenge;
 ///     Represents the page model for editing a challenge in the admin section.
 /// </summary>
 [Authorize(Policy = "Admin")]
-[RequestSizeLimit(CdnMediaService.MaxUploadSizeBytes)]
+[RequestSizeLimit(CdnUploadPolicy.MaxUploadSizeBytes)]
 public sealed class Edit : PageModel
 {
     private const string Area = "challenge";

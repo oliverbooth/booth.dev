@@ -17,7 +17,7 @@ namespace BoothDotDev.Pages.Admin.Posts;
 ///     Represents the page model for editing a blog post in the admin section.
 /// </summary>
 [Authorize(Policy = "Admin")]
-[RequestSizeLimit(CdnMediaService.MaxUploadSizeBytes)]
+[RequestSizeLimit(CdnUploadPolicy.MaxUploadSizeBytes)]
 public sealed class Edit : PageModel
 {
     private const string Area = "blog";

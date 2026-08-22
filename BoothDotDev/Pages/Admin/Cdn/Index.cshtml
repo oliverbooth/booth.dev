@@ -1,0 +1,115 @@
+@page "/admin/cdn"
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Cdn.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>CDN</h1>
+            <p>Browse and manage files on the CDN</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <button type="button" id="cdn-new-folder-btn" class="btn icon-btn">
+                <i class="ti ti-folder-plus" style="font-size:15px"></i>New folder
+            </button>
+            <button type="button" id="cdn-upload-btn" class="btn btn-primary">
+                <i class="ti ti-upload" style="font-size:15px"></i>Upload
+            </button>
+            <input type="file" id="cdn-file-input" multiple hidden />
+        </div>
+    </div>
+
+    <p class="login-error validation-summary-errors" id="cdn-error" hidden></p>
+
+    <form method="post" id="cdn-form" hidden></form>
+
+    <nav class="path-builder" aria-label="Breadcrumb">
+        @for (var i = 0; i < Model.Breadcrumbs.Count; i++)
+        {
+            var crumb = Model.Breadcrumbs[i];
+            if (i == Model.Breadcrumbs.Count - 1)
+            {
+                <span class="path-crumb">@crumb.Name</span>
+            }
+            else
+            {
+                <a asp-page="/Admin/Cdn/Index" asp-route-path="@crumb.Path" class="path-crumb">@crumb.Name</a>
+                <span class="path-sep">/</span>
+            }
+        }
+    </nav>
+
+    <div data-search-scope id="cdn-browser" data-current-path="@Model.CurrentDisplayPath">
+    <div class="table-toolbar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" id="search" placeholder="Search this folder&hellip;">
+        </div>
+    </div>
+
+    <table class="data-table" id="cdn-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Modified</th>
+            <th style="text-align:right">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var entry in Model.Entries)
+        {
+            <tr draggable="true" data-kind="@(entry.IsDirectory ? "folder" : "file")" data-name="@entry.Name">
+                <td>
+                    <div class="row-title" data-search>
+                        <i class="ti @Index.GetIcon(entry)"></i>
+                        @if (entry.IsDirectory)
+                        {
+                            <a asp-page="/Admin/Cdn/Index"
+                               asp-route-path="@($"{Model.CurrentDisplayPath}/{entry.Name}".TrimStart('/'))">@entry.Name</a>
+                        }
+                        else
+                        {
+                            @entry.Name
+                        }
+                    </div>
+                </td>
+                <td>
+                    @if (entry.IsDirectory)
+                    {
+                        @("item".ToQuantity(entry.ItemCount ?? 0))
+                    }
+                    else
+                    {
+                        @Index.FormatFileSize(entry.SizeBytes ?? 0)
+                    }
+                </td>
+                <td><abbr title="@entry.ModifiedAt.ToString("yyyy-MM-dd HH:mm:ss")">@entry.ModifiedAt.Humanize()</abbr></td>
+                <td>
+                    <div class="row-actions">
+                        @if (!entry.IsDirectory)
+                        {
+                            <a href="@entry.Url" target="_blank" rel="noopener" class="icon-btn" aria-label="View"><i class="ti ti-external-link"></i></a>
+                        }
+                        <button type="button" class="icon-btn" data-action="rename" aria-label="Rename"><i class="ti ti-edit"></i></button>
+                        <button type="button" class="icon-btn" data-action="move" aria-label="Move"><i class="ti ti-arrows-move"></i></button>
+                        <button type="button" class="icon-btn danger" data-action="delete" aria-label="Delete"><i class="ti ti-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr data-search-empty hidden="@(Model.Entries.Count != 0)">
+            <td colspan="4" class="table-empty-state">
+                @(Model.Entries.Count == 0 ? "This folder is empty" : "No files or folders found")
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</div>

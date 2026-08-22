@@ -11,6 +11,7 @@ import {initAvatarFallback} from './avatar-fallback.ts';
 import {initUserAuthoring} from './admin/user-authoring.ts';
 import {initPasskeyRegistration} from './admin/passkey-registration.ts';
 import {initPasskeyLogin} from './admin/passkey-login.ts';
+import {initCdnBrowser} from './admin/cdn-browser.ts';
 
 (() => {
     initAltTextPopovers();
@@ -26,4 +27,5 @@ import {initPasskeyLogin} from './admin/passkey-login.ts';
     initUserAuthoring();
     initPasskeyRegistration();
     initPasskeyLogin();
+    initCdnBrowser();
 })();
