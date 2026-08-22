@@ -172,6 +172,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of tutorial article drafts in the database.
+    /// </summary>
+    /// <value>The collection of tutorial article drafts.</value>
+    public DbSet<TutorialArticleDraft> TutorialArticleDrafts
+    {
+        get => Set<TutorialArticleDraft>();
+    }
+
+    /// <summary>
     ///     Gets the collection of tutorial folders in the database.
     /// </summary>
     /// <value>The collection of tutorial folders.</value>
@@ -216,6 +225,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new SiteConfigurationConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
+        modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
     }

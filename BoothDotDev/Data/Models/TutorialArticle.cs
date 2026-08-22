@@ -8,10 +8,26 @@ namespace BoothDotDev.Data.Models;
 public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExcerpt
 {
     /// <summary>
-    ///     Gets or sets the body of this article.
+    ///     Gets the body of this article, as of its current draft.
     /// </summary>
     /// <value>The body.</value>
-    public string Body { get; set; } = string.Empty;
+    [NotMapped]
+    public string Body
+    {
+        get => Draft.Body;
+    }
+
+    /// <summary>
+    ///     Gets the draft that is currently live for this article.
+    /// </summary>
+    /// <value>The currently-live draft.</value>
+    public TutorialArticleDraft? CurrentDraft { get; internal set; }
+
+    /// <summary>
+    ///     Gets the ID of the draft that is currently live for this article.
+    /// </summary>
+    /// <value>The ID of the currently-live draft.</value>
+    public Guid? CurrentDraftId { get; internal set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether comments are enabled for the article.
@@ -22,16 +38,24 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     public bool EnableComments { get; set; }
 
     /// <summary>
-    ///     Gets or sets the excerpt of this article, if it has one.
+    ///     Gets the excerpt of this article, as of its current draft, if it has one.
     /// </summary>
     /// <value>The excerpt, or <see langword="null" /> if this article has no excerpt.</value>
-    public string? Excerpt { get; set; }
+    [NotMapped]
+    public string? Excerpt
+    {
+        get => Draft.Excerpt;
+    }
 
     /// <summary>
-    ///     Gets or sets the ID of the folder this article is contained within.
+    ///     Gets the ID of the folder this article is contained within, as of its current draft.
     /// </summary>
     /// <value>The ID of the folder.</value>
-    public Guid Folder { get; set; }
+    [NotMapped]
+    public Guid Folder
+    {
+        get => Draft.Folder;
+    }
 
     /// <summary>
     ///     Gets a value indicating whether this article is part of a multi-part series.
@@ -56,10 +80,14 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     public Guid? NextPart { get; set; }
 
     /// <summary>
-    ///     Gets or sets the URL of the article's preview image.
+    ///     Gets the URL of the article's preview image, as of its current draft.
     /// </summary>
     /// <value>The preview image URL.</value>
-    public Uri? PreviewImageUrl { get; set; }
+    [NotMapped]
+    public Uri? PreviewImageUrl
+    {
+        get => Draft.PreviewImageUrl;
+    }
 
     /// <summary>
     ///     Gets or sets the ID of the previous article to this one.
@@ -74,10 +102,14 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     public DateTimeOffset Published { get; private set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
-    ///     Gets or sets the rank of this article within its folder.
+    ///     Gets the rank of this article within its folder, as of its current draft.
     /// </summary>
     /// <value>The rank.</value>
-    public int Rank { get; set; }
+    [NotMapped]
+    public int Rank
+    {
+        get => Draft.Rank;
+    }
 
     /// <summary>
     ///     Gets or sets the ID of the post that was redirected to this article.
@@ -86,12 +118,16 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     public Guid? RedirectFrom { get; set; }
 
     /// <summary>
-    ///     Gets or sets a value indicating whether to show the table of contents for the post.
+    ///     Gets a value indicating whether to show the table of contents for the article, as of its current draft.
     /// </summary>
     /// <value>
     ///     <see langword="true" /> if the table of contents should be shown; otherwise, <see langword="false" />.
     /// </value>
-    public bool ShowTableOfContents { get; set; }
+    [NotMapped]
+    public bool ShowTableOfContents
+    {
+        get => Draft.ShowTableOfContents;
+    }
 
     /// <summary>
     ///     Gets or sets the slug of this article.
@@ -100,18 +136,34 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     public string Slug { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Gets or sets a value indicating whether the table of contents is expanded by default.
+    ///     Gets a value indicating whether the table of contents is expanded by default, as of its current draft.
     /// </summary>
     /// <value>
     ///     <see langword="true" /> if the table of contents is expanded by default; otherwise, <see langword="false" />.
     /// </value>
-    public bool TableOfContentsExpanded { get; set; } = true;
+    [NotMapped]
+    public bool TableOfContentsExpanded
+    {
+        get => Draft.TableOfContentsExpanded;
+    }
 
     /// <summary>
-    ///     Gets or sets the title of this article.
+    ///     Gets the title of this article, as of its current draft.
     /// </summary>
     /// <value>The title.</value>
-    public string Title { get; set; } = string.Empty;
+    [NotMapped]
+    public string Title
+    {
+        get => Draft.Title;
+    }
+
+    /// <summary>
+    ///     Gets or sets the date and time the article was moved to the trash.
+    /// </summary>
+    /// <value>
+    ///     The date and time the article was trashed, or <see langword="null" /> if the article is not trashed.
+    /// </value>
+    public DateTimeOffset? TrashedAt { get; set; }
 
     /// <summary>
     ///     Gets or sets the date and time at which this article was updated.
@@ -120,10 +172,27 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     public DateTimeOffset? Updated { get; set; }
 
     /// <summary>
-    ///     Gets or sets the visibility of this article.
+    ///     Gets the visibility of this article, as of its current draft.
     /// </summary>
     /// <value>The visibility of the article.</value>
-    public Visibility Visibility { get; set; }
+    [NotMapped]
+    public Visibility Visibility
+    {
+        get => Draft.Visibility;
+    }
+
+    /// <summary>
+    ///     Gets the currently-live draft, throwing if it has not been loaded.
+    /// </summary>
+    /// <value>The currently-live draft.</value>
+    /// <exception cref="InvalidOperationException">
+    ///     <see cref="CurrentDraft" /> was not eager-loaded by the query that produced this instance.
+    /// </exception>
+    private TutorialArticleDraft Draft
+    {
+        get => CurrentDraft ?? throw new InvalidOperationException(
+            $"The current draft for article '{Id}' was not loaded. Ensure the query includes '{nameof(CurrentDraft)}'.");
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="TutorialArticle" /> are equal.
