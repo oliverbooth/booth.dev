@@ -1,4 +1,5 @@
 @page "/project/{projectSlug}/devlog/{slug}"
+@using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @model Devlog
@@ -19,12 +20,37 @@
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Projects/Index">Projects</a> /
-        <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
-        @devlog.Title
-    </p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb">
+            <a asp-page="/Index">Home</a> /
+            <a asp-page="/Projects/Index">Projects</a> /
+            <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
+            @devlog.Title
+        </p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+        }
+    </div>
+
+    @if (devlog.Visibility == Visibility.Private)
+    {
+        <div class="callout" data-callout="warning">
+            <p class="callout-title"><i class="ti ti-lock"></i> This devlog entry is private</p>
+            <div class="callout-body">
+                <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
+            </div>
+        </div>
+    }
+    else if (devlog.Visibility == Visibility.Unlisted)
+    {
+        <div class="callout" data-callout="note">
+            <p class="callout-title"><i class="ti ti-eye-off"></i> This devlog entry is unlisted</p>
+            <div class="callout-body">
+                <p>It doesn't appear in listings or search, but anyone with this link can view it.</p>
+            </div>
+        </div>
+    }
 
     <span class="eyebrow">Devlog</span>
     <h1 style="margin:8px 0 12px;font-size:30px">@devlog.Title</h1>

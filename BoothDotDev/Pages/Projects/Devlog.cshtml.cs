@@ -1,3 +1,4 @@
+using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,11 @@ internal sealed class Devlog : PageModel
         Project = project;
 
         if (!_projectService.TryGetDevlog(project, slug, out var devlog))
+        {
+            return NotFound();
+        }
+
+        if (devlog.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
         {
             return NotFound();
         }
