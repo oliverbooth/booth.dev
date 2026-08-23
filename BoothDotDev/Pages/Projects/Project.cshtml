@@ -50,6 +50,13 @@
                 @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
             </div>
 
+            @if (!string.IsNullOrWhiteSpace(project.Details))
+            {
+                <div class="prose project-details">
+                    @Html.Raw(ProjectService.GetDetails(project))
+                </div>
+            }
+
             @if (project.Languages is { Count: > 0 } and not ["various"])
             {
                 <div class="tag-row">

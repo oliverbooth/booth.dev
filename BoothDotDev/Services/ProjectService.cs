@@ -48,6 +48,17 @@ public sealed class ProjectService
     }
 
     /// <summary>
+    ///     Gets the details of the specified project.
+    /// </summary>
+    /// <param name="project">The project whose details to get.</param>
+    /// <returns>The details of the specified project.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="project" /> is <see langword="null" />.</exception>
+    public string GetDetails(Project project)
+    {
+        return _markdownRenderingService.Render(project.Details, project.Id, project.CreatedAt, ProjectArea);
+    }
+
+    /// <summary>
     ///     Gets the CDN URL of the specified project's hero image.
     /// </summary>
     /// <param name="project">The project whose hero image URL to get.</param>
