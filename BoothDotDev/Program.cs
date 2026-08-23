@@ -118,6 +118,7 @@ app.MapRazorPages();
 app.MapGet("/contact", () => Results.StatusCode(StatusCodes.Status410Gone));
 app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", permanent: true));
 app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", permanent: true));
+app.MapGet("/blog/archive", () => Results.Redirect("/blog", permanent: true));
 app.MapGet("/blog/posts/{page:int}", () => Results.Redirect("/blog", permanent: true));
 app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month, int day, string slug) =>
 {
