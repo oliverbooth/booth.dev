@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Markdown.Link;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Optional;
 
@@ -11,18 +13,26 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class ProjectService
 {
+    private const string ProjectArea = "projects";
+
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MarkdownRenderingService _markdownRenderingService;
+    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProjectService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The database context factory.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
-    public ProjectService(IDbContextFactory<AppDbContext> dbContextFactory, MarkdownRenderingService markdownRenderingService)
+    /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
+    public ProjectService(
+        IDbContextFactory<AppDbContext> dbContextFactory,
+        MarkdownRenderingService markdownRenderingService,
+        CdnMediaService cdnMediaService)
     {
         _dbContextFactory = dbContextFactory;
         _markdownRenderingService = markdownRenderingService;
+        _cdnMediaService = cdnMediaService;
     }
 
     /// <summary>
@@ -33,8 +43,23 @@ public sealed class ProjectService
     /// <exception cref="ArgumentNullException"><paramref name="project" /> is <see langword="null" />.</exception>
     public string GetDescription(Project project)
     {
-        // TODO we need dates on projects, CDN resolver can't just use today. fix this!!!
-        return _markdownRenderingService.Render(project.Description, project.Id, DateTimeOffset.UtcNow, "projects");
+        return _markdownRenderingService.Render(project.Description, project.Id, project.CreatedAt, ProjectArea);
+    }
+
+    /// <summary>
+    ///     Gets the CDN URL of the specified project's hero image.
+    /// </summary>
+    /// <param name="project">The project whose hero image URL to get.</param>
+    /// <returns>The hero image's CDN URL, or <see langword="null" /> if the project has no hero image.</returns>
+    public string? GetHeroUrl(Project project)
+    {
+        if (string.IsNullOrEmpty(project.HeroUrl))
+        {
+            return null;
+        }
+
+        var kind = CdnMediaResolver.ResolveMediaKind(project.HeroUrl);
+        return CdnMediaResolver.BuildCdnUrl(ProjectArea, kind, project.CreatedAt, project.Id, project.HeroUrl);
     }
 
     /// <summary>
@@ -206,5 +231,117 @@ public sealed class ProjectService
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         project = context.Projects.FirstOrDefault(p => p.Slug == slug);
         return project is not null;
+    }
+
+    /// <summary>
+    ///     Gets a project by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the project.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the project if found; otherwise, an error result.</returns>
+    public Result<Project> GetProject(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var project = context.Projects.Find(id);
+        return project is not null ? project : Result.Fail($"The project with ID {id} was not found");
+    }
+
+    /// <summary>
+    ///     Creates a new project.
+    /// </summary>
+    /// <param name="request">The project's fields.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the newly-created project.</returns>
+    public Result<Project> CreateProject(ProjectSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+
+        var project = new Project();
+        ApplyProjectRequest(project, request);
+
+        context.Projects.Add(project);
+        context.SaveChanges();
+
+        return project;
+    }
+
+    /// <summary>
+    ///     Updates an existing project.
+    /// </summary>
+    /// <param name="id">The ID of the project to update.</param>
+    /// <param name="request">The project's new fields.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated project, or an error if no project with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<Project> UpdateProject(Guid id, ProjectSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var project = context.Projects.Find(id);
+
+        if (project is null)
+        {
+            return Result.Fail($"The project with ID {id} was not found");
+        }
+
+        ApplyProjectRequest(project, request);
+        context.SaveChanges();
+
+        return project;
+    }
+
+    /// <summary>
+    ///     Deletes a project. The project must not have any devlog entries.
+    /// </summary>
+    /// <param name="id">The ID of the project to delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if the project was not found or still has
+    ///     devlog entries.
+    /// </returns>
+    public Result DeleteProject(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var project = context.Projects.Find(id);
+
+        if (project is null)
+        {
+            return Result.Fail($"The project with ID {id} was not found");
+        }
+
+        var hasDevlogs = context.DevLogs.Any(d => d.ProjectId == id);
+        if (hasDevlogs)
+        {
+            return Result.Fail("This project has devlog entries. Delete them first.");
+        }
+
+        if (!string.IsNullOrEmpty(project.HeroUrl))
+        {
+            _cdnMediaService.DeleteAllMedia(id, project.CreatedAt, ProjectArea);
+        }
+
+        context.Projects.Remove(project);
+        context.SaveChanges();
+
+        return Result.Ok();
+    }
+
+    /// <summary>
+    ///     Applies the fields of a <see cref="ProjectSaveRequest" /> onto a <see cref="Project" />.
+    /// </summary>
+    /// <param name="project">The project to apply the request to.</param>
+    /// <param name="request">The request containing the fields to apply.</param>
+    private static void ApplyProjectRequest(Project project, ProjectSaveRequest request)
+    {
+        project.Name = request.Name;
+        project.Slug = request.Slug;
+        project.Tagline = request.Tagline;
+        project.Description = request.Description;
+        project.Details = request.Details;
+        project.HeroUrl = request.HeroUrl;
+        project.Languages = request.Languages;
+        project.Rank = request.Rank;
+        project.RemoteUrl = request.RemoteUrl;
+        project.RemoteTarget = request.RemoteTarget;
+        project.Status = request.Status;
+        project.Type = request.Type;
+        project.CreatedAt = request.CreatedAt.ToUniversalTime();
     }
 }

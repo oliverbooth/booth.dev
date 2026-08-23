@@ -1,0 +1,87 @@
+@page "/admin/projects"
+@using BoothDotDev.Data
+@model BoothDotDev.Pages.Admin.Projects.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Projects</h1>
+            <p>Manage your portfolio projects and their devlog entries</p>
+        </div>
+        <a asp-page="/Admin/Projects/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New project</a>
+    </div>
+
+    @if (Model.DeleteError is { } error)
+    {
+        <div class="callout" data-callout="danger">
+            <p class="callout-title"><i class="ti ti-alert-triangle"></i> Couldn't delete project</p>
+            <div class="callout-body"><p>@error</p></div>
+        </div>
+    }
+
+    @if (Model.Projects.Count == 0)
+    {
+        <p class="table-empty-state">No projects yet</p>
+    }
+    else
+    {
+        <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search projects&hellip;">
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th style="text-align:right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var project in Model.Projects)
+            {
+                var statusClass = project.Status switch
+                {
+                    ProjectStatus.Ongoing => "published",
+                    ProjectStatus.Hiatus => "unlisted",
+                    ProjectStatus.Past => "unlisted",
+                    ProjectStatus.Retired => "private",
+                    _ => "unlisted"
+                };
+
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@project.Name</div>
+                    </td>
+                    <td><span class="badge badge-@statusClass"><span class="dot"></span> @project.Status</span></td>
+                    <td><span data-search>@project.Type</span></td>
+                    <td>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Projects/Edit" asp-route-id="@project.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                            <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" target="_blank" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@project.Id" data-confirm="Delete '@project.Name'? This can't be undone.">
+                                <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="4" class="table-empty-state">No projects found</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    }
+
+</div>
