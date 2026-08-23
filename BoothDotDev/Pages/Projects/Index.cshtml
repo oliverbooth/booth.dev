@@ -35,7 +35,7 @@
 
             <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
                 <div class="card-icon">
-                    <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
+                    <img loading="lazy" src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
                 </div>
                 <div class="card-body">
                     <p class="title">@project.Name</p>
