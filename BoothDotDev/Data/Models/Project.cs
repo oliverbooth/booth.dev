@@ -6,6 +6,13 @@ namespace BoothDotDev.Data.Models;
 public sealed class Project : IEquatable<Project>
 {
     /// <summary>
+    ///     Gets or sets the date and time the project was created.
+    /// </summary>
+    /// <value>The date and time the project was created.</value>
+    /// <remarks>Also forms part of the CDN path for the project's hero image.</remarks>
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    /// <summary>
     ///     Gets or sets the description of the project.
     /// </summary>
     /// <value>The description of the project.</value>

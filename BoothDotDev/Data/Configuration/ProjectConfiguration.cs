@@ -16,6 +16,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).IsRequired();
+        builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Rank).IsRequired();
         builder.Property(e => e.Slug).IsRequired();
         builder.Property(e => e.Name).IsRequired();
