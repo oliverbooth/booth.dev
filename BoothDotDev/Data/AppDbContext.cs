@@ -145,6 +145,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of project devlog drafts in the database.
+    /// </summary>
+    /// <value>The collection of project devlog drafts.</value>
+    public DbSet<ProjectDevlogDraft> ProjectDevlogDrafts
+    {
+        get => Set<ProjectDevlogDraft>();
+    }
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -214,6 +223,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
+        modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());

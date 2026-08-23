@@ -14,6 +14,7 @@ namespace BoothDotDev.Services;
 public sealed class ProjectService
 {
     private const string ProjectArea = "projects";
+    private const string DevlogArea = "devlog";
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MarkdownRenderingService _markdownRenderingService;
@@ -81,19 +82,30 @@ public sealed class ProjectService
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return project.HasValue
-            ? context.DevLogs.Count(d => d.ProjectId == project.ValueOr((Project)null!).Id)
-            : context.DevLogs.Count();
+            ? context.DevLogs.Count(d => d.TrashedAt == null && d.ProjectId == project.ValueOr((Project)null!).Id)
+            : context.DevLogs.Count(d => d.TrashedAt == null);
     }
 
     /// <summary>
-    ///     Gets all devlogs for the specified project.
+    ///     Gets all non-trashed devlogs for the specified project.
     /// </summary>
     /// <param name="project">The project to get devlogs for.</param>
-    /// <returns>A read-only list of devlogs for the specified project.</returns>
-    public IReadOnlyList<ProjectDevlog> GetDevlogs(Project project)
+    /// <param name="visibility">
+    ///     The visibility of the devlogs to retrieve. If set to <see cref="Visibility.None" />, every devlog is
+    ///     returned regardless of visibility - only the admin listing should pass this.
+    /// </param>
+    /// <returns>A read-only list of devlogs for the specified project, newest-published first.</returns>
+    public IReadOnlyList<ProjectDevlog> GetDevlogs(Project project, Visibility visibility = Visibility.None)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return [.. context.DevLogs.Where(d => d.ProjectId == project.Id).OrderByDescending(d => d.PublishedAt)];
+        var devlogs = context.DevLogs.Include(d => d.CurrentDraft).Where(d => d.TrashedAt == null && d.ProjectId == project.Id);
+
+        if (visibility != Visibility.None)
+        {
+            devlogs = devlogs.Where(d => d.CurrentDraft!.Visibility == visibility);
+        }
+
+        return [.. devlogs.OrderByDescending(d => d.PublishedAt)];
     }
 
     /// <summary>
@@ -131,7 +143,8 @@ public sealed class ProjectService
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.DevLogs
-            .Where(p => p.ProjectId == devlog.ProjectId)
+            .Include(d => d.CurrentDraft)
+            .Where(p => p.TrashedAt == null && p.ProjectId == devlog.ProjectId)
             .OrderBy(post => post.PublishedAt)
             .FirstOrDefault(post => post.PublishedAt > devlog.PublishedAt);
     }
@@ -150,7 +163,8 @@ public sealed class ProjectService
 
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         return context.DevLogs
-            .Where(p => p.ProjectId == devlog.ProjectId)
+            .Include(d => d.CurrentDraft)
+            .Where(p => p.TrashedAt == null && p.ProjectId == devlog.ProjectId)
             .OrderByDescending(post => post.PublishedAt)
             .FirstOrDefault(post => post.PublishedAt < devlog.PublishedAt);
     }
@@ -163,11 +177,11 @@ public sealed class ProjectService
     public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(ActivitySearchOptions searchOptions)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        var devlogs = context.DevLogs.AsQueryable();
+        var devlogs = context.DevLogs.Include(d => d.CurrentDraft).Where(d => d.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
         {
-            devlogs = devlogs.Where(p => p.Visibility == searchOptions.Visibility);
+            devlogs = devlogs.Where(p => p.CurrentDraft!.Visibility == searchOptions.Visibility);
         }
 
         var ordered = searchOptions.SortStrategy switch
@@ -181,6 +195,22 @@ public sealed class ProjectService
     }
 
     /// <summary>
+    ///     Gets all trashed devlogs for the specified project, newest-trashed first.
+    /// </summary>
+    /// <param name="project">The project whose trashed devlogs to get.</param>
+    /// <returns>A read-only list of the project's trashed devlogs.</returns>
+    public IReadOnlyList<ProjectDevlog> GetTrashedDevlogs(Project project)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        return
+        [
+            .. context.DevLogs.Include(d => d.CurrentDraft)
+                .Where(d => d.TrashedAt != null && d.ProjectId == project.Id)
+                .OrderByDescending(d => d.TrashedAt)
+        ];
+    }
+
+    /// <summary>
     ///     Attempts to find a devlog entry for the specified project and slug.
     /// </summary>
     /// <param name="project">The project to search for the devlog entry.</param>
@@ -189,12 +219,39 @@ public sealed class ProjectService
     ///     When this method returns, contains the devlog entry associated with the specified project and slug, if found;
     ///     otherwise, <see langword="null" />.
     /// </param>
+    /// <param name="includeTrashed">
+    ///     Whether to include the devlog entry if it's trashed. Only the admin editor should pass <see langword="true" /> —
+    ///     every public-facing caller should get the trash exclusion for free.
+    /// </param>
     /// <returns><see langword="true" /> if a devlog entry with the specified project and slug is found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetDevlog(Project project, string slug, [NotNullWhen(true)] out ProjectDevlog? devlog)
+    public bool TryGetDevlog(Project project, string slug, [NotNullWhen(true)] out ProjectDevlog? devlog, bool includeTrashed = false)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        devlog = context.DevLogs.FirstOrDefault(d => d.ProjectId == project.Id && d.Slug == slug);
+        devlog = context.DevLogs.Include(d => d.CurrentDraft)
+            .FirstOrDefault(d => d.ProjectId == project.Id && d.Slug == slug && (includeTrashed || d.TrashedAt == null));
         return devlog != null;
+    }
+
+    /// <summary>
+    ///     Gets a devlog entry by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry.</param>
+    /// <param name="includeTrashed">
+    ///     Whether to include the devlog entry if it's trashed. Only the admin editor should pass
+    ///     <see langword="true" /> — every public-facing caller should get the trash exclusion for free.
+    /// </param>
+    /// <returns>A <see cref="Result{T}" /> containing the devlog entry if found; otherwise, an error result.</returns>
+    public Result<ProjectDevlog> GetDevlogById(Guid id, bool includeTrashed = false)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var devlog = context.DevLogs.Include(d => d.CurrentDraft).FirstOrDefault(d => d.Id == id);
+
+        if (devlog is null || (devlog.TrashedAt is not null && !includeTrashed))
+        {
+            return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        return devlog;
     }
 
     /// <summary>
@@ -289,7 +346,8 @@ public sealed class ProjectService
     }
 
     /// <summary>
-    ///     Deletes a project. The project must not have any devlog entries.
+    ///     Deletes a project. The project must not have any devlog entries, trashed or not - permanently delete
+    ///     them first.
     /// </summary>
     /// <param name="id">The ID of the project to delete.</param>
     /// <returns>
@@ -306,10 +364,14 @@ public sealed class ProjectService
             return Result.Fail($"The project with ID {id} was not found");
         }
 
+        // Counts *every* devlog, including trashed ones, not just d.TrashedAt == null - the devlog->project
+        // foreign key is RESTRICT, so the database would reject this delete anyway if any row (trashed or
+        // not) still referenced this project. Surfacing that as a friendly error here means the admin never
+        // sees a raw DbUpdateException; they're told to permanently delete the devlogs first instead.
         var hasDevlogs = context.DevLogs.Any(d => d.ProjectId == id);
         if (hasDevlogs)
         {
-            return Result.Fail("This project has devlog entries. Delete them first.");
+            return Result.Fail("This project has devlog entries. Permanently delete them first.");
         }
 
         if (!string.IsNullOrEmpty(project.HeroUrl))
@@ -321,6 +383,230 @@ public sealed class ProjectService
         context.SaveChanges();
 
         return Result.Ok();
+    }
+
+    /// <summary>
+    ///     Creates a new devlog entry, along with its first draft, which immediately becomes the entry's current
+    ///     draft.
+    /// </summary>
+    /// <param name="request">The devlog entry's parent-level fields and the content of its first draft.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the newly-created devlog entry.</returns>
+    public Result<ProjectDevlog> CreateDevlog(ProjectDevlogSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+
+        var devlog = new ProjectDevlog
+        {
+            ProjectId = request.ProjectId,
+            Slug = request.Slug,
+            PublishedAt = request.PublishedAt.ToUniversalTime(),
+            EnableComments = request.EnableComments
+        };
+
+        // Two SaveChanges calls, not one: ProjectDevlog -> ProjectDevlogDraft (via ProjectDevlogId) and
+        // ProjectDevlogDraft -> ProjectDevlog (via CurrentDraftId) form a cycle between two rows that are
+        // both new, which EF can't resolve in a single call even though CurrentDraftId is nullable.
+        context.DevLogs.Add(devlog);
+        context.SaveChanges();
+
+        var draft = NewDraft(devlog.Id, request.Content);
+        context.ProjectDevlogDrafts.Add(draft);
+        devlog.CurrentDraftId = draft.Id;
+        context.SaveChanges();
+
+        return devlog;
+    }
+
+    /// <summary>
+    ///     Saves a new draft of an existing devlog entry, without publishing it.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry to save a draft for.</param>
+    /// <param name="request">The devlog entry's parent-level fields and the content of the new draft.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the devlog entry the draft was saved for, or an error if no entry with
+    ///     the specified <paramref name="id" /> exists.
+    /// </returns>
+    public Result<ProjectDevlog> SaveDevlogDraft(Guid id, ProjectDevlogSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var devlog = context.DevLogs.Find(id);
+
+        if (devlog is null)
+        {
+            return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        var draft = NewDraft(devlog.Id, request.Content);
+        context.ProjectDevlogDrafts.Add(draft);
+
+        devlog.Slug = request.Slug;
+        devlog.PublishedAt = request.PublishedAt.ToUniversalTime();
+        devlog.EnableComments = request.EnableComments;
+
+        context.SaveChanges();
+        return devlog;
+    }
+
+    /// <summary>
+    ///     Saves a new draft of an existing devlog entry and publishes it, making it the entry's current draft.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry to publish.</param>
+    /// <param name="request">The devlog entry's parent-level fields and the content of the new draft.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated devlog entry, or an error if no entry with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<ProjectDevlog> PublishDevlog(Guid id, ProjectDevlogSaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var devlog = context.DevLogs.Find(id);
+
+        if (devlog is null)
+        {
+            return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        var draft = NewDraft(devlog.Id, request.Content);
+        context.ProjectDevlogDrafts.Add(draft);
+
+        devlog.Slug = request.Slug;
+        devlog.PublishedAt = request.PublishedAt.ToUniversalTime();
+        devlog.EnableComments = request.EnableComments;
+        devlog.CurrentDraftId = draft.Id;
+        devlog.UpdatedAt = DateTimeOffset.UtcNow;
+
+        context.SaveChanges();
+        return devlog;
+    }
+
+    /// <summary>
+    ///     Moves a devlog entry to the trash. It's excluded from every listing and 404s on its public URL, but
+    ///     nothing about it is otherwise touched, and it can be restored with <see cref="RestoreDevlog" />.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry to trash.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the trashed devlog entry, or an error if no entry with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<ProjectDevlog> TrashDevlog(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var devlog = context.DevLogs.Find(id);
+
+        if (devlog is null)
+        {
+            return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        devlog.TrashedAt = DateTimeOffset.UtcNow;
+        context.SaveChanges();
+        return devlog;
+    }
+
+    /// <summary>
+    ///     Restores a trashed devlog entry, making it visible in listings and on its public URL again.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry to restore.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the restored devlog entry, or an error if no entry with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<ProjectDevlog> RestoreDevlog(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var devlog = context.DevLogs.Find(id);
+
+        if (devlog is null)
+        {
+            return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        devlog.TrashedAt = null;
+        context.SaveChanges();
+        return devlog;
+    }
+
+    /// <summary>
+    ///     Permanently deletes a trashed devlog entry - the entry row, every draft in its revision history
+    ///     (cascade), and every file it had uploaded to the CDN. This cannot be undone.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry to permanently delete.</param>
+    /// <returns>
+    ///     A <see cref="Result" /> indicating success, or a failure if no entry with the specified <paramref name="id" />
+    ///     exists or it isn't currently trashed.
+    /// </returns>
+    public Result PermanentlyDeleteDevlog(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var devlog = context.DevLogs.Find(id);
+
+        if (devlog is null)
+        {
+            return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        if (devlog.TrashedAt is null)
+        {
+            return Result.Fail("Only trashed devlog entries can be permanently deleted.");
+        }
+
+        _cdnMediaService.DeleteAllMedia(id, devlog.PublishedAt, DevlogArea);
+
+        context.DevLogs.Remove(devlog);
+        context.SaveChanges();
+        return Result.Ok();
+    }
+
+    /// <summary>
+    ///     Returns a devlog entry's full draft history, newest first.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry whose draft history to return.</param>
+    /// <returns>The devlog entry's drafts, newest first.</returns>
+    public IReadOnlyList<ProjectDevlogDraft> GetDraftHistory(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        return [.. context.ProjectDevlogDrafts.Where(d => d.ProjectDevlogId == id).OrderByDescending(d => d.CreatedAt)];
+    }
+
+    /// <summary>
+    ///     Returns a specific draft of the specified devlog entry, for viewing without publishing it.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry the draft belongs to.</param>
+    /// <param name="draftId">The ID of the draft to return.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the requested draft, or an error if it doesn't exist or doesn't belong to
+    ///     the specified devlog entry.
+    /// </returns>
+    public Result<ProjectDevlogDraft> GetDraft(Guid id, Guid draftId)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var draft = context.ProjectDevlogDrafts.Find(draftId);
+
+        if (draft is null || draft.ProjectDevlogId != id)
+        {
+            return Result.Fail($"Draft '{draftId}' not found for devlog entry '{id}'.");
+        }
+
+        return draft;
+    }
+
+    /// <summary>
+    ///     Returns the newest draft of the specified devlog entry, which may or may not be the entry's current
+    ///     (published) draft.
+    /// </summary>
+    /// <param name="id">The ID of the devlog entry whose newest draft to return.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the entry's newest draft, or an error if it has no drafts.</returns>
+    public Result<ProjectDevlogDraft> GetNewestDraft(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var draft = context.ProjectDevlogDrafts.Where(d => d.ProjectDevlogId == id).OrderByDescending(d => d.CreatedAt).FirstOrDefault();
+
+        if (draft is null)
+        {
+            return Result.Fail($"Devlog entry '{id}' has no drafts.");
+        }
+
+        return draft;
     }
 
     /// <summary>
@@ -343,5 +629,22 @@ public sealed class ProjectService
         project.Status = request.Status;
         project.Type = request.Type;
         project.CreatedAt = request.CreatedAt.ToUniversalTime();
+    }
+
+    /// <summary>
+    ///     Builds a new, unsaved draft snapshot for the specified devlog entry.
+    /// </summary>
+    /// <param name="devlogId">The ID of the devlog entry for which to create a draft.</param>
+    /// <param name="content">The content for the new draft.</param>
+    /// <returns>The newly created draft.</returns>
+    private static ProjectDevlogDraft NewDraft(Guid devlogId, ProjectDevlogDraftContent content)
+    {
+        return new ProjectDevlogDraft
+        {
+            ProjectDevlogId = devlogId,
+            Title = content.Title,
+            Body = content.Body,
+            Visibility = content.Visibility
+        };
     }
 }
