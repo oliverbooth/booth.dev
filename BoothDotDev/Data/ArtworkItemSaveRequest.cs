@@ -7,7 +7,7 @@ namespace BoothDotDev.Data;
 /// </summary>
 /// <param name="Title">The title of the artwork.</param>
 /// <param name="Description">The description of the artwork, if it has one.</param>
-/// <param name="Published">The publication date and time of the artwork.</param>
+/// <param name="PublishedAt">The publication date and time of the artwork.</param>
 /// <param name="Visibility">The visibility of the artwork.</param>
 /// <param name="IsWorkInProgress">A value indicating whether the artwork is a work in progress.</param>
 /// <param name="MadeWith">A string describing how the artwork was made, if specified.</param>

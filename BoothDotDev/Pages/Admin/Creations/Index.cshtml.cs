@@ -69,6 +69,6 @@ public sealed class Index : PageModel
     /// <param name="Title">The title of the creation.</param>
     /// <param name="Type">The type of the creation, either <c>"Artwork"</c> or <c>"Music"</c>.</param>
     /// <param name="Visibility">The visibility of the creation.</param>
-    /// <param name="Published">The publication date and time of the creation.</param>
+    /// <param name="PublishedAt">The publication date and time of the creation.</param>
     public sealed record CreationListItem(Guid Id, string Title, string Type, Visibility Visibility, DateTimeOffset PublishedAt);
 }

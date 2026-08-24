@@ -28,7 +28,7 @@ public sealed record TutorialArticleDraftContent(
 ///     of the draft the save produces.
 /// </summary>
 /// <param name="Slug">The slug of the article.</param>
-/// <param name="Published">The publication date and time of the article.</param>
+/// <param name="PublishedAt">The publication date and time of the article.</param>
 /// <param name="EnableComments">A value indicating whether comments are enabled for the article.</param>
 /// <param name="NextPart">The ID of the next article to this one, if this article is part of a series.</param>
 /// <param name="PreviousPart">The ID of the previous article to this one, if this article is part of a series.</param>
