@@ -140,6 +140,7 @@ public sealed class Edit : PageModel
         Input = new EditModel
         {
             Title = draft.Title,
+            Excerpt = draft.Excerpt,
             Description = draft.Description,
             Solution = draft.Solution,
             ShowSolution = draft.ShowSolution,
@@ -398,7 +399,7 @@ public sealed class Edit : PageModel
     /// <returns>The built <see cref="DevChallengeSaveRequest" />.</returns>
     private DevChallengeSaveRequest BuildSaveRequest()
     {
-        var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Solution, Input.ShowSolution, Input.Visibility);
+        var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Excerpt, Input.Solution, Input.ShowSolution, Input.Visibility);
         return new DevChallengeSaveRequest(Input.PublishedAt, content);
     }
 
@@ -429,6 +430,12 @@ public sealed class Edit : PageModel
         /// <value>The title of the challenge.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the excerpt of the challenge.
+        /// </summary>
+        /// <value>The excerpt of the challenge, or <see langword="null" /> to auto-derive one from the description.</value>
+        public string? Excerpt { get; set; }
 
         /// <summary>
         ///     Gets or sets the description of the challenge.

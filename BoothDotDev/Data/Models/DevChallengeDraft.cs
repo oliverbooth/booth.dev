@@ -26,6 +26,15 @@ public sealed class DevChallengeDraft : IEquatable<DevChallengeDraft>
     public ShortGuid DevChallengeId { get; internal set; }
 
     /// <summary>
+    ///     Gets or sets the excerpt of the challenge, as of this draft.
+    /// </summary>
+    /// <value>
+    ///     The excerpt of the challenge, or <see langword="null" /> if none was set - a preview is then auto-derived
+    ///     from <see cref="Description" /> instead.
+    /// </value>
+    public string? Excerpt { get; set; }
+
+    /// <summary>
     ///     Gets the ID of this draft.
     /// </summary>
     /// <value>The ID of this draft.</value>

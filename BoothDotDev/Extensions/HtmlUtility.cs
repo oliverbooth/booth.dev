@@ -51,7 +51,7 @@ public static class HtmlUtility
             DevChallenge challenge => CreateMetaTags(new Dictionary<string, string>
             {
                 ["title"] = challenge.Title,
-                ["description"] = markdownRenderingService.RenderPlainTextPreview(challenge.Description),
+                ["description"] = markdownRenderingService.RenderPlainTextExcerpt(challenge, out _),
                 ["author"] = Strings.MyName,
                 ["image"] = OgImageUrl(siteBaseUrl, "challenge", challenge.Id)
             }),

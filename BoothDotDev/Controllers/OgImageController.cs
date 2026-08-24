@@ -121,7 +121,7 @@ public sealed class OgImageController : ControllerBase
         }
 
         DevChallenge challenge = result.Value;
-        var description = _markdownRenderingService.RenderPlainTextPreview(challenge.Description);
+        var description = _markdownRenderingService.RenderPlainTextExcerpt(challenge, out _);
         return ServeCached("challenge", ((Guid)challenge.Id).ToString("N"), challenge.UpdatedAt ?? challenge.PublishedAt,
             () => _ogImageService.RenderFlatCard("CHALLENGE", challenge.Title, description));
     }

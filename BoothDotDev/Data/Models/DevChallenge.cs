@@ -6,7 +6,7 @@ namespace BoothDotDev.Data.Models;
 /// <summary>
 ///     Represents a development challenge.
 /// </summary>
-public sealed class DevChallenge : IEquatable<DevChallenge>
+public sealed class DevChallenge : IEquatable<DevChallenge>, IMarkdownExcerpt
 {
     /// <summary>
     ///     Gets the draft that is currently live for this challenge.
@@ -28,6 +28,22 @@ public sealed class DevChallenge : IEquatable<DevChallenge>
     public string Description
     {
         get => Draft.Description;
+    }
+
+    /// <summary>
+    ///     Gets the excerpt of the challenge, as of its current draft.
+    /// </summary>
+    /// <value>The excerpt of the challenge, or <see langword="null" /> if none was set.</value>
+    [NotMapped]
+    public string? Excerpt
+    {
+        get => Draft.Excerpt;
+    }
+
+    /// <inheritdoc />
+    string IMarkdownBody.Body
+    {
+        get => Description;
     }
 
     /// <summary>
