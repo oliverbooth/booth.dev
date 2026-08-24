@@ -3,14 +3,14 @@ using System.Xml.Serialization;
 namespace BoothDotDev.Data.Models.Rss;
 
 /// <summary>
-///     Represents the GUID of a blog item in an RSS feed.
+///     Represents the GUID of an item in an RSS feed.
 /// </summary>
-public struct BlogItemGuid
+public struct RssItemGuid
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="BlogItemGuid" /> structure.
+    ///     Initializes a new instance of the <see cref="RssItemGuid" /> structure.
     /// </summary>
-    public BlogItemGuid()
+    public RssItemGuid()
     {
     }
 
@@ -29,12 +29,12 @@ public struct BlogItemGuid
     public string Value { get; set; } = null!;
 
     /// <summary>
-    ///     Implicitly converts a string to a <see cref="BlogItemGuid" />.
+    ///     Implicitly converts a string to a <see cref="RssItemGuid" />.
     /// </summary>
     /// <param name="value">The string value to convert.</param>
-    /// <returns>A <see cref="BlogItemGuid" /> with the specified value.</returns>
-    public static implicit operator BlogItemGuid(string value)
+    /// <returns>A <see cref="RssItemGuid" /> with the specified value.</returns>
+    public static implicit operator RssItemGuid(string value)
     {
-        return new BlogItemGuid { Value = value };
+        return new RssItemGuid { Value = value };
     }
 }
