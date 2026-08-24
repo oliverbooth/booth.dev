@@ -50,6 +50,18 @@
   flex-wrap: wrap;
 }
 
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--accent-hover);
+  }
+}
+
 footer.site-footer {
   background: var(--bg);
   border-top: 0.5px solid var(--border);

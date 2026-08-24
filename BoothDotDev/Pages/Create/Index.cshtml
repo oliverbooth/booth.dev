@@ -12,10 +12,13 @@
 
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
         <p class="crumb"><a asp-page="/Index">Home</a> / Create</p>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Creations/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
-        }
+        <div style="display:flex;gap:8px">
+            <a href="/create.rss" class="icon-link" aria-label="Subscribe to the creations RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Admin/Creations/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
+            }
+        </div>
     </div>
     <h1>Create</h1>
     <p class="lede">

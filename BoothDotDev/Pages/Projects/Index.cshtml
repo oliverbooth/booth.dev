@@ -17,10 +17,13 @@
 
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
         <p class="crumb"><a asp-page="/Index">Home</a> / Projects</p>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Projects/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
-        }
+        <div style="display:flex;gap:8px">
+            <a href="/projects.rss" class="icon-link" aria-label="Subscribe to the projects RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Admin/Projects/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
+            }
+        </div>
     </div>
     <h1>Projects</h1>
     <p class="lede">

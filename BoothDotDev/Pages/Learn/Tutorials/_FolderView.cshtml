@@ -48,10 +48,14 @@
                 <text> / @Model.Title</text>
             }
         </p>
-        @if (Model is not null && User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@Model.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
+        <div style="display:flex;gap:8px">
+            @{ var feedPath = Model is null ? "/learn" : $"/learn/{TutorialService.GetFullSlug(Model)}"; }
+            <a href="@(feedPath).rss" class="icon-link" aria-label="Subscribe to this listing's RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
+            @if (Model is not null && User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@Model.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+            }
+        </div>
     </div>
 
     @if (Model?.Visibility == Visibility.Private)
