@@ -4,6 +4,7 @@ using BoothDotDev.Data.Models;
 using BoothDotDev.Markdown.Link;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Optional;
 
 namespace BoothDotDev.Services;
@@ -19,6 +20,7 @@ public sealed class ProjectService
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MarkdownRenderingService _markdownRenderingService;
     private readonly CdnMediaService _cdnMediaService;
+    private readonly string _cdnBaseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProjectService" /> class.
@@ -26,14 +28,17 @@ public sealed class ProjectService
     /// <param name="dbContextFactory">The database context factory.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
     /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
+    /// <param name="cdnOptions">The CDN options.</param>
     public ProjectService(
         IDbContextFactory<AppDbContext> dbContextFactory,
         MarkdownRenderingService markdownRenderingService,
-        CdnMediaService cdnMediaService)
+        CdnMediaService cdnMediaService,
+        IOptions<CdnOptions> cdnOptions)
     {
         _dbContextFactory = dbContextFactory;
         _markdownRenderingService = markdownRenderingService;
         _cdnMediaService = cdnMediaService;
+        _cdnBaseUrl = cdnOptions.Value.BaseUrl;
     }
 
     /// <summary>
@@ -71,7 +76,7 @@ public sealed class ProjectService
         }
 
         var kind = CdnMediaResolver.ResolveMediaKind(project.HeroUrl);
-        return CdnMediaResolver.BuildCdnUrl(ProjectArea, kind, project.CreatedAt, project.Id, project.HeroUrl);
+        return CdnMediaResolver.BuildCdnUrl(_cdnBaseUrl, ProjectArea, kind, project.CreatedAt, project.Id, project.HeroUrl);
     }
 
     /// <summary>

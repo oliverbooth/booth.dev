@@ -82,6 +82,8 @@ builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
 builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
+builder.Services.Configure<CdnOptions>(
+    builder.Configuration.GetSection(CdnOptions.SectionName));
 builder.Services.AddSingleton<IFido2>(services =>
 {
     var webAuthnOptions = services.GetRequiredService<IOptions<WebAuthnOptions>>().Value;

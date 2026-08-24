@@ -12,6 +12,7 @@ using Markdig.Renderers.Html;
 using Markdig.Renderers.Html.Inlines;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using Microsoft.Extensions.Options;
 using MD = Markdig.Markdown;
 
 namespace BoothDotDev.Services;
@@ -229,9 +230,10 @@ public sealed class MarkdownRenderingService
 
         var context = new MarkdownRenderContext(id, published);
         var razorPartialRenderer = services.GetRequiredService<RazorPartialRenderer>();
-        var resolver = new CdnMediaResolver(context, razorPartialRenderer, area);
+        var cdnBaseUrl = services.GetRequiredService<IOptions<CdnOptions>>().Value.BaseUrl;
+        var resolver = new CdnMediaResolver(context, razorPartialRenderer, area, cdnBaseUrl);
 
-        ReplaceRenderer<LinkInlineRenderer>(htmlRenderer, new CdnMediaLinkRenderer(context, razorPartialRenderer, area));
+        ReplaceRenderer<LinkInlineRenderer>(htmlRenderer, new CdnMediaLinkRenderer(context, razorPartialRenderer, area, cdnBaseUrl));
         ReplaceRenderer<CodeBlockRenderer>(htmlRenderer, new HighlightCodeBlockRenderer());
         ReplaceRenderer<EmbedRenderer>(htmlRenderer, new EmbedRenderer(services, _markdownPipeline, resolver));
 

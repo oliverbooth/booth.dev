@@ -1,6 +1,7 @@
 using BoothDotDev.Data;
 using BoothDotDev.Markdown.Link;
 using FluentResults;
+using Microsoft.Extensions.Options;
 
 namespace BoothDotDev.Services;
 
@@ -11,16 +12,17 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class CdnBrowserService
 {
-    private const string BaseUrl = "https://cdn.booth.dev";
-
     private readonly ILogger<CdnBrowserService> _logger;
     private readonly string _root;
+    private readonly string _baseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnBrowserService" /> class.
     /// </summary>
     /// <param name="logger">The logger.</param>
-    public CdnBrowserService(ILogger<CdnBrowserService> logger) : this(logger, CdnPaths.GetRoot())
+    /// <param name="cdnOptions">The CDN options.</param>
+    public CdnBrowserService(ILogger<CdnBrowserService> logger, IOptions<CdnOptions> cdnOptions)
+        : this(logger, CdnPaths.GetRoot(), cdnOptions.Value.BaseUrl)
     {
     }
 
@@ -30,10 +32,12 @@ public sealed class CdnBrowserService
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="root">The root directory to confine every operation to.</param>
-    internal CdnBrowserService(ILogger<CdnBrowserService> logger, string root)
+    /// <param name="baseUrl">The base URL of the CDN.</param>
+    internal CdnBrowserService(ILogger<CdnBrowserService> logger, string root, string baseUrl)
     {
         _logger = logger;
         _root = root;
+        _baseUrl = baseUrl;
     }
 
     /// <summary>
@@ -383,7 +387,7 @@ public sealed class CdnBrowserService
             : Result.Fail("The requested folder was not found.");
     }
 
-    private static CdnEntry BuildFileEntry(string fullPath, CdnPath directory)
+    private CdnEntry BuildFileEntry(string fullPath, CdnPath directory)
     {
         var info = new FileInfo(fullPath);
         return new CdnEntry
@@ -409,10 +413,10 @@ public sealed class CdnBrowserService
         };
     }
 
-    private static string BuildUrl(CdnPath directory, string name)
+    private string BuildUrl(CdnPath directory, string name)
     {
         var directoryPath = directory.DisplayPath == "/" ? string.Empty : directory.DisplayPath;
-        return $"{BaseUrl}{directoryPath}/{name}";
+        return $"{_baseUrl}{directoryPath}/{name}";
     }
 
     private static void TryDelete(string path)

@@ -1,6 +1,8 @@
 @page "/"
 @using BoothDotDev.Pages.Shared.Partials
+@using BoothDotDev.Services
 @model Index
+@inject ProjectService ProjectService
 
 <div class="page-wide">
 
@@ -92,7 +94,7 @@
         {
             <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
                 <div class="card-icon">
-                    <img loading="lazy" src="https://cdn.booth.dev/projects/hero/@project.HeroUrl" alt="@project.Name">
+                    <img loading="lazy" src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
                     <span class="card-status-badge">
                         <span class="dot" style="margin-right:5px"></span>@project.Status.ToString().ToLower()
                     </span>

@@ -11,11 +11,11 @@ namespace BoothDotDev.Markdown.Link;
 /// </summary>
 public sealed class CdnMediaResolver
 {
-    private const string BaseUrl = "https://cdn.booth.dev";
     private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
     private readonly MarkdownRenderContext _renderContext;
     private readonly RazorPartialRenderer _razorPartialRenderer;
     private readonly string _area;
+    private readonly string _baseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnMediaResolver" /> class.
@@ -23,11 +23,13 @@ public sealed class CdnMediaResolver
     /// <param name="renderContext">The rendering context, supplying the containing post's ID and published date.</param>
     /// <param name="razorPartialRenderer">The Razor partial renderer used to render media partials to a string.</param>
     /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
-    public CdnMediaResolver(MarkdownRenderContext renderContext, RazorPartialRenderer razorPartialRenderer, string area)
+    /// <param name="baseUrl">The base URL of the CDN.</param>
+    public CdnMediaResolver(MarkdownRenderContext renderContext, RazorPartialRenderer razorPartialRenderer, string area, string baseUrl)
     {
         _renderContext = renderContext;
         _razorPartialRenderer = razorPartialRenderer;
         _area = area;
+        _baseUrl = baseUrl;
     }
 
     /// <summary>
@@ -75,22 +77,23 @@ public sealed class CdnMediaResolver
     /// <returns>The fully-qualified CDN URL.</returns>
     public string ResolveCdnUrl(string? url, MediaKind mediaKind)
     {
-        return BuildCdnUrl(_area, mediaKind, _renderContext.Date, _renderContext.Id, url ?? string.Empty);
+        return BuildCdnUrl(_baseUrl, _area, mediaKind, _renderContext.Date, _renderContext.Id, url ?? string.Empty);
     }
 
     /// <summary>
     ///     Builds the fully-qualified CDN URL for a filename from its raw path components, for callers that don't have a
     ///     <see cref="MarkdownRenderContext" /> of their own (e.g. admin media management).
     /// </summary>
+    /// <param name="baseUrl">The base URL of the CDN.</param>
     /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
     /// <param name="mediaKind">The <see cref="MediaKind" /> of the file, used to select the CDN path segment.</param>
     /// <param name="date">The published date of the containing post, used in the CDN path.</param>
     /// <param name="id">The ID of the containing post, used in the CDN path.</param>
     /// <param name="filename">The bare filename to resolve.</param>
     /// <returns>The fully-qualified CDN URL.</returns>
-    public static string BuildCdnUrl(string area, MediaKind mediaKind, DateTimeOffset date, Guid id, string filename)
+    public static string BuildCdnUrl(string baseUrl, string area, MediaKind mediaKind, DateTimeOffset date, Guid id, string filename)
     {
-        return $"{BaseUrl}/{area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{id:N}/{filename}";
+        return $"{baseUrl}/{area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{id:N}/{filename}";
     }
 
     /// <summary>

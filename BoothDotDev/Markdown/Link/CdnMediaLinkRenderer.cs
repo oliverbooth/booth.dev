@@ -20,11 +20,11 @@ public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
         Misc
     }
 
-    private const string BaseUrl = "https://cdn.booth.dev";
     private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
     private readonly MarkdownRenderContext _renderContext;
     private readonly RazorPartialRenderer _razorPartialRenderer;
     private readonly string _area;
+    private readonly string _baseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnMediaLinkRenderer" /> class.
@@ -32,13 +32,16 @@ public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
     /// <param name="renderContext">The rendering context.</param>
     /// <param name="razorPartialRenderer">The Razor partial renderer.</param>
     /// <param name="area">The area.</param>
+    /// <param name="baseUrl">The base URL of the CDN.</param>
     public CdnMediaLinkRenderer(MarkdownRenderContext renderContext,
         RazorPartialRenderer razorPartialRenderer,
-        string area)
+        string area,
+        string baseUrl)
     {
         _renderContext = renderContext;
         _razorPartialRenderer = razorPartialRenderer;
         _area = area;
+        _baseUrl = baseUrl;
     }
 
     /// <inheritdoc />
@@ -112,6 +115,6 @@ public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
         var uuid = _renderContext.Id;
         var date = _renderContext.Date;
 
-        return $"{BaseUrl}/{_area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{uuid:N}/{url}";
+        return $"{_baseUrl}/{_area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{uuid:N}/{url}";
     }
 }

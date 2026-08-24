@@ -6,6 +6,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 
 namespace BoothDotDev.Pages.Admin.Creations.Music;
 
@@ -22,16 +23,19 @@ public sealed class Edit : PageModel
 
     private readonly CreationService _creationService;
     private readonly CdnMediaService _cdnMediaService;
+    private readonly string _cdnBaseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
     /// </summary>
     /// <param name="creationService">The creation service.</param>
     /// <param name="cdnMediaService">The CDN media service.</param>
-    public Edit(CreationService creationService, CdnMediaService cdnMediaService)
+    /// <param name="cdnOptions">The CDN options.</param>
+    public Edit(CreationService creationService, CdnMediaService cdnMediaService, IOptions<CdnOptions> cdnOptions)
     {
         _creationService = creationService;
         _cdnMediaService = cdnMediaService;
+        _cdnBaseUrl = cdnOptions.Value.BaseUrl;
     }
 
     /// <summary>
@@ -278,7 +282,7 @@ public sealed class Edit : PageModel
         }
 
         var kind = CdnMediaResolver.ResolveMediaKind(item.FileName);
-        FileUrl = CdnMediaResolver.BuildCdnUrl(Area, kind, item.PublishedAt, item.Id, item.FileName);
+        FileUrl = CdnMediaResolver.BuildCdnUrl(_cdnBaseUrl, Area, kind, item.PublishedAt, item.Id, item.FileName);
         DurationDisplay = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
     }
 

@@ -1,6 +1,7 @@
 using BoothDotDev.Data;
 using BoothDotDev.Markdown.Link;
 using FluentResults;
+using Microsoft.Extensions.Options;
 
 namespace BoothDotDev.Services;
 
@@ -12,15 +13,18 @@ public sealed class CdnMediaService
 {
     private readonly ILogger<CdnMediaService> _logger;
     private readonly string _root;
+    private readonly string _baseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnMediaService" /> class.
     /// </summary>
     /// <param name="logger">The logger.</param>
-    public CdnMediaService(ILogger<CdnMediaService> logger)
+    /// <param name="cdnOptions">The CDN options.</param>
+    public CdnMediaService(ILogger<CdnMediaService> logger, IOptions<CdnOptions> cdnOptions)
     {
         _logger = logger;
         _root = CdnPaths.GetRoot();
+        _baseUrl = cdnOptions.Value.BaseUrl;
     }
 
     /// <summary>
@@ -48,7 +52,7 @@ public sealed class CdnMediaService
                 files.Add(new CdnMediaFile
                 {
                     FileName = info.Name,
-                    Url = CdnMediaResolver.BuildCdnUrl(area, kind, published, id, info.Name),
+                    Url = CdnMediaResolver.BuildCdnUrl(_baseUrl, area, kind, published, id, info.Name),
                     Kind = kind,
                     SizeBytes = info.Length,
                     ModifiedAt = info.LastWriteTimeUtc
@@ -142,7 +146,7 @@ public sealed class CdnMediaService
         return new CdnMediaFile
         {
             FileName = fileName,
-            Url = CdnMediaResolver.BuildCdnUrl(area, kind, published, id, fileName),
+            Url = CdnMediaResolver.BuildCdnUrl(_baseUrl, area, kind, published, id, fileName),
             Kind = kind,
             SizeBytes = info.Length,
             ModifiedAt = info.LastWriteTimeUtc
@@ -232,7 +236,7 @@ public sealed class CdnMediaService
         return new CdnMediaFile
         {
             FileName = newName,
-            Url = CdnMediaResolver.BuildCdnUrl(area, kind, published, id, newName),
+            Url = CdnMediaResolver.BuildCdnUrl(_baseUrl, area, kind, published, id, newName),
             Kind = kind,
             SizeBytes = info.Length,
             ModifiedAt = info.LastWriteTimeUtc

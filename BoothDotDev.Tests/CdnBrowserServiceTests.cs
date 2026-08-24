@@ -14,7 +14,7 @@ internal sealed class CdnBrowserServiceTests
     {
         _root = Path.Combine(Path.GetTempPath(), $"cdn-browser-tests-{Guid.NewGuid():N}");
         Directory.CreateDirectory(_root);
-        _service = new CdnBrowserService(NullLogger<CdnBrowserService>.Instance, _root);
+        _service = new CdnBrowserService(NullLogger<CdnBrowserService>.Instance, _root, "https://cdn.test");
     }
 
     [TearDown]
