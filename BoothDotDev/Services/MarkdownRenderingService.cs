@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Web;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
@@ -23,6 +24,14 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class MarkdownRenderingService
 {
+    // Block math (\begin{...}...\end{...}) first, so it isn't mistaken for a run of inline math; $$...$$ before
+    // $...$ for the same reason.
+    private static readonly Regex LatexPattern = new(
+        @"\\begin\{[a-zA-Z*]+\}.*?\\end\{[a-zA-Z*]+\}|\$\$.*?\$\$|\\\[.*?\\\]|\\\(.*?\\\)|\$[^$\n]+\$",
+        RegexOptions.Singleline | RegexOptions.Compiled);
+
+    private static readonly Regex WhitespaceRunPattern = new(@"\s+", RegexOptions.Compiled);
+
     private readonly MarkdownPipeline _markdownPipeline;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -144,10 +153,10 @@ public sealed class MarkdownRenderingService
         if (!string.IsNullOrWhiteSpace(markdown.Excerpt))
         {
             wasTrimmed = false;
-            return ToPlainText(markdown.Excerpt);
+            return ToPlainText(StripLatex(markdown.Excerpt));
         }
 
-        var body = markdown.Body;
+        var body = StripLatex(markdown.Body);
         var moreIndex = body.IndexOf("<!--more-->", StringComparison.Ordinal);
 
         if (moreIndex == -1)
@@ -176,7 +185,7 @@ public sealed class MarkdownRenderingService
             throw new ArgumentNullException(nameof(markdown));
         }
 
-        return ToPlainText(markdown.Truncate(maxLength, "...")).Trim();
+        return ToPlainText(StripLatex(markdown).Truncate(maxLength, "...")).Trim();
     }
 
     /// <summary>
@@ -192,7 +201,23 @@ public sealed class MarkdownRenderingService
     /// </remarks>
     private string ToPlainText(string markdown)
     {
-        return HttpUtility.HtmlDecode(MD.ToPlainText(markdown, _markdownPipeline));
+        var plainText = HttpUtility.HtmlDecode(MD.ToPlainText(markdown, _markdownPipeline));
+        return WhitespaceRunPattern.Replace(plainText, " ").Trim();
+    }
+
+    /// <summary>
+    ///     Strips LaTeX math markup from a raw Markdown string.
+    /// </summary>
+    /// <param name="markdown">The raw Markdown to strip.</param>
+    /// <returns>The Markdown with LaTeX math markup removed.</returns>
+    /// <remarks>
+    ///     MathJax typesets this client-side on the live page, but plain-text consumers (an OG image, a further-HTML-encoded meta
+    ///     tag) have no typesetting step of their own - left in, the raw source (<c>\begin{align}</c>, <c>\tag{1}</c>,
+    ///     <c>\forall</c>, ...) leaks through verbatim instead of reading as prose.
+    /// </remarks>
+    private static string StripLatex(string markdown)
+    {
+        return LatexPattern.Replace(markdown, string.Empty);
     }
 
     /// <summary>
@@ -268,7 +293,8 @@ public sealed class MarkdownRenderingService
         var cdnBaseUrl = services.GetRequiredService<IOptions<CdnOptions>>().Value.BaseUrl;
         var resolver = new CdnMediaResolver(context, razorPartialRenderer, area, cdnBaseUrl);
 
-        ReplaceRenderer<LinkInlineRenderer>(htmlRenderer, new CdnMediaLinkRenderer(context, razorPartialRenderer, area, cdnBaseUrl));
+        ReplaceRenderer<LinkInlineRenderer>(htmlRenderer,
+            new CdnMediaLinkRenderer(context, razorPartialRenderer, area, cdnBaseUrl));
         ReplaceRenderer<CodeBlockRenderer>(htmlRenderer, new HighlightCodeBlockRenderer());
         ReplaceRenderer<EmbedRenderer>(htmlRenderer, new EmbedRenderer(services, _markdownPipeline, resolver));
 
