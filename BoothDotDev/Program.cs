@@ -75,6 +75,7 @@ builder.Services.AddSingleton<NoteService>();
 builder.Services.AddSingleton<OgImageService>();
 builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<ReadingListService>();
+builder.Services.AddSingleton<RssFeedService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BlueskyService>();
@@ -112,6 +113,23 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/error/{0}");
+
+// every content listing is subscribable by appending .rss to its URL (/blog.rss, /learn/unity.rss, ...) - a single rule, not one
+// route per content type. This has to run as middleware ahead of normal routing rather than as a route itself: /learn/{**slug} is
+// already a catch-all Razor Page route, and ASP.NET route templates don't allow a literal suffix after a catch-all segment, so
+// "/learn/{**slug}.rss" isn't valid route syntax to register alongside it
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+    if (context.Request.Method != HttpMethods.Get || path is null || !path.EndsWith(".rss", StringComparison.OrdinalIgnoreCase))
+    {
+        await next(context);
+        return;
+    }
+
+    await HandleRssFeedAsync(context, path[..^".rss".Length]);
+});
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
@@ -122,6 +140,7 @@ app.MapGet("/contact", () => Results.StatusCode(StatusCodes.Status410Gone));
 app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", permanent: true));
 app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", permanent: true));
 app.MapGet("/blog/archive", () => Results.Redirect("/blog", permanent: true));
+app.MapGet("/blog/feed", () => Results.Redirect("/blog.rss", permanent: true));
 app.MapGet("/blog/posts/{page:int}", () => Results.Redirect("/blog", permanent: true));
 app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month, int day, string slug) =>
 {
@@ -148,6 +167,40 @@ app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slu
 
 app.Run();
 return;
+
+async Task HandleRssFeedAsync(HttpContext context, string path)
+{
+    var baseUrl = new Uri($"{context.Request.Scheme}://{context.Request.Host}");
+    var rssFeedService = context.RequestServices.GetRequiredService<RssFeedService>();
+    var segments = path.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+    string? xml = segments.Length switch
+    {
+        1 when segments[0] == "blog" => rssFeedService.BuildBlogFeed(baseUrl),
+        1 when segments[0] == "notes" => rssFeedService.BuildNotesFeed(baseUrl),
+        1 when segments[0] == "create" => rssFeedService.BuildCreationsFeed(baseUrl),
+        1 when segments[0] == "projects" => rssFeedService.BuildProjectsFeed(baseUrl),
+        1 when segments[0] == "learn" => rssFeedService.BuildTutorialFeed(baseUrl, null),
+        > 1 when segments[0] == "learn" => BuildScopedTutorialFeed(context, rssFeedService, baseUrl, segments[1..]),
+        _ => null
+    };
+
+    if (xml is null)
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+    }
+
+    context.Response.ContentType = "application/xml";
+    await context.Response.WriteAsync(xml);
+}
+
+string? BuildScopedTutorialFeed(HttpContext context, RssFeedService rssFeedService, Uri baseUrl, string[] folderSegments)
+{
+    var tutorialService = context.RequestServices.GetRequiredService<TutorialService>();
+    var folderResult = tutorialService.GetFolder(string.Join('/', folderSegments));
+    return folderResult.IsSuccess ? rssFeedService.BuildTutorialFeed(baseUrl, folderResult.Value) : null;
+}
 
 async Task ConfigureMigrationsAsync<TContext>(IServiceProvider services) where TContext : DbContext
 {

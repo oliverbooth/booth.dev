@@ -189,6 +189,25 @@ public sealed class MarkdownRenderingService
     }
 
     /// <summary>
+    ///     Renders a truncated HTML preview of a raw Markdown string, for content types that don't implement
+    ///     <see cref="IMarkdownExcerpt" /> - the HTML-returning counterpart to <see cref="RenderPlainTextPreview" />,
+    ///     for consumers that render the result (an RSS feed reader) rather than draw it as bare text.
+    /// </summary>
+    /// <param name="markdown">The raw Markdown to preview.</param>
+    /// <param name="maxLength">The maximum length, in characters, of the Markdown source to consider before rendering.</param>
+    /// <returns>The rendered HTML of the truncated preview.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="markdown" /> is <see langword="null" />.</exception>
+    public string RenderHtmlPreview(string markdown, int maxLength = 255)
+    {
+        if (markdown is null)
+        {
+            throw new ArgumentNullException(nameof(markdown));
+        }
+
+        return MD.ToHtml(markdown.Truncate(maxLength, "..."), _markdownPipeline);
+    }
+
+    /// <summary>
     ///     Renders Markdown to plain text, then decodes the result.
     /// </summary>
     /// <param name="markdown">The Markdown to render.</param>

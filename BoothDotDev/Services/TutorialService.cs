@@ -75,6 +75,64 @@ public sealed class TutorialService
     }
 
     /// <summary>
+    ///     Gets every article within a tutorial folder and all of its descendant folders - so a feed scoped to e.g. "unity"
+    ///     includes articles in "unity/2d-platformer" too. Trashed articles are excluded.
+    /// </summary>
+    /// <param name="folder">The folder whose subtree of articles to retrieve.</param>
+    /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
+    /// <returns>A read-only view of the articles in the folder's subtree.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="folder" /> is <see langword="null" />.</exception>
+    public IReadOnlyList<TutorialArticle> GetArticlesInSubtree(TutorialFolder folder, Visibility visibility = Visibility.None)
+    {
+        if (folder is null)
+        {
+            throw new ArgumentNullException(nameof(folder));
+        }
+
+        var folderIds = CollectSubtreeFolderIds(folder.Id);
+
+        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        IQueryable<TutorialArticle> articles = context.TutorialArticles.Include(a => a.CurrentDraft)
+            .Where(a => a.TrashedAt == null && folderIds.Contains(a.CurrentDraft!.Folder));
+
+        if (visibility != Visibility.None)
+        {
+            articles = articles.Where(a => a.CurrentDraft!.Visibility == visibility);
+        }
+
+        return [.. articles.OrderBy(a => a.CurrentDraft!.Rank)];
+    }
+
+    /// <summary>
+    ///     Computes the set of folder IDs in a folder's subtree (itself plus every descendant).
+    /// </summary>
+    /// <param name="rootId">The ID of the subtree's root folder.</param>
+    /// <returns>The set of folder IDs in the subtree.</returns>
+    private HashSet<Guid> CollectSubtreeFolderIds(Guid rootId)
+    {
+        ILookup<Guid, TutorialFolder> childrenByParent = GetAllFolders()
+            .Where(f => f.Parent.HasValue)
+            .ToLookup(f => f.Parent!.Value);
+
+        var subtreeIds = new HashSet<Guid> { rootId };
+        var stack = new Stack<Guid>();
+        stack.Push(rootId);
+
+        while (stack.TryPop(out var current))
+        {
+            foreach (TutorialFolder child in childrenByParent[current])
+            {
+                if (subtreeIds.Add(child.Id))
+                {
+                    stack.Push(child.Id);
+                }
+            }
+        }
+
+        return subtreeIds;
+    }
+
+    /// <summary>
     ///     Gets the folders within a tutorial folder.
     /// </summary>
     /// <param name="parent">The parent folder whose child folders to retrieve.</param>
