@@ -9,6 +9,7 @@ import 'prismjs/plugins/show-language/prism-show-language.js';
 import 'prismjs/plugins/keep-markup/prism-keep-markup.js';
 import 'prismjs/plugins/autoloader/prism-autoloader.js';
 import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
+import {initManimScenes} from './manim/scenes.ts';
 import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 
 // Prism auto-runs highlightAll() on DOMContentLoaded unless told otherwise; <script data-manual> tag used to suppress this, but
@@ -34,6 +35,7 @@ export function initContentFeatures(element?: HTMLElement): void {
     applyAnsiHighlighting(element);
     renderTimestamps(element);
     renderSpoilers(element);
+    initManimScenes(element).catch(error => console.error('Failed to initialize manim-web scenes:', error));
 }
 
 /**
