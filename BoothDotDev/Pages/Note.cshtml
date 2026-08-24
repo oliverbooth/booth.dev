@@ -13,6 +13,7 @@
 @{
     var note = Model.RetrievedNote.ValueOr((Data.Models.Note)null!);
     ViewData["Page"] = "Note";
+    ViewData["Title"] = note.Title;
     ViewData["Post"] = note;
     var published = note.PublishedAt;
 }

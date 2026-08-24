@@ -11,6 +11,8 @@
 
 @{
     var project = Model.SelectedProject;
+    ViewData["Title"] = project.Name;
+    ViewData["Post"] = project;
 }
 
 <div class="page">

@@ -7,6 +7,7 @@
 @{
     ViewData["Title"] = Model.DevChallenge.Title;
     ViewData["Page"] = "Challenges";
+    ViewData["Post"] = Model.DevChallenge;
     var challenge = Model.DevChallenge;
     var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
 }

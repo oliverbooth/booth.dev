@@ -318,15 +318,9 @@ public sealed class CdnMediaService
         }
     }
 
-    private string GetDirectory(string area, MediaKind kind, DateTimeOffset published, Guid id)
+    private static string GetDirectory(string area, MediaKind kind, DateTimeOffset published, Guid id)
     {
-        return Path.Combine(
-            _root,
-            area,
-            kind.ToString().ToLowerInvariant(),
-            published.ToString("yyyy"),
-            published.ToString("MM"),
-            id.ToString("N"));
+        return CdnPaths.GetMediaDirectory(area, kind, published, id);
     }
 
     private static void PruneEmptyParents(string directory, string stopAt)

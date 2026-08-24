@@ -1,3 +1,4 @@
+using System.Web;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
@@ -143,7 +144,7 @@ public sealed class MarkdownRenderingService
         if (!string.IsNullOrWhiteSpace(markdown.Excerpt))
         {
             wasTrimmed = false;
-            return MD.ToPlainText(markdown.Excerpt, _markdownPipeline);
+            return ToPlainText(markdown.Excerpt);
         }
 
         var body = markdown.Body;
@@ -153,11 +154,45 @@ public sealed class MarkdownRenderingService
         {
             var excerpt = body.Truncate(255, "...");
             wasTrimmed = body.Length > 255;
-            return MD.ToPlainText(excerpt, _markdownPipeline);
+            return ToPlainText(excerpt);
         }
 
         wasTrimmed = true;
-        return MD.ToPlainText(body[..moreIndex], _markdownPipeline);
+        return ToPlainText(body[..moreIndex]);
+    }
+
+    /// <summary>
+    ///     Renders a truncated plain-text preview of a raw Markdown string, for content types that don't implement
+    ///     <see cref="IMarkdownExcerpt" /> (and so have no dedicated excerpt field or <c>&lt;!--more--&gt;</c> convention).
+    /// </summary>
+    /// <param name="markdown">The raw Markdown to preview.</param>
+    /// <param name="maxLength">The maximum length, in characters, of the Markdown source to consider before rendering.</param>
+    /// <returns>The rendered plain text of the truncated preview.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="markdown" /> is <see langword="null" />.</exception>
+    public string RenderPlainTextPreview(string markdown, int maxLength = 255)
+    {
+        if (markdown is null)
+        {
+            throw new ArgumentNullException(nameof(markdown));
+        }
+
+        return ToPlainText(markdown.Truncate(maxLength, "...")).Trim();
+    }
+
+    /// <summary>
+    ///     Renders Markdown to plain text, then decodes the result.
+    /// </summary>
+    /// <param name="markdown">The Markdown to render.</param>
+    /// <returns>The rendered plain text.</returns>
+    /// <remarks>
+    ///     The typographer extension renders curly quotes, ellipses, etc. as literal HTML entities (e.g. <c>&amp;ldquo;</c>),
+    ///     which <see cref="MD.ToPlainText(string, MarkdownPipeline, MarkdownParserContext)" /> doesn't decode on its own since
+    ///     it's meant to strip tags, not entities. Left undecoded, plain-text consumers (an image canvas, a further-HTML-encoded
+    ///     meta tag) would show the literal entity text instead of the character it represents.
+    /// </remarks>
+    private string ToPlainText(string markdown)
+    {
+        return HttpUtility.HtmlDecode(MD.ToPlainText(markdown, _markdownPipeline));
     }
 
     /// <summary>

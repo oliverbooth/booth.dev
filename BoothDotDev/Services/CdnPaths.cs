@@ -1,3 +1,4 @@
+using BoothDotDev.Data;
 using FluentResults;
 
 namespace BoothDotDev.Services;
@@ -14,6 +15,40 @@ public static class CdnPaths
     public static string GetRoot()
     {
         return Path.Combine(AppContext.BaseDirectory, "cdn");
+    }
+
+    /// <summary>
+    ///     Resolves the physical directory a piece of content's media files of a given kind live under.
+    /// </summary>
+    /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
+    /// <param name="kind">The kind of media.</param>
+    /// <param name="published">The published date of the containing post, used in the CDN path.</param>
+    /// <param name="id">The ID of the containing post, used in the CDN path.</param>
+    /// <returns>The resolved absolute directory.</returns>
+    public static string GetMediaDirectory(string area, MediaKind kind, DateTimeOffset published, Guid id)
+    {
+        return Path.Combine(
+            GetRoot(),
+            area,
+            kind.ToString().ToLowerInvariant(),
+            published.ToString("yyyy"),
+            published.ToString("MM"),
+            id.ToString("N"));
+    }
+
+    /// <summary>
+    ///     Resolves the physical path to a specific media file, mirroring the shape <see cref="Markdown.Link.CdnMediaResolver.BuildCdnUrl" />
+    ///     uses for the corresponding public URL.
+    /// </summary>
+    /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
+    /// <param name="kind">The kind of media.</param>
+    /// <param name="published">The published date of the containing post, used in the CDN path.</param>
+    /// <param name="id">The ID of the containing post, used in the CDN path.</param>
+    /// <param name="filename">The bare filename to resolve.</param>
+    /// <returns>The resolved absolute file path.</returns>
+    public static string GetMediaPath(string area, MediaKind kind, DateTimeOffset published, Guid id, string filename)
+    {
+        return Path.Combine(GetMediaDirectory(area, kind, published, id), filename);
     }
 
     /// <summary>

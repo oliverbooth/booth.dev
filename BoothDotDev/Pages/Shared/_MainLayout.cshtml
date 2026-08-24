@@ -9,41 +9,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="title" content="@PageTitle">
-    <meta property="og:title" content="@PageTitle">
-    <meta property="twitter:title" content="@PageTitle">
     <meta property="og:url" content="@CurrentUrl">
     <meta property="twitter:url" content="@CurrentUrl">
-    <meta name="theme-color" content="#007EC6">
-    <meta property="og:image" content="@Url.Content("~/img/favicon.png")">
-    <meta property="twitter:image" content="@Url.Content("~/img/favicon.png")">
-    @if (ViewData["Title"] != null)
-    {
-        <title>@ViewData["Title"] - @Strings.MyName</title>
-    }
-    else
-    {
-        <title>@Strings.MyName</title>
-    }
-
-    @switch (ViewData["Post"])
-    {
-        case BlogPost post:
-            @Html.Raw(HtmlUtility.CreateMetaTagsFromPost(post, MarkdownRenderingService))
-            break;
-        case TutorialArticle article:
-            @Html.Raw(HtmlUtility.CreateMetaTagsFromTutorialArticle(article, MarkdownRenderingService))
-            break;
-        default:
-            <meta name="title" content="@PageTitle">
-            <meta name="description" content="@Strings.Tagline">
-            <meta property="og:title" content="@PageTitle">
-            <meta property="og:description" content="@Strings.Tagline">
-            <meta property="twitter:title" content="@PageTitle">
-            <meta property="twitter:description" content="@Strings.Tagline">
-            break;
-    }
+    <meta name="theme-color" content="#6161cd">
     <title>@PageTitle</title>
+
+    @Html.Raw(HtmlUtility.CreateMetaTagsForContent(ViewData["Post"], SiteBaseUrl, MarkdownRenderingService, PageTitle, Strings.Tagline))
     <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="shortcut icon" href="~/img/favicon-dark.png" asp-append-version="true" media="(prefers-color-scheme: light)">
     <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true" media="(prefers-color-scheme: dark)">
