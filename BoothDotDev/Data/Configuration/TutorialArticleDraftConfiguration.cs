@@ -1,4 +1,5 @@
 using BoothDotDev.Data.Models;
+using BoothDotDev.Data.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -20,8 +21,8 @@ internal sealed class TutorialArticleDraftConfiguration : IEntityTypeConfigurati
         builder.Property(e => e.TutorialArticleId).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Title).IsRequired();
-        builder.Property(e => e.Body).IsRequired();
-        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false);
+        builder.Property(e => e.Body).IsRequired().HasConversion<MarkdownValueConverter>();
+        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false).HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.Folder).IsRequired();
         builder.Property(e => e.Rank).IsRequired();
         builder.Property(e => e.PreviewImageUrl).HasConversion<UriToStringConverter>();

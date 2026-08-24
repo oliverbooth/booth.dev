@@ -1,4 +1,5 @@
 using BoothDotDev.Data.Models;
+using BoothDotDev.Data.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,8 +17,8 @@ internal sealed class BlogPostDraftConfiguration : IEntityTypeConfiguration<Blog
         builder.Property(e => e.BlogPostId).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Title).HasMaxLength(255).IsRequired();
-        builder.Property(e => e.Body).IsRequired();
-        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false);
+        builder.Property(e => e.Body).IsRequired().HasConversion<MarkdownValueConverter>();
+        builder.Property(e => e.Excerpt).HasMaxLength(512).IsRequired(false).HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.Visibility).IsRequired();
         builder.Property(e => e.Tags).IsRequired();
         builder.Property(e => e.CategoryId).IsRequired();

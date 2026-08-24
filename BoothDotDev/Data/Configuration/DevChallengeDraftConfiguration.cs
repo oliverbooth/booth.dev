@@ -20,8 +20,8 @@ internal sealed class DevChallengeDraftConfiguration : IEntityTypeConfiguration<
         builder.Property(e => e.DevChallengeId).HasConversion<ShortGuidToGuidConverter>().IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Title).IsRequired();
-        builder.Property(e => e.Description).IsRequired();
-        builder.Property(e => e.Solution).IsRequired(false);
+        builder.Property(e => e.Description).IsRequired().HasConversion<MarkdownValueConverter>();
+        builder.Property(e => e.Solution).IsRequired(false).HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.ShowSolution).IsRequired();
         builder.Property(e => e.Visibility).IsRequired();
 

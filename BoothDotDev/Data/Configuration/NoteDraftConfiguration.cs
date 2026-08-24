@@ -1,4 +1,5 @@
 using BoothDotDev.Data.Models;
+using BoothDotDev.Data.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,7 +17,7 @@ internal sealed class NoteDraftConfiguration : IEntityTypeConfiguration<NoteDraf
         builder.Property(e => e.NoteId).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Title).IsRequired().HasMaxLength(255);
-        builder.Property(e => e.Content).IsRequired().HasMaxLength(10000);
+        builder.Property(e => e.Content).IsRequired().HasMaxLength(10000).HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.FontStyle).IsRequired().HasDefaultValue(FontStyle.Serif);
         builder.Property(e => e.Visibility).IsRequired();
 

@@ -16,7 +16,7 @@ internal sealed class ArtworkItemConfiguration : IEntityTypeConfiguration<Artwor
         builder.Property(e => e.Id).IsRequired();
         builder.Property(e => e.FileName).IsRequired().HasMaxLength(255);
         builder.Property(e => e.Title).IsRequired().HasMaxLength(255);
-        builder.Property(e => e.Description).IsRequired(false).HasMaxLength(10000);
+        builder.Property(e => e.Description).IsRequired(false).HasMaxLength(10000).HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.PublishedAt).IsRequired();
         builder.Property(e => e.Visibility).IsRequired().HasDefaultValue(Visibility.Published);
         builder.Property(e => e.IsWorkInProgress).IsRequired();

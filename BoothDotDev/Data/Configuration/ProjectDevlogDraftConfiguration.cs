@@ -1,4 +1,5 @@
 using BoothDotDev.Data.Models;
+using BoothDotDev.Data.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,7 +20,7 @@ internal sealed class ProjectDevlogDraftConfiguration : IEntityTypeConfiguration
         builder.Property(e => e.ProjectDevlogId).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Title).IsRequired().HasMaxLength(200);
-        builder.Property(e => e.Body).IsRequired();
+        builder.Property(e => e.Body).IsRequired().HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.Visibility).IsRequired();
 
         builder.HasOne<ProjectDevlog>().WithMany().HasForeignKey(e => e.ProjectDevlogId).OnDelete(DeleteBehavior.Cascade);

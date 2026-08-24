@@ -1,4 +1,5 @@
 using BoothDotDev.Data.Models;
+using BoothDotDev.Data.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,8 +22,8 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.Property(e => e.Slug).IsRequired();
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.HeroUrl).IsRequired();
-        builder.Property(e => e.Description).IsRequired();
-        builder.Property(e => e.Details).IsRequired();
+        builder.Property(e => e.Description).IsRequired().HasConversion<MarkdownValueConverter>();
+        builder.Property(e => e.Details).IsRequired().HasConversion<MarkdownValueConverter>();
         builder.Property(e => e.Status).IsRequired();
         builder.Property(e => e.RemoteUrl);
         builder.Property(e => e.RemoteTarget);
