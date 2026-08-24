@@ -46,12 +46,12 @@
 
         <div class="field">
             <label for="description">Description (markdown supported)</label>
-            <textarea id="description" rows="16" asp-for="Input.Description" data-markdown data-preview-source></textarea>
+            <textarea id="description" rows="16" asp-for="Input.Description" data-markdown data-preview-source data-preview-field="description"></textarea>
         </div>
 
         <div class="field">
             <label for="solution">Solution (markdown supported)</label>
-            <textarea id="solution" rows="10" asp-for="Input.Solution" data-markdown></textarea>
+            <textarea id="solution" rows="10" asp-for="Input.Solution" data-markdown data-preview-source data-preview-field="solution"></textarea>
         </div>
 
         <div class="field-row">
@@ -178,7 +178,13 @@
     </form>
 
     <aside class="admin-preview" id="preview-pane">
-        <span class="eyebrow">Preview</span>
+        <div class="admin-header">
+            <span class="eyebrow">Preview</span>
+            <div class="preview-tabs">
+                <span class="pill active" data-preview-tab="description">Description</span>
+                <span class="pill" data-preview-tab="solution">Solution</span>
+            </div>
+        </div>
         <h1 id="preview-title">@challengeModel.Title</h1>
         <div class="prose" id="preview-body"></div>
     </aside>

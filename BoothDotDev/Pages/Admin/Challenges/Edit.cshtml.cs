@@ -201,16 +201,19 @@ public sealed class Edit : PageModel
     }
 
     /// <summary>
-    ///     Handles the POST request for rendering a live preview of the challenge's description.
+    ///     Handles the POST request for rendering a live preview of the challenge's description or solution.
     /// </summary>
     /// <param name="id">The ID of the challenge being edited. If <see langword="null" />, a new challenge is being created.</param>
+    /// <param name="field">
+    ///     Which field to render: <c>"solution"</c> for the solution, or anything else (including <see langword="null" />)
+    ///     for the description. Sent by the preview pane's field tabs.
+    /// </param>
     /// <returns>
     ///     A JSON payload of the rendered preview HTML. This handler backs the editor's live-updating preview pane
     ///     and is only ever called via <c>fetch</c> — there's no server-rendered fallback, since the Markdown editor
-    ///     itself already requires JS to function. Only the description is previewed; the solution has no live
-    ///     preview pane.
+    ///     itself already requires JS to function.
     /// </returns>
-    public IActionResult OnPostPreview(string? id)
+    public IActionResult OnPostPreview(string? id, string? field)
     {
         if (!ModelState.IsValid)
         {
@@ -218,7 +221,8 @@ public sealed class Edit : PageModel
         }
 
         var challengeGuid = id is not null ? (Guid)ShortGuid.Parse(id) : Guid.Empty;
-        var html = _markdownRenderingService.Render(Input.Description, challengeGuid, Input.PublishedAt, Area);
+        var markdown = field == "solution" ? Input.Solution ?? string.Empty : Input.Description;
+        var html = _markdownRenderingService.Render(markdown, challengeGuid, Input.PublishedAt, Area);
 
         // Challenges have no font-style concept, so there's no real prose modifier class to send - an empty
         // string keeps content-preview.ts's `prose ${proseClass}` assembly well-formed without touching the TS.

@@ -10,6 +10,15 @@
   }
 }
 
+.preview-tabs {
+  display: flex;
+  gap: 8px;
+
+  .pill {
+    cursor: pointer;
+  }
+}
+
 .admin-preview {
   position: sticky;
   top: 2rem;
