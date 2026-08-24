@@ -43,13 +43,24 @@ internal sealed class Index : PageModel
     public IReadOnlyList<Note> Notes { get; private set; } = [];
 
     /// <summary>
+    ///     Gets the tag <see cref="BlogPosts" /> is currently filtered to, if any.
+    /// </summary>
+    /// <value>The active tag filter, or <see langword="null" /> if the page is showing everything.</value>
+    public string? Tag { get; private set; }
+
+    /// <summary>
     ///     Handles the GET request for the blog index page.
     /// </summary>
     /// <param name="postId">The post ID.</param>
     /// <param name="wpPostId">The WordPress post ID.</param>
+    /// <param name="tag">
+    ///     A tag to filter <see cref="BlogPosts" /> to. Ported from the 3.x site's <c>?tag=</c> query parameter, which
+    ///     the redesign otherwise dropped - <c>Blog/Article.cshtml</c>'s tag links already point here.
+    /// </param>
     /// <returns>The result of the GET request.</returns>
     public IActionResult OnGet([FromQuery(Name = "pid")] Guid? postId = null,
-        [FromQuery(Name = "p")] int? wpPostId = null)
+        [FromQuery(Name = "p")] int? wpPostId = null,
+        [FromQuery(Name = "tag")] string? tag = null)
     {
         if (postId.HasValue != wpPostId.HasValue)
         {
@@ -58,7 +69,18 @@ internal sealed class Index : PageModel
 
         BlogPosts = _blogPostService.GetAllBlogPosts();
         BlogPostCategories = _blogPostService.GetTopLevelCategories();
-        Notes = _noteService.GetAllNotes();
+
+        if (!string.IsNullOrWhiteSpace(tag))
+        {
+            Tag = tag;
+            ViewData["Title"] = $"Posts tagged “{tag.Replace('-', ' ')}”";
+            BlogPosts = [.. BlogPosts.Where(p => p.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))];
+        }
+        else
+        {
+            Notes = _noteService.GetAllNotes();
+        }
+
         return Page();
     }
 

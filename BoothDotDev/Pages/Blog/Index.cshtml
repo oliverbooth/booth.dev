@@ -9,7 +9,16 @@
 
     <p class="crumb"><a asp-page="/Index">Home</a> / Write</p>
     <h1>Write</h1>
-    <p class="lede">I write for me, not for you. Unless it's tech-related. Then I write for you. But also me.</p>
+    @if (Model.Tag is { } tag)
+    {
+        <p class="lede">
+            Showing posts tagged &ldquo;@tag.Replace('-', ' ')&rdquo; &middot; <a asp-page="/Blog/Index">Clear filter</a>
+        </p>
+    }
+    else
+    {
+        <p class="lede">I write for me, not for you. Unless it's tech-related. Then I write for you. But also me.</p>
+    }
 
     <div data-filter-scope>
         <div class="filter-row">
