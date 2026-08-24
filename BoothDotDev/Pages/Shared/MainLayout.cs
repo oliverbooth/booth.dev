@@ -17,6 +17,13 @@ public abstract class MainLayout : RazorPage<object>
     public Uri CurrentUrl { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the site's own base URL, used to build absolute URLs (e.g. the Open Graph image) independent of the
+    ///     current page's path.
+    /// </summary>
+    /// <value>The site's base URL.</value>
+    public Uri SiteBaseUrl { get; private set; } = null!;
+
+    /// <summary>
     ///     Gets or sets the Markdown rendering service.
     /// </summary>
     /// <value>The Markdown rendering service.</value>
@@ -51,6 +58,7 @@ public abstract class MainLayout : RazorPage<object>
     {
         var request = Context.Request;
         CurrentUrl = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
+        SiteBaseUrl = new Uri($"{request.Scheme}://{request.Host}");
 
         var env = Context.RequestServices.GetRequiredService<IWebHostEnvironment>();
         var descriptor = ViewContext.ActionDescriptor as Microsoft.AspNetCore.Mvc.RazorPages.CompiledPageActionDescriptor;
