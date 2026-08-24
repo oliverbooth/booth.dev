@@ -1,14 +1,27 @@
+import Prism from 'prismjs';
+import 'prismjs/plugins/toolbar/prism-toolbar.js';
+import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js';
+import 'prismjs/plugins/previewers/prism-previewers.js';
+import 'prismjs/plugins/inline-color/prism-inline-color.js';
+import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
+import 'prismjs/plugins/line-highlight/prism-line-highlight.js';
+import 'prismjs/plugins/show-language/prism-show-language.js';
+import 'prismjs/plugins/keep-markup/prism-keep-markup.js';
+import 'prismjs/plugins/autoloader/prism-autoloader.js';
 import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
 import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 
-declare const Prism: typeof import('prismjs');
+// Prism auto-runs highlightAll() on DOMContentLoaded unless told otherwise; <script data-manual> tag used to suppress this, but
+// that signal doesn't exist for a bundled import, so it's set explicitly here. this MUST run before Prism's own DOMContentLoaded
+// listener fires, which it always does since this executes synchronously at module-evaluation time - all we need is to beat
+// DOM-ready, not the listener registration
+Prism.manual = true;
 
-// Prism is loaded as a global via a classic <script> tag in _AdminLayout.cshtml/_MainLayout.cshtml, not
-// bundled into this module graph - pages that skip those layouts (Login.cshtml/LoginTotp.cshtml, which are
-// deliberately minimal and never render code blocks) never define it, so this can't assume it's present.
-if (typeof Prism !== 'undefined') {
-    addPrismLanguages();
-}
+// language grammars are fetched on demand instead of bundled, so any content type can use any Prism-supported language without
+// shipping every grammar Prism has to every page. self-hosted alongside the rest of wwwroot
+Prism.plugins.autoloader.languages_path = '/js/prism-components/';
+
+addPrismLanguages();
 
 /**
  * Initializes the front-end Markdown content features for the given element, or the entire document if no element is provided.
@@ -28,10 +41,6 @@ export function initContentFeatures(element?: HTMLElement): void {
  * @param element The element within which to initialize Prism code blocks.
  */
 function initPrismCodeblocks(element: HTMLElement): void {
-    if (typeof Prism === 'undefined') {
-        return;
-    }
-
     const blocks: NodeListOf<HTMLElement> = element.querySelectorAll<HTMLElement>('pre code');
     for (const block of blocks) {
         addLineNumbers(block);
@@ -50,10 +59,11 @@ function initPrismCodeblocks(element: HTMLElement): void {
             return;
         }
 
-        Prism.highlightAllUnder(block.parentElement);
-        if (block.dataset.highlight) {
-            applyCodeBlockHighlights(block);
-        }
+        Prism.highlightAllUnder(block.parentElement, false, () => {
+            if (block.dataset.highlight) {
+                applyCodeBlockHighlights(block);
+            }
+        });
     }
 }
 

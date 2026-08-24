@@ -31,6 +31,7 @@ msbuild.wrn
 # Node / npm / Vite
 node_modules/
 dist/
+public/js/prism-components/
 *.tsbuildinfo
 .npm
 .eslintcache
