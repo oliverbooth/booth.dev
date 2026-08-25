@@ -142,6 +142,9 @@ public sealed class Login : PageModel
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(new ClaimsPrincipal(identity));
 
+        Response.StatusCode = 200;
+        Response.Headers.Remove("Location");
+
         return new JsonResult(new { success = true });
     }
 
