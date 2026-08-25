@@ -9,9 +9,6 @@
 @inject TutorialService TutorialService
 
 @{
-    ViewData["Title"] = "Tutorials";
-    ViewData["Page"] = "Learn";
-
     var parents = new Stack<TutorialFolder>();
     var parent = Model?.Parent;
     while (parent is not null)

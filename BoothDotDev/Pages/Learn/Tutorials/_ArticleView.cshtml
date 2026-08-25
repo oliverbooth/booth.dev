@@ -18,9 +18,6 @@
 }
 
 @{
-    ViewData["Post"] = article;
-    ViewData["Title"] = article.Title;
-    ViewData["Page"] = "Learn";
     var published = article.PublishedAt;
 
     var parents = new Stack<TutorialFolder>();

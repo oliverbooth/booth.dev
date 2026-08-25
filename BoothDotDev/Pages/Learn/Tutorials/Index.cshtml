@@ -1,6 +1,23 @@
 @page "/learn/{**slug}"
 @model Index
 
+@{
+    // ViewData set from within a <partial> never reaches this page's own layout - it gets a snapshotted copy
+    // of ViewData, not a live reference back to this one. Set it here instead; see _ArticleView.cshtml/
+    // _FolderView.cshtml, which used to (incorrectly) set this themselves.
+    if (Model.CurrentArticle is { } article)
+    {
+        ViewData["Post"] = article;
+        ViewData["Title"] = article.Title;
+    }
+    else
+    {
+        ViewData["Title"] = "Tutorials";
+    }
+
+    ViewData["Page"] = "Learn";
+}
+
 @if (Model.ShowFolderView)
 {
     <partial name="_FolderView" model="Model.CurrentFolder" />
