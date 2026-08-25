@@ -1,3 +1,4 @@
+using System.Net;
 using BoothDotDev.Services;
 using BoothDotDev.Views;
 using Markdig.Renderers;
@@ -107,7 +108,9 @@ public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
         altRenderer.WriteChildren(link);
         altWriter.Flush();
 
-        return altWriter.ToString();
+        // typographic replacements (SmartyPants curly quotes, dashes, ellipses) are written as literal HTML
+        // entity text, correct for embedding in HTML body markup. decode it back.
+        return WebUtility.HtmlDecode(altWriter.ToString());
     }
 
     private string ResolveCdnUrl(string? url, MediaKind mediaKind)
