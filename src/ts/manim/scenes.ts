@@ -20,8 +20,9 @@ export async function initManimScenes(element: HTMLElement): Promise<void> {
 
     await ensureManimWebLoaded();
 
-    // mounted sequentially, not in parallel - each scene's code references the ambient `scene` global, which this
-    // reassigns per block, so two scenes constructing concurrently would race over which one it actually points to
+    // mounted sequentially, not in parallel - each scene's own instance is handed off via a transient global that
+    // must survive only until that scene's module reads it on its very first line (see runSceneScript), so two
+    // scenes mounting concurrently would race over that handoff
     for (const block of unmounted) {
         block.dataset.manimMounted = '';
         await mountScene(block);
@@ -50,14 +51,13 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
     const globals = window as unknown as {
         Scene: new (container: HTMLElement, options: SceneOptions) => Scene;
         ThreeDScene: new (container: HTMLElement, options: SceneOptions) => ThreeDScene;
-        scene: Scene | ThreeDScene;
     };
 
-    globals.scene = codeElement.dataset.manim === '3d'
+    const scene = codeElement.dataset.manim === '3d'
         ? new globals.ThreeDScene(scenePanel, SCENE_OPTIONS)
         : new globals.Scene(scenePanel, SCENE_OPTIONS);
 
-    await runSceneScript(codeElement.textContent ?? '', scenePanel);
+    await runSceneScript(codeElement.textContent ?? '', scenePanel, scene);
 }
 
 /**
@@ -117,22 +117,24 @@ function activateTab(tab: HTMLButtonElement, otherTab: HTMLButtonElement, panel:
  * module (including any top-level await) has fully finished executing.
  * @param code The raw JS to run.
  * @param container The element under which to mount the script.
+ * @param scene The scene this code runs against, bound as a module-local `const scene` (see below).
  */
-function runSceneScript(code: string, container: HTMLElement): Promise<void> {
+function runSceneScript(code: string, container: HTMLElement, scene: Scene | ThreeDScene): Promise<void> {
     return new Promise((resolve, reject) => {
-        // `load` turned out not to be a reliable "fully done" signal for a module with a top-level await - it fired
-        // before the paused await actually resumed, letting the sequential-mounting loop move on (and reassign/clear
-        // the ambient `scene`) while this script was still suspended mid-run. A sentinel call appended after the raw
-        // code only runs once every preceding top-level statement - awaits included - has actually finished, since
-        // top-level statements execute strictly in order.
-        const globals = window as unknown as {__manimSceneDone?: () => void};
+        const globals = window as unknown as {
+            __manimSceneDone?: () => void;
+            __manimPendingScene?: Scene | ThreeDScene;
+        };
+
         globals.__manimSceneDone = () => {
             delete globals.__manimSceneDone;
             URL.revokeObjectURL(url);
             resolve();
         };
 
-        const url = URL.createObjectURL(new Blob([`${code}\nwindow.__manimSceneDone();`], {type: 'text/javascript'}));
+        globals.__manimPendingScene = scene;
+        const preamble = 'const scene = window.__manimPendingScene; delete window.__manimPendingScene;\n';
+        const url = URL.createObjectURL(new Blob([`${preamble}${code}\nwindow.__manimSceneDone();`], {type: 'text/javascript'}));
 
         const script = document.createElement('script');
         script.type = 'module';
