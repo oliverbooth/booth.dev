@@ -162,7 +162,7 @@ public sealed class OgImageService
             }
 
             var wordmarkOptions = new RichTextOptions(_wordmarkFont) { Origin = new PointF(Margin, Height - Margin) };
-            ctx.DrawText(wordmarkOptions, "Oliver Booth · booth.dev", TextSecondaryColor);
+            ctx.DrawText(wordmarkOptions, $"{Strings.MyName} · booth.dev", TextSecondaryColor);
         });
     }
 
@@ -227,7 +227,7 @@ public sealed class OgImageService
             }
 
             var wordmarkOptions = new RichTextOptions(_wordmarkFont) { Origin = new PointF(Margin, wordmarkY) };
-            ctx.DrawText(wordmarkOptions, "Oliver Booth · booth.dev", TextSecondaryColor);
+            ctx.DrawText(wordmarkOptions, $"{Strings.MyName} · booth.dev", TextSecondaryColor);
         });
     }
 
