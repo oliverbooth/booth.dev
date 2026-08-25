@@ -1,4 +1,5 @@
 using BoothDotDev.Services;
+using HtmlAgilityPack;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 
@@ -23,6 +24,19 @@ internal sealed class TemplateRenderer : HtmlObjectRenderer<TemplateInline>
     /// <inheritdoc />
     protected override void Write(HtmlRenderer renderer, TemplateInline template)
     {
-        renderer.Write(_templateService.RenderGlobalTemplate(template));
+        var html = _templateService.RenderGlobalTemplate(template);
+
+        if (renderer.EnableHtmlForInline)
+        {
+            renderer.Write(html);
+            return;
+        }
+
+        // plain-text renderers (MD.ToPlainText, used for OG descriptions/images) have no markup to fall back on here
+        // the way CalloutRenderer falls back to its block's child content - a template's partial view is opaque HTML,
+        // not Markdown - so reduce it to its visible text instead of writing the partial's markup verbatim
+        var document = new HtmlDocument();
+        document.LoadHtml(html);
+        renderer.Write(document.DocumentNode.InnerText);
     }
 }
