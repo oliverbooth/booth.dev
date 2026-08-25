@@ -37,13 +37,13 @@ public sealed class ViteTagHelper : TagHelper
         var environment = ViewContext.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
         var attributeName = output.TagName == "link" ? "href" : "src";
 
+        if (output.TagName == "script")
+        {
+            output.Attributes.SetAttribute("type", "module");
+        }
+
         if (environment.IsDevelopment())
         {
-            if (output.TagName == "script")
-            {
-                output.Attributes.SetAttribute("type", "module");
-            }
-
             output.Attributes.SetAttribute(attributeName, $"{ViteManifest.BaseViteHmrUrl}/{SourcePath}");
             return;
         }
