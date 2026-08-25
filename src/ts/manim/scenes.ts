@@ -26,8 +26,6 @@ export async function initManimScenes(element: HTMLElement): Promise<void> {
         block.dataset.manimMounted = '';
         await mountScene(block);
     }
-
-    delete (window as unknown as {scene?: unknown}).scene;
 }
 
 /**
@@ -122,18 +120,23 @@ function activateTab(tab: HTMLButtonElement, otherTab: HTMLButtonElement, panel:
  */
 function runSceneScript(code: string, container: HTMLElement): Promise<void> {
     return new Promise((resolve, reject) => {
-        // the `load`/`error` events this depends on only fire for a script "from an external file" per spec - an
-        // inline script (bare .textContent, no src) never fires either one, so the code runs fine but this would
-        // hang forever waiting for a load event that was never coming. A blob URL makes it count as external.
-        const url = URL.createObjectURL(new Blob([code], {type: 'text/javascript'}));
+        // `load` turned out not to be a reliable "fully done" signal for a module with a top-level await - it fired
+        // before the paused await actually resumed, letting the sequential-mounting loop move on (and reassign/clear
+        // the ambient `scene`) while this script was still suspended mid-run. A sentinel call appended after the raw
+        // code only runs once every preceding top-level statement - awaits included - has actually finished, since
+        // top-level statements execute strictly in order.
+        const globals = window as unknown as {__manimSceneDone?: () => void};
+        globals.__manimSceneDone = () => {
+            delete globals.__manimSceneDone;
+            URL.revokeObjectURL(url);
+            resolve();
+        };
+
+        const url = URL.createObjectURL(new Blob([`${code}\nwindow.__manimSceneDone();`], {type: 'text/javascript'}));
 
         const script = document.createElement('script');
         script.type = 'module';
         script.src = url;
-        script.addEventListener('load', () => {
-            URL.revokeObjectURL(url);
-            resolve();
-        });
         script.addEventListener('error', () => {
             URL.revokeObjectURL(url);
             reject(new Error('manim scene script failed to run'));
