@@ -31,7 +31,9 @@
     "@codemirror/lang-markdown": "^6.5.2",
     "@codemirror/language-data": "^6.5.2",
     "@codemirror/view": "^6.43.9",
+    "@types/three": "^0.185.4",
     "codemirror": "^6.0.2",
+    "manim-web": "^0.3.24",
     "prismjs": "^1.30.0"
   }
 }

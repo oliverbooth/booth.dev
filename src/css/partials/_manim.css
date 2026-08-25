@@ -1,0 +1,46 @@
+.manim-scene {
+  margin: 1.5rem 0;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.manim-scene-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface-1);
+  border-bottom: 0.5px solid var(--border);
+  padding: 4px;
+}
+
+.manim-tab {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.manim-tab:hover {
+  color: var(--text-primary);
+}
+
+.manim-tab.active {
+  color: var(--text-primary);
+  background: var(--accent-tint);
+}
+
+.manim-scene-panel:not([hidden]) {
+  display: flex;
+  justify-content: center;
+  background: var(--surface-2);
+}
+
+.manim-source-panel pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
