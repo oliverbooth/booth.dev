@@ -348,15 +348,20 @@ public sealed class TutorialService
     /// <summary>
     ///     Gets every article, newest first, excluding trashed ones.
     /// </summary>
+    /// <param name="visibility">The visibility to filter by. -1 does not filter.</param>
     /// <returns>A read-only view of every article.</returns>
-    public IReadOnlyList<TutorialArticle> GetAllArticles()
+    public IReadOnlyList<TutorialArticle> GetAllArticles(Visibility visibility = Visibility.None)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
-        return
-        [
-            .. context.TutorialArticles.Include(a => a.CurrentDraft).Where(a => a.TrashedAt == null)
-                .OrderByDescending(a => a.PublishedAt)
-        ];
+        IQueryable<TutorialArticle> articles = context.TutorialArticles.Include(a => a.CurrentDraft)
+            .Where(a => a.TrashedAt == null);
+
+        if (visibility != Visibility.None)
+        {
+            articles = articles.Where(a => a.CurrentDraft!.Visibility == visibility);
+        }
+
+        return [.. articles.OrderByDescending(a => a.PublishedAt)];
     }
 
     /// <summary>

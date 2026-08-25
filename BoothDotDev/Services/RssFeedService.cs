@@ -125,8 +125,8 @@ public sealed class RssFeedService
     public string BuildTutorialFeed(Uri baseUrl, TutorialFolder? scope)
     {
         IReadOnlyList<TutorialArticle> articles = scope is null
-            ? _tutorialService.GetAllArticles()
-            : _tutorialService.GetArticlesInSubtree(scope);
+            ? _tutorialService.GetAllArticles(Visibility.Published)
+            : _tutorialService.GetArticlesInSubtree(scope, Visibility.Published);
 
         var items = new List<RssItem>();
         foreach (TutorialArticle article in articles)
