@@ -1,8 +1,7 @@
 using System.Diagnostics;
 using System.Text;
-using BoothDotDev.Common.Data.Web;
-using BoothDotDev.Common.Services;
-using BoothDotDev.Extensions.Markdig.Markdown.Template;
+using BoothDotDev.Data.Models;
+using BoothDotDev.Services;
 using Markdig;
 
 namespace BoothDotDev.Markdown.Template;
@@ -12,9 +11,8 @@ namespace BoothDotDev.Markdown.Template;
 /// </summary>
 internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
 {
-    private readonly ICodeSnippetService _codeSnippetService;
+    private readonly CodeSnippetService _codeSnippetService;
     private readonly Lazy<MarkdownPipeline> _markdownPipeline;
-    private readonly IProgrammingLanguageService _programmingLanguageService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CodeSnippetTemplateRenderer" /> class.
@@ -24,8 +22,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
     {
         // lazily evaluate to avoid circular dependency problem causing tremendous stack overflow 
         _markdownPipeline = new Lazy<MarkdownPipeline>(serviceProvider.GetRequiredService<MarkdownPipeline>);
-        _codeSnippetService = serviceProvider.GetRequiredService<ICodeSnippetService>();
-        _programmingLanguageService = serviceProvider.GetRequiredService<IProgrammingLanguageService>();
+        _codeSnippetService = serviceProvider.GetRequiredService<CodeSnippetService>();
     }
 
     /// <inheritdoc />
@@ -46,8 +43,8 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
             return DefaultRender(template);
         }
 
-        var identifier = Guid.NewGuid();
-        var snippets = new List<ICodeSnippet>();
+        var identifier = Guid.CreateVersion7();
+        var snippets = new List<CodeSnippet>();
 
         IReadOnlyList<string> languages = argumentList.Count > 1
             ? argumentList[1].Split(';')
@@ -55,7 +52,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
 
         foreach (string language in languages)
         {
-            if (_codeSnippetService.TryGetCodeSnippetForLanguage(snippetId, language, out ICodeSnippet? snippet))
+            if (_codeSnippetService.TryGetCodeSnippetForLanguage(snippetId, language, out CodeSnippet? snippet))
             {
                 snippets.Add(snippet);
             }
@@ -63,7 +60,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
 
         if (snippets.Count == 1)
         {
-            ICodeSnippet snippet = snippets[0];
+            CodeSnippet snippet = snippets[0];
             return RenderHtml(snippet);
         }
 
@@ -93,7 +90,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
                                       data-tabs="snp-{snippetId}-{identifier:N}"
                                       aria-controls="snp-{snippetId}-{identifier:N}-{language}"
                                       aria-selected="true"
-                                      >{_programmingLanguageService.GetLanguageName(language)}</a
+                                      >{ProgrammingLanguage.GetNameFromShorthand(language)}</a
                                     >
                                 """);
             builder.AppendLine("</li>");
@@ -126,7 +123,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
         return builder.ToString();
     }
 
-    private string RenderHtml(ICodeSnippet snippet)
+    private string RenderHtml(CodeSnippet snippet)
     {
         return Markdig.Markdown.ToHtml($"```{snippet.Language}\n{snippet.Content}\n```", _markdownPipeline.Value);
     }

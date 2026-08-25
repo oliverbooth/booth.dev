@@ -1,0 +1,33 @@
+import {initFavicon} from './favicon.ts';
+import {initCopyButtons} from './clipboard.ts';
+import {initContentFeatures} from './content-rendering.ts';
+import {initPostAuthoring} from './admin/post-authoring.ts';
+import {initAltTextPopovers} from './images.ts';
+import {initSearch} from './search.ts';
+import {initConfirmForms} from './confirm.ts';
+import {initBulkSelect} from './bulk-select.ts';
+import {initContentPreview} from './admin/content-preview.ts';
+import {initMediaManager} from './admin/media-manager.ts';
+import {initAvatarFallback} from './avatar-fallback.ts';
+import {initUserAuthoring} from './admin/user-authoring.ts';
+import {initPasskeyRegistration} from './admin/passkey-registration.ts';
+import {initPasskeyLogin} from './admin/passkey-login.ts';
+import {initCdnBrowser} from './admin/cdn-browser.ts';
+
+(() => {
+    initAltTextPopovers();
+    initFavicon();
+    initCopyButtons();
+    initContentFeatures();
+    initPostAuthoring();
+    initSearch();
+    initConfirmForms();
+    initBulkSelect();
+    initContentPreview();
+    initMediaManager();
+    initAvatarFallback();
+    initUserAuthoring();
+    initPasskeyRegistration();
+    initPasskeyLogin();
+    initCdnBrowser();
+})();

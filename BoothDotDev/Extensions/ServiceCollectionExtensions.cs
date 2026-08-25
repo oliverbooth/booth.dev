@@ -1,5 +1,4 @@
-using BoothDotDev.Extensions.Markdig;
-using BoothDotDev.Extensions.Markdig.Markdown.Timestamp;
+using BoothDotDev.Markdown.Timestamp;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 
@@ -21,6 +20,7 @@ internal static class ServiceCollectionExtensions
         {
             return services.AddSingleton(provider => new MarkdownPipelineBuilder()
                 .Use<TimestampExtension>()
+                .UseEmbeds(provider)
                 .UseTemplates(provider)
 
                 // we have our own "alert blocks" in the form of GitHub and Obsidian style callouts
@@ -47,9 +47,9 @@ internal static class ServiceCollectionExtensions
                 .UseGenericAttributes() // must be last as it is one parser modifying other parsers
 
                 // no more advanced extensions
-                .UseBootstrap()
                 .UseEmojiAndSmiley()
                 .UseSmartyPants()
+                .EnableTrackTrivia()
                 .Build());
         }
     }

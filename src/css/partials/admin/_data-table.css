@@ -1,0 +1,134 @@
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    background: var(--surface-1);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  tbody {
+    td {
+      padding: 12px 14px;
+      font-size: 14px;
+      border-bottom: 0.5px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr {
+      &:last-child td {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: var(--surface-1);
+      }
+    }
+  }
+
+  .row-title {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .row-title--avatar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .avatar {
+      width: 20px;
+      height: 20px;
+      font-size: 9px;
+    }
+  }
+
+  .row-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .table-empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 24px 14px;
+  }
+}
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--surface-1);
+    color: var(--text-primary);
+  }
+
+  &.danger:hover {
+    color: var(--text-danger, #e24b4a);
+    border-color: rgba(226, 75, 74, 0.4);
+  }
+}
+
+.btn.icon-btn {
+  width: auto;
+  height: auto;
+  padding: 9px 16px;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 860px) {
+  .data-table {
+    thead {
+      display: none;
+    }
+
+    &,
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    tr {
+      border-bottom: 0.5px solid var(--border);
+      padding: 10px 0;
+
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    td {
+      border-bottom: none;
+      padding: 4px 0;
+    }
+  }
+}

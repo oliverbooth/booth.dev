@@ -1,0 +1,81 @@
+@page "/challenge/{id}"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@inject MarkdownRenderingService MarkdownRenderingService
+@model Challenge
+@{
+    ViewData["Title"] = Model.DevChallenge.Title;
+    ViewData["Page"] = "Challenges";
+    ViewData["Post"] = Model.DevChallenge;
+    var challenge = Model.DevChallenge;
+    var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
+}
+
+<div class="page">
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb">
+            <a asp-page="/Index">Home</a> /
+            <a asp-page="/Learn/Challenges/Index">Challenges</a> /
+            @challenge.Title
+        </p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+        }
+    </div>
+
+    @if (challenge.Visibility == Visibility.Private)
+    {
+        <div class="callout" data-callout="warning">
+            <p class="callout-title"><i class="ti ti-lock"></i> This challenge is private</p>
+            <div class="callout-body">
+                <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
+            </div>
+        </div>
+    }
+
+    <span class="eyebrow">Challenge</span>
+    <h1 style="margin:8px 0 12px;font-size:30px">@challenge.Title</h1>
+
+    <div class="byline">
+        <span class="meta">
+            Published @challenge.PublishedAt.ToShortString()
+            &middot;
+            @if (hasSolution)
+            {
+                <span style="color:var(--success-text)"><i class="ti ti-check" style="font-size:13px;vertical-align:-1px"></i> Solution available</span>
+            }
+            else
+            {
+                <span style="color:var(--text-muted)"><i class="ti ti-lock" style="font-size:13px;vertical-align:-1px"></i> Solution locked</span>
+            }
+        </span>
+    </div>
+
+    <div class="prose" style="margin-top:2rem">
+        @Html.Raw(MarkdownRenderingService.Render(challenge.Description, challenge.Id, challenge.PublishedAt, "challenge"))
+    </div>
+
+    @if (hasSolution)
+    {
+        <div class="prose" style="margin-top:2rem">
+            <details class="callout" data-callout="success">
+                <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
+                <div class="callout-body">
+                    @Html.Raw(MarkdownRenderingService.Render(challenge.Solution!, challenge.Id, challenge.PublishedAt, "challenge"))
+                </div>
+            </details>
+        </div>
+    }
+    else
+    {
+        <div class="challenge-locked" style="margin-top:2rem">
+            <i class="ti ti-lock" style="font-size:22px"></i>
+            <p class="challenge-locked-title">Solution not released yet</p>
+            <p class="challenge-locked-desc">Give it a real attempt first. Check back later for the official solution.</p>
+        </div>
+    }
+
+</div>

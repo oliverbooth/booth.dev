@@ -1,0 +1,14 @@
+@import "partials/admin/_shell.css";
+@import "partials/admin/_stat-cards.css";
+@import "partials/admin/_data-table.css";
+@import "partials/admin/_badges.css";
+@import "partials/admin/_toolbar.css";
+@import "partials/admin/_forms.css";
+@import "partials/admin/_login.css";
+@import "partials/admin/_path-builder.css";
+@import "partials/admin/_media.css";
+@import "partials/admin/_mini-row.css";
+@import "partials/admin/_preview.css";
+@import "partials/admin/_post-media.css";
+@import "partials/admin/_post-drafts.css";
+@import "partials/admin/_cdn-browser.css";

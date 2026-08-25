@@ -1,0 +1,90 @@
+.lightbox {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0;
+  max-width: min(90vw, 1100px);
+  max-height: 90vh;
+  background: var(--surface-1);
+  color: var(--text);
+  overflow: hidden;
+
+  opacity: 1;
+  transition: opacity 0.2s ease, display 0.2s allow-discrete, overlay 0.2s allow-discrete;
+
+  &[open] {
+    @starting-style {
+      opacity: 0;
+    }
+  }
+}
+
+.lightbox::backdrop {
+  background: rgb(0 0 0 / 0.75);
+  backdrop-filter: blur(2px);
+
+  opacity: 1;
+  transition: opacity 0.2s ease, backdrop-filter 0.2s ease, display 0.2s allow-discrete, overlay 0.2s allow-discrete;
+
+  @starting-style {
+    background: rgb(0 0 0 / 0);
+    backdrop-filter: blur(0px);
+  }
+}
+
+.lightbox:not([open])::backdrop {
+  opacity: 0;
+}
+
+.lightbox.is-closing,
+.lightbox.is-closing::backdrop {
+  opacity: 0;
+}
+
+.lightbox figure {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.lightbox-image {
+  display: block;
+  width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  background: var(--surface-1, #000);
+}
+
+.lightbox-caption {
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  background: var(--surface-1);
+  border: 0.5px solid var(--border);
+  border-radius: 999px;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.lightbox-close:hover {
+  background: var(--surface-2, var(--surface-1));
+}
+
+.lightbox-close:focus-visible,
+.lightbox-image:focus-visible {
+  outline: 2px solid var(--accent, #6cf);
+  outline-offset: 2px;
+}

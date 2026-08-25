@@ -1,0 +1,35 @@
+.path-builder {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  background: var(--surface-1);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 8px 10px;
+
+  input {
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+    flex: 1;
+    min-width: 100px;
+    font-family: var(--font-mono);
+  }
+}
+
+.path-crumb {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 0.5px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.path-sep {
+  color: var(--text-muted);
+  font-size: 13px;
+}

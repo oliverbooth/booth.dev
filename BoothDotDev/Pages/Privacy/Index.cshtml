@@ -1,26 +1,25 @@
-@page
+@page "/privacy"
+@using Humanizer
 @{
     ViewData["Title"] = "Privacy Policy";
-    DateTimeOffset lastUpdated = new DateTime(2025, 11, 20);
+    var lastUpdated = new DateOnly(2026, 08, 08);
     const string githubPrivacyUrl = "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement";
 }
 
-<article class="post-single">
-    <header class="post-header">
-        <h1 class="post-title entry-hint-parent">@ViewData["Title"]</h1>
-        <div class="post-meta">
-            Last updated
-            &nbsp;
-            <span title="@(lastUpdated.ToString("s"))">@lastUpdated.ToString("D")</span>
-        </div>
-    </header>
+<div class="page">
 
-    <div class="post-content">
-        <div class="callout" data-callout="info">
-            This Privacy Policy differs from the policy that applies to my applications published to Google Play. For my
-            applications' privacy policy, please <a asp-page="/Privacy/GooglePlay">click here</a>.
-        </div>
+    <p class="crumb"><a asp-page="/Index">Home</a> / Privacy Policy</p>
+    <h1>Privacy Policy</h1>
+    <p class="meta" style="margin:8px 0 2rem">
+        Last updated <abbr title="@lastUpdated.ToString("D")">@lastUpdated.Humanize()</abbr>
+    </p>
 
+    <div class="callout" data-callout="info">
+        This Privacy Policy differs from the policy that applies to my applications published to Google Play. For my
+        applications' privacy policy, please <a asp-page="/Privacy/GooglePlay">click here</a>.
+    </div>
+
+    <div class="prose" style="margin-top:2rem">
         <p>
             This Privacy Policy describes how your personal information is collected, used, and shared when you visit or
             interact with my website <a href="https://booth.dev">booth.dev</a>.
@@ -84,12 +83,13 @@
 
         <h2>Contact Me</h2>
         <p>
-            If you have any questions or concerns about this Privacy Policy or my privacy practices, please
-            <a asp-page="/Contact/Index">get in touch</a>.
+            If you have any questions or concerns about this Privacy Policy or my privacy practices, you can find ways to
+            reach me on my <a asp-page="/About">About page</a>.
         </p>
 
-        <hr/>
+        <hr />
 
         <p>By using my website, you signify your acceptance of this Privacy Policy.</p>
     </div>
-</article>
+
+</div>

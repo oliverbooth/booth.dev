@@ -1,0 +1,113 @@
+:root {
+  --prism-background: #1E1E1E;
+  --prism-foreground: #DCDCDA;
+
+  /* C# */
+  --prism-comment: #23A658;
+  --prism-string: #EA9D78;
+  --prism-function: #A0D7A7;
+  --prism-class-name: #13C9C6;
+  --prism-keyword: #439CE2;
+  --prism-preprocessor-property: #9B9B99;
+
+  /* CSS */
+  --prism-atrule: var(--prism-keyword);
+  --prism-css-foreground: #C8C8C6;
+  --prism-css-selector: #D8BA76;
+  --prism-css-property: #67DCFF;
+
+  /* Markup (HTML, XML) */
+  --prism-doctype: var(--prism-class-name);
+  --prism-markup-tag: var(--prism-keyword);
+  --prism-attr-name: #87DCFF;
+  --prism-markup-punctuation: #80807F;
+  --prism-markup-attr-value: var(--prism-css-foreground);
+}
+
+code[class*="language-"] {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: var(--prism-background);
+  color: var(--prism-foreground);
+}
+
+.token {
+  &.punctuation {
+    color: var(--prism-foreground);
+  }
+
+  &.comment {
+    color: var(--prism-comment);
+  }
+
+  &.string {
+    color: var(--prism-string);
+  }
+
+  &.function {
+    color: var(--prism-function);
+  }
+
+  &.class-name {
+    color: var(--prism-class-name);
+  }
+
+  &.doctype, &.prolog {
+    color: var(--prism-doctype);
+  }
+
+  &.keyword {
+    color: var(--prism-keyword);
+  }
+
+  &.preprocessor.property {
+    color: var(--prism-preprocessor-property);
+
+    .keyword {
+      color: var(--prism-preprocessor-property);
+    }
+  }
+
+  &.selector {
+    color: var(--prism-css-selector);
+  }
+
+  &.atrule {
+    color: var(--prism-atrule);
+  }
+
+  &.tag {
+    color: var(--prism-markup-tag);
+  }
+
+  &.attr-name {
+    color: var(--prism-attr-name);
+  }
+
+  &.attr-value {
+    color: var(--prism-markup-attr-value);
+  }
+}
+
+/* CSS */
+code[class*="language-css"] {
+  color: var(--prism-css-foreground);
+
+  .token {
+    &.property {
+      color: var(--prism-css-property);
+    }
+
+    &.string {
+      color: var(--prism-css-foreground);
+    }
+  }
+}
+
+/* Markup */
+code[class*="language-markup"] {
+  .token {
+    &.punctuation {
+      color: var(--prism-markup-punctuation);
+    }
+  }
+}

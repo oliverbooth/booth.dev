@@ -1,93 +1,21 @@
-import UI from "./UI";
-import Input from "./Input";
-import Callout from "./Callout";
-
-declare const Prism: any;
-declare const lucide: any;
-declare const JXG: any;
+import {initCopyButtons} from './clipboard.ts';
+import {initContentFeatures} from './content-rendering.ts';
+import {initEasterEggs} from './easter-eggs.ts';
+import {initFavicon} from './favicon.ts';
+import {initFiltering} from './filtering.ts';
+import {initAltTextPopovers} from './images.ts';
+import {initLightbox} from './lightbox.ts';
+import {initTerminalTypewriters} from './terminal.ts';
+import {initAvatarFallback} from './avatar-fallback.ts';
 
 (() => {
-    Callout.foldAll();
-    lucide.createIcons();
-    JXG.Options.text.useMathJax = true;
-
-    Prism.languages.extend('markup', {});
-    Prism.languages.hex = {
-        'number': {
-            pattern: /(?:[a-fA-F0-9]{3}){1,2}\b/i,
-            lookbehind: true
-        }
-    };
-    Prism.languages.binary = {
-        'number': {
-            pattern: /[10]+/i,
-            lookbehind: true
-        }
-    };
-    Prism.languages.insertBefore('custom', 'tag', {
-        'mark': {
-            pattern: /<\/?mark(?:\s+\w+(?:=(?:"[^"]*"|'[^']*'|[^\s'">=]+))?\s*|\s*)\/?>/,
-            greedy: true
-        }
-    });
-
-    Input.registerShortcut(Input.KONAMI_CODE, () => {
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
-    });
-
-    function setFavicon() {
-        const darkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const favicon = document.querySelector("link[rel~=\"icon\"]");
-        // @ts-ignore
-        favicon.href = `/img/${darkMode ? "favicon.png" : "favicon-dark.png"}`;
-    }
-
-    setFavicon();
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
-
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        document.body.classList.toggle("dark");
-
-        const newTheme: string = getCookie("theme") === "light" ? "dark" : "light";
-        setCookie("theme", "", -100);
-        setCookie("theme", newTheme, 30);
-
-        {
-            const iframe = document.querySelector(".giscus iframe.giscus-frame") as HTMLIFrameElement;
-            if (iframe) {
-                iframe.contentWindow.postMessage({giscus: {setConfig: {theme: newTheme}}}, "https://giscus.app");
-            }
-        }
-        {
-            const iframe = document.querySelector('iframe[src^="https://embed.bsky.app/embed/"]') as HTMLIFrameElement;
-            if (iframe) {
-                const url = new URL(iframe.src);
-                url.searchParams.set("colorMode", newTheme);
-                iframe.src = url.toString();
-            }
-        }
-    });
-
-    UI.updateUI();
-
-    function setCookie(name: string, value: any, expiry: number) {
-        const d = new Date();
-        d.setTime(d.getTime() + (expiry * 24 * 60 * 60 * 1000));
-        const expires = `expires=${d.toUTCString()}`;
-        document.cookie = `${name}=${value};${expires};SameSite=None;secure;path=/`;
-    }
-
-    function getCookie(name: string) {
-        const cookieName = `${name}=`;
-        const decodedCookie = decodeURIComponent(document.cookie);
-        const cookies = decodedCookie.split(';');
-
-        for (let cookie of cookies) {
-            if (cookie.startsWith(cookieName)) {
-                return cookie.substring(cookieName.length, cookie.length);
-            }
-        }
-
-        return "";
-    }
+    initFavicon();
+    initAltTextPopovers();
+    initCopyButtons();
+    initContentFeatures();
+    initEasterEggs();
+    initFiltering();
+    initLightbox();
+    initTerminalTypewriters();
+    initAvatarFallback();
 })();

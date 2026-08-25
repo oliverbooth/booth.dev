@@ -1,0 +1,86 @@
+@page "/admin/users"
+@model BoothDotDev.Pages.Admin.Users.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Users</h1>
+            <p>Manage user accounts and contributors</p>
+        </div>
+        <a asp-page="/Admin/Users/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New user</a>
+    </div>
+
+    <div data-search-scope>
+    <div class="table-toolbar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" id="search" placeholder="Search users&hellip;">
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Login</th>
+            <th>2FA</th>
+            <th style="text-align:right">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model.Users)
+        {
+            var loginEnabled = !string.IsNullOrWhiteSpace(user.Password);
+            var totpEnabled = !string.IsNullOrWhiteSpace(user.TotpSecret);
+
+            <tr>
+                <td>
+                    <div class="row-title row-title--avatar" data-search>
+                        <div class="avatar" data-initial="@user.DisplayName[0]">
+                            <img src="@user.AvatarUrl" alt="@user.DisplayName" />
+                        </div>
+                        @user.DisplayName
+                    </div>
+                </td>
+                <td data-search>@user.EmailAddress</td>
+                <td>
+                    @if (loginEnabled)
+                    {
+                        <span class="badge badge-published"><span class="dot"></span> Enabled</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-private"><i class="ti ti-lock"></i> Disabled</span>
+                    }
+                </td>
+                <td>
+                    @if (totpEnabled)
+                    {
+                        <span class="badge badge-published"><span class="dot"></span> Enabled</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-unlisted"><i class="ti ti-eye-off"></i> Not set</span>
+                    }
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Users/Edit" asp-route-id="@user.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr data-search-empty hidden>
+            <td colspan="5" class="table-empty-state">No users found</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</div>

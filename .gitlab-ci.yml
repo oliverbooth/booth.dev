@@ -1,15 +1,43 @@
 stages:
+  - verify
   - build
 
-build-aspnet:
+.default-rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+test:
+  extends: .default-rules
+  stage: verify
+  needs: ["build-assets"]
+  image: mcr.microsoft.com/dotnet/sdk:11.0-preview
+  script:
+    - dotnet test BoothDotDev.slnx --configuration Release --logger "junit;LogFilePath=test-results.xml"
+  artifacts:
+    when: always
+    reports:
+      junit: "**/test-results.xml"
+
+build-assets:
+  extends: .default-rules
+  stage: verify
+  image: node:22-alpine
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - BoothDotDev/wwwroot/
+    expire_in: 1 hour
+
+build:
+  extends: .default-rules
   stage: build
-  image: mcr.microsoft.com/dotnet/sdk:10.0
+  image: mcr.microsoft.com/dotnet/sdk:11.0-preview
   script:
     - dotnet restore BoothDotDev.slnx
     - dotnet build BoothDotDev.slnx --configuration Release
   artifacts:
     paths:
       - "**/bin/**"
-      - "**/obj/**"
-  only:
-    - main

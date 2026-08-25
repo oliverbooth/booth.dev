@@ -1,0 +1,43 @@
+:root {
+  --accent: #6161cd;
+  --accent-hover: #7070d6;
+  --accent-tint: rgba(97, 97, 205, 0.12);
+  --accent-tint-strong: rgba(97, 97, 205, 0.2);
+
+  --ko-fi-tint: #192025;
+  --buy-me-a-coffee-tint: #f9dd00;
+
+  --bg: #0d0d10;
+  --surface-1: #151519;
+  --surface-2: #1a1a1f;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --text-primary: #f2f2f4;
+  --text-secondary: #9a9aa5;
+  --text-muted: #6b6b75;
+
+  --success-bg: rgba(63, 185, 80, 0.14);
+  --success-text: #5fd576;
+
+  --warning-bg: rgba(224, 166, 52, 0.14);
+  --warning-text: #e0a634;
+
+  --danger-bg: rgba(226, 75, 74, 0.14);
+  --danger-text: #f0716f;
+
+  --info-bg: rgba(97, 97, 205, 0.14);
+  --info-text: #8a8ae0;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-voice: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+
+  --radius: 10px;
+  --radius-lg: 14px;
+  --content-width: 640px;
+
+  --terminal-dot-1: #ff5f57;
+  --terminal-dot-2: #28c840;
+  --terminal-dot-3: #febc2e;
+}

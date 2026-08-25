@@ -1,0 +1,15 @@
+@using BoothDotDev.Extensions
+@model ActivityEntryCommit
+
+<div class="commit-dot@(Model.IsFirst ? "" : " muted")"></div>
+<div class="commit-meta">
+    <span class="commit-hash">@Model.Entry.CommitSha</span><span class="commit-tag">@Model.Entry.Category</span>
+</div>
+<p class="commit-title">@Model.Entry.Title</p>
+<p class="commit-sub">
+    @if (Model.Entry.ReadingMinutes.HasValue)
+    {
+        <text>@Model.Entry.ReadingMinutes.ValueOr(0) min read &middot; </text>
+    }
+    @Model.Entry.PublishedAt.ToShortString()
+</p>

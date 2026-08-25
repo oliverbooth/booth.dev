@@ -1,0 +1,20 @@
+#cdn-browser.cdn-browser--dragover {
+  background: var(--accent-tint);
+  outline: 2px dashed var(--accent);
+  outline-offset: -6px;
+  border-radius: 10px;
+}
+
+.cdn-row--drop-target {
+  background: var(--accent-tint);
+  outline: 1.5px dashed var(--accent);
+  outline-offset: -3px;
+}
+
+#cdn-table tr[draggable="true"] {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}

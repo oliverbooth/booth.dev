@@ -1,0 +1,84 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 9px 16px;
+  border: 0.5px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+
+  animation: elastic-btn-hover-off 0.2s;
+  transform: scale(1);
+
+  &:hover {
+    background: var(--surface-1);
+
+    animation: elastic-btn-hover-on 0.2s;
+    transform: scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+    animation: none;
+
+    &:hover {
+      animation: none;
+      transform: scale(1);
+    }
+  }
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+
+  &:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+}
+
+.btn-danger {
+  background: var(--danger-bg);
+  border-color: var(--danger-text);
+  color: var(--danger-text) !important;
+}
+
+@keyframes elastic-btn-hover-on {
+  0%   {
+    transform: scale(1);
+    animation-timing-function: ease-in;
+  }
+  50%  {
+    transform: scale(0.9,1);
+    animation-timing-function: linear;
+  }
+  100% {
+    transform: scale(1.1);
+    animation-timing-function: ease-out;
+  }
+}
+
+@keyframes elastic-btn-hover-off {
+  0%   {
+    transform: scale(1.1);
+    animation-timing-function: ease-in;
+  }
+  50%  {
+    transform: scale(1,0.9);
+    animation-timing-function: linear;
+  }
+  100% {
+    transform: scale(1);
+    animation-timing-function: ease-out;
+  }
+}

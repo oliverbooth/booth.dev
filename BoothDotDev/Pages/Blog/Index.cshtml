@@ -1,45 +1,80 @@
-@page
-@using BoothDotDev.Common.Data
-@using BoothDotDev.Common.Services
+@page "/blog"
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@using DEDrake
 @model Index
-@inject IBlogPostService BlogPostService
-@inject BlueskyService BlueskyService
+@inject BlogPostService BlogPostService
 
-@{
-    ViewData["Title"] = "Blog";
-    ViewData["Page"] = "Blog";
+<div class="page">
 
-    bool lightTheme = Request.Cookies.TryGetValue("theme", out string? theme) && theme == "light";
-}
-
-@await Html.PartialAsync("Shared/Partials/_HomeInfoEntry")
-@await Html.PartialAsync("Shared/Partials/_BlogEntries", new ViewDataDictionary(ViewData)
-{
-    ["CurrentPage"] = 0,
-    ["Tags"] = Model.Tag
-})
-
-@{
-    int pageCount = BlogPostService.GetPageCount(tags: Model.Tag, visibility: Visibility.Published);
-    if (pageCount > 1)
+    <p class="crumb"><a asp-page="/Index">Home</a> / Write</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <h1>Write</h1>
+        <div style="display:flex;gap:8px">
+            <a href="/blog.rss" class="icon-link" aria-label="Subscribe to the blog RSS feed" title="Blog RSS feed"><i class="ti ti-rss"></i></a>
+            <a href="/notes.rss" class="icon-link" aria-label="Subscribe to the notes RSS feed" title="Notes RSS feed"><i class="ti ti-notes"></i></a>
+        </div>
+    </div>
+    @if (Model.Tag is { } tag)
     {
-        <footer class="page-footer">
-            <nav class="pagination">
-                <a class="next" asp-page="/Blog/List" asp-route-pageNumber="2" asp-route-tag="@string.Join('+', Model.Tag)">Next&nbsp;2/@pageCount&nbsp;»</a>
-            </nav>
-        </footer>
+        <p class="lede">
+            Showing posts tagged &ldquo;@tag.Replace('-', ' ')&rdquo; &middot; <a asp-page="/Blog/Index">Clear filter</a>
+        </p>
     }
-}
+    else
+    {
+        <p class="lede">I write for me, not for you. Unless it's tech-related. Then I write for you. But also me.</p>
+    }
 
-<div style="padding-top: 150px">
-    @{
-        BlueskyPost? latestPost = await BlueskyService.GetLatestPostAsync();
-        @if (latestPost is not null)
-        {
-            <blockquote class="bluesky-embed" data-bluesky-uri="at://@latestPost.AtUri" data-bluesky-lang="" data-bluesky-embed-color-mode="@(lightTheme ? "light" : "dark")">
-                <a href="@latestPost.PostUrl">View on Bluesky</a>
-            </blockquote>
-            <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
-        }
-    }
+    <div data-filter-scope>
+        <div class="filter-row">
+            <span class="pill active">All</span>
+            @foreach (var category in Model.BlogPostCategories)
+            {
+                <span class="pill" data-filter="@category.Id">@category.Name</span>
+            }
+            <span class="pill" data-filter-kind="note">Notes</span>
+        </div>
+
+        <div class="commit-log" style="margin-bottom:3rem">
+            @for (var index = 0; index < Model.BlogPosts.Count; index++)
+            {
+                var post = Model.BlogPosts[index];
+                var first = index == 0;
+                var categoryResult = BlogPostService.GetParentCategory(post);
+                var category = categoryResult.IsSuccess ? categoryResult.Value : null;
+
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug"
+                   class="commit"
+                   data-state="@category?.Id">
+                    <div class="collapse-inner">
+                        <div class="commit-dot@(first ? "" : " muted")"></div>
+                        <div class="commit-meta">
+                            <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
+                        </div>
+                        <p class="commit-title">@post.Title</p>
+                        <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.PublishedAt.ToShortString()</p>
+                    </div>
+                </a>
+            }
+
+            @for (var index = 0; index < Model.Notes.Count; index++)
+            {
+                var note = Model.Notes[index];
+                var first = index == 0;
+
+                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="commit" data-kind="note" data-state="note">
+                    <div class="collapse-inner">
+                        <div class="commit-dot@(first ? "" : " muted")"></div>
+                        <div class="commit-meta">
+                            <span class="commit-hash">@note.Id.ToString()[..7]</span><span class="commit-tag">note</span>
+                        </div>
+                        <p class="commit-title">@note.Title</p>
+                        <p class="commit-sub">@note.PublishedAt.ToShortString()</p>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
 </div>

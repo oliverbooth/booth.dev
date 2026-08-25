@@ -1,0 +1,155 @@
+@page "/admin/users/edit/{id:guid?}"
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Users.Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Users/Index">Users</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div style="display:flex;align-items:center;gap:12px">
+                @if (!Model.CreatingNew)
+                {
+                    <div class="avatar" data-initial="@Model.Input.DisplayName[0]" style="width:36px;height:36px;font-size:15px">
+                        <img src="@Model.AvatarUrl" alt="@Model.Input.DisplayName" />
+                    </div>
+                }
+                <h1>@(Model.CreatingNew ? "New user" : Model.Input.DisplayName)</h1>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> @(Model.CreatingNew ? "Create user" : "Save changes")</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.DisplayName">Display name</label>
+            <input asp-for="Input.DisplayName" type="text" />
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.EmailAddress">Email address</label>
+            <input asp-for="Input.EmailAddress" type="email" autocomplete="email" />
+        </div>
+
+        <div class="field">
+            <label>Settings</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" id="disable-login" asp-for="Input.DisableLogin" />
+                    Disable login (contributor with no account access)
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.NewPassword">
+                @(Model.CreatingNew ? "Password" : "New password")
+            </label>
+            @if (Model.CreatingNew)
+            {
+                <input asp-for="Input.NewPassword" type="password" id="password" autocomplete="new-password" required />
+            }
+            else
+            {
+                <input asp-for="Input.NewPassword" type="password" id="password" autocomplete="new-password" placeholder="Leave blank to keep current password" />
+            }
+        </div>
+
+        @if (!Model.CreatingNew)
+        {
+            <div class="field">
+                <label asp-for="Input.TotpSecret">Two-factor authentication</label>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    @if (Model.HasTotp)
+                    {
+                        <span class="badge badge-published"><span class="dot"></span> Enabled</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-unlisted"><i class="ti ti-eye-off"></i> Not configured</span>
+                    }
+                    <button type="submit" class="btn" asp-page-handler="GenerateTotp">
+                        <i class="ti ti-refresh"></i> Generate new secret
+                    </button>
+                    @if (Model.HasTotp)
+                    {
+                        <button type="submit" class="btn" asp-page-handler="ResetTotp">
+                            <i class="ti ti-shield-off"></i> Reset TOTP
+                        </button>
+                    }
+                </div>
+                <input asp-for="Input.TotpSecret" type="text" autocomplete="off" spellcheck="false" placeholder="No secret configured" />
+                <p class="hint">
+                    Generating stages a new secret in the field above for review - nothing changes until you hit
+                    Save changes. Resetting clears the current secret immediately and skips the code prompt at
+                    login until a new one is configured.
+                </p>
+                @if (Model.TotpQrCodeSvg is not null)
+                {
+                    <div style="background:#fff;padding:16px;border-radius:8px;width:fit-content;margin-top:8px">
+                        @Html.Raw(Model.TotpQrCodeSvg)
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!Model.CreatingNew)
+        {
+            <div class="field" id="passkeys">
+                <label>Passkeys</label>
+                @if (Model.Passkeys.Count == 0)
+                {
+                    <p class="hint">No passkeys registered yet.</p>
+                }
+                else
+                {
+                    <ul class="media-list">
+                        @foreach (var passkey in Model.Passkeys)
+                        {
+                            <li class="media-item">
+                                <div class="media-item-body">
+                                    <p class="name">@(string.IsNullOrWhiteSpace(passkey.Nickname) ? "Unnamed passkey" : passkey.Nickname)</p>
+                                    <p class="meta">
+                                        Registered @passkey.CreatedAt.Humanize()
+                                        @(passkey.LastUsedAt is { } lastUsed ? $"· last used {lastUsed.Humanize()}" : "· never used")
+                                    </p>
+                                </div>
+                                <div class="row-actions">
+                                    <button type="submit" form="delete-passkey-form" asp-page-handler="DeletePasskey"
+                                            asp-route-id="@Model.UserId" asp-route-credentialId="@passkey.Id"
+                                            class="icon-btn danger" aria-label="Delete passkey"><i class="ti ti-trash"></i></button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+                <div class="input-with-button" style="margin-top:8px">
+                    <input type="text" id="passkey-nickname" name="nickname" placeholder="e.g. MacBook Touch ID" autocomplete="off" />
+                    <button type="button" id="passkey-register-btn" class="btn">
+                        <i class="ti ti-fingerprint"></i> Register new passkey
+                    </button>
+                </div>
+                <p class="hint" id="passkey-error" hidden></p>
+            </div>
+        }
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> @(Model.CreatingNew ? "Create user" : "Save changes")</button>
+        </div>
+
+    </form>
+
+    @if (!Model.CreatingNew)
+    {
+        <form id="delete-passkey-form" method="post" hidden></form>
+    }
+
+</div>

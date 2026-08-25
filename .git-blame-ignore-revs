@@ -1,0 +1,20 @@
+# style: space "key = value" for readability
+64265291c0b61b729dc4ee392ee0ac8a9124edba
+
+# style: add newline to end of all files
+a7ca3bdd5801a5d00b6e202619bdd687fb52d49b
+
+# refactor: use LF line endings
+ce66747c3a3125336044ce7a5b697da74cd4be8d
+
+# refactor: add newline to Trash files
+3239c5343ba615ee8b54ea8c96c949f258030bb8
+
+# style: insert space before self-closing empty tag
+75969368e481802268219379d46ad4467a04326a
+
+# style: format csproj
+499dd306a6f1f902f7c82fe4ebe951f18486781d
+
+# style: format csproj
+7961c6957d6f3ea9fe0cfeaac8d7b430c5571455

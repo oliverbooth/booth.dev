@@ -1,0 +1,6 @@
+@using BoothDotDev.Extensions
+@using Markdig
+@model BoothDotDev.Markdown.Template.TemplateModel
+@inject MarkdownPipeline MarkdownPipeline
+
+<abbr title="@Model.ArgumentList[1]">@Html.Raw(Markdown.ToHtmlUnwrapped(Model.ArgumentList[0], MarkdownPipeline))</abbr>

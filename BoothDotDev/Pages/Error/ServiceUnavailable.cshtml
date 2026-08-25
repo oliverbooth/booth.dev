@@ -1,17 +1,25 @@
 @page "/error/503"
-<article>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="p-2">
-                <h1 class="text-center">503 Service Unavailable</h1>
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="terminal" style="margin-bottom:1.75rem">
+            <div class="terminal-bar">
+                <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
             </div>
-            <div class="p-2">
-                <p class="text-center">The server is currently unable to process your request. Please try again later.</p>
+            <div class="terminal-body">
+                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> systemctl status boothdotdev</div>
+                <div class="out" style="margin-top:6px">boothdotdev.service: activating (auto-restart)</div>
             </div>
         </div>
 
-        <div class="align-self-stretch">
-            <img class="img-fluid" src="~/img/error/503-service-unavailable.png">
+        <p class="error-code">Error 503</p>
+        <h1 class="error-title">Service Unavailable</h1>
+        <p class="error-desc">The site is temporarily down &mdash; probably a deploy or restart in progress. Try again in a moment.</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Back home</a>
+            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
         </div>
+
     </div>
-</article>
+</div>

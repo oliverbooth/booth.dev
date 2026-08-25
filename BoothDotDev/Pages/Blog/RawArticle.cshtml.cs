@@ -1,5 +1,4 @@
-using BoothDotDev.Common.Data.Blog;
-using BoothDotDev.Common.Services;
+using BoothDotDev.Services;
 using Cysharp.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,33 +11,38 @@ namespace BoothDotDev.Pages.Blog;
 [Area("blog")]
 internal sealed class RawArticle : PageModel
 {
-    private readonly IBlogPostService _blogPostService;
+    private readonly BlogPostService _blogPostService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RawArticle" /> class.
     /// </summary>
-    /// <param name="blogPostService">The <see cref="IBlogPostService" />.</param>
-    public RawArticle(IBlogPostService blogPostService)
+    /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
+    public RawArticle(BlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
 
     public IActionResult OnGet(string slug)
     {
-        if (!_blogPostService.TryGetPost(slug, out IBlogPost? post))
+        var result = _blogPostService.GetPost(slug);
+        if (result.IsFailed)
         {
+            Response.StatusCode = 404;
             return NotFound();
         }
 
+        var post = result.Value;
         Response.Headers.Append("Content-Type", "text/plain; charset=utf-8");
 
         using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("# " + post.Title);
         builder.AppendLine($"Author: {post.Author.DisplayName}");
 
-        builder.AppendLine($"Published: {post.Published:R}");
-        if (post.Updated.HasValue)
-            builder.AppendLine($"Updated: {post.Updated:R}");
+        builder.AppendLine($"Published: {post.PublishedAt:R}");
+        if (post.UpdatedAt.HasValue)
+        {
+            builder.AppendLine($"Updated: {post.UpdatedAt:R}");
+        }
 
         builder.AppendLine();
         builder.AppendLine(post.Body);

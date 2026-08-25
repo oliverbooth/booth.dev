@@ -1,50 +1,56 @@
-@page
+@page "/donate"
 @{
     ViewData["Title"] = "Donate";
     ViewData["Page"] = "Donate";
 }
 
-<article class="post-single">
-    <header class="post-header">
-        <div class="breadcrumbs"><a asp-page="/Index">Home</a></div>
-        <h1 class="post-title entry-hint-parent">Donate</h1>
-    </header>
+<div class="page">
 
-    <div class="post-content">
-        <p>
-            I believe in free and open exchange of information, and I want to keep my educational content free for
-            everyone to access. I will never put ads on my site, and I don't want to put behind a paywall resources that
-            should be available to everybody, regardless of their financial situation.
-        </p>
-        <p>
-            However, writing tutorials takes time, and I do have to pay for hosting. While I will never ask you for
-            money, I will always appreciate it if you do decide to donate. It also helps me to know that people are
-            finding my content useful, and that I should continue to make more.
-        </p>
-        <p>
-            If you like what I do and are both willing and able to donate money to me and fund all of this, you can do
-            so using the links below. Thank you for your support!
-        </p>
+    <p class="crumb"><a asp-page="/Index">Home</a> / Donate</p>
+    <h1>Donate</h1>
 
-        <p>
-            <script type="text/javascript" src="https://storage.ko-fi.com/cdn/widget/Widget_2.js"></script>
-            <script type="text/javascript">kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'C0C4DVDZX');
-                kofiwidget2.draw();</script>
-        </p>
+    <p class="body-copy">
+        I believe in free and open exchange of information, and I want to keep my educational content free for
+        everyone to access. I will never put ads on my site, and I don't want to put behind a paywall resources that
+        should be available to everybody, regardless of their financial situation.
+    </p>
 
-        <p>
-            <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
-                    data-name="bmc-button" data-slug="oliverbooth" data-color="#FFDD00" data-emoji=""
-                    data-font="Cookie"
-                    data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000"
-                    data-coffee-color="#ffffff"></script>
-        </p>
+    <p class="body-copy">
+        That said, tutorials take time and hosting costs money. If you find what I make useful, and are both willing and able to donate to
+        fund all of this, you can do so using the links below. Thank you for your support!
+    </p>
 
-        <p>I also accept cryptocurrency donations.</p>
-
-        <ul>
-            <li>BTC: 1LmXvavJr1omscfkXjp7A4VyNf3XhKP9JK</li>
-            <li>ETH: 0x972C6641e36e2736823A6B1e6BA4D2A814b69fD2</li>
-        </ul>
+    <div class="link-list">
+        <a href="https://ko-fi.com/oliverbooth" class="tile tile--padded">
+            <div class="tile-icon-box tile-icon-box--ko-fi"><i class="ti ti-coffee"></i></div>
+            <div class="label">
+                <p style="font-weight:500;font-size:14px;margin:0">Ko-fi</p>
+                <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0">One-off support</p>
+            </div>
+            <i class="ti ti-external-link tile-external-icon"></i>
+        </a>
+        <a href="https://www.buymeacoffee.com/oliverbooth" class="tile tile--padded">
+            <div class="tile-icon-box tile-icon-box--bmac"><i class="ti ti-cup"></i></div>
+            <div class="label">
+                <p style="font-weight:500;font-size:14px;margin:0">Buy Me a Coffee</p>
+                <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0">One-off support</p>
+            </div>
+            <i class="ti ti-external-link tile-external-icon"></i>
+        </a>
     </div>
-</article>
+
+    <h2>Crypto</h2>
+    <div class="stack-list">
+        <div class="crypto-row">
+            <span class="crypto-symbol"><i class="ti ti-coin-bitcoin-filled"></i> BTC</span>
+            <span class="crypto-address">1LmXvavJr1omscfkXjp7A4VyNf3XhKP9JK</span>
+            <i class="ti ti-copy copy-icon"></i>
+        </div>
+        <div class="crypto-row">
+            <span class="crypto-symbol"><i class="ti ti-currency-ethereum"></i>ETH</span>
+            <span class="crypto-address">0x972C6641e36e2736823A6B1e6BA4D2A814b69fD2</span>
+            <i class="ti ti-copy copy-icon"></i>
+        </div>
+    </div>
+
+</div>

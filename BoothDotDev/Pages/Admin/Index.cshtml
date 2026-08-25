@@ -1,0 +1,105 @@
+@page "/admin"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p>An overview of everything on the site.</p>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <p class="label">Posts</p>
+            <p class="value">@Model.BlogPostCount</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Notes</p>
+            <p class="value">@Model.NoteCount</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Tutorials</p>
+            <p class="value">@Model.TutorialCount</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Projects</p>
+            <p class="value">@Model.ProjectCount</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Devlogs</p>
+            <p class="value">@Model.DevlogCount</p>
+        </div>
+    </div>
+
+    <div class="admin-header">
+        <div><h2 style="margin:0">Recent activity</h2></div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Type</th>
+            <th>Visibility</th>
+            <th>Updated</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var activity in Model.RecentActivity)
+        {
+            var timestamp = activity.UpdatedAt ?? activity.PublishedAt;
+            var badgeClass = activity.Visibility switch
+            {
+                Visibility.Published => "published",
+                Visibility.Private => "private",
+                _ => "unlisted"
+            };
+
+            <tr>
+                <td>
+                    <div class="row-title">@activity.Title</div>
+                </td>
+                <td>@activity.Category.Humanize()</td>
+                <td><span class="badge badge-@badgeClass">
+                    @switch (activity.Visibility)
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
+                        }
+                </span></td>
+                <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
+                <td>
+                    <div class="row-actions">
+                        <a asp-page="@activity.PagePath" asp-all-route-data="activity.RouteValues" class="icon-btn">
+                            <i class="ti ti-eye"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+</div>

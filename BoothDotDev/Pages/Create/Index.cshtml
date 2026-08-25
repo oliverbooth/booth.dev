@@ -1,0 +1,100 @@
+@page "/create"
+@using BoothDotDev.Data
+@using BoothDotDev.Markdown
+@using BoothDotDev.Markdown.Link
+@using BoothDotDev.Services
+@using Microsoft.Extensions.Options
+@model BoothDotDev.Pages.Create.Index
+@inject MarkdownRenderingService MarkdownRenderingService
+@inject IOptions<CdnOptions> CdnOptions
+
+<div class="page-wide">
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <p class="crumb"><a asp-page="/Index">Home</a> / Create</p>
+        <div style="display:flex;gap:8px">
+            <a href="/create.rss" class="icon-link" aria-label="Subscribe to the creations RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Admin/Creations/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
+            }
+        </div>
+    </div>
+    <h1>Create</h1>
+    <p class="lede">
+        Things I gone done and made that aren't code-related. See <a asp-page="/Projects/Index">my project list</a> for my dev portfolio.
+    </p>
+
+    @if (Model.MusicItems.Count > 0)
+    {
+        <div class="section-head"><h2>Music</h2></div>
+        <div class="stack-list section-list">
+            @foreach (var item in Model.MusicItems)
+            {
+                var musicContext = new MarkdownRenderContext(item.Id, item.PublishedAt);
+                var musicResolver = new CdnMediaResolver(musicContext, null!, "content", CdnOptions.Value.BaseUrl);
+                var musicUrl = musicResolver.ResolveCdnUrl(item.FileName, MediaKind.Audio);
+                var duration = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
+
+                <div class="stack-meta track-meta">
+                    <div>
+                        <p class="title">@item.Title@(item.IsWorkInProgress ? " (WIP)" : "")</p>
+                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                        {
+                            <p class="sub">@item.Description</p>
+                        }
+                    </div>
+                    <audio controls src="@musicUrl" style="height:32px"></audio>
+                    <span class="sub">@duration</span>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-page="/Admin/Creations/Music/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <div class="section-head"><h2>Art</h2></div>
+    <div class="masonry">
+        @for (var index = 0; index < Model.ArtworkItems.Count; index++)
+        {
+            const MediaKind mediaKind = MediaKind.Image;
+            var first = index == 0;
+            var item = Model.ArtworkItems[index];
+            var context = new MarkdownRenderContext(item.Id, item.PublishedAt);
+            var resolver = new CdnMediaResolver(context, null!, "content", CdnOptions.Value.BaseUrl);
+            var cdnUrl = resolver.ResolveCdnUrl(item.FileName, mediaKind);
+
+            <figure class="masonry-cell @(first ? "tall" : "short")" style="position:relative">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-page="/Admin/Creations/Artwork/Edit" asp-route-id="@item.Id" class="icon-btn"
+                       aria-label="Edit" style="position:absolute;top:8px;right:8px;z-index:1">
+                        <i class="ti ti-edit"></i>
+                    </a>
+                }
+                <img src="@cdnUrl"
+                     title="@item.Title"
+                     alt="@item.FileName"
+                     data-lightbox
+                     data-lightbox-src="@cdnUrl" />
+                <template data-lightbox-caption-template>
+                    @Html.Raw(MarkdownRenderingService.Render(item.Description!, item.Id, item.PublishedAt, "content"))
+                    <p class="lightbox-caption-date">
+                        Made with @item.MadeWith, @item.PublishedAt.ToString("MMMM yyyy").
+                    </p>
+                </template>
+            </figure>
+        }
+    </div>
+
+    <dialog id="lightbox" class="lightbox">
+        <button type="button" class="lightbox-close" aria-label="Close">&times;</button>
+        <figure>
+            <img class="lightbox-image" src="" alt="" />
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+    </dialog>
+
+</div>

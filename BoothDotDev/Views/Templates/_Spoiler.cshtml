@@ -1,0 +1,85 @@
+@model BoothDotDev.Markdown.Template.TemplateModel
+
+@{
+    static bool TryGetFirst(IReadOnlyDictionary<string, string> parameters, out string value, params string[] keys)
+    {
+        foreach (string key in keys)
+        {
+            if (parameters.TryGetValue(key, out var candidate) && !string.IsNullOrWhiteSpace(candidate))
+            {
+                value = candidate;
+                return true;
+            }
+        }
+
+        value = string.Empty;
+        return false;
+    }
+
+    var severity = Model.Params.GetValueOrDefault("severity", "minor");
+    var isMajor = string.Equals(severity, "major", StringComparison.OrdinalIgnoreCase);
+
+    string cssClass, icon, title;
+    if (isMajor)
+    {
+        cssClass = "danger";
+        icon = "octagon";
+        title = "Major";
+    }
+    else
+    {
+        cssClass = "warning";
+        icon = "triangle";
+        title = "Minor";
+    }
+
+    var isShow = TryGetFirst(Model.Params, out var showValue, "show", "movie");
+    var isGame = TryGetFirst(Model.Params, out var gameValue, "game");
+
+    if (isShow == isGame)
+    {
+        throw new InvalidOperationException("The spoiler template requires either a 'show'/'movie' or 'game' parameter, not both.");
+    }
+
+    string name, infinitive, gerund, end, spoils;
+    if (isShow)
+    {
+        name = showValue;
+        infinitive = "watch";
+        gerund = "watching";
+        end = "finale";
+        spoils = "plot";
+    }
+    else
+    {
+        name = gameValue;
+        infinitive = "play";
+        gerund = "playing";
+        end = "endgame";
+        spoils = "story or gameplay";
+    }
+}
+
+<div class="callout" data-callout="@cssClass">
+    <div class="callout-title"><i class="ti ti-alert-@icon"></i> @title Spoiler Warning</div>
+    <div class="callout-body">
+        <p>
+            This post contains information about the @spoils of
+            @if (Model.Params.TryGetValue("link", out var link))
+            {
+                <a href="@link"><em>@name</em></a>
+            }
+            else
+            {
+                <em>@name</em>
+            }
+            which may
+            @if (isMajor)
+            {
+                <text>include details about the @end, which will almost <strong>certainly</strong></text>
+            }
+            spoil the experience if you have yet to @infinitive.
+        </p>
+        <p>For this reason, I strongly urge you consider @gerund for yourself before you continue.</p>
+    </div>
+</div>

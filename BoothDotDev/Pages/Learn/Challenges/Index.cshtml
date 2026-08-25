@@ -1,0 +1,47 @@
+@page "/challenges"
+@using BoothDotDev.Data
+@using BoothDotDev.Services
+@using Humanizer
+@model Index
+@inject DevChallengeService DevChallengeService
+@{
+    ViewData["Title"] = "Dev Challenges";
+    ViewData["Page"] = "Challenges";
+}
+
+<div class="page-wide">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / Challenges</p>
+    <h1>Dev Challenges</h1>
+    <p class="lede">
+        These are a collection of challenges I've written to help you improve your skills as a developer.
+        They're designed to be fun, challenging, and educational. I hope you enjoy them!
+    </p>
+
+    <div class="card-grid">
+        @{
+            var number = 1;
+        }
+        @foreach (var challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
+        {
+            var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
+
+            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="card">
+                <div class="card-icon">
+                    <i class="ti ti-code"></i>
+                    <span class="card-status-badge@(hasSolution ? "" : " done")">
+                        <i class="ti @(hasSolution ? "ti-check" : "ti-lock")" style="font-size:12px"></i>
+                        @(hasSolution ? "Solution unlocked" : "Solution locked")
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p class="branch">#@number</p>
+                    <p class="title">@challenge.Title</p>
+                    <p class="desc">Published @challenge.PublishedAt.Humanize()</p>
+                </div>
+            </a>
+            number++;
+        }
+    </div>
+
+</div>

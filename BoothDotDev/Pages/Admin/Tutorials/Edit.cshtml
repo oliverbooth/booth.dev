@@ -1,0 +1,251 @@
+@page "/admin/tutorials/edit/{id:guid?}"
+@using BoothDotDev.Data
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Tutorials.Edit
+
+@{
+    Layout = "_AdminLayout";
+    var articleModel = Model.Input;
+}
+
+<div class="admin-page admin-page--split">
+
+    <p class="crumb"><a asp-page="/Admin/Tutorials/Index">Tutorials</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This article is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the public site and every listing. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New article" : articleModel.Title)</h1></div>
+            <div style="display:flex;gap:8px">
+                @if (!Model.CreatingNew)
+                {
+                    <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@Model.ArticlePath" target="_blank" class="btn">
+                        <i class="ti ti-eye"></i> View article
+                    </a>
+                }
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title" />
+        </div>
+
+        <div class="field">
+            <label for="slug">Slug</label>
+            <div class="input-with-button">
+                <input type="text" id="slug" asp-for="Input.Slug" />
+                <button type="button" id="generate-slug" class="btn icon-btn" aria-label="Generate slug from title">
+                    <i class="ti ti-refresh"></i>
+                </button>
+            </div>
+            <p class="hint">The public URL is built from the folder path below plus this slug.</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="folder">Folder</label>
+                <select id="folder" asp-for="Input.Folder">
+                    @foreach (var folder in Model.Folders)
+                    {
+                        <option value="@folder.Id">@Model.GetFolderPath(folder)</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="rank">Order in folder</label>
+                <input type="number" id="rank" asp-for="Input.Rank" />
+                <p class="hint">Lower numbers show first.</p>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Input.Visibility">Visibility</label>
+                <select asp-for="Input.Visibility">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="date">Published date</label>
+                <div class="input-with-button">
+                    <input type="datetime-local" id="date" step="0.001" asp-for="Input.PublishedAt">
+                    <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                        <i class="ti ti-clock"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="excerpt">Excerpt (markdown supported)</label>
+            <textarea id="excerpt" rows="5" asp-for="Input.Excerpt" data-markdown></textarea>
+            <p class="hint">Shown in list views and link previews.</p>
+        </div>
+
+        <div class="field">
+            <label for="body">Body (markdown supported)</label>
+            <textarea id="body" rows="30" asp-for="Input.Body" data-markdown data-preview-source></textarea>
+        </div>
+
+        <div class="field">
+            <label for="preview-image">Preview image URL</label>
+            <input type="url" id="preview-image" asp-for="Input.PreviewImageUrl" />
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="previous-part">Previous part</label>
+                <select id="previous-part" asp-for="Input.PreviousPart">
+                    <option value="">&mdash; none &mdash;</option>
+                    @foreach (var other in Model.OtherArticles)
+                    {
+                        <option value="@other.Id">@other.Title (@Model.GetArticlePath(other))</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="next-part">Next part</label>
+                <select id="next-part" asp-for="Input.NextPart">
+                    <option value="">&mdash; none &mdash;</option>
+                    @foreach (var other in Model.OtherArticles)
+                    {
+                        <option value="@other.Id">@other.Title (@Model.GetArticlePath(other))</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Settings</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.EnableComments" />
+                    Enable comments
+                </label>
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.ShowTableOfContents" />
+                    Show table of contents
+                </label>
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.TableOfContentsExpanded" />
+                    Table of contents expanded by default
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            <button type="submit" class="btn" asp-page-handler="SaveDraft"><i class="ti ti-device-floppy"></i> Save as draft</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
+        </div>
+
+        <section class="admin-media" id="content-media">
+            <div class="admin-header">
+                <div><h2>Media</h2></div>
+                @if (!Model.CreatingNew)
+                {
+                    <div style="display:flex;gap:8px">
+                        <input type="file" id="media-file-input" hidden>
+                        <button type="button" class="btn btn-primary" id="media-upload-btn">
+                            <i class="ti ti-upload"></i>Upload file
+                        </button>
+                    </div>
+                }
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this article before attaching media.</p>
+            }
+            else
+            {
+                <p class="hint">
+                    Reference an uploaded file from the body or excerpt above by its filename, e.g.
+                    <code>![alt text](filename.png)</code>. Images have their EXIF metadata stripped automatically on upload.
+                </p>
+                <p class="hint" id="media-error" hidden></p>
+                <ul class="media-list" id="media-list"></ul>
+            }
+        </section>
+
+        <section class="admin-drafts" id="article-drafts">
+            <div class="admin-header">
+                <div><h2>Revision history</h2></div>
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this article to start its revision history.</p>
+            }
+            else
+            {
+                <p class="hint">
+                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as draft.
+                </p>
+                <ul class="draft-list">
+                    @foreach (var draft in Model.DraftHistory)
+                    {
+                        var isPublished = draft.Id == Model.CurrentDraftId;
+                        var isViewing = draft.Id == Model.ViewingDraftId;
+
+                        <li class="draft-item">
+                            <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)"
+                               asp-page="Edit" asp-route-id="@Model.ArticleId" asp-route-draftId="@draft.Id">
+                                <div class="draft-item-body">
+                                    <p class="name">@draft.Title</p>
+                                    <p class="meta">@draft.CreatedAt.Humanize()</p>
+                                </div>
+                                @if (isPublished)
+                                {
+                                    <span class="badge badge-published">Published</span>
+                                }
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+    </form>
+
+    <aside class="admin-preview" id="preview-pane">
+        <span class="eyebrow">Preview</span>
+        <h1 id="preview-title">@articleModel.Title</h1>
+        <div class="prose" id="preview-body"></div>
+    </aside>
+
+</div>

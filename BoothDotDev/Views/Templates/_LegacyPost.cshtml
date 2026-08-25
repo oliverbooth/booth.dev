@@ -1,0 +1,21 @@
+@model BoothDotDev.Markdown.Template.TemplateModel
+
+<div class="callout" data-callout="note">
+    <div class="callout-title"><i class="ti ti-info-circle"></i> Legacy Post</div>
+    <div class="callout-body">
+        <p>
+            @if (string.IsNullOrWhiteSpace(Model.ArgumentString))
+            {
+                <text>
+                    This post has been recovered from an alternative blogging platform that I've not used in many years.
+                    Some of the content may have been reworded so that it makes sense in the context of this site, however the substance of
+                    the content will be unchanged.
+                </text>
+            }
+            else
+            {
+                <text>@Model.ArgumentString</text>
+            }
+        </p>
+    </div>
+</div>

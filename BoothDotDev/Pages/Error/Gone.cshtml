@@ -1,17 +1,25 @@
-@page "/error/400"
-<article>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="p-2">
-                <h1 class="text-center">410 Gone</h1>
+@page "/error/410"
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="terminal" style="margin-bottom:1.75rem">
+            <div class="terminal-bar">
+                <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
             </div>
-            <div class="p-2">
-                <p class="text-center">The requested page has mysteriously disappeared.</p>
+            <div class="terminal-body">
+                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> git show a3f9c1e:old-page.md</div>
+                <div class="out" style="margin-top:6px">fatal: path 'old-page.md' does not exist in 'a3f9c1e'</div>
             </div>
         </div>
 
-        <div class="align-self-stretch">
-            <img class="img-fluid" src="~/img/error/410-gone.png">
+        <p class="error-code">Error 410</p>
+        <h1 class="error-title">Gone</h1>
+        <p class="error-desc">This page used to exist, but it's been deliberately removed and isn't coming back.</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Back home</a>
+            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
         </div>
+
     </div>
-</article>
+</div>

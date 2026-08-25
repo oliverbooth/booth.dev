@@ -1,17 +1,25 @@
 @page "/error/400"
-<article>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="p-2">
-                <h1 class="text-center">400 Bad Request</h1>
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="terminal" style="margin-bottom:1.75rem">
+            <div class="terminal-bar">
+                <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
             </div>
-            <div class="p-2">
-                <p class="text-center">Received invalid request message. Check your request and try again.</p>
+            <div class="terminal-body">
+                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> curl booth.dev/malformed?q=%</div>
+                <div class="out" style="margin-top:6px">curl: (3) URL rejected: bad/illegal format or missing URL</div>
             </div>
         </div>
 
-        <div class="align-self-stretch">
-            <img class="img-fluid" src="~/img/error/400-bad-request.png">
+        <p class="error-code">Error 400</p>
+        <h1 class="error-title">Bad Request</h1>
+        <p class="error-desc">The request couldn't be understood as sent. Check the URL and try again.</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Back home</a>
+            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
         </div>
+
     </div>
-</article>
+</div>

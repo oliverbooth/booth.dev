@@ -1,0 +1,97 @@
+@page "/admin/tutorials"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Tutorials.Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Tutorials</h1>
+            <p>Create, edit, and delete tutorial articles</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a asp-page="/Admin/Tutorials/Folders/Index" class="btn icon-btn"><i class="ti ti-folder" style="font-size:15px"></i>Folders</a>
+            <a asp-page="/Admin/Tutorials/Trash" class="btn icon-btn"><i class="ti ti-trash" style="font-size:15px"></i>Trash</a>
+            <a asp-page="/Admin/Tutorials/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New article</a>
+        </div>
+    </div>
+
+    <div data-search-scope>
+    <div class="table-toolbar">
+        <div class="search-input">
+            <i class="ti ti-search"></i>
+            <input type="text" id="search" placeholder="Search articles&hellip;">
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Path</th>
+            <th>Visibility</th>
+            <th>Updated</th>
+            <th style="text-align:right">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var article in Model.Articles)
+        {
+            var timestamp = article.UpdatedAt ?? article.PublishedAt;
+            var badgeClass = article.Visibility switch
+            {
+                Visibility.Published => "published",
+                Visibility.Private => "private",
+                _ => "unlisted"
+            };
+
+            <tr>
+                <td>
+                    <div class="row-title" data-search>@article.Title</div>
+                </td>
+                <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)" data-search>@Model.GetPath(article)</span></td>
+                <td><span class="badge badge-@badgeClass">
+                    @switch (article.Visibility)
+                    {
+                        case Visibility.Published:
+                            <text><span class="dot"></span> Published</text>
+                            break;
+
+                        case Visibility.Private:
+                            <text><i class="ti ti-lock"></i> Private</text>
+                            break;
+
+                        case Visibility.Unlisted:
+                            <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                            break;
+
+                        default:
+                            throw new UnreachableException();
+                    }
+                </span></td>
+                <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
+                <td>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@Model.GetPath(article)" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@article.Id">
+                            <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr data-search-empty hidden>
+            <td colspan="5" class="table-empty-state">No articles found</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</div>

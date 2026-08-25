@@ -1,0 +1,200 @@
+@page "/admin/projects/edit/{id:guid?}"
+@using BoothDotDev.Data
+@using Humanizer
+@model BoothDotDev.Pages.Admin.Projects.Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Projects/Index">Projects</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New project" : Model.Input.Name)</h1></div>
+            <div style="display:flex;gap:8px">
+                @if (!Model.CreatingNew)
+                {
+                    <a asp-page="/Projects/Project" asp-route-slug="@Model.Input.Slug" target="_blank" class="btn">
+                        <i class="ti ti-eye"></i> View project
+                    </a>
+                }
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save project</button>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="name">Name</label>
+                <input type="text" id="name" asp-for="Input.Name" />
+            </div>
+            <div class="field">
+                <label for="slug">Slug</label>
+                <input type="text" id="slug" asp-for="Input.Slug" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="tagline">Tagline</label>
+            <input type="text" id="tagline" asp-for="Input.Tagline" />
+        </div>
+
+        <div class="field">
+            <label for="description">Description (markdown supported)</label>
+            <textarea id="description" rows="3" asp-for="Input.Description" data-markdown></textarea>
+            <p class="hint">Shown on the projects list and as the intro on the project page.</p>
+        </div>
+
+        <div class="field">
+            <label for="details">Details (markdown supported)</label>
+            <textarea id="details" rows="10" asp-for="Input.Details" data-markdown></textarea>
+            <p class="hint">The fuller write-up, shown below the description on the project page.</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Input.Status">Status</label>
+                <select asp-for="Input.Status">
+                    @foreach (var status in Enum.GetValues<ProjectStatus>())
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label asp-for="Input.Type">Type</label>
+                <select asp-for="Input.Type">
+                    @foreach (var type in Enum.GetValues<ProjectType>())
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="rank">Order</label>
+                <input type="number" id="rank" asp-for="Input.Rank" />
+                <p class="hint">Lower numbers show first.</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="languages">Languages</label>
+            <input type="text" id="languages" asp-for="Input.Languages" placeholder="e.g. csharp, python, various" />
+            <p class="hint">Comma-separated. Matches the icon filenames under <code>img/lang/</code>.</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="remote-target">Host</label>
+                <input type="text" id="remote-target" asp-for="Input.RemoteTarget" placeholder="e.g. GitHub, GitLab, Itch.io, PlayStore" />
+            </div>
+            <div class="field">
+                <label for="remote-url">URL</label>
+                <input type="url" id="remote-url" asp-for="Input.RemoteUrl" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="date">Created date</label>
+            <div class="input-with-button">
+                <input type="datetime-local" id="date" step="0.001" asp-for="Input.CreatedAt">
+                <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                    <i class="ti ti-clock"></i>
+                </button>
+            </div>
+            <p class="hint">Only used to organise the hero image's CDN path - not shown publicly.</p>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save project</button>
+        </div>
+
+    </form>
+
+    <section class="admin-media" id="hero-media" style="margin-top:2rem">
+            <div class="admin-header">
+                <div><h2>Hero image</h2></div>
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this project before uploading a hero image.</p>
+            }
+            else
+            {
+                @if (Model.HeroUrl is { } heroUrl)
+                {
+                    <img src="@heroUrl" alt="" style="max-width:320px;border-radius:8px;margin-bottom:12px;display:block">
+                }
+                else
+                {
+                    <p class="hint">No hero image uploaded yet.</p>
+                }
+                <p class="hint" id="hero-error" hidden></p>
+                <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile" asp-route-id="@Model.ProjectId">
+                    <input type="file" name="file" accept="image/*" />
+                    <button type="submit" class="btn btn-primary"><i class="ti ti-upload"></i> Upload</button>
+                </form>
+            }
+    </section>
+
+    <section class="admin-devlogs" id="project-devlogs" style="margin-top:2rem">
+            <div class="admin-header">
+                <div><h2>Devlog entries</h2></div>
+                @if (!Model.CreatingNew)
+                {
+                    <div style="display:flex;gap:8px">
+                        <a asp-page="/Admin/Projects/Devlogs/Trash" asp-route-projectId="@Model.ProjectId" class="btn">
+                            <i class="ti ti-trash"></i> Trash
+                        </a>
+                        <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.ProjectId" class="btn btn-primary">
+                            <i class="ti ti-plus" style="font-size:15px"></i> New devlog entry
+                        </a>
+                    </div>
+                }
+            </div>
+
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save this project before adding devlog entries.</p>
+            }
+            else if (Model.Devlogs.Count == 0)
+            {
+                <p class="hint">No devlog entries yet.</p>
+            }
+            else
+            {
+                <ul class="draft-list">
+                    @foreach (var devlog in Model.Devlogs)
+                    {
+                        <li class="draft-item">
+                            <a class="draft-item-link" asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.ProjectId" asp-route-id="@devlog.Id">
+                                <div class="draft-item-body">
+                                    <p class="name">@devlog.Title</p>
+                                    <p class="meta">@devlog.PublishedAt.Humanize()</p>
+                                </div>
+                                <span class="badge badge-@(devlog.Visibility == Visibility.Published ? "published" : devlog.Visibility == Visibility.Private ? "private" : "unlisted")">@devlog.Visibility</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+    </section>
+
+    @if (!Model.CreatingNew)
+    {
+        <form method="post" asp-page-handler="Delete" data-confirm="Delete this project? This can't be undone.">
+            <div class="form-actions">
+                <button type="submit" class="btn icon-btn danger" aria-label="Delete project">
+                    <i class="ti ti-trash"></i> Delete project
+                </button>
+            </div>
+        </form>
+    }
+
+</div>
