@@ -43,6 +43,17 @@ public sealed class EmbedRenderer : HtmlObjectRenderer<EmbedInline>
                 break;
 
             default:
+                // _resolver is null for the placeholder EmbedRenderer the pipeline installs by default (see
+                // EmbedExtension) - real renders replace it with one bound to the current post's render context
+                // via MarkdownRenderingService.CreateHtmlRenderer, but plain-text-only passes (Markdown.ToPlainText,
+                // used for OG/RSS descriptions) never go through that replacement. A media embed has no meaningful
+                // plain-text representation anyway, so skip it rather than crash.
+                if (_resolver is null)
+                {
+                    _logger.LogDebug("Skipping media embed {FileName} - no resolver bound (likely a plain-text render pass)", embed.FileName);
+                    break;
+                }
+
                 var result = _resolver.RenderMediaAsync(embed.FileName, alt: null, title: null).GetAwaiter().GetResult();
                 renderer.Write(result);
                 break;
