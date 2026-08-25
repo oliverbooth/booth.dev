@@ -1,13 +1,15 @@
 div.code-toolbar > .toolbar {
   position: absolute;
   z-index: 10;
-  top: 0;
-  right: 0.2em;
+  top: 0.5rem;
+  right: 0.5rem;
+  line-height: 1;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 
   > .toolbar-item {
     display: inline-block;
+    line-height: 1;
 
     > a,
     > button,
@@ -35,7 +37,7 @@ div.code-toolbar > .toolbar {
       border: 1px solid rgba(255, 255, 255, 0.12);
       font: inherit;
       font-size: 0.7rem;
-      line-height: normal;
+      line-height: 1;
       overflow: visible;
       user-select: none;
 
