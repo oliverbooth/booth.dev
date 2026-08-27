@@ -35,7 +35,7 @@ public sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        BlogPosts = _blogPostService.GetAllBlogPosts(visibility: Visibility.None);
+        BlogPosts = _blogPostService.GetAllBlogPosts(visibility: Visibility.None, includeRedirects: true);
     }
 
     /// <summary>

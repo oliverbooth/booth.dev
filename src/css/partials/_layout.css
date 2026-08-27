@@ -46,6 +46,18 @@ body {
   }
 }
 
+.page-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.page-actions {
+  display: flex;
+  gap: 8px;
+}
+
 @media (max-width: 860px) {
   .page,
   .page-wide {

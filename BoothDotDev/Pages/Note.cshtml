@@ -2,6 +2,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
+@using DEDrake
 @inject MarkdownRenderingService MarkdownRenderingService
 @model Note
 
@@ -20,13 +21,7 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-        <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
-    </div>
+    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
 
     @if (note.Visibility == Visibility.Private)
     {
@@ -42,7 +37,13 @@
     <h1 style="margin:8px 0 12px;font-size:30px">@note.Title</h1>
 
     <div class="byline">
-        <span class="meta">@published.ToShortString()</span>
+        <span class="meta">
+            @published.ToShortString() &middot; <a href="/note/@((ShortGuid)note.Id).md">View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <text> &middot; <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id">Edit</a></text>
+            }
+        </span>
     </div>
 
     <div class="prose @note.FontStyle.ToProseClass()" style="margin-top:2.5rem">

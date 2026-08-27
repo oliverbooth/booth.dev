@@ -25,13 +25,7 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-        <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
-    </div>
+    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
 
     @if (post.Visibility == Visibility.Private)
     {
@@ -57,8 +51,14 @@
 
     <div class="byline">
         <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="@author.DisplayName"/></div>
-        <span
-            class="meta">@author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</span>
+        <span class="meta">
+            @author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read
+            &middot; <a href="/blog/@(post.Slug).md">View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <text> &middot; <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id">Edit</a></text>
+            }
+        </span>
     </div>
 
     @if (post.ShowTableOfContents)

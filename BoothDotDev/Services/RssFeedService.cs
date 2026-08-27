@@ -16,6 +16,7 @@ public sealed class RssFeedService
     private readonly TutorialService _tutorialService;
     private readonly CreationService _creationService;
     private readonly ProjectService _projectService;
+    private readonly DevChallengeService _devChallengeService;
     private readonly MarkdownRenderingService _markdownRenderingService;
 
     /// <summary>
@@ -26,6 +27,7 @@ public sealed class RssFeedService
     /// <param name="tutorialService">The <see cref="TutorialService" />.</param>
     /// <param name="creationService">The <see cref="CreationService" />.</param>
     /// <param name="projectService">The <see cref="ProjectService" />.</param>
+    /// <param name="devChallengeService">The <see cref="DevChallengeService" />.</param>
     /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" />.</param>
     public RssFeedService(
         BlogPostService blogPostService,
@@ -33,6 +35,7 @@ public sealed class RssFeedService
         TutorialService tutorialService,
         CreationService creationService,
         ProjectService projectService,
+        DevChallengeService devChallengeService,
         MarkdownRenderingService markdownRenderingService)
     {
         _blogPostService = blogPostService;
@@ -40,6 +43,7 @@ public sealed class RssFeedService
         _tutorialService = tutorialService;
         _creationService = creationService;
         _projectService = projectService;
+        _devChallengeService = devChallengeService;
         _markdownRenderingService = markdownRenderingService;
     }
 
@@ -207,6 +211,33 @@ public sealed class RssFeedService
         }
 
         return BuildGenericFeed(baseUrl, "/projects", $"Projects by {Strings.MyName}", items);
+    }
+
+    /// <summary>
+    ///     Builds the RSS feed for dev challenges.
+    /// </summary>
+    /// <param name="baseUrl">The site's own base URL, used to build absolute links.</param>
+    /// <returns>The serialized RSS feed.</returns>
+    public string BuildChallengesFeed(Uri baseUrl)
+    {
+        var items = new List<RssItem>();
+
+        foreach (DevChallenge challenge in _devChallengeService.GetAllChallenges())
+        {
+            var url = new Uri(baseUrl, $"/challenge/{challenge.Id}").ToString();
+            var excerpt = _markdownRenderingService.RenderExcerpt(challenge, out _);
+
+            items.Add(new RssItem
+            {
+                Title = challenge.Title,
+                Link = url,
+                PubDate = challenge.PublishedAt.ToString("R"),
+                Guid = url,
+                Description = excerpt
+            });
+        }
+
+        return BuildGenericFeed(baseUrl, "/challenges", $"Dev Challenges by {Strings.MyName}", items);
     }
 
     private static string BuildGenericFeed(Uri baseUrl, string path, string title, IReadOnlyList<RssItem> items)

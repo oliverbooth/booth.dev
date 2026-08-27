@@ -17,7 +17,7 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div class="page-header-row">
         <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Projects/Index">Projects</a> / @project.Name</p>
         @if (User.Identity?.IsAuthenticated == true)
         {

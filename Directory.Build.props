@@ -9,7 +9,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <DebugType>pdbonly</DebugType>
         <DebugSymbols>true</DebugSymbols>
-        <VersionPrefix>4.1.0</VersionPrefix>
+        <VersionPrefix>4.2.0</VersionPrefix>
         <Authors>Oliver Booth</Authors>
         <Nullable>enable</Nullable>
         <NeutralLanguage>en</NeutralLanguage>
@@ -19,7 +19,7 @@
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <PropertyGroup Condition="'$(CI)' == 'true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 

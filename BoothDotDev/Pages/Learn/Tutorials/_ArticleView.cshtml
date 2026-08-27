@@ -37,22 +37,16 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-        <p class="crumb">
-            <a asp-page="/Index">Home</a> /
-            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-            @while (parents.Count > 0)
-            {
-                var current = parents.Pop();
-                <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
-            }
-            / @article.Title
-        </p>
-        @if (User.Identity?.IsAuthenticated == true)
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        @while (parents.Count > 0)
         {
-            <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+            var current = parents.Pop();
+            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
         }
-    </div>
+        / @article.Title
+    </p>
 
     @if (article.Visibility == Visibility.Private)
     {
@@ -77,7 +71,14 @@
     <h1 style="margin:8px 0 12px;font-size:30px">@article.Title</h1>
 
     <div class="byline">
-        <span class="meta">@published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read</span>
+        <span class="meta">
+            @published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read
+            &middot; <a href="/learn/@(TutorialService.GetFullSlug(article)).md">View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <text> &middot; <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id">Edit</a></text>
+            }
+        </span>
     </div>
 
     @if (article.ShowTableOfContents)

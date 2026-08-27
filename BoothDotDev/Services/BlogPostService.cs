@@ -262,11 +262,20 @@ public sealed class BlogPostService : BackgroundService
     /// </summary>
     /// <param name="limit">The maximum number of posts to return. A value of -1 returns all posts.</param>
     /// <param name="visibility">The visibility filter for the posts.</param>
+    /// <param name="includeRedirects">A value indicating whether to include redirects in the results.</param>
     /// <returns>A collection of all blog posts.</returns>
-    public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1, Visibility visibility = Visibility.Published)
+    public IReadOnlyList<BlogPost> GetAllBlogPosts(int limit = -1,
+        Visibility visibility = Visibility.Published,
+        bool includeRedirects = false)
     {
         using AppDbContext context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => p.TrashedAt == null);
+
+        if (!includeRedirects)
+        {
+            posts = posts.Where(p => !p.IsRedirect);
+        }
+
         if (visibility != Visibility.None)
         {
             posts = posts.Where(p => p.CurrentDraft!.Visibility == visibility);
@@ -519,10 +528,10 @@ public sealed class BlogPostService : BackgroundService
         var post = context.BlogPosts
             .Include(p => p.CurrentDraft)
             .FirstOrDefault(post => post.PublishedAt.Year == publishDate.Year &&
-                                     post.PublishedAt.Month == publishDate.Month &&
-                                     post.PublishedAt.Day == publishDate.Day &&
-                                     post.Slug == slug &&
-                                     post.TrashedAt == null);
+                                    post.PublishedAt.Month == publishDate.Month &&
+                                    post.PublishedAt.Day == publishDate.Day &&
+                                    post.Slug == slug &&
+                                    post.TrashedAt == null);
 
         if (post is null)
         {
