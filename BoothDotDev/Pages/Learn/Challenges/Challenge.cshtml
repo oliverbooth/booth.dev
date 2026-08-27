@@ -14,13 +14,13 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div class="page-header-row">
         <p class="crumb">
             <a asp-page="/Index">Home</a> /
             <a asp-page="/Learn/Challenges/Index">Challenges</a> /
             @challenge.Title
         </p>
-        <div style="display:flex;gap:8px">
+        <div class="page-actions">
             <a href="/challenge/@(challenge.Id).md" class="btn" title="View this challenge's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {

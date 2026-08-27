@@ -25,9 +25,9 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div class="page-header-row">
         <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
-        <div style="display:flex;gap:8px">
+        <div class="page-actions">
             <a href="/blog/@(post.Slug).md" class="btn" title="View this post's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {

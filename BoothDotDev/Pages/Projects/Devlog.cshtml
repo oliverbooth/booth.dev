@@ -20,14 +20,14 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div class="page-header-row">
         <p class="crumb">
             <a asp-page="/Index">Home</a> /
             <a asp-page="/Projects/Index">Projects</a> /
             <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
             @devlog.Title
         </p>
-        <div style="display:flex;gap:8px">
+        <div class="page-actions">
             <a href="/project/@(Model.Project.Slug)/devlog/@(devlog.Slug).md" class="btn" title="View this devlog entry's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {

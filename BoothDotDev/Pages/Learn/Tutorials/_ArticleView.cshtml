@@ -37,7 +37,7 @@
 
 <div class="page">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div class="page-header-row">
         <p class="crumb">
             <a asp-page="/Index">Home</a> /
             <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
@@ -48,7 +48,7 @@
             }
             / @article.Title
         </p>
-        <div style="display:flex;gap:8px">
+        <div class="page-actions">
             <a href="/learn/@(TutorialService.GetFullSlug(article)).md" class="btn" title="View this article's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {

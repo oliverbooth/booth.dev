@@ -31,7 +31,7 @@
 
 <div class="page-wide">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div class="page-header-row">
         <p class="crumb">
             <a asp-page="/Index">Home</a> /
             <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
@@ -45,7 +45,7 @@
                 <text> / @Model.Title</text>
             }
         </p>
-        <div style="display:flex;gap:8px">
+        <div class="page-actions">
             @{ var feedPath = Model is null ? "/learn" : $"/learn/{TutorialService.GetFullSlug(Model)}"; }
             <a href="@(feedPath).rss" class="icon-link" aria-label="Subscribe to this listing's RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
             @if (Model is not null && User.Identity?.IsAuthenticated == true)
