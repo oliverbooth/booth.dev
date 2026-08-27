@@ -20,10 +20,13 @@
             <a asp-page="/Learn/Challenges/Index">Challenges</a> /
             @challenge.Title
         </p>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
+        <div style="display:flex;gap:8px">
+            <a href="/challenge/@(challenge.Id).md" class="btn" title="View this challenge's raw Markdown source"><i class="ti ti-code"></i> View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+            }
+        </div>
     </div>
 
     @if (challenge.Visibility == Visibility.Private)

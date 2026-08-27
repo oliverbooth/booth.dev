@@ -2,6 +2,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
+@using DEDrake
 @inject MarkdownRenderingService MarkdownRenderingService
 @model Note
 
@@ -22,10 +23,13 @@
 
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
         <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
+        <div style="display:flex;gap:8px">
+            <a href="/note/@((ShortGuid)note.Id).md" class="btn" title="View this note's raw Markdown source"><i class="ti ti-code"></i> View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
+            }
+        </div>
     </div>
 
     @if (note.Visibility == Visibility.Private)
