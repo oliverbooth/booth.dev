@@ -49,7 +49,6 @@
             / @article.Title
         </p>
         <div class="page-actions">
-            <a href="/learn/@(TutorialService.GetFullSlug(article)).md" class="btn" title="View this article's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
@@ -80,7 +79,10 @@
     <h1 style="margin:8px 0 12px;font-size:30px">@article.Title</h1>
 
     <div class="byline">
-        <span class="meta">@published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read</span>
+        <span class="meta">
+            @published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read
+            &middot; <a href="/learn/@(TutorialService.GetFullSlug(article)).md">View source</a>
+        </span>
     </div>
 
     @if (article.ShowTableOfContents)

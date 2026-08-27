@@ -28,7 +28,6 @@
             @devlog.Title
         </p>
         <div class="page-actions">
-            <a href="/project/@(Model.Project.Slug)/devlog/@(devlog.Slug).md" class="btn" title="View this devlog entry's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
@@ -65,6 +64,7 @@
             {
                 <text>&middot; updated @updated.ToShortString()</text>
             }
+            &middot; <a href="/project/@(Model.Project.Slug)/devlog/@(devlog.Slug).md">View source</a>
         </span>
     </div>
 

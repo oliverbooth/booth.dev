@@ -28,7 +28,6 @@
     <div class="page-header-row">
         <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
         <div class="page-actions">
-            <a href="/blog/@(post.Slug).md" class="btn" title="View this post's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
@@ -60,8 +59,10 @@
 
     <div class="byline">
         <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="@author.DisplayName"/></div>
-        <span
-            class="meta">@author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</span>
+        <span class="meta">
+            @author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read
+            &middot; <a href="/blog/@(post.Slug).md">View source</a>
+        </span>
     </div>
 
     @if (post.ShowTableOfContents)

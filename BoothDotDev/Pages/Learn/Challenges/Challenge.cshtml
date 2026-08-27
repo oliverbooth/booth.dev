@@ -21,7 +21,6 @@
             @challenge.Title
         </p>
         <div class="page-actions">
-            <a href="/challenge/@(challenge.Id).md" class="btn" title="View this challenge's raw Markdown source"><i class="ti ti-code"></i> View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
@@ -54,6 +53,7 @@
             {
                 <span style="color:var(--text-muted)"><i class="ti ti-lock" style="font-size:13px;vertical-align:-1px"></i> Solution locked</span>
             }
+            &middot; <a href="/challenge/@(challenge.Id).md">View source</a>
         </span>
     </div>
 
