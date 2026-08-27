@@ -14,19 +14,11 @@
 
 <div class="page">
 
-    <div class="page-header-row">
-        <p class="crumb">
-            <a asp-page="/Index">Home</a> /
-            <a asp-page="/Learn/Challenges/Index">Challenges</a> /
-            @challenge.Title
-        </p>
-        <div class="page-actions">
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-            }
-        </div>
-    </div>
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Learn/Challenges/Index">Challenges</a> /
+        @challenge.Title
+    </p>
 
     @if (challenge.Visibility == Visibility.Private)
     {
@@ -54,6 +46,10 @@
                 <span style="color:var(--text-muted)"><i class="ti ti-lock" style="font-size:13px;vertical-align:-1px"></i> Solution locked</span>
             }
             &middot; <a href="/challenge/@(challenge.Id).md">View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <text> &middot; <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id">Edit</a></text>
+            }
         </span>
     </div>
 

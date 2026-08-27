@@ -37,24 +37,16 @@
 
 <div class="page">
 
-    <div class="page-header-row">
-        <p class="crumb">
-            <a asp-page="/Index">Home</a> /
-            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-            @while (parents.Count > 0)
-            {
-                var current = parents.Pop();
-                <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
-            }
-            / @article.Title
-        </p>
-        <div class="page-actions">
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-            }
-        </div>
-    </div>
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
+        @while (parents.Count > 0)
+        {
+            var current = parents.Pop();
+            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+        }
+        / @article.Title
+    </p>
 
     @if (article.Visibility == Visibility.Private)
     {
@@ -82,6 +74,10 @@
         <span class="meta">
             @published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read
             &middot; <a href="/learn/@(TutorialService.GetFullSlug(article)).md">View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <text> &middot; <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id">Edit</a></text>
+            }
         </span>
     </div>
 

@@ -20,20 +20,12 @@
 
 <div class="page">
 
-    <div class="page-header-row">
-        <p class="crumb">
-            <a asp-page="/Index">Home</a> /
-            <a asp-page="/Projects/Index">Projects</a> /
-            <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
-            @devlog.Title
-        </p>
-        <div class="page-actions">
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-            }
-        </div>
-    </div>
+    <p class="crumb">
+        <a asp-page="/Index">Home</a> /
+        <a asp-page="/Projects/Index">Projects</a> /
+        <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
+        @devlog.Title
+    </p>
 
     @if (devlog.Visibility == Visibility.Private)
     {
@@ -65,6 +57,10 @@
                 <text>&middot; updated @updated.ToShortString()</text>
             }
             &middot; <a href="/project/@(Model.Project.Slug)/devlog/@(devlog.Slug).md">View source</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <text> &middot; <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id">Edit</a></text>
+            }
         </span>
     </div>
 
