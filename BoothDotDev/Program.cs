@@ -193,6 +193,7 @@ async Task HandleRssFeedAsync(HttpContext context, string path)
         1 when segments[0] == "notes" => rssFeedService.BuildNotesFeed(baseUrl),
         1 when segments[0] == "create" => rssFeedService.BuildCreationsFeed(baseUrl),
         1 when segments[0] == "projects" => rssFeedService.BuildProjectsFeed(baseUrl),
+        1 when segments[0] == "challenges" => rssFeedService.BuildChallengesFeed(baseUrl),
         1 when segments[0] == "learn" => rssFeedService.BuildTutorialFeed(baseUrl, null),
         > 1 when segments[0] == "learn" => BuildScopedTutorialFeed(context, rssFeedService, baseUrl, segments[1..]),
         _ => null
