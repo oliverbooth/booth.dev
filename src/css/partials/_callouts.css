@@ -31,21 +31,33 @@
 
   &[data-callout="note"], &[data-callout="info"], &[data-callout="todo"], &[data-callout="update"] {
     --callout-accent: var(--callout-note);
+
+    th { border-bottom-color: var(--callout-note); }
   }
   &[data-callout="abstract"], &[data-callout="tip"], &[data-callout="important"], &[data-callout="example"] {
     --callout-accent: var(--callout-abstract);
+
+    th { border-bottom-color: var(--callout-abstract); }
   }
   &[data-callout="success"] {
     --callout-accent: var(--callout-success);
+
+    th { border-bottom-color: var(--callout-success); }
   }
   &[data-callout="question"], &[data-callout="warning"] {
     --callout-accent: var(--callout-warning);
+
+    th { border-bottom-color: var(--callout-warning); }
   }
   &[data-callout="failure"], &[data-callout="danger"], &[data-callout="bug"] {
     --callout-accent: var(--callout-danger);
+
+    th { border-bottom-color: var(--callout-danger); }
   }
   &[data-callout="cite"] {
     --callout-accent: var(--callout-cite);
+
+    th { border-bottom-color: var(--callout-cite); }
   }
 }
 
@@ -55,7 +67,7 @@ details.callout {
   border-right-color: transparent;
   border-bottom-color: transparent;
   interpolate-size: allow-keywords;
-  
+
   &::details-content {
     transition: height 0.3s ease, content-visibility 0.3s ease allow-discrete;
     height: 0;
