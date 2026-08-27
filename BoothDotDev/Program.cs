@@ -2,6 +2,8 @@ using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
 using Fido2NetLib;
+using FluentResults;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -75,6 +77,7 @@ builder.Services.AddSingleton<MarkdownRenderingService>();
 builder.Services.AddSingleton<NoteService>();
 builder.Services.AddSingleton<OgImageService>();
 builder.Services.AddSingleton<ProjectService>();
+builder.Services.AddSingleton<RawContentService>();
 builder.Services.AddSingleton<ReadingListService>();
 builder.Services.AddSingleton<RssFeedService>();
 builder.Services.AddSingleton<TemplateService>();
@@ -131,6 +134,20 @@ app.Use(async (context, next) =>
     await HandleRssFeedAsync(context, path[..^".rss".Length]);
 });
 
+// same reasoning as the .rss rule above: appending .md to an article's URL (/blog/foo.md, /learn/unity/awaitable.md, ...)
+// shows its raw Markdown source, and /learn/{**slug} being a catch-all means this has to be middleware, not a route
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+    if (context.Request.Method != HttpMethods.Get || path is null || !path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+    {
+        await next(context);
+        return;
+    }
+
+    await HandleRawMarkdownAsync(context, path[..^".md".Length]);
+});
+
 app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
@@ -171,9 +188,10 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}/raw", (int year, int m
     var date = new DateOnly(year, month, day);
     var result = blogPostService.GetPost(slug, date);
     return result.IsSuccess
-        ? Results.Redirect($"/blog/{slug}/raw", permanent: true)
+        ? Results.Redirect($"/blog/{slug}.md", permanent: true)
         : Results.NotFound();
 });
+app.MapGet("/blog/{slug}/raw", (string slug) => Results.Redirect($"/blog/{slug}.md", permanent: true));
 app.MapGet("/tutorials", () => Results.Redirect($"/learn", permanent: true));
 app.MapGet("/tutorials/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", permanent: true));
 app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", permanent: true));
@@ -214,6 +232,38 @@ string? BuildScopedTutorialFeed(HttpContext context, RssFeedService rssFeedServi
     var tutorialService = context.RequestServices.GetRequiredService<TutorialService>();
     var folderResult = tutorialService.GetFolder(string.Join('/', folderSegments));
     return folderResult.IsSuccess ? rssFeedService.BuildTutorialFeed(baseUrl, folderResult.Value) : null;
+}
+
+async Task HandleRawMarkdownAsync(HttpContext context, string path)
+{
+    var rawContentService = context.RequestServices.GetRequiredService<RawContentService>();
+    var segments = path.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+    // this middleware runs ahead of UseAuthorization, so the cookie hasn't been authenticated yet - authenticate
+    // explicitly rather than trusting context.User, otherwise a signed-in admin would never see private content here
+    var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    var isAuthenticated = authenticateResult.Succeeded;
+
+    Result<string> result = segments.Length switch
+    {
+        2 when segments[0] == "blog" => rawContentService.BuildBlogPostRaw(segments[1], isAuthenticated),
+        2 when segments[0] == "note" => rawContentService.BuildNoteRaw(segments[1], isAuthenticated),
+        2 when segments[0] == "challenge" => rawContentService.BuildChallengeRaw(segments[1], isAuthenticated),
+        4 when segments[0] == "project" && segments[2] == "devlog" =>
+            rawContentService.BuildDevlogRaw(segments[1], segments[3], isAuthenticated),
+        > 1 when segments[0] == "learn" =>
+            rawContentService.BuildTutorialRaw(string.Join('/', segments[1..]), isAuthenticated),
+        _ => Result.Fail("No matching route")
+    };
+
+    if (result.IsFailed)
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+    }
+
+    context.Response.ContentType = "text/markdown; charset=utf-8";
+    await context.Response.WriteAsync(result.Value);
 }
 
 async Task ConfigureMigrationsAsync<TContext>(IServiceProvider services) where TContext : DbContext
