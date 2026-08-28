@@ -1,4 +1,6 @@
-let loadPromise: Promise<void> | null = null;
+type VexFlowModule = typeof import('vexflow');
+
+let loadPromise: Promise<VexFlowModule> | null = null;
 
 /**
  * Lazily loads VexFlow - via its `bravura` entry, which brings in the core engine plus only the Bravura/Academico
@@ -8,7 +10,7 @@ let loadPromise: Promise<void> | null = null;
  * VexFlow export is bridged as `VexFlow<Name>` instead, so it stays reachable rather than becoming permanently
  * unusable the day some other library claims its bare name.
  */
-export function ensureVexFlowLoaded(): Promise<void> {
+export function ensureVexFlowLoaded(): Promise<VexFlowModule> {
     loadPromise ??= import('vexflow/bravura').then(vexflow => {
         const globals = window as unknown as Record<string, unknown>;
         for (const [name, value] of Object.entries(vexflow)) {
@@ -27,6 +29,8 @@ export function ensureVexFlowLoaded(): Promise<void> {
 
             globals[name] = value;
         }
+
+        return vexflow;
     });
 
     return loadPromise;

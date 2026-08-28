@@ -1,4 +1,4 @@
-import type {Renderer, RendererBackends} from 'vexflow';
+import type {Renderer} from 'vexflow';
 import {ensureVexFlowLoaded} from './bootstrap.ts';
 
 /**
@@ -73,11 +73,11 @@ async function mountNotation(codeElement: HTMLElement): Promise<void> {
         }
     });
 
-    const globals = window as unknown as {
-        Renderer: (new (element: HTMLElement, backend: RendererBackends) => Renderer) & {Backends: typeof RendererBackends};
-    };
-
-    const rendererInstance = new globals.Renderer(notationPanel, globals.Renderer.Backends.SVG);
+    // resolved from ensureVexFlowLoaded's return value rather than read back off `window` - manim-web also exports a
+    // `Renderer`, so `window.Renderer` may silently be *its* class instead, per the collision fallback documented on
+    // ensureVexFlowLoaded
+    const {Renderer} = await ensureVexFlowLoaded();
+    const rendererInstance = new Renderer(notationPanel, Renderer.Backends.SVG);
     rendererInstance.resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
     await runNotationScript(codeElement.textContent ?? '', notationPanel, rendererInstance);
@@ -116,7 +116,7 @@ function buildTabs(): {
     tabList: HTMLElement;
     notationTab: HTMLButtonElement;
     sourceTab: HTMLButtonElement;
-    notationPanel: HTMLElement;
+    notationPanel: HTMLDivElement;
     sourcePanel: HTMLElement;
     themeToggle: HTMLButtonElement;
 } {
