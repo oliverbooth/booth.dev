@@ -4,9 +4,9 @@ import {DraggableExpression} from './draggable-expression.ts';
 import {DisplayValue, DraggableValue} from './draggable-value.ts';
 
 /**
- * Standardized dimensions for every manim-web scene on the site.
+ * Standardized options for every manim-web scene on the site.
  */
-const SCENE_OPTIONS: SceneOptions = {width: 700, height: 400, backgroundColor: '#000'};
+const SCENE_OPTIONS: SceneOptions = {backgroundColor: '#000'};
 
 /**
  * Finds manim-web codeblocks within the given element and mounts each as a live, tabbed scene. No-ops - without

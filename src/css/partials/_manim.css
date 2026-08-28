@@ -38,6 +38,8 @@
   position: relative;
   display: flex;
   justify-content: center;
+  width: 100%;
+  aspect-ratio: 7 / 4;
   background: black;
 }
 
