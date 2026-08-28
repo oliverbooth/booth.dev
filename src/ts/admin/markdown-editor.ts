@@ -30,61 +30,73 @@ const highlightStyle = HighlightStyle.define([
  */
 export function initMarkdownEditors(): void {
     document.querySelectorAll<HTMLTextAreaElement>('textarea[data-markdown]').forEach((textarea) => {
-        const lineHeightPx: number = 14 * 1.6;
-        const rows: number = textarea.rows || 10;
-        const maxHeight: string = `${rows * lineHeightPx}px`;
-
-        const viewTheme = EditorView.theme({
-            '&': {
-                color: 'var(--text-primary)',
-                fontSize: '14px',
-                lineHeight: '1.8',
-            },
-            '.cm-content': {
-                fontFamily: 'var(--font-mono)',
-                padding: '0.75rem',
-                caretColor: 'var(--text-primary)',
-            },
-            '.cm-scroller': {overflow: 'auto'},
-            '.cm-cursor, .cm-dropCursor': {
-                borderLeftColor: 'var(--text-primary)',
-                borderLeftWidth: '2px',
-            },
-            '&.cm-editor': {
-                maxHeight,
-                background: 'var(--surface-1)',
-                border: '0.5px solid var(--border)',
-                borderRadius: '8px',
-            },
-        }, {dark: true});
-
-        const view = new EditorView({
-            doc: textarea.value,
-            extensions: [
-                history(),
-                // `markdown()` binds its own Prec.high Enter handler for continuing lists/blockquotes, but its own
-                // docs say it must not be the only Enter binding — it deliberately no-ops outside that context and
-                // falls through to whatever's next. Without defaultKeymap providing that fallback, "next" was
-                // nothing: Enter fell all the way through to unintercepted native contenteditable behavior, which is
-                // exactly the kind of thing that gets flaky creating consecutive empty blocks at the end of a
-                // document. defaultKeymap's own insertNewlineAndIndent is the real fallback; historyKeymap gives
-                // undo/redo, which was equally absent.
-                keymap.of([...defaultKeymap, ...historyKeymap]),
-                markdown({codeLanguages: languages}),
-                syntaxHighlighting(defaultHighlightStyle, {fallback: true}),
-                syntaxHighlighting(highlightStyle),
-                viewTheme,
-                EditorView.lineWrapping,
-                EditorView.updateListener.of((update) => {
-                    if (update.docChanged) {
-                        textarea.value = update.state.doc.toString();
-                        textarea.dispatchEvent(new Event('input', {bubbles: true}));
-                    }
-                }),
-            ],
-        });
-
-        textarea.style.display = 'none';
-        textarea.insertAdjacentElement('afterend', view.dom);
+        void mountEditor(textarea);
     });
+}
+
+/**
+ * Mounts a single CodeMirror editor onto a textarea, once the page's layout has settled.
+ * @param textarea The textarea to mount the editor onto.
+ */
+async function mountEditor(textarea: HTMLTextAreaElement): Promise<void> {
+    await document.fonts.ready;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    const lineHeightPx: number = 14 * 1.6;
+    const rows: number = textarea.rows || 10;
+    const maxHeight: string = `${rows * lineHeightPx}px`;
+
+    const viewTheme = EditorView.theme({
+        '&': {
+            color: 'var(--text-primary)',
+            fontSize: '14px',
+            lineHeight: '1.8',
+        },
+        '.cm-content': {
+            fontFamily: 'var(--font-mono)',
+            padding: '0.75rem',
+            caretColor: 'var(--text-primary)',
+        },
+        '.cm-scroller': {overflow: 'auto'},
+        '.cm-cursor, .cm-dropCursor': {
+            borderLeftColor: 'var(--text-primary)',
+            borderLeftWidth: '2px',
+        },
+        '&.cm-editor': {
+            maxHeight,
+            background: 'var(--surface-1)',
+            border: '0.5px solid var(--border)',
+            borderRadius: '8px',
+        },
+    }, {dark: true});
+
+    const view = new EditorView({
+        doc: textarea.value,
+        extensions: [
+            history(),
+            // `markdown()` binds its own Prec.high Enter handler for continuing lists/blockquotes, but its own
+            // docs say it must not be the only Enter binding — it deliberately no-ops outside that context and
+            // falls through to whatever's next. Without defaultKeymap providing that fallback, "next" was
+            // nothing: Enter fell all the way through to unintercepted native contenteditable behavior, which is
+            // exactly the kind of thing that gets flaky creating consecutive empty blocks at the end of a
+            // document. defaultKeymap's own insertNewlineAndIndent is the real fallback; historyKeymap gives
+            // undo/redo, which was equally absent.
+            keymap.of([...defaultKeymap, ...historyKeymap]),
+            markdown({codeLanguages: languages}),
+            syntaxHighlighting(defaultHighlightStyle, {fallback: true}),
+            syntaxHighlighting(highlightStyle),
+            viewTheme,
+            EditorView.lineWrapping,
+            EditorView.updateListener.of((update) => {
+                if (update.docChanged) {
+                    textarea.value = update.state.doc.toString();
+                    textarea.dispatchEvent(new Event('input', {bubbles: true}));
+                }
+            }),
+        ],
+    });
+
+    textarea.style.display = 'none';
+    textarea.insertAdjacentElement('afterend', view.dom);
 }
