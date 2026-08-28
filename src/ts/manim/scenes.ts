@@ -41,12 +41,31 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
         return;
     }
 
-    const {sceneTab, sourceTab, scenePanel, sourcePanel, wrapper} = buildTabs();
-    pre.replaceWith(wrapper);
-    sourcePanel.append(pre);
+    const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
+    const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
-    sceneTab.addEventListener('click', () => activateTab(sceneTab, sourceTab, scenePanel, sourcePanel));
-    sourceTab.addEventListener('click', () => activateTab(sourceTab, sceneTab, sourcePanel, scenePanel));
+    const {sceneTab, sourceTab, scenePanel, sourcePanel, tabList, wrapper} = buildTabs();
+    (codeToolbar ?? pre).replaceWith(wrapper);
+    sourcePanel.append(codeToolbar ?? pre);
+
+    if (toolbar) {
+        toolbar.classList.add('scene-toolbar');
+        toolbar.hidden = true; // scene tab is active by default
+        tabList.append(toolbar);
+    }
+
+    sceneTab.addEventListener('click', () => {
+        activateTab(sceneTab, sourceTab, scenePanel, sourcePanel);
+        if (toolbar) {
+            toolbar.hidden = true;
+        }
+    });
+    sourceTab.addEventListener('click', () => {
+        activateTab(sourceTab, sceneTab, sourcePanel, scenePanel);
+        if (toolbar) {
+            toolbar.hidden = false;
+        }
+    });
 
     const globals = window as unknown as {
         Scene: new (container: HTMLElement, options: SceneOptions) => Scene;
@@ -65,6 +84,7 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
  */
 function buildTabs(): {
     wrapper: HTMLElement;
+    tabList: HTMLElement;
     sceneTab: HTMLButtonElement;
     sourceTab: HTMLButtonElement;
     scenePanel: HTMLElement;
@@ -90,7 +110,7 @@ function buildTabs(): {
 
     wrapper.append(tabList, scenePanel, sourcePanel);
 
-    return {wrapper, sceneTab, sourceTab, scenePanel, sourcePanel};
+    return {wrapper, tabList, sceneTab, sourceTab, scenePanel, sourcePanel};
 }
 
 function createTabButton(label: string, active: boolean): HTMLButtonElement {
