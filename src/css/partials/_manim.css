@@ -71,4 +71,13 @@
   position: absolute;
   display: inline-flex;
   align-items: baseline;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 6px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.manim-draggable-expression:hover {
+  background: rgba(0, 0, 0, 0.85);
 }
