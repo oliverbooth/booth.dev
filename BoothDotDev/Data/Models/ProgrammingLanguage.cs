@@ -17,6 +17,22 @@ public static class ProgrammingLanguage
         ["unity"] = "Unity",
         ["unreal"] = "Unreal Engine",
         ["gd"] = "Godot",
+        ["ts"] = "TypeScript",
+        ["js"] = "JavaScript",
+        ["py"] = "Python",
+        ["rb"] = "Ruby",
+        ["php"] = "PHP",
+        ["go"] = "Go",
+        ["rs"] = "Rust",
+        ["swift"] = "Swift",
+        ["dart"] = "Dart",
+        ["lua"] = "Lua",
+        ["r"] = "R",
+        ["pl"] = "Perl",
+        ["hs"] = "Haskell",
+        ["scala"] = "Scala",
+        ["elixir"] = "Elixir",
+        ["clj"] = "Clojure"
     };
 
     /// <summary>
