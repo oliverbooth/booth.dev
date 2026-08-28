@@ -1,5 +1,7 @@
 import type {Scene, SceneOptions, ThreeDScene} from 'manim-web';
 import {ensureManimWebLoaded} from './bootstrap.ts';
+import {DraggableExpression} from './draggable-expression.ts';
+import {DisplayValue, DraggableValue} from './draggable-value.ts';
 
 /**
  * Standardized dimensions for every manim-web scene on the site.
@@ -19,6 +21,17 @@ export async function initManimScenes(element: HTMLElement): Promise<void> {
     }
 
     await ensureManimWebLoaded();
+
+    // DraggableValue/DisplayValue/DraggableExpression are ours, not part of manim-web's own export set, so they
+    // aren't bridged by ensureManimWebLoaded - set up once per page rather than once per scene
+    const globals = window as unknown as {
+        DraggableValue: typeof DraggableValue;
+        DisplayValue: typeof DisplayValue;
+        DraggableExpression: typeof DraggableExpression;
+    };
+    globals.DraggableValue = DraggableValue;
+    globals.DisplayValue = DisplayValue;
+    globals.DraggableExpression = DraggableExpression;
 
     // mounted sequentially, not in parallel - each scene's own instance is handed off via a transient global that
     // must survive only until that scene's module reads it on its very first line (see runSceneScript), so two

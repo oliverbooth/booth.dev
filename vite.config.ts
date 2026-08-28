@@ -24,10 +24,33 @@ function syncPrismComponents(): Plugin {
     };
 }
 
+/**
+ * Copies KaTeX's stylesheet and font files out of node_modules into the public dir.
+ * @returns A Vite plugin that copies KaTeX's CSS and fonts to the public directory.
+ */
+function syncKatexAssets(): Plugin {
+    return {
+        name: 'sync-katex-assets',
+        configResolved() {
+            const srcDir = resolve(__dirname, 'node_modules/katex/dist');
+            const destDir = resolve(__dirname, 'public/css/katex');
+            const fontsDestDir = resolve(destDir, 'fonts');
+
+            mkdirSync(fontsDestDir, {recursive: true});
+            copyFileSync(resolve(srcDir, 'katex.min.css'), resolve(destDir, 'katex.min.css'));
+
+            const fontsSrcDir = resolve(srcDir, 'fonts');
+            for (const file of readdirSync(fontsSrcDir)) {
+                copyFileSync(resolve(fontsSrcDir, file), resolve(fontsDestDir, file));
+            }
+        },
+    };
+}
+
 export default defineConfig({
     root: 'src',
     publicDir: '../public',
-    plugins: [syncPrismComponents()],
+    plugins: [syncPrismComponents(), syncKatexAssets()],
     server: {
         port: 5173,
         strictPort: true,
