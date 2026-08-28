@@ -1,5 +1,8 @@
+.code-toolbar > .toolbar, .scene-toolbar.toolbar {
+  font-family: var(--font-sans) !important;
+}
+
 div.code-toolbar > .toolbar {
-  font-family: var(--font-sans);
   position: absolute;
   z-index: 10;
   top: 0.5rem;

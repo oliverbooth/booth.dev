@@ -11,6 +11,7 @@ import 'prismjs/plugins/autoloader/prism-autoloader.js';
 import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
 import {initManimScenes} from './manim/scenes.ts';
 import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
+import {initVexFlowScenes} from './vexflow/scenes.ts';
 
 // Prism auto-runs highlightAll() on DOMContentLoaded unless told otherwise; <script data-manual> tag used to suppress this, but
 // that signal doesn't exist for a bundled import, so it's set explicitly here. this MUST run before Prism's own DOMContentLoaded
@@ -36,6 +37,7 @@ export function initContentFeatures(element?: HTMLElement): void {
     renderTimestamps(element);
     renderSpoilers(element);
     initManimScenes(element).catch(error => console.error('Failed to initialize manim-web scenes:', error));
+    initVexFlowScenes(element).catch(error => console.error('Failed to initialize vexflow scenes:', error));
 }
 
 /**

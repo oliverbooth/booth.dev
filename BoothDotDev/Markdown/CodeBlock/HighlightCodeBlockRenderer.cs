@@ -8,7 +8,8 @@ namespace BoothDotDev.Markdown.CodeBlock;
 /// <summary>
 ///     Extends the stock <see cref="CodeBlockRenderer" /> to surface a fenced code block's <c>h=...</c> highlight trivia as a
 ///     <c>data-highlight</c> attribute, for client-side application against Prism's rendered tokens; also flags
-///     <c>manim-2d</c>/<c>manim-3d</c> blocks for client-side rendering as a manim-web scene.
+///     <c>manim-2d</c>/<c>manim-3d</c> blocks for client-side rendering as a manim-web scene, and <c>vexflow</c> blocks for
+///     client-side rendering as music notation.
 /// </summary>
 public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
 {
@@ -16,6 +17,7 @@ public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
     protected override void Write(HtmlRenderer renderer, MarkdownCodeBlock obj)
     {
         var manimDimension = (string?)null;
+        var isVexFlow = false;
 
         if (obj is FencedCodeBlock { Arguments.Length: > 0 } fenced)
         {
@@ -37,11 +39,17 @@ public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
             {
                 obj.GetAttributes().AddPropertyIfNotExist("data-manim", manimDimension);
             }
+
+            isVexFlow = arguments.Contains("vexflow");
+            if (isVexFlow)
+            {
+                obj.GetAttributes().AddPropertyIfNotExist("data-vexflow", string.Empty);
+            }
         }
 
         base.Write(renderer, obj);
 
-        if (manimDimension is not null)
+        if (manimDimension is not null || isVexFlow)
         {
             // client-side rendering replaces this codeblock with a live scene; readers without JavaScript never see
             // that happen, so they're left looking at raw code with no indication a visualization was intended
