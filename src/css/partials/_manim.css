@@ -37,7 +37,7 @@
 .manim-scene-panel:not([hidden]) {
   display: flex;
   justify-content: center;
-  background: var(--surface-2);
+  background: black;
 }
 
 .manim-source-panel pre {
