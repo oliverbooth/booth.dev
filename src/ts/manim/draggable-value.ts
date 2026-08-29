@@ -234,6 +234,11 @@ export class DraggableNumber extends DisplayNumber {
 const overlayLayers = new WeakMap<HTMLElement, HTMLElement>();
 
 /**
+ * Caps how far the overlay layer scales up relative to its authored (inline, in-article) size.
+ */
+const MAX_OVERLAY_SCALE = 2;
+
+/**
  * Returns the shared, responsively-scaled overlay layer for a scene's container.
  * @param container The scene's own container element.
  */
@@ -258,7 +263,7 @@ export function getOverlayLayer(container: HTMLElement): HTMLElement {
             return;
         }
 
-        const scale = referenceWidth > 0 ? container.clientWidth / referenceWidth : 1;
+        const scale = referenceWidth > 0 ? Math.min(container.clientWidth / referenceWidth, MAX_OVERLAY_SCALE) : 1;
         layer.style.transform = `scale(${scale})`;
     });
     observer.observe(container);
