@@ -231,6 +231,41 @@ export class DraggableNumber extends DisplayNumber {
     }
 }
 
+const overlayLayers = new WeakMap<HTMLElement, HTMLElement>();
+
+/**
+ * Returns the shared, responsively-scaled overlay layer for a scene's container.
+ * @param container The scene's own container element.
+ */
+export function getOverlayLayer(container: HTMLElement): HTMLElement {
+    const existing = overlayLayers.get(container);
+    if (existing) {
+        return existing;
+    }
+
+    const layer = document.createElement('div');
+    layer.style.position = 'absolute';
+    layer.style.inset = '0';
+    layer.style.pointerEvents = 'none';
+    layer.style.transformOrigin = 'top left';
+    container.append(layer);
+    overlayLayers.set(container, layer);
+
+    const referenceWidth = container.clientWidth;
+    const observer = new ResizeObserver(() => {
+        if (!container.isConnected) {
+            observer.disconnect();
+            return;
+        }
+
+        const scale = referenceWidth > 0 ? container.clientWidth / referenceWidth : 1;
+        layer.style.transform = `scale(${scale})`;
+    });
+    observer.observe(container);
+
+    return layer;
+}
+
 export interface DraggableValueOptions extends DraggableNumberOptions {
     /** Horizontal offset, in pixels, from the scene's container's top-left corner. */
     x: number;
@@ -267,7 +302,7 @@ export class DraggableValue {
         this.number.element.style.left = `${options.x}px`;
         this.number.element.style.top = `${options.y}px`;
 
-        scene.getContainer().append(this.number.element);
+        getOverlayLayer(scene.getContainer()).append(this.number.element);
     }
 
     /**
@@ -316,7 +351,7 @@ export class DisplayValue {
         this.number.element.style.left = `${options.x}px`;
         this.number.element.style.top = `${options.y}px`;
 
-        scene.getContainer().append(this.number.element);
+        getOverlayLayer(scene.getContainer()).append(this.number.element);
     }
 
     /**

@@ -1,5 +1,5 @@
 import type {Scene, ThreeDScene} from 'manim-web';
-import {DisplayNumber, type DisplayNumberOptions, DraggableNumber, type DraggableNumberOptions} from './draggable-value.ts';
+import {DisplayNumber, type DisplayNumberOptions, DraggableNumber, type DraggableNumberOptions, getOverlayLayer} from './draggable-value.ts';
 import {ensureKatexLoaded} from './katex-loader.ts';
 
 /** A fixed, non-interactive piece of the expression - just LaTeX, e.g. `"\\text{lerp}("` or `", "`. */
@@ -72,7 +72,7 @@ export class DraggableExpression {
             }
         }
 
-        scene.getContainer().append(this.wrapper);
+        getOverlayLayer(scene.getContainer()).append(this.wrapper);
     }
 
     /**
