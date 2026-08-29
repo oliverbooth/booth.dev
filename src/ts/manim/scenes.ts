@@ -9,6 +9,26 @@ import {DisplayValue, DraggableValue} from './draggable-value.ts';
 const SCENE_OPTIONS: SceneOptions = {backgroundColor: '#000'};
 
 /**
+ * Every currently-mounted scene, keyed by its `.manim-scene-panel` container.
+ */
+const mountedScenes = new WeakMap<HTMLElement, Scene | ThreeDScene>();
+
+/**
+ * Disposes every manim-web scene mounted within the given element.
+ * @param element The element within which to find and dispose manim-web scenes.
+ */
+export function disposeManimScenes(element: HTMLElement): void {
+    const panels = element.matches('.manim-scene-panel')
+        ? [element, ...element.querySelectorAll<HTMLElement>('.manim-scene-panel')]
+        : [...element.querySelectorAll<HTMLElement>('.manim-scene-panel')];
+
+    for (const panel of panels) {
+        mountedScenes.get(panel)?.dispose();
+        mountedScenes.delete(panel);
+    }
+}
+
+/**
  * Finds manim-web codeblocks within the given element and mounts each as a live, tabbed scene. No-ops - without
  * loading manim-web at all - if the element contains none.
  * @param element The element within which to find and mount manim-web codeblocks.
@@ -88,6 +108,7 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
     const scene = codeElement.dataset.manim === '3d'
         ? new globals.ThreeDScene(scenePanel, SCENE_OPTIONS)
         : new globals.Scene(scenePanel, SCENE_OPTIONS);
+    mountedScenes.set(scenePanel, scene);
 
     await runSceneScript(codeElement.textContent ?? '', scenePanel, scene);
 }
