@@ -1,3 +1,7 @@
+.code-toolbar > .toolbar, .scene-toolbar.toolbar {
+  font-family: var(--font-sans) !important;
+}
+
 div.code-toolbar > .toolbar {
   position: absolute;
   z-index: 10;
@@ -34,6 +38,59 @@ div.code-toolbar > .toolbar {
 
     > button {
       background-color: rgba(0, 0, 0, 0.65); /* re-assert over the button-reset below */
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font: inherit;
+      font-size: 0.7rem;
+      line-height: 1;
+      overflow: visible;
+      user-select: none;
+
+      &:hover,
+      &:focus-visible {
+        background: var(--accent, #6161cd);
+        border-color: var(--accent, #6161cd);
+        color: #fff;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
+    }
+  }
+}
+
+.scene-toolbar {
+  line-height: 1;
+  margin-left: auto;
+
+  > .toolbar-item {
+    display: inline-block;
+    line-height: 1;
+
+    > a,
+    > button,
+    > span {
+      padding: 0.3rem 0.55rem;
+      line-height: 1;
+
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      box-shadow: none;
+
+      color: #eaeaf0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    > button {
+      background-color: rgba(0, 0, 0, 0.65);
       border: 1px solid rgba(255, 255, 255, 0.12);
       font: inherit;
       font-size: 0.7rem;

@@ -1,0 +1,90 @@
+.vexflow-scene {
+  margin: 1.5rem 0;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.vexflow-scene-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface-1);
+  border-bottom: 0.5px solid var(--border);
+  padding: 4px;
+}
+
+.vexflow-tab {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.vexflow-tab:hover {
+  color: var(--text-primary);
+}
+
+.vexflow-tab.active {
+  color: var(--text-primary);
+  background: var(--accent-tint);
+}
+
+.vexflow-theme-toggle:not([hidden]) {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.vexflow-theme-toggle:hover {
+  color: var(--text-primary);
+  background: var(--accent-tint);
+}
+
+.vexflow-scene-panel:not([hidden]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 1.5rem;
+}
+
+.vexflow-scene .vexflow-scene-panel {
+  background: #f5f5f5;
+
+  svg {
+    fill: #0d0d10;
+    stroke: #0d0d10;
+  }
+}
+
+.vexflow-scene[data-theme="dark"] .vexflow-scene-panel {
+  background: #0d0d10;
+
+  svg {
+    fill: #eee;
+    stroke: #eee;
+  }
+}
+
+.vexflow-scene-panel svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.vexflow-source-panel pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}

@@ -32,6 +32,7 @@ msbuild.wrn
 node_modules/
 dist/
 public/js/prism-components/
+public/css/katex/
 *.tsbuildinfo
 .npm
 .eslintcache
