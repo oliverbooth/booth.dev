@@ -2,6 +2,7 @@ import type {Scene, SceneOptions, ThreeDScene} from 'manim-web';
 import {ensureManimWebLoaded} from './bootstrap.ts';
 import {DraggableExpression} from './draggable-expression.ts';
 import {DisplayValue, DraggableValue} from './draggable-value.ts';
+import {ensureMathJsLoaded} from './mathjs-loader.ts';
 
 /**
  * Standardized options for every manim-web scene on the site.
@@ -40,7 +41,7 @@ export async function initManimScenes(element: HTMLElement): Promise<void> {
         return;
     }
 
-    await ensureManimWebLoaded();
+    await Promise.all([ensureManimWebLoaded(), ensureMathJsLoaded()]);
 
     // DraggableValue/DisplayValue/DraggableExpression are ours, not part of manim-web's own export set, so they
     // aren't bridged by ensureManimWebLoaded - set up once per page rather than once per scene
