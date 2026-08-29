@@ -94,6 +94,8 @@ export interface DraggableNumberOptions extends DisplayNumberOptions {
     max: number;
     /** Pixel distance a drag must travel to move through the entire min-max range. Defaults to 200. */
     sensitivity?: number;
+    /** Wraps the value around at `min`/`max` instead of clamping to them. Defaults to false. */
+    wrap?: boolean;
     /** Values the dragged number snaps to when within `snapDistance` of them. */
     snapPoints?: number[];
     /** How close (in value units) the current value must be to a snap point to snap to it. Defaults to 0 (off). */
@@ -102,7 +104,7 @@ export interface DraggableNumberOptions extends DisplayNumberOptions {
     onChange: (value: number) => void;
 }
 
-type ResolvedDragOptions = Required<Pick<DraggableNumberOptions, 'min' | 'max' | 'sensitivity' | 'snapPoints' | 'snapDistance' | 'onChange'>>;
+type ResolvedDragOptions = Required<Pick<DraggableNumberOptions, 'min' | 'max' | 'sensitivity' | 'wrap' | 'snapPoints' | 'snapDistance' | 'onChange'>>;
 
 /**
  * A `DisplayNumber` a reader can click-and-drag (or wheel/arrow-key) to adjust, as a bare, unpositioned element -
@@ -122,6 +124,7 @@ export class DraggableNumber extends DisplayNumber {
         super(options);
         this.dragOptions = {
             sensitivity: 200,
+            wrap: false,
             snapPoints: [],
             snapDistance: 0,
             ...options,
@@ -144,11 +147,12 @@ export class DraggableNumber extends DisplayNumber {
 
     /**
      * Sets the value programmatically.
-     * @param value The new value. Will be clamped to the configured min/max and snapped to any configured snap points.
+     * @param value The new value. Wrapped or clamped to the configured min/max (see `wrap`) and snapped to any configured snap points.
      */
     public override setValue(value: number): void {
-        const {min, max, snapPoints, snapDistance} = this.dragOptions;
-        let next = Math.max(min, Math.min(max, value));
+        const {min, max, wrap, snapPoints, snapDistance} = this.dragOptions;
+        const range = max - min;
+        let next = wrap && range > 0 ? min + (((value - min) % range) + range) % range : Math.max(min, Math.min(max, value));
 
         for (const snapPoint of snapPoints) {
             if (Math.abs(next - snapPoint) <= snapDistance) {
