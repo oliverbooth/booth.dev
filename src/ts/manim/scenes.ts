@@ -78,7 +78,7 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
     const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
     const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
-    const {sceneTab, sourceTab, scenePanel, sourcePanel, tabList, wrapper} = buildTabs();
+    const {sceneTab, sourceTab, scenePanel, sourcePanel, tabList, wrapper, fullscreenToggle} = buildTabs();
     (codeToolbar ?? pre).replaceWith(wrapper);
     sourcePanel.append(codeToolbar ?? pre);
 
@@ -90,12 +90,14 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
 
     sceneTab.addEventListener('click', () => {
         activateTab(sceneTab, sourceTab, scenePanel, sourcePanel);
+        fullscreenToggle.hidden = false;
         if (toolbar) {
             toolbar.hidden = true;
         }
     });
     sourceTab.addEventListener('click', () => {
         activateTab(sourceTab, sceneTab, sourcePanel, scenePanel);
+        fullscreenToggle.hidden = true;
         if (toolbar) {
             toolbar.hidden = false;
         }
@@ -111,6 +113,16 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
         : new globals.Scene(scenePanel, SCENE_OPTIONS);
     mountedScenes.set(scenePanel, scene);
 
+    const resizeObserver = new ResizeObserver(() => {
+        if (!scenePanel.isConnected) {
+            resizeObserver.disconnect();
+            return;
+        }
+
+        scene.resize(scenePanel.clientWidth, scenePanel.clientHeight);
+    });
+    resizeObserver.observe(scenePanel);
+
     await runSceneScript(codeElement.textContent ?? '', scenePanel, scene);
 }
 
@@ -124,6 +136,7 @@ function buildTabs(): {
     sourceTab: HTMLButtonElement;
     scenePanel: HTMLElement;
     sourcePanel: HTMLElement;
+    fullscreenToggle: HTMLButtonElement;
 } {
     const wrapper = document.createElement('div');
     wrapper.className = 'manim-scene';
@@ -134,7 +147,8 @@ function buildTabs(): {
 
     const sceneTab = createTabButton('Scene', true);
     const sourceTab = createTabButton('Source', false);
-    tabList.append(sceneTab, sourceTab);
+    const fullscreenToggle = createFullscreenToggle(wrapper);
+    tabList.append(sceneTab, sourceTab, fullscreenToggle);
 
     const scenePanel = document.createElement('div');
     scenePanel.className = 'manim-scene-panel';
@@ -145,7 +159,35 @@ function buildTabs(): {
 
     wrapper.append(tabList, scenePanel, sourcePanel);
 
-    return {wrapper, tabList, sceneTab, sourceTab, scenePanel, sourcePanel};
+    return {wrapper, tabList, sceneTab, sourceTab, scenePanel, sourcePanel, fullscreenToggle};
+}
+
+/**
+ * Builds the fullscreen toggle for a scene - fullscreens the whole wrapper (tabs included), not just the canvas
+ * panel, so the toggle itself (and the Scene/Source tabs) stay reachable to exit again rather than disappearing the
+ * moment you enter fullscreen. Tracks the real `fullscreenchange` event rather than just flipping state on click,
+ * since fullscreen can also be exited via Esc or the browser's own UI, not only this button.
+ * @param wrapper The scene's outermost wrapper element - what actually goes fullscreen.
+ */
+function createFullscreenToggle(wrapper: HTMLElement): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'manim-fullscreen-toggle';
+
+    function update(): void {
+        const isFullscreen = document.fullscreenElement === wrapper;
+        button.innerHTML = `<i class="ti ti-${isFullscreen ? 'minimize' : 'maximize'}"></i>`;
+        button.setAttribute('aria-label', isFullscreen ? 'Exit fullscreen' : 'View scene fullscreen');
+    }
+
+    button.addEventListener('click', () => {
+        void (document.fullscreenElement === wrapper ? document.exitFullscreen() : wrapper.requestFullscreen());
+    });
+
+    wrapper.addEventListener('fullscreenchange', update);
+    update();
+
+    return button;
 }
 
 function createTabButton(label: string, active: boolean): HTMLButtonElement {
