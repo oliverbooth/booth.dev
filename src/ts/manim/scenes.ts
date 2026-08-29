@@ -3,6 +3,7 @@ import {ensureManimWebLoaded} from './bootstrap.ts';
 import {DraggableExpression} from './draggable-expression.ts';
 import {DisplayValue, DraggableValue} from './draggable-value.ts';
 import {ensureMathJsLoaded} from './mathjs-loader.ts';
+import {Toggle} from './toggle.ts';
 
 /**
  * Standardized options for every manim-web scene on the site.
@@ -43,16 +44,18 @@ export async function initManimScenes(element: HTMLElement): Promise<void> {
 
     await Promise.all([ensureManimWebLoaded(), ensureMathJsLoaded()]);
 
-    // DraggableValue/DisplayValue/DraggableExpression are ours, not part of manim-web's own export set, so they
-    // aren't bridged by ensureManimWebLoaded - set up once per page rather than once per scene
+    // DraggableValue/DisplayValue/DraggableExpression/Toggle are ours, not part of manim-web's own export set, so
+    // they aren't bridged by ensureManimWebLoaded - set up once per page rather than once per scene
     const globals = window as unknown as {
         DraggableValue: typeof DraggableValue;
         DisplayValue: typeof DisplayValue;
         DraggableExpression: typeof DraggableExpression;
+        Toggle: typeof Toggle;
     };
     globals.DraggableValue = DraggableValue;
     globals.DisplayValue = DisplayValue;
     globals.DraggableExpression = DraggableExpression;
+    globals.Toggle = Toggle;
 
     // mounted sequentially, not in parallel - each scene's own instance is handed off via a transient global that
     // must survive only until that scene's module reads it on its very first line (see runSceneScript), so two
