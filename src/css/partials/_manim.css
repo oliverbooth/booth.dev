@@ -35,8 +35,11 @@
 }
 
 .manim-scene-panel:not([hidden]) {
+  position: relative;
   display: flex;
   justify-content: center;
+  width: 100%;
+  aspect-ratio: 7 / 4;
   background: black;
 }
 
@@ -44,4 +47,39 @@
   margin: 0;
   border: none;
   border-radius: 0;
+}
+
+.manim-draggable-value {
+  cursor: col-resize;
+  padding: 2px 4px;
+  border-radius: 4px;
+  user-select: none;
+  touch-action: none;
+  transition: text-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.manim-draggable-value:hover,
+.manim-draggable-value.dragging {
+  background: rgba(255, 255, 255, 0.08);
+  text-shadow: 0 0 8px currentColor;
+}
+
+.manim-draggable-value:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.manim-draggable-expression {
+  position: absolute;
+  display: inline-flex;
+  align-items: baseline;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 6px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.manim-draggable-expression:hover {
+  background: rgba(0, 0, 0, 0.85);
 }

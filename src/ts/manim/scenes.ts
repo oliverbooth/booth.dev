@@ -1,10 +1,33 @@
 import type {Scene, SceneOptions, ThreeDScene} from 'manim-web';
 import {ensureManimWebLoaded} from './bootstrap.ts';
+import {DraggableExpression} from './draggable-expression.ts';
+import {DisplayValue, DraggableValue} from './draggable-value.ts';
+import {ensureMathJsLoaded} from './mathjs-loader.ts';
 
 /**
- * Standardized dimensions for every manim-web scene on the site.
+ * Standardized options for every manim-web scene on the site.
  */
-const SCENE_OPTIONS: SceneOptions = {width: 700, height: 400, backgroundColor: '#000'};
+const SCENE_OPTIONS: SceneOptions = {backgroundColor: '#000'};
+
+/**
+ * Every currently-mounted scene, keyed by its `.manim-scene-panel` container.
+ */
+const mountedScenes = new WeakMap<HTMLElement, Scene | ThreeDScene>();
+
+/**
+ * Disposes every manim-web scene mounted within the given element.
+ * @param element The element within which to find and dispose manim-web scenes.
+ */
+export function disposeManimScenes(element: HTMLElement): void {
+    const panels = element.matches('.manim-scene-panel')
+        ? [element, ...element.querySelectorAll<HTMLElement>('.manim-scene-panel')]
+        : [...element.querySelectorAll<HTMLElement>('.manim-scene-panel')];
+
+    for (const panel of panels) {
+        mountedScenes.get(panel)?.dispose();
+        mountedScenes.delete(panel);
+    }
+}
 
 /**
  * Finds manim-web codeblocks within the given element and mounts each as a live, tabbed scene. No-ops - without
@@ -18,7 +41,18 @@ export async function initManimScenes(element: HTMLElement): Promise<void> {
         return;
     }
 
-    await ensureManimWebLoaded();
+    await Promise.all([ensureManimWebLoaded(), ensureMathJsLoaded()]);
+
+    // DraggableValue/DisplayValue/DraggableExpression are ours, not part of manim-web's own export set, so they
+    // aren't bridged by ensureManimWebLoaded - set up once per page rather than once per scene
+    const globals = window as unknown as {
+        DraggableValue: typeof DraggableValue;
+        DisplayValue: typeof DisplayValue;
+        DraggableExpression: typeof DraggableExpression;
+    };
+    globals.DraggableValue = DraggableValue;
+    globals.DisplayValue = DisplayValue;
+    globals.DraggableExpression = DraggableExpression;
 
     // mounted sequentially, not in parallel - each scene's own instance is handed off via a transient global that
     // must survive only until that scene's module reads it on its very first line (see runSceneScript), so two
@@ -75,6 +109,7 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
     const scene = codeElement.dataset.manim === '3d'
         ? new globals.ThreeDScene(scenePanel, SCENE_OPTIONS)
         : new globals.Scene(scenePanel, SCENE_OPTIONS);
+    mountedScenes.set(scenePanel, scene);
 
     await runSceneScript(codeElement.textContent ?? '', scenePanel, scene);
 }

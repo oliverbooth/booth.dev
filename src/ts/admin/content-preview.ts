@@ -1,4 +1,5 @@
 import {initContentFeatures} from '../content-rendering.ts';
+import {disposeManimScenes} from '../manim/scenes.ts';
 
 declare const MathJax: {typesetPromise(elements?: HTMLElement[]): Promise<void>} | undefined;
 
@@ -113,6 +114,9 @@ async function fetchPreview(form: HTMLFormElement, previewBody: HTMLElement, fie
         }
 
         const {html, proseClass} = await response.json() as PreviewResponse;
+
+        disposeManimScenes(previewBody);
+
         previewBody.className = `prose ${proseClass}`;
         previewBody.innerHTML = html;
 
