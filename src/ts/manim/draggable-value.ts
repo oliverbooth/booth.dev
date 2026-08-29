@@ -271,6 +271,17 @@ export function getOverlayLayer(container: HTMLElement): HTMLElement {
     return layer;
 }
 
+/**
+ * Absolutely positions `element` at `(x, y)` within `scene`'s shared overlay layer - the common anchoring glue
+ * behind every overlay control (`DraggableValue`, `DisplayValue`, `Toggle`, ...).
+ */
+export function anchorInOverlay(scene: Scene | ThreeDScene, element: HTMLElement, x: number, y: number): void {
+    element.style.position = 'absolute';
+    element.style.left = `${x}px`;
+    element.style.top = `${y}px`;
+    getOverlayLayer(scene.getContainer()).append(element);
+}
+
 export interface DraggableValueOptions extends DraggableNumberOptions {
     /** Horizontal offset, in pixels, from the scene's container's top-left corner. */
     x: number;
@@ -303,11 +314,7 @@ export class DraggableValue {
      */
     constructor(scene: Scene | ThreeDScene, options: DraggableValueOptions) {
         this.number = new DraggableNumber(options);
-        this.number.element.style.position = 'absolute';
-        this.number.element.style.left = `${options.x}px`;
-        this.number.element.style.top = `${options.y}px`;
-
-        getOverlayLayer(scene.getContainer()).append(this.number.element);
+        anchorInOverlay(scene, this.number.element, options.x, options.y);
     }
 
     /**
@@ -352,11 +359,7 @@ export class DisplayValue {
      */
     constructor(scene: Scene | ThreeDScene, options: DisplayValueOptions) {
         this.number = new DisplayNumber(options);
-        this.number.element.style.position = 'absolute';
-        this.number.element.style.left = `${options.x}px`;
-        this.number.element.style.top = `${options.y}px`;
-
-        getOverlayLayer(scene.getContainer()).append(this.number.element);
+        anchorInOverlay(scene, this.number.element, options.x, options.y);
     }
 
     /**
