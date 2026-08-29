@@ -120,6 +120,13 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
         }
 
         scene.resize(scenePanel.clientWidth, scenePanel.clientHeight);
+
+        // manim-web bug workaround: when the canvas resizes, the camera's projection matrix is updated, but the mobjects'
+        // positions are not
+        for (const mobject of scene.mobjects) {
+            mobject.shift([0, 0, 0]);
+        }
+        scene.render();
     });
     resizeObserver.observe(scenePanel);
 
