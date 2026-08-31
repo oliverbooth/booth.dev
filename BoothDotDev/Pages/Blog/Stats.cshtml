@@ -1,4 +1,6 @@
 @page "/blog/stats"
+@using Cysharp.Text
+@using Humanizer
 @model Stats
 
 @{
@@ -36,7 +38,7 @@
         <h2>Posts by year</h2>
 
         <div class="stats-bars">
-            @foreach ((int year, int count) in Model.PostsByYear)
+            @foreach (var (year, count) in Model.PostsByYear)
             {
                 <div class="stats-bar-row">
                     <span class="stats-bar-label">@year</span>
@@ -65,7 +67,16 @@
                         {
                             @if (day.Date is { } date)
                             {
-                                <div class="commit-graph-cell@(day.HasPost ? " has-post" : "")" title="@date.ToString("d MMMM yyyy")@(day.HasPost ? " — published" : "")"></div>
+                                using var builder = ZString.CreateStringBuilder();
+                                var hasPost = day.PostCount > 0;
+                                builder.Append($"{date.Day} {date.ToString("MMMM")} {date.Year}");
+                                if (hasPost)
+                                {
+                                    builder.Append(" - ");
+                                    builder.Append("post".ToQuantity(day.PostCount));
+                                }
+
+                                <div class="commit-graph-cell@(hasPost ? " has-post" : "")" title="@builder"></div>
                             }
                             else
                             {

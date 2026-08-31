@@ -131,7 +131,7 @@ internal sealed class Stats : PageModel
             {
                 DateOnly date = gridStart.AddDays(column * 7 + row);
                 var inYear = date.Year == year;
-                days.Add(new PostDistributionDay(inYear ? date : null, inYear && publishDates.Contains(date)));
+                days.Add(new PostDistributionDay(inYear ? date : null, publishDates.Count(d => d == date)));
             }
         }
 
@@ -167,5 +167,5 @@ internal readonly record struct PostDistributionMonth(string Name, int Column);
 ///     Represents a single day cell in a <see cref="PostDistributionYear" />'s grid.
 /// </summary>
 /// <param name="Date">The calendar date this cell represents, or <see langword="null" /> if it falls outside the year.</param>
-/// <param name="HasPost">A value indicating whether a post was published on <see cref="Date" />.</param>
-internal readonly record struct PostDistributionDay(DateOnly? Date, bool HasPost);
+/// <param name="PostCount">The number of posts published on this date.</param>
+internal readonly record struct PostDistributionDay(DateOnly? Date, int PostCount);
