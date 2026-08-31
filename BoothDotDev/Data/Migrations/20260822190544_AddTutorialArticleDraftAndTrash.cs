@@ -105,7 +105,7 @@ namespace BoothDotDev.Data.Migrations
                 principalColumn: "id");
 
             // --- Phase 2: migrate. Give every existing article a generation-zero draft carrying its current
-            // content, then point it at that draft. Nothing here is hand-typed — Postgres copies every row
+            // content, then point it at that draft. Nothing here is hand-typed - Postgres copies every row
             // in one pass. ---
 
             migrationBuilder.Sql(
@@ -257,7 +257,7 @@ namespace BoothDotDev.Data.Migrations
                 defaultValue: Visibility.Private);
 
             // Backfill the resurrected columns from each article's current draft, while both `current_draft_id`
-            // and `tutorial_article_draft` still exist. This only restores the *current* draft's content — the
+            // and `tutorial_article_draft` still exist. This only restores the *current* draft's content - the
             // rest of the draft history has nowhere to go in the old schema and is discarded here.
 
             migrationBuilder.Sql(

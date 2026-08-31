@@ -87,7 +87,7 @@ public sealed class CreationService
     /// </summary>
     /// <param name="id">The ID of the artwork item.</param>
     /// <param name="includeTrashed">
-    ///     Whether to include the item if it's trashed. Only the admin editor should pass <see langword="true" /> — every
+    ///     Whether to include the item if it's trashed. Only the admin editor should pass <see langword="true" /> - every
     ///     public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the item if found; otherwise, an error result.</returns>
@@ -108,7 +108,7 @@ public sealed class CreationService
     /// </summary>
     /// <param name="id">The ID of the music item.</param>
     /// <param name="includeTrashed">
-    ///     Whether to include the item if it's trashed. Only the admin editor should pass <see langword="true" /> — every
+    ///     Whether to include the item if it's trashed. Only the admin editor should pass <see langword="true" /> - every
     ///     public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the item if found; otherwise, an error result.</returns>

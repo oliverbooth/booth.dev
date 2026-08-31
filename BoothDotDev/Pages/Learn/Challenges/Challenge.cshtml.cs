@@ -25,7 +25,7 @@ internal sealed class Challenge : PageModel
         }
 
         // There's no legitimate reason for a signed-out visitor to reach a private challenge by its public
-        // URL — the editor's preview pane covers previewing unpublished work.
+        // URL - the editor's preview pane covers previewing unpublished work.
         if (challenge.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
         {
             return NotFound();

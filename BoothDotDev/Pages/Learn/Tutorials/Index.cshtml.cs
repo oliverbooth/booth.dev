@@ -60,7 +60,7 @@ public sealed class Index : PageModel
             var folder = folderResult.Value;
 
             // There's no legitimate reason for a signed-out visitor to reach a private folder by its public
-            // URL — the admin editor covers previewing unpublished work.
+            // URL - the admin editor covers previewing unpublished work.
             if (folder.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
             {
                 return NotFound();

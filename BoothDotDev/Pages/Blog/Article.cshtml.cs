@@ -46,7 +46,7 @@ internal sealed class Article : PageModel
         var post = result.Value;
 
         // Now that drafts exist, there's no legitimate reason for a signed-out visitor to reach a private post
-        // by its public URL — the editor's preview pane covers previewing unpublished work.
+        // by its public URL - the editor's preview pane covers previewing unpublished work.
         if (post.Visibility == Visibility.Private && User.Identity?.IsAuthenticated != true)
         {
             Response.StatusCode = 404;

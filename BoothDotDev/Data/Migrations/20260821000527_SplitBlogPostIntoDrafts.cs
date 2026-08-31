@@ -92,7 +92,7 @@ namespace BoothDotDev.Data.Migrations
                 principalColumn: "id");
 
             // --- Phase 2: migrate. Give every existing post a generation-zero draft carrying its current
-            // content, then point it at that draft. Nothing here is hand-typed — Postgres copies every row
+            // content, then point it at that draft. Nothing here is hand-typed - Postgres copies every row
             // in one pass. `password` is deliberately not copied anywhere; it's being removed outright. ---
 
             migrationBuilder.Sql(
@@ -169,7 +169,7 @@ namespace BoothDotDev.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // --- Reverse of phase 3: bring the old columns back (password can't be restored — it was
+            // --- Reverse of phase 3: bring the old columns back (password can't be restored - it was
             // deliberately removed, not just relocated). ---
 
             migrationBuilder.AddColumn<string>(
@@ -264,7 +264,7 @@ namespace BoothDotDev.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             // Backfill the resurrected columns from each post's current draft, while both `current_draft_id`
-            // and `blog_post_draft` still exist. This only restores the *current* draft's content — the rest
+            // and `blog_post_draft` still exist. This only restores the *current* draft's content - the rest
             // of the draft history has nowhere to go in the old schema and is discarded here.
 
             migrationBuilder.Sql(

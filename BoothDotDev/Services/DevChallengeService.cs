@@ -236,7 +236,7 @@ public sealed class DevChallengeService
     /// <param name="id">The ID of the challenge.</param>
     /// <param name="includeTrashed">
     ///     Whether to include the challenge if it's trashed. Only the admin editor should pass <see langword="true" />
-    ///     — every public-facing caller should get the trash exclusion for free.
+    ///     - every public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the challenge if found; otherwise, an error result.</returns>
     public Result<DevChallenge> GetChallengeById(ShortGuid id, bool includeTrashed = false)

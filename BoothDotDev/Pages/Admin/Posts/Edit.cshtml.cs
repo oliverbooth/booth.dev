@@ -87,7 +87,7 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="id">The ID of the post to edit. If <see langword="null" />, a new post will be created.</param>
     /// <param name="draftId">
-    ///     The ID of a specific draft to view. If <see langword="null" />, the post's newest draft is loaded — not
+    ///     The ID of a specific draft to view. If <see langword="null" />, the post's newest draft is loaded - not
     ///     necessarily the currently-live one, so reopening the editor resumes from wherever editing was last left
     ///     off rather than silently discarding unpublished draft work.
     /// </param>
@@ -188,7 +188,7 @@ public sealed class Edit : PageModel
 
         var request = BuildSaveRequest();
 
-        // A brand-new post has no prior draft to leave untouched, so its first save — draft or not — always
+        // A brand-new post has no prior draft to leave untouched, so its first save - draft or not - always
         // becomes the post's current draft. There's nothing else for it to sensibly point at.
         var result = id is null
             ? _blogPostService.CreatePost(request)
@@ -233,7 +233,7 @@ public sealed class Edit : PageModel
     /// <param name="id">The ID of the post being edited. If <see langword="null" />, a new post is being created.</param>
     /// <returns>
     ///     A JSON payload of the rendered preview HTML and the prose CSS class for the post's category. This handler
-    ///     backs the editor's live-updating preview pane and is only ever called via <c>fetch</c> — there's no
+    ///     backs the editor's live-updating preview pane and is only ever called via <c>fetch</c> - there's no
     ///     server-rendered fallback, since the Markdown editor itself already requires JS to function.
     /// </returns>
     public IActionResult OnPostPreview(Guid? id)

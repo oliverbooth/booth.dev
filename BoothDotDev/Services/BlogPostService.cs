@@ -93,7 +93,7 @@ public sealed class BlogPostService : BackgroundService
 
     /// <summary>
     ///     Saves a new draft of an existing blog post, without publishing it. The post's current draft is left
-    ///     unchanged, so the public site's rendered content is unaffected — but the parent-level fields (author,
+    ///     unchanged, so the public site's rendered content is unaffected - but the parent-level fields (author,
     ///     slug, publication date, comments) aren't versioned at all, so they're saved immediately regardless.
     /// </summary>
     /// <param name="id">The ID of the post to save a draft for.</param>
@@ -486,7 +486,7 @@ public sealed class BlogPostService : BackgroundService
     /// <param name="key">The ID or slug of the blog post to return.</param>
     /// <param name="includeTrashed">
     ///     <see langword="true" /> to return the post even if it's trashed; otherwise, <see langword="false" />.
-    ///     Trashed posts are excluded by default since this lookup mostly backs public-facing pages — the admin
+    ///     Trashed posts are excluded by default since this lookup mostly backs public-facing pages - the admin
     ///     editor is the one legitimate caller that needs to keep working for a trashed post, so it opts in.
     /// </param>
     /// <returns>

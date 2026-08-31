@@ -91,7 +91,7 @@ public sealed class Edit : PageModel
     /// <param name="projectId">The ID of the project this devlog entry belongs to.</param>
     /// <param name="id">The ID of the devlog entry to edit. If <see langword="null" />, a new entry will be created.</param>
     /// <param name="draftId">
-    ///     The ID of a specific draft to view. If <see langword="null" />, the entry's newest draft is loaded — not
+    ///     The ID of a specific draft to view. If <see langword="null" />, the entry's newest draft is loaded - not
     ///     necessarily the currently-live one, so reopening the editor resumes from wherever editing was last left
     ///     off rather than silently discarding unpublished draft work.
     /// </param>

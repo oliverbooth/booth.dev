@@ -122,7 +122,7 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="id">The ID of the article to edit. If <see langword="null" />, a new article will be created.</param>
     /// <param name="draftId">
-    ///     The ID of a specific draft to view. If <see langword="null" />, the article's newest draft is loaded — not
+    ///     The ID of a specific draft to view. If <see langword="null" />, the article's newest draft is loaded - not
     ///     necessarily the currently-live one, so reopening the editor resumes from wherever editing was last left
     ///     off rather than silently discarding unpublished draft work.
     /// </param>
@@ -232,7 +232,7 @@ public sealed class Edit : PageModel
 
         var request = BuildSaveRequest();
 
-        // A brand-new article has no prior draft to leave untouched, so its first save — draft or not — always
+        // A brand-new article has no prior draft to leave untouched, so its first save - draft or not - always
         // becomes the article's current draft. There's nothing else for it to sensibly point at.
         var result = id is null
             ? _tutorialService.CreateArticle(request)
@@ -247,7 +247,7 @@ public sealed class Edit : PageModel
     /// <param name="id">The ID of the article being edited. If <see langword="null" />, a new article is being created.</param>
     /// <returns>
     ///     A JSON payload of the rendered preview HTML. This handler backs the editor's live-updating preview pane
-    ///     and is only ever called via <c>fetch</c> — there's no server-rendered fallback, since the Markdown editor
+    ///     and is only ever called via <c>fetch</c> - there's no server-rendered fallback, since the Markdown editor
     ///     itself already requires JS to function.
     /// </returns>
     public IActionResult OnPostPreview(Guid? id)

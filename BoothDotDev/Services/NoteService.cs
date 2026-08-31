@@ -212,7 +212,7 @@ public sealed class NoteService
     /// </summary>
     /// <param name="id">The ID of the note.</param>
     /// <param name="includeTrashed">
-    ///     Whether to include the note if it's trashed. Only the admin editor should pass <see langword="true" /> —
+    ///     Whether to include the note if it's trashed. Only the admin editor should pass <see langword="true" /> -
     ///     every public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the note if found; otherwise, an error result.</returns>

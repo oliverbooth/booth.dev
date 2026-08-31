@@ -1,7 +1,7 @@
 namespace BoothDotDev.CodeBlockTrivia.Highlighting;
 
 /// <summary>
-///     Represents a single parsed highlight token — a line spec, optionally paired with one or more column ranges
+///     Represents a single parsed highlight token - a line spec, optionally paired with one or more column ranges
 ///     (e.g. <c>L1@(2..8,14..20)</c>).
 /// </summary>
 /// <param name="Lines">The line spans this token applies to.</param>

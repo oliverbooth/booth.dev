@@ -1,7 +1,7 @@
 namespace BoothDotDev.CodeBlockTrivia.Highlighting;
 
 /// <summary>
-///     Represents a parsed line specification — a single line, or a range of lines — from a highlight trivia token
+///     Represents a parsed line specification - a single line, or a range of lines - from a highlight trivia token
 ///     (e.g. the <c>L3</c> or <c>L3-L5</c> in <c>L3-L5@2..8</c>).
 /// </summary>
 /// <param name="Start">The first (or only) line bound.</param>

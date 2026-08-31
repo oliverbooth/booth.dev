@@ -258,7 +258,7 @@ public sealed class MarkdownRenderingService
     }
 
     /// <summary>
-    ///     Finds every bare filename referenced as CDN media in a Markdown body — both <c>![alt](filename)</c> and
+    ///     Finds every bare filename referenced as CDN media in a Markdown body - both <c>![alt](filename)</c> and
     ///     <c>![[filename]]</c> formats.
     /// </summary>
     /// <param name="body">The Markdown content to scan.</param>

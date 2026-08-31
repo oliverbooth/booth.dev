@@ -236,7 +236,7 @@ public sealed class ProjectService
     ///     otherwise, <see langword="null" />.
     /// </param>
     /// <param name="includeTrashed">
-    ///     Whether to include the devlog entry if it's trashed. Only the admin editor should pass <see langword="true" /> —
+    ///     Whether to include the devlog entry if it's trashed. Only the admin editor should pass <see langword="true" /> -
     ///     every public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns><see langword="true" /> if a devlog entry with the specified project and slug is found; otherwise, <see langword="false" />.</returns>
@@ -254,7 +254,7 @@ public sealed class ProjectService
     /// <param name="id">The ID of the devlog entry.</param>
     /// <param name="includeTrashed">
     ///     Whether to include the devlog entry if it's trashed. Only the admin editor should pass
-    ///     <see langword="true" /> — every public-facing caller should get the trash exclusion for free.
+    ///     <see langword="true" /> - every public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the devlog entry if found; otherwise, an error result.</returns>
     public Result<ProjectDevlog> GetDevlogById(Guid id, bool includeTrashed = false)

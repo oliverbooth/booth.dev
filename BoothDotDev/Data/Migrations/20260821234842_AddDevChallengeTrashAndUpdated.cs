@@ -184,7 +184,7 @@ namespace BoothDotDev.Data.Migrations
 
             // Backfill the resurrected columns from each challenge's current draft, while both
             // `current_draft_id` and `dev_challenge_draft` still exist. This only restores the *current*
-            // draft's content — the rest of the draft history has nowhere to go in the old schema and is
+            // draft's content - the rest of the draft history has nowhere to go in the old schema and is
             // discarded here.
 
             migrationBuilder.Sql(

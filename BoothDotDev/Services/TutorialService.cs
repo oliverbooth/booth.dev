@@ -370,7 +370,7 @@ public sealed class TutorialService
     /// <param name="id">The ID of the article.</param>
     /// <param name="includeTrashed">
     ///     Whether to include the article if it's trashed. Only the admin editor should pass <see langword="true" />
-    ///     — every public-facing caller should get the trash exclusion for free.
+    ///     - every public-facing caller should get the trash exclusion for free.
     /// </param>
     /// <returns>A <see cref="Result{T}" /> containing the article if that article was found, or a failure if not found.</returns>
     public Result<TutorialArticle> GetArticle(Guid id, bool includeTrashed = false)
