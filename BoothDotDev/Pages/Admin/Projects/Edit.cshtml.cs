@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using FluentResults;
 using Microsoft.AspNetCore.Authorization;

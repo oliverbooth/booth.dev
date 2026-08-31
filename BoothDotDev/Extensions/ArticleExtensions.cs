@@ -32,6 +32,25 @@ internal static class ArticleExtensions
             var wordCount = CountWords(post.Body);
             return Math.Max(1, wordCount / WordsPerMinute);
         }
+
+        /// <summary>
+        ///     Returns the number of words in the post, excluding the content of manim-2d/manim-3d/vexflow fenced codeblocks.
+        /// </summary>
+        /// <returns>The word count.</returns>
+        public int GetWordCount()
+        {
+            return CountWords(post.Body);
+        }
+
+        /// <summary>
+        ///     Returns the number of fenced code blocks in the post.
+        /// </summary>
+        /// <returns>The code sample count.</returns>
+        public int GetCodeSampleCount()
+        {
+            MarkdownDocument document = global::Markdig.Markdown.Parse(post.Body, WordCountPipeline);
+            return document.Descendants().OfType<FencedCodeBlock>().Count();
+        }
     }
 
     /// <param name="devlog">The <see cref="ProjectDevlog" />.</param>

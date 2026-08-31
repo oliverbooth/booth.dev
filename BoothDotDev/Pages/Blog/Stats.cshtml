@@ -1,0 +1,85 @@
+@page "/blog/stats"
+@model Stats
+
+@{
+    ViewData["Title"] = "Blog Stats";
+    ViewData["Page"] = "Blog";
+    var maxYearCount = Model.PostsByYear.Count > 0 ? Model.PostsByYear.Max(y => y.Count) : 0;
+}
+
+<div class="page-wide">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Blog/Index">Write</a> / Stats</p>
+    <h1>Blog stats</h1>
+
+    @if (Model.TotalPosts == 0)
+    {
+        <p class="page-intro">Nothing published yet.</p>
+    }
+    else
+    {
+        <div class="page-intro">
+            <p>
+                My first post was published on <strong>@Model.FirstPostDate.ToString("d MMMM yyyy")</strong> and my most
+                recent one was published on <strong>@Model.LastPostDate.ToString("d MMMM yyyy")</strong>. I've published
+                <strong>@Model.TotalPosts.ToString("N0")</strong> posts containing
+                <strong>@Model.TotalWords.ToString("N0")</strong> words and
+                <strong>@Model.TotalCodeSamples.ToString("N0")</strong> code samples.
+            </p>
+
+            <p>
+                Posts have, on average, <strong>@Model.AverageWords.ToString("N0")</strong> words and a gap of
+                <strong>@Model.AverageGapDays.ToString("N0")</strong> days between them.
+            </p>
+        </div>
+
+        <h2>Posts by year</h2>
+
+        <div class="stats-bars">
+            @foreach ((int year, int count) in Model.PostsByYear)
+            {
+                <div class="stats-bar-row">
+                    <span class="stats-bar-label">@year</span>
+                    <div class="stats-bar-track">
+                        <div class="stats-bar-fill" style="width:@((count * 100.0 / maxYearCount).ToString("0.##"))%"></div>
+                    </div>
+                    <span class="stats-bar-count">@count</span>
+                </div>
+            }
+        </div>
+
+        <h2>Post distribution</h2>
+        @foreach (var distributionYear in Model.DistributionYears)
+        {
+            <section class="commit-graph-year">
+                <h3>@distributionYear.Year</h3>
+                <div class="commit-graph" style="--commit-graph-columns:@distributionYear.ColumnCount">
+                    <div class="commit-graph-months">
+                        @foreach (var month in distributionYear.Months)
+                        {
+                            <span style="grid-column:@(month.Column + 1)">@month.Name</span>
+                        }
+                    </div>
+                    <div class="commit-graph-grid">
+                        @foreach (var day in distributionYear.Days)
+                        {
+                            @if (day.Date is { } date)
+                            {
+                                <div class="commit-graph-cell@(day.HasPost ? " has-post" : "")" title="@date.ToString("d MMMM yyyy")@(day.HasPost ? " — published" : "")"></div>
+                            }
+                            else
+                            {
+                                <div class="commit-graph-cell commit-graph-cell--empty"></div>
+                            }
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+    }
+
+    <p class="page-footnote">
+        This page was heavily inspired by
+        <a href="https://rknight.me/blog/stats/" target="_blank" rel="noopener noreferrer">Robb Knight</a>.
+    </p>
+</div>
