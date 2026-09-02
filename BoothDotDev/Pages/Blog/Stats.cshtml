@@ -22,8 +22,10 @@
     {
         <div class="page-intro">
             <p>
-                My first post was published on <strong>@Model.FirstPostDate.ToString("d MMMM yyyy")</strong> and my most
-                recent one was published on <strong>@Model.LastPostDate.ToString("d MMMM yyyy")</strong>. I've published
+                My <a asp-page="/Blog/Article" asp-route-slug="@Model.FirstPost.Slug">first post</a> was published on
+                <strong>@Model.FirstPostDate.ToString("d MMMM yyyy")</strong> and
+                <a asp-page="/Blog/Article" asp-route-slug="@Model.LastPost.Slug">my most recent one</a> was published on
+                <strong>@Model.LastPostDate.ToString("d MMMM yyyy")</strong>. I've published
                 <strong>@Model.TotalPosts.ToString("N0")</strong> posts containing
                 <strong>@Model.TotalWords.ToString("N0")</strong> words and
                 <strong>@Model.TotalCodeSamples.ToString("N0")</strong> code samples.

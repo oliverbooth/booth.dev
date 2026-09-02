@@ -1,3 +1,4 @@
+using BoothDotDev.Data.Models;
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -39,10 +40,22 @@ internal sealed class Stats : PageModel
     public IReadOnlyList<PostDistributionYear> DistributionYears { get; private set; } = [];
 
     /// <summary>
+    ///     Gets the first post.
+    /// </summary>
+    /// <value>The first post.</value>
+    public BlogPost FirstPost { get; private set; }
+
+    /// <summary>
     ///     Gets the date the first post was published.
     /// </summary>
     /// <value>The date the first post was published.</value>
     public DateOnly FirstPostDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the most recent post.
+    /// </summary>
+    /// <value>The most recent post.</value>
+    public BlogPost LastPost { get; private set; }
 
     /// <summary>
     ///     Gets the date the most recent post was published.
@@ -90,6 +103,9 @@ internal sealed class Stats : PageModel
         TotalWords = posts.Sum(post => post.GetWordCount());
         TotalCodeSamples = posts.Sum(post => post.GetCodeSampleCount());
         AverageWords = (double)TotalWords / TotalPosts;
+
+        FirstPost = posts.MinBy(post => post.PublishedAt.DateTime)!;
+        LastPost = posts.MaxBy(post => post.PublishedAt.DateTime)!;
 
         var publishDates = new HashSet<DateOnly>(posts.Select(post => DateOnly.FromDateTime(post.PublishedAt.DateTime)));
         FirstPostDate = publishDates.Min();
