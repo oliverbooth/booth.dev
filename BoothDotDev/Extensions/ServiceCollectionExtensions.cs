@@ -1,4 +1,3 @@
-using BoothDotDev.Markdown.Timestamp;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 
@@ -19,9 +18,9 @@ internal static class ServiceCollectionExtensions
         public IServiceCollection AddMarkdownPipeline()
         {
             return services.AddSingleton(provider => new MarkdownPipelineBuilder()
-                .Use<TimestampExtension>()
                 .UseEmbeds(provider)
                 .UseTemplates(provider)
+                .UseTimestamps() // Discord-style timestamps, e.g. "<t:1234567890>" or "<t:1234567890:R>"
                 .UseSubtext() // Discord-style subtext, e.g. "-# this is smaller, muted text"
 
                 // we have our own "alert blocks" in the form of GitHub and Obsidian style callouts
