@@ -1,7 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Markdown.Callout;
 using BoothDotDev.Markdown.Embed;
+using BoothDotDev.Markdown.Spoiler;
+using BoothDotDev.Markdown.Subtext;
 using BoothDotDev.Markdown.Template;
+using BoothDotDev.Markdown.Timestamp;
 using HtmlAgilityPack;
 using Markdig;
 using MD = Markdig.Markdown;
@@ -23,6 +26,26 @@ public static class MarkdownExtensions
         public MarkdownPipelineBuilder UseCallouts()
         {
             builder.Extensions.AddIfNotAlready<CalloutExtension>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Enables the use of Discord-style subtext (<c>-#</c>) in this pipeline.
+        /// </summary>
+        /// <returns>The modified Markdig markdown pipeline builder.</returns>
+        public MarkdownPipelineBuilder UseSubtext()
+        {
+            builder.Extensions.AddIfNotAlready<SubtextExtension>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Enables the use of Discord-style spoilers (<c>||text||</c>) in this pipeline.
+        /// </summary>
+        /// <returns>The modified Markdig markdown pipeline builder.</returns>
+        public MarkdownPipelineBuilder UseSpoilers()
+        {
+            builder.Extensions.AddIfNotAlready<SpoilerExtension>();
             return builder;
         }
 
@@ -57,6 +80,16 @@ public static class MarkdownExtensions
             }
 
             builder.Use(new TemplateExtension(serviceProvider));
+            return builder;
+        }
+
+        /// <summary>
+        ///     Enables the use of Discord-style timestamps (<c>&lt;t:unix_timestamp&gt;</c>) in this pipeline.
+        /// </summary>
+        /// <returns>The modified Markdig markdown pipeline builder.</returns>
+        public MarkdownPipelineBuilder UseTimestamps()
+        {
+            builder.Use<TimestampExtension>();
             return builder;
         }
     }

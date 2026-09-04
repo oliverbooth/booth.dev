@@ -1,0 +1,60 @@
+.mermaid-scene {
+  margin: 1.5rem 0;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.mermaid-scene-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface-1);
+  border-bottom: 0.5px solid var(--border);
+  padding: 4px;
+}
+
+.mermaid-tab {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.mermaid-tab:hover {
+  color: var(--text-primary);
+}
+
+.mermaid-tab.active {
+  color: var(--text-primary);
+  background: var(--accent-tint);
+}
+
+.mermaid-scene-panel:not([hidden]) {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--surface-1);
+  overflow-x: auto;
+}
+
+/* no-source is a bare diagram */
+.mermaid-scene--bare {
+  border: none;
+  border-radius: 0;
+}
+
+.mermaid-scene--bare .mermaid-scene-panel:not([hidden]) {
+  padding: 0;
+  background: none;
+}
+
+.mermaid-source-panel pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
