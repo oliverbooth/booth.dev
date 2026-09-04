@@ -13,6 +13,34 @@
     margin: 0 0 0.25rem;
   }
 
+  .spoiler {
+    border-radius: 3px;
+    padding: 0 2px;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:not(.spoiler-revealed) {
+      color: transparent;
+
+      * {
+        color: transparent !important;
+      }
+
+      code {
+        background: none;
+      }
+
+      &:hover {
+        background: var(--border-strong);
+      }
+    }
+
+    &.spoiler-revealed {
+      cursor: text;
+    }
+  }
+
   h2 {
     font-family: var(--font-sans);
     margin: 2rem 0 1rem;

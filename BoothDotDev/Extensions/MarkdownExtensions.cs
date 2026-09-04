@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Markdown.Callout;
 using BoothDotDev.Markdown.Embed;
+using BoothDotDev.Markdown.Spoiler;
 using BoothDotDev.Markdown.Subtext;
 using BoothDotDev.Markdown.Template;
 using BoothDotDev.Markdown.Timestamp;
@@ -35,6 +36,16 @@ public static class MarkdownExtensions
         public MarkdownPipelineBuilder UseSubtext()
         {
             builder.Extensions.AddIfNotAlready<SubtextExtension>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Enables the use of Discord-style spoilers (<c>||text||</c>) in this pipeline.
+        /// </summary>
+        /// <returns>The modified Markdig markdown pipeline builder.</returns>
+        public MarkdownPipelineBuilder UseSpoilers()
+        {
+            builder.Extensions.AddIfNotAlready<SpoilerExtension>();
             return builder;
         }
 

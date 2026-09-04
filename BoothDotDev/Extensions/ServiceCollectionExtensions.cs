@@ -22,6 +22,7 @@ internal static class ServiceCollectionExtensions
                 .UseTemplates(provider)
                 .UseTimestamps() // Discord-style timestamps, e.g. "<t:1234567890>" or "<t:1234567890:R>"
                 .UseSubtext() // Discord-style subtext, e.g. "-# this is smaller, muted text"
+                .UseSpoilers() // Discord-style spoilers, e.g. "||this is hidden until clicked||"
 
                 // we have our own "alert blocks" in the form of GitHub and Obsidian style callouts
                 .UseCallouts()
