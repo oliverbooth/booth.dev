@@ -1,0 +1,189 @@
+{
+  "referenceUtc": "2026-06-15T12:00:00.0000000Z",
+  "cases": [
+    {
+      "targetUtc": "2026-06-15T12:00:00.0000000Z",
+      "expected": "now"
+    },
+    {
+      "targetUtc": "2026-06-15T11:59:59.5000000Z",
+      "expected": "now"
+    },
+    {
+      "targetUtc": "2026-06-15T11:59:59.0010000Z",
+      "expected": "now"
+    },
+    {
+      "targetUtc": "2026-06-15T11:59:59.0000000Z",
+      "expected": "one second ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:59:58.0000000Z",
+      "expected": "2 seconds ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:59:01.0000000Z",
+      "expected": "59 seconds ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:59:00.0000000Z",
+      "expected": "a minute ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:58:01.0000000Z",
+      "expected": "a minute ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:58:00.0000000Z",
+      "expected": "2 minutes ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:01:00.0000000Z",
+      "expected": "59 minutes ago"
+    },
+    {
+      "targetUtc": "2026-06-15T11:00:00.0000000Z",
+      "expected": "an hour ago"
+    },
+    {
+      "targetUtc": "2026-06-15T10:31:00.0000000Z",
+      "expected": "an hour ago"
+    },
+    {
+      "targetUtc": "2026-06-15T10:29:00.0000000Z",
+      "expected": "an hour ago"
+    },
+    {
+      "targetUtc": "2026-06-15T10:00:00.0000000Z",
+      "expected": "2 hours ago"
+    },
+    {
+      "targetUtc": "2026-06-14T13:00:00.0000000Z",
+      "expected": "23 hours ago"
+    },
+    {
+      "targetUtc": "2026-06-14T12:00:00.0000000Z",
+      "expected": "yesterday"
+    },
+    {
+      "targetUtc": "2026-06-14T00:00:00.0000000Z",
+      "expected": "yesterday"
+    },
+    {
+      "targetUtc": "2026-06-13T13:00:00.0000000Z",
+      "expected": "2 days ago"
+    },
+    {
+      "targetUtc": "2026-06-13T12:00:00.0000000Z",
+      "expected": "2 days ago"
+    },
+    {
+      "targetUtc": "2026-05-19T12:00:00.0000000Z",
+      "expected": "27 days ago"
+    },
+    {
+      "targetUtc": "2026-05-18T12:00:00.0000000Z",
+      "expected": "28 days ago"
+    },
+    {
+      "targetUtc": "2026-05-17T12:00:00.0000000Z",
+      "expected": "29 days ago"
+    },
+    {
+      "targetUtc": "2026-05-16T12:00:00.0000000Z",
+      "expected": "one month ago"
+    },
+    {
+      "targetUtc": "2026-05-15T12:00:00.0000000Z",
+      "expected": "one month ago"
+    },
+    {
+      "targetUtc": "2026-05-06T12:00:00.0000000Z",
+      "expected": "one month ago"
+    },
+    {
+      "targetUtc": "2026-04-17T12:00:00.0000000Z",
+      "expected": "2 months ago"
+    },
+    {
+      "targetUtc": "2026-04-16T12:00:00.0000000Z",
+      "expected": "2 months ago"
+    },
+    {
+      "targetUtc": "2025-07-15T12:00:00.0000000Z",
+      "expected": "11 months ago"
+    },
+    {
+      "targetUtc": "2025-07-06T12:00:00.0000000Z",
+      "expected": "11 months ago"
+    },
+    {
+      "targetUtc": "2025-07-05T12:00:00.0000000Z",
+      "expected": "one year ago"
+    },
+    {
+      "targetUtc": "2025-06-16T12:00:00.0000000Z",
+      "expected": "one year ago"
+    },
+    {
+      "targetUtc": "2025-06-15T12:00:00.0000000Z",
+      "expected": "one year ago"
+    },
+    {
+      "targetUtc": "2025-06-14T12:00:00.0000000Z",
+      "expected": "one year ago"
+    },
+    {
+      "targetUtc": "2024-06-15T12:00:00.0000000Z",
+      "expected": "2 years ago"
+    },
+    {
+      "targetUtc": "2026-06-15T12:00:01.0000000Z",
+      "expected": "one second from now"
+    },
+    {
+      "targetUtc": "2026-06-15T12:00:02.0000000Z",
+      "expected": "2 seconds from now"
+    },
+    {
+      "targetUtc": "2026-06-15T12:01:00.0000000Z",
+      "expected": "a minute from now"
+    },
+    {
+      "targetUtc": "2026-06-15T12:02:00.0000000Z",
+      "expected": "2 minutes from now"
+    },
+    {
+      "targetUtc": "2026-06-15T13:00:00.0000000Z",
+      "expected": "an hour from now"
+    },
+    {
+      "targetUtc": "2026-06-15T14:00:00.0000000Z",
+      "expected": "2 hours from now"
+    },
+    {
+      "targetUtc": "2026-06-16T12:00:00.0000000Z",
+      "expected": "tomorrow"
+    },
+    {
+      "targetUtc": "2026-06-17T12:00:00.0000000Z",
+      "expected": "2 days from now"
+    },
+    {
+      "targetUtc": "2026-07-15T12:00:00.0000000Z",
+      "expected": "one month from now"
+    },
+    {
+      "targetUtc": "2026-08-15T12:00:00.0000000Z",
+      "expected": "2 months from now"
+    },
+    {
+      "targetUtc": "2027-06-15T12:00:00.0000000Z",
+      "expected": "one year from now"
+    },
+    {
+      "targetUtc": "2028-06-15T12:00:00.0000000Z",
+      "expected": "2 years from now"
+    }
+  ]
+}
