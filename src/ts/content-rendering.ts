@@ -26,7 +26,31 @@ Prism.plugins.autoloader.languages_path = '/js/prism-components/';
 
 addPrismLanguages();
 
-mermaid.initialize({startOnLoad: false});
+mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    themeVariables: {
+        darkMode: true,
+        background: cssVar('--surface-1'),
+        primaryColor: cssVar('--surface-2'),
+        primaryTextColor: cssVar('--text-primary'),
+        primaryBorderColor: cssVar('--accent'),
+        secondaryColor: cssVar('--surface-2'),
+        tertiaryColor: cssVar('--surface-2'),
+        lineColor: cssVar('--text-secondary'),
+        textColor: cssVar('--text-primary'),
+        edgeLabelBackground: cssVar('--surface-1'),
+        fontFamily: cssVar('--font-sans'),
+    },
+});
+
+/**
+ * Reads the resolved value of a CSS custom property off the document root.
+ * @param name The custom property's name, e.g. `--accent`.
+ */
+function cssVar(name: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
 
 /**
  * Initializes the front-end Markdown content features for the given element, or the entire document if no element is provided.
