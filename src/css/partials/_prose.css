@@ -14,10 +14,31 @@
   }
 
   .spoiler {
+    display: inline-block;
+    cursor: pointer;
+
+    &:not(.spoiler-revealed) {
+      img,
+      video {
+        filter: blur(64px);
+        pointer-events: none;
+      }
+
+      .alt-badge {
+        filter: blur(6px);
+        pointer-events: none;
+      }
+    }
+
+    &.spoiler-revealed {
+      cursor: default;
+    }
+  }
+
+  span.spoiler {
     border-radius: 3px;
     padding: 0 2px;
     background: var(--surface-2);
-    cursor: pointer;
     transition: background-color 0.15s ease;
 
     &:not(.spoiler-revealed) {
