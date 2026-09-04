@@ -53,7 +53,7 @@
                     <div class="collapse-inner">
                         <div class="commit-dot@(first ? "" : " muted")"></div>
                         <div class="commit-meta">
-                            <span class="commit-hash">@post.Id.ToString()[..7]</span><span class="commit-tag">blog</span>
+                            <span class="commit-hash">@post.Id.ToCommitSha()</span><span class="commit-tag">blog</span>
                         </div>
                         <p class="commit-title">@post.Title</p>
                         <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.PublishedAt.ToShortString()</p>
@@ -70,7 +70,7 @@
                     <div class="collapse-inner">
                         <div class="commit-dot@(first ? "" : " muted")"></div>
                         <div class="commit-meta">
-                            <span class="commit-hash">@note.Id.ToString()[..7]</span><span class="commit-tag">note</span>
+                            <span class="commit-hash">@note.Id.ToCommitSha()</span><span class="commit-tag">note</span>
                         </div>
                         <p class="commit-title">@note.Title</p>
                         <p class="commit-sub">@note.PublishedAt.ToShortString()</p>
