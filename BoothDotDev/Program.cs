@@ -172,6 +172,7 @@ app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", true));
 app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", true));
 app.MapGet("/blog/archive", () => Results.Redirect("/blog", true));
 app.MapGet("/blog/feed", () => Results.Redirect("/blog.rss", true));
+app.MapGet("/blog/page/{page:int}", () => Results.Redirect("/blog", true));
 app.MapGet("/blog/posts/{page:int}", () => Results.Redirect("/blog", true));
 app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month, int day, string slug) =>
 {
