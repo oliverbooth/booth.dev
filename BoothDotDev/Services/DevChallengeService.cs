@@ -13,9 +13,9 @@ namespace BoothDotDev.Services;
 public sealed class DevChallengeService
 {
     private const string Area = "challenge";
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DevChallengeService" /> class.
@@ -38,10 +38,7 @@ public sealed class DevChallengeService
     {
         using var context = _dbContextFactory.CreateDbContext();
 
-        var challenge = new DevChallenge
-        {
-            PublishedAt = request.PublishedAt.ToUniversalTime()
-        };
+        var challenge = new DevChallenge { PublishedAt = request.PublishedAt.ToUniversalTime() };
 
         // two SaveChanges calls, not one: DevChallenge -> DevChallengeDraft (via DevChallengeId) and
         // DevChallengeDraft -> DevChallenge (via CurrentDraftId) form a cycle between two rows that are
@@ -200,7 +197,7 @@ public sealed class DevChallengeService
     /// <returns>A read-only collection of dev challenges, excluding trashed ones.</returns>
     public IReadOnlyList<DevChallenge> GetDevChallenges(Visibility visibility)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         IQueryable<DevChallenge> challenges = context.DevChallenges.Include(c => c.CurrentDraft)
             .Where(c => c.TrashedAt == null)
             .OrderBy(c => c.PublishedAt);
@@ -259,7 +256,7 @@ public sealed class DevChallengeService
     /// <returns>A read-only list of the most recent dev challenges, excluding trashed ones.</returns>
     public IReadOnlyList<DevChallenge> GetRecentChallenges(ActivitySearchOptions searchOptions)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var challenges = context.DevChallenges.Include(c => c.CurrentDraft).Where(c => c.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)

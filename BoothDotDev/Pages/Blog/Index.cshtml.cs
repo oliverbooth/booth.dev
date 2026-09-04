@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Blog;
 
-using Note = BoothDotDev.Data.Models.Note;
+using Note = Data.Models.Note;
 
 [Area("blog")]
 internal sealed class Index : PageModel

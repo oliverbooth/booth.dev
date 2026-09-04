@@ -1,6 +1,6 @@
 @page "/admin/cdn"
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Cdn.Index
+@model Index
 
 @{
     Layout = "_AdminLayout";
@@ -45,71 +45,75 @@
     </nav>
 
     <div data-search-scope id="cdn-browser" data-current-path="@Model.CurrentDisplayPath">
-    <div class="table-toolbar">
-        <div class="search-input">
-            <i class="ti ti-search"></i>
-            <input type="text" id="search" placeholder="Search this folder&hellip;">
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search this folder&hellip;">
+            </div>
         </div>
-    </div>
 
-    <table class="data-table" id="cdn-table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Modified</th>
-            <th style="text-align:right">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var entry in Model.Entries)
-        {
-            <tr draggable="true" data-kind="@(entry.IsDirectory ? "folder" : "file")" data-name="@entry.Name">
-                <td>
-                    <div class="row-title" data-search>
-                        <i class="ti @Index.GetIcon(entry)"></i>
+        <table class="data-table" id="cdn-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Modified</th>
+                <th style="text-align:right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var entry in Model.Entries)
+            {
+                <tr draggable="true" data-kind="@(entry.IsDirectory ? "folder" : "file")" data-name="@entry.Name">
+                    <td>
+                        <div class="row-title" data-search>
+                            <i class="ti @Index.GetIcon(entry)"></i>
+                            @if (entry.IsDirectory)
+                            {
+                                <a asp-page="/Admin/Cdn/Index"
+                                   asp-route-path="@($"{Model.CurrentDisplayPath}/{entry.Name}".TrimStart('/'))">@entry.Name</a>
+                            }
+                            else
+                            {
+                                @entry.Name
+                            }
+                        </div>
+                    </td>
+                    <td>
                         @if (entry.IsDirectory)
                         {
-                            <a asp-page="/Admin/Cdn/Index"
-                               asp-route-path="@($"{Model.CurrentDisplayPath}/{entry.Name}".TrimStart('/'))">@entry.Name</a>
+                            @("item".ToQuantity(entry.ItemCount ?? 0))
                         }
                         else
                         {
-                            @entry.Name
+                            @Index.FormatFileSize(entry.SizeBytes ?? 0)
                         }
-                    </div>
-                </td>
-                <td>
-                    @if (entry.IsDirectory)
-                    {
-                        @("item".ToQuantity(entry.ItemCount ?? 0))
-                    }
-                    else
-                    {
-                        @Index.FormatFileSize(entry.SizeBytes ?? 0)
-                    }
-                </td>
-                <td><abbr title="@entry.ModifiedAt.ToString("yyyy-MM-dd HH:mm:ss")">@entry.ModifiedAt.Humanize()</abbr></td>
-                <td>
-                    <div class="row-actions">
-                        @if (!entry.IsDirectory)
-                        {
-                            <a href="@entry.Url" target="_blank" rel="noopener" class="icon-btn" aria-label="View"><i class="ti ti-external-link"></i></a>
-                        }
-                        <button type="button" class="icon-btn" data-action="rename" aria-label="Rename"><i class="ti ti-edit"></i></button>
-                        <button type="button" class="icon-btn" data-action="move" aria-label="Move"><i class="ti ti-arrows-move"></i></button>
-                        <button type="button" class="icon-btn danger" data-action="delete" aria-label="Delete"><i class="ti ti-trash"></i></button>
-                    </div>
+                    </td>
+                    <td><abbr title="@entry.ModifiedAt.ToString("yyyy-MM-dd HH:mm:ss")">@entry.ModifiedAt.Humanize()</abbr></td>
+                    <td>
+                        <div class="row-actions">
+                            @if (!entry.IsDirectory)
+                            {
+                                <a href="@entry.Url" target="_blank" rel="noopener" class="icon-btn" aria-label="View"><i
+                                        class="ti ti-external-link"></i></a>
+                            }
+                            <button type="button" class="icon-btn" data-action="rename" aria-label="Rename"><i class="ti ti-edit"></i>
+                            </button>
+                            <button type="button" class="icon-btn" data-action="move" aria-label="Move"><i class="ti ti-arrows-move"></i>
+                            </button>
+                            <button type="button" class="icon-btn danger" data-action="delete" aria-label="Delete"><i
+                                    class="ti ti-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden="@(Model.Entries.Count != 0)">
+                <td colspan="4" class="table-empty-state">
+                    @(Model.Entries.Count == 0 ? "This folder is empty" : "No files or folders found")
                 </td>
             </tr>
-        }
-        <tr data-search-empty hidden="@(Model.Entries.Count != 0)">
-            <td colspan="4" class="table-empty-state">
-                @(Model.Entries.Count == 0 ? "This folder is empty" : "No files or folders found")
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
     </div>
 
 </div>

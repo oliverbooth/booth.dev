@@ -3,7 +3,7 @@
 @using BoothDotDev.Extensions
 @using DEDrake
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Notes.Edit
+@model Edit
 
 @{
     Layout = "_AdminLayout";
@@ -145,7 +145,8 @@
             else
             {
                 <p class="hint">
-                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as draft.
+                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as
+                    draft.
                 </p>
                 <ul class="draft-list">
                     @foreach (var draft in Model.DraftHistory)

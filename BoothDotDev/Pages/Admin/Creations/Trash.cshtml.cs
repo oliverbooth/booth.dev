@@ -121,5 +121,10 @@ public sealed class Trash : PageModel
     /// <param name="Type">The type of the creation, either <c>"Artwork"</c> or <c>"Music"</c>.</param>
     /// <param name="Visibility">The visibility of the creation.</param>
     /// <param name="TrashedAt">The date and time the creation was trashed.</param>
-    public sealed record TrashedCreationListItem(Guid Id, string Title, string Type, Visibility Visibility, DateTimeOffset TrashedAt);
+    public sealed record TrashedCreationListItem(
+        Guid Id,
+        string Title,
+        string Type,
+        Visibility Visibility,
+        DateTimeOffset TrashedAt);
 }

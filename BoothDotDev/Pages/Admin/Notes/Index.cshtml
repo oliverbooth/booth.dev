@@ -3,7 +3,7 @@
 @using BoothDotDev.Data
 @using DEDrake
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Notes.Index
+@model Index
 
 @{
     Layout = "_AdminLayout";
@@ -23,73 +23,76 @@
     </div>
 
     <div data-search-scope>
-    <div class="table-toolbar">
-        <div class="search-input">
-            <i class="ti ti-search"></i>
-            <input type="text" id="search" placeholder="Search notes&hellip;">
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search notes&hellip;">
+            </div>
         </div>
-    </div>
 
-    <table class="data-table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Visibility</th>
-            <th>Updated</th>
-            <th style="text-align:right">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var note in Model.Notes)
-        {
-            var timestamp = note.UpdatedAt ?? note.PublishedAt;
-            var badgeClass = note.Visibility switch
-            {
-                Visibility.Published => "published",
-                Visibility.Private => "private",
-                _ => "unlisted"
-            };
-
+        <table class="data-table">
+            <thead>
             <tr>
-                <td>
-                    <div class="row-title" data-search>@note.Title</div>
-                </td>
-                <td><span class="badge badge-@badgeClass">
-                    @switch (note.Visibility)
-                    {
-                        case Visibility.Published:
-                            <text><span class="dot"></span> Published</text>
-                            break;
-
-                        case Visibility.Private:
-                            <text><i class="ti ti-lock"></i> Private</text>
-                            break;
-
-                        case Visibility.Unlisted:
-                            <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                            break;
-
-                        default:
-                            throw new UnreachableException();
-                    }
-                </span></td>
-                <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
-                <td>
-                    <div class="row-actions">
-                        <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
-                        <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@note.Id">
-                            <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
-                        </form>
-                    </div>
-                </td>
+                <th>Title</th>
+                <th>Visibility</th>
+                <th>Updated</th>
+                <th style="text-align:right">Actions</th>
             </tr>
-        }
-        <tr data-search-empty hidden>
-            <td colspan="4" class="table-empty-state">No notes found</td>
-        </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var note in Model.Notes)
+            {
+                var timestamp = note.UpdatedAt ?? note.PublishedAt;
+                var badgeClass = note.Visibility switch
+                {
+                    Visibility.Published => "published",
+                    Visibility.Private => "private",
+                    _ => "unlisted"
+                };
+
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@note.Title</div>
+                    </td>
+                    <td><span class="badge badge-@badgeClass">
+                    @switch (note.Visibility)
+                            {
+                                case Visibility.Published:
+                                    <text><span class="dot"></span> Published</text>
+                                    break;
+
+                                case Visibility.Private:
+                                    <text><i class="ti ti-lock"></i> Private</text>
+                                    break;
+
+                                case Visibility.Unlisted:
+                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                    break;
+
+                                default:
+                                    throw new UnreachableException();
+                            }
+                </span></td>
+                    <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
+                    <td>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id" class="icon-btn" aria-label="Edit"><i
+                                    class="ti ti-edit"></i></a>
+                            <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="icon-btn" aria-label="View"><i
+                                    class="ti ti-eye"></i></a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@note.Id">
+                                <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="4" class="table-empty-state">No notes found</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
 </div>

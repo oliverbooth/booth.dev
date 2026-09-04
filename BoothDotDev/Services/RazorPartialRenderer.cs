@@ -14,9 +14,9 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class RazorPartialRenderer
 {
-    private readonly IRazorViewEngine _viewEngine;
-    private readonly ITempDataProvider _tempDataProvider;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ITempDataProvider _tempDataProvider;
+    private readonly IRazorViewEngine _viewEngine;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RazorPartialRenderer" /> class.
@@ -50,7 +50,7 @@ public sealed class RazorPartialRenderer
         var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
         var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
 
-        IView view = FindView(actionContext, partialName);
+        var view = FindView(actionContext, partialName);
 
         await using var writer = new StringWriter();
 
@@ -74,19 +74,19 @@ public sealed class RazorPartialRenderer
 
     private IView FindView(ActionContext actionContext, string partialName)
     {
-        ViewEngineResult result = _viewEngine.GetView(executingFilePath: null, partialName, isMainPage: false);
+        var result = _viewEngine.GetView(null, partialName, false);
         if (result.Success)
         {
             return result.View;
         }
 
-        ViewEngineResult fallbackResult = _viewEngine.FindView(actionContext, partialName, isMainPage: false);
+        var fallbackResult = _viewEngine.FindView(actionContext, partialName, false);
         if (fallbackResult.Success)
         {
             return fallbackResult.View;
         }
 
-        IEnumerable<string> searched = result.SearchedLocations.Concat(fallbackResult.SearchedLocations);
+        var searched = result.SearchedLocations.Concat(fallbackResult.SearchedLocations);
         var searchedLocations = string.Join(Environment.NewLine, searched);
         throw new InvalidOperationException($"The partial view '{partialName}' could not be found. " +
                                             $"The following locations were searched:{Environment.NewLine}{searchedLocations}");

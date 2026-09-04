@@ -10,6 +10,7 @@ import 'prismjs/plugins/keep-markup/prism-keep-markup.js';
 import 'prismjs/plugins/autoloader/prism-autoloader.js';
 import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
 import {initManimScenes} from './manim/scenes.ts';
+import {initMermaidScenes} from './mermaid/scenes.ts';
 import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 import {initVexFlowScenes} from './vexflow/scenes.ts';
 
@@ -38,6 +39,7 @@ export function initContentFeatures(element?: HTMLElement): void {
     renderSpoilers(element);
     initManimScenes(element).catch(error => console.error('Failed to initialize manim-web scenes:', error));
     initVexFlowScenes(element).catch(error => console.error('Failed to initialize vexflow scenes:', error));
+    initMermaidScenes(element).catch(error => console.error('Failed to initialize mermaid scenes:', error));
 }
 
 /**

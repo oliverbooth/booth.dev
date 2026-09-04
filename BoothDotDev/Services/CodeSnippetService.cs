@@ -31,9 +31,9 @@ internal sealed class CodeSnippetService
     public IReadOnlyList<string> GetLanguagesForSnippet(int id)
     {
         var languages = new HashSet<string>();
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
 
-        foreach (CodeSnippet snippet in context.CodeSnippets.Where(s => s.Id == id))
+        foreach (var snippet in context.CodeSnippets.Where(s => s.Id == id))
         {
             languages.Add(snippet.Language);
         }
@@ -59,8 +59,8 @@ internal sealed class CodeSnippetService
             throw new ArgumentNullException(nameof(language));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<CodeSnippet> snippets = context.CodeSnippets.Where(s => s.Id == id);
+        using var context = _dbContextFactory.CreateDbContext();
+        var snippets = context.CodeSnippets.Where(s => s.Id == id);
         snippet = snippets.FirstOrDefault(s => s.Language == language);
         return snippet is not null;
     }

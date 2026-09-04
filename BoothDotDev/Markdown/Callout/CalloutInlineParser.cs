@@ -31,8 +31,8 @@ internal sealed class CalloutInlineParser : InlineParser
             return false;
         }
 
-        StringSlice cache = slice;
-        char current = slice.NextChar();
+        var cache = slice;
+        var current = slice.NextChar();
 
         if (current != '!')
         {
@@ -42,8 +42,8 @@ internal sealed class CalloutInlineParser : InlineParser
 
         current = slice.NextChar(); // skip !
 
-        int start = slice.Start;
-        int end = start;
+        var start = slice.Start;
+        var end = start;
 
         while (current.IsAlphaUpper())
         {
@@ -61,7 +61,7 @@ internal sealed class CalloutInlineParser : InlineParser
         current = slice.NextChar(); // skip ]
         start = slice.Start;
 
-        bool fold = false;
+        var fold = false;
         if (current == '-')
         {
             fold = true;
@@ -69,7 +69,7 @@ internal sealed class CalloutInlineParser : InlineParser
             start = slice.Start;
         }
 
-        ReadTitle(current, ref slice, out StringSlice title, out end);
+        ReadTitle(current, ref slice, out var title, out end);
 
         var callout = new CalloutBlock(type)
         {
@@ -88,9 +88,9 @@ internal sealed class CalloutInlineParser : InlineParser
 
     private static void ReadTitle(char startChar, ref StringSlice slice, out StringSlice title, out int end)
     {
-        using Utf16ValueStringBuilder builder = ZString.CreateStringBuilder();
+        using var builder = ZString.CreateStringBuilder();
 
-        char current = startChar;
+        var current = startChar;
         while (true)
         {
             if (current is not ('\0' or '\r' or '\n'))
@@ -142,20 +142,20 @@ internal sealed class CalloutInlineParser : InlineParser
 
     private static void AddAttributes(IMarkdownObject callout, StringSlice type)
     {
-        HtmlAttributes attributes = callout.GetAttributes();
+        var attributes = callout.GetAttributes();
         attributes.AddClass("callout");
         attributes.AddProperty("data-callout", type.AsSpan().ToString().ToLowerInvariant());
     }
 
     private static void ReplaceQuoteBlock(InlineProcessor processor, QuoteBlock quoteBlock, CalloutBlock callout)
     {
-        ContainerBlock? parentQuoteBlock = quoteBlock.Parent;
+        var parentQuoteBlock = quoteBlock.Parent;
         if (parentQuoteBlock is null)
         {
             return;
         }
 
-        int indexOfQuoteBlock = parentQuoteBlock.IndexOf(quoteBlock);
+        var indexOfQuoteBlock = parentQuoteBlock.IndexOf(quoteBlock);
         parentQuoteBlock[indexOfQuoteBlock] = callout;
 
         while (quoteBlock.Count > 0)

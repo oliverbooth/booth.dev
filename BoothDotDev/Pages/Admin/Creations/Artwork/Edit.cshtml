@@ -1,6 +1,6 @@
 @page "/admin/creations/artwork/edit/{id:guid?}"
 @using BoothDotDev.Data
-@model BoothDotDev.Pages.Admin.Creations.Artwork.Edit
+@model Edit
 
 @{
     Layout = "_AdminLayout";
@@ -113,7 +113,8 @@
             @if (Model.FileUrl is not null)
             {
                 <p class="hint">Currently: <code>@Model.ResolutionDisplay</code></p>
-                <img src="@Model.FileUrl" alt="@Model.Input.Title" style="max-width:320px;border-radius:var(--radius);display:block;margin-bottom:12px" />
+                <img src="@Model.FileUrl" alt="@Model.Input.Title"
+                     style="max-width:320px;border-radius:var(--radius);display:block;margin-bottom:12px" />
             }
             else
             {

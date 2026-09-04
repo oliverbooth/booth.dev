@@ -34,7 +34,7 @@ public sealed class CommentService
             throw new ArgumentNullException(nameof(post));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Count(c => c.PostId == post.Id);
     }
 
@@ -56,7 +56,7 @@ public sealed class CommentService
             return 0;
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.LegacyComments.Count(c => c.PostId == postId);
     }
 
@@ -73,7 +73,7 @@ public sealed class CommentService
             throw new ArgumentNullException(nameof(post));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.LegacyComments.Where(c => c.PostId == post.Id && c.ParentComment == null)];
     }
 
@@ -95,7 +95,7 @@ public sealed class CommentService
             return [];
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.LegacyComments.Where(c => c.PostId == postId && c.ParentComment == null)];
     }
 
@@ -112,7 +112,7 @@ public sealed class CommentService
             throw new ArgumentNullException(nameof(comment));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.LegacyComments.Where(c => c.ParentComment == comment.Id)];
     }
 }

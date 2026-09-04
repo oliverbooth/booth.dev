@@ -18,7 +18,8 @@
     <div class="page-header-row">
         <p class="crumb"><a asp-page="/Index">Home</a> / Projects</p>
         <div class="page-actions">
-            <a href="/projects.rss" class="icon-link" aria-label="Subscribe to the projects RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
+            <a href="/projects.rss" class="icon-link" aria-label="Subscribe to the projects RSS feed" title="RSS feed"><i
+                    class="ti ti-rss"></i></a>
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a asp-page="/Admin/Projects/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>

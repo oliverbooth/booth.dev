@@ -1,3 +1,4 @@
+using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using DEDrake;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Challenges;
 
-using DevChallenge = Data.Models.DevChallenge;
+using DevChallenge = DevChallenge;
 
 /// <summary>
 ///     Represents the page model for the admin challenge trash page.

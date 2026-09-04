@@ -51,9 +51,9 @@ public static class TriviaParser
         while (start < remainder.Length)
         {
             var end = FindTokenEnd(remainder, start);
-            ReadOnlySpan<char> tokenSpan = remainder[start..end];
+            var tokenSpan = remainder[start..end];
 
-            if (!TryParseToken(tokenSpan, out HighlightToken token, out error))
+            if (!TryParseToken(tokenSpan, out var token, out error))
             {
                 return false;
             }
@@ -104,22 +104,22 @@ public static class TriviaParser
         token = default;
 
         var atIndex = span.IndexOf('@');
-        ReadOnlySpan<char> lineSpan = atIndex >= 0 ? span[..atIndex] : span;
-        ReadOnlySpan<char> columnSpan = atIndex >= 0 ? span[(atIndex + 1)..] : ReadOnlySpan<char>.Empty;
+        var lineSpan = atIndex >= 0 ? span[..atIndex] : span;
+        var columnSpan = atIndex >= 0 ? span[(atIndex + 1)..] : ReadOnlySpan<char>.Empty;
 
-        if (!TryParseLineGroup(lineSpan, out IReadOnlyList<LineSpec> lines, out var isGrouped, out error))
+        if (!TryParseLineGroup(lineSpan, out var lines, out var isGrouped, out error))
         {
             return false;
         }
 
         if (atIndex < 0)
         {
-            token = new HighlightToken(lines, isGrouped, Columns: null);
+            token = new HighlightToken(lines, isGrouped, null);
             error = TriviaParseError.None;
             return true;
         }
 
-        if (!TryParseColumnSpec(columnSpan, out IReadOnlyList<SpecRange> columns, out error))
+        if (!TryParseColumnSpec(columnSpan, out var columns, out error))
         {
             return false;
         }
@@ -150,7 +150,7 @@ public static class TriviaParser
             var commaIndex = span[start..].IndexOf(',');
             var end = commaIndex < 0 ? span.Length : start + commaIndex;
 
-            if (!TryParseLineSpec(span[start..end], out LineSpec lineSpec, out error))
+            if (!TryParseLineSpec(span[start..end], out var lineSpec, out error))
             {
                 return false;
             }
@@ -193,18 +193,18 @@ public static class TriviaParser
         var dashIndex = span.IndexOf('-');
         if (dashIndex < 0)
         {
-            if (!TryParseBound(span, out SpecBound single, out error))
+            if (!TryParseBound(span, out var single, out error))
             {
                 return false;
             }
 
-            lineSpec = new LineSpec(single, End: null);
+            lineSpec = new LineSpec(single, null);
             error = TriviaParseError.None;
             return true;
         }
 
-        ReadOnlySpan<char> startSpan = span[..dashIndex];
-        ReadOnlySpan<char> endSpan = span[(dashIndex + 1)..];
+        var startSpan = span[..dashIndex];
+        var endSpan = span[(dashIndex + 1)..];
 
         // the end side is written "L5", so drop its leading 'L' too
         if (endSpan.IsEmpty || endSpan[0] != 'L')
@@ -215,8 +215,8 @@ public static class TriviaParser
 
         endSpan = endSpan[1..];
 
-        if (!TryParseBound(startSpan, out SpecBound start, out error) ||
-            !TryParseBound(endSpan, out SpecBound end, out error))
+        if (!TryParseBound(startSpan, out var start, out error) ||
+            !TryParseBound(endSpan, out var end, out error))
         {
             return false;
         }
@@ -252,7 +252,7 @@ public static class TriviaParser
             var commaIndex = span[start..].IndexOf(',');
             var end = commaIndex < 0 ? span.Length : start + commaIndex;
 
-            if (!TryParseRange(span[start..end], out SpecRange range, out error))
+            if (!TryParseRange(span[start..end], out var range, out error))
             {
                 return false;
             }
@@ -283,11 +283,11 @@ public static class TriviaParser
             return false;
         }
 
-        ReadOnlySpan<char> startSpan = span[..dotDotIndex];
-        ReadOnlySpan<char> endSpan = span[(dotDotIndex + 2)..];
+        var startSpan = span[..dotDotIndex];
+        var endSpan = span[(dotDotIndex + 2)..];
 
-        if (!TryParseBound(startSpan, out SpecBound start, out error) ||
-            !TryParseBound(endSpan, out SpecBound end, out error))
+        if (!TryParseBound(startSpan, out var start, out error) ||
+            !TryParseBound(endSpan, out var end, out error))
         {
             return false;
         }

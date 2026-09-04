@@ -3,7 +3,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Services
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Posts.Index
+@model Index
 @inject BlogPostService BlogPostService
 
 @{
@@ -24,81 +24,84 @@
     </div>
 
     <div data-search-scope>
-    <div class="table-toolbar">
-        <div class="search-input">
-            <i class="ti ti-search"></i>
-            <input type="text" id="search" placeholder="Search posts&hellip;">
-        </div>
-        @*<div class="filter-row" style="margin:0">
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search posts&hellip;">
+            </div>
+            @*<div class="filter-row" style="margin:0">
             <span class="pill active">All</span>
             <span class="pill">Published</span>
             <span class="pill">Drafts</span>
         </div>*@
-    </div>
+        </div>
 
-    <table class="data-table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Visibility</th>
-            <th>Updated</th>
-            <th style="text-align:right">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var post in Model.BlogPosts)
-        {
-            var timestamp = post.UpdatedAt ?? post.PublishedAt;
-            var badgeClass = post.Visibility switch
-            {
-                Visibility.Published => "published",
-                Visibility.Private => "private",
-                _ => "unlisted"
-            };
-
+        <table class="data-table">
+            <thead>
             <tr>
-                <td>
-                    <div class="row-title" data-search>@post.Title</div>
-                    <div class="row-sub" data-search>/blog/@post.Slug</div>
-                </td>
-                <td>@BlogPostService.GetCategory(post.CategoryId)?.Name</td>
-                <td><span class="badge badge-@badgeClass">
-                    @switch (post.Visibility)
-                    {
-                        case Visibility.Published:
-                            <text><span class="dot"></span> Published</text>
-                            break;
-
-                        case Visibility.Private:
-                            <text><i class="ti ti-lock"></i> Private</text>
-                            break;
-
-                        case Visibility.Unlisted:
-                            <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                            break;
-
-                        default:
-                            throw new UnreachableException();
-                    }
-                </span></td>
-                <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
-                <td>
-                    <div class="row-actions">
-                        <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
-                        <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="icon-btn" aria-label="View"><i class="ti ti-eye"></i></a>
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@post.Id">
-                            <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i></button>
-                        </form>
-                    </div>
-                </td>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Visibility</th>
+                <th>Updated</th>
+                <th style="text-align:right">Actions</th>
             </tr>
-        }
-        <tr data-search-empty hidden>
-            <td colspan="5" class="table-empty-state">No posts found</td>
-        </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var post in Model.BlogPosts)
+            {
+                var timestamp = post.UpdatedAt ?? post.PublishedAt;
+                var badgeClass = post.Visibility switch
+                {
+                    Visibility.Published => "published",
+                    Visibility.Private => "private",
+                    _ => "unlisted"
+                };
+
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@post.Title</div>
+                        <div class="row-sub" data-search>/blog/@post.Slug</div>
+                    </td>
+                    <td>@BlogPostService.GetCategory(post.CategoryId)?.Name</td>
+                    <td><span class="badge badge-@badgeClass">
+                    @switch (post.Visibility)
+                            {
+                                case Visibility.Published:
+                                    <text><span class="dot"></span> Published</text>
+                                    break;
+
+                                case Visibility.Private:
+                                    <text><i class="ti ti-lock"></i> Private</text>
+                                    break;
+
+                                case Visibility.Unlisted:
+                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                    break;
+
+                                default:
+                                    throw new UnreachableException();
+                            }
+                </span></td>
+                    <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
+                    <td>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn" aria-label="Edit"><i
+                                    class="ti ti-edit"></i></a>
+                            <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="icon-btn" aria-label="View"><i
+                                    class="ti ti-eye"></i></a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@post.Id">
+                                <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="5" class="table-empty-state">No posts found</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
 </div>

@@ -92,9 +92,7 @@ public static class HtmlUtility
     {
         var tags = new Dictionary<string, string>
         {
-            ["title"] = item.Title,
-            ["author"] = Strings.MyName,
-            ["image"] = OgImageUrl(siteBaseUrl, type, item.Id)
+            ["title"] = item.Title, ["author"] = Strings.MyName, ["image"] = OgImageUrl(siteBaseUrl, type, item.Id)
         };
 
         if (!string.IsNullOrWhiteSpace(item.Description))
@@ -115,32 +113,27 @@ public static class HtmlUtility
     /// </summary>
     /// <param name="tags">
     ///     A dictionary containing the tag values. This dictionary should be in the form:
-    ///
     ///     <list type="table">
     ///         <listheader>
     ///             <term>Key</term>
     ///             <description>Description</description>
     ///         </listheader>
-    ///
     ///         <item>
     ///             <term>description</term>
     ///             <description>
     ///                 The value to apply to the <c>description</c>, <c>og:description</c>, and <c>twitter:description</c>, tags.
     ///             </description>
     ///         </item>
-    ///
     ///         <item>
     ///             <term>author</term>
     ///             <description>The value to apply to the <c>og:site_name</c>, and <c>twitter:creator</c>, tags.</description>
     ///         </item>
-    ///
     ///         <item>
     ///             <term>title</term>
     ///             <description>
     ///                 The value to apply to the <c>title</c>, <c>og:title</c>, and <c>twitter:title</c>, tags.
     ///             </description>
     ///         </item>
-    ///
     ///         <item>
     ///             <term>image</term>
     ///             <description>
@@ -148,7 +141,6 @@ public static class HtmlUtility
     ///             </description>
     ///         </item>
     ///     </list>
-    ///
     ///     Any other values contained with the dictionary are ignored.
     /// </param>
     /// <returns>A string containing a collection of <c>&lt;meta&gt;</c> embed tags.</returns>
@@ -160,7 +152,7 @@ public static class HtmlUtility
             throw new ArgumentNullException(nameof(tags));
         }
 
-        using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
+        using var builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("""<meta property="og:type" content="article">""");
 
         if (tags.TryGetValue("description", out var description))

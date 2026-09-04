@@ -27,7 +27,7 @@ internal sealed class ReadingListService
     /// <returns>A collection of books in the specified state.</returns>
     public IReadOnlyCollection<Book> GetBooks(BookState state)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return state == (BookState)(-1)
             ? context.Books.ToArray()
             : context.Books.Where(b => b.State == state).ToArray();

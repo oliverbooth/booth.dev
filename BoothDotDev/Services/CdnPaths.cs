@@ -37,7 +37,8 @@ public static class CdnPaths
     }
 
     /// <summary>
-    ///     Resolves the physical path to a specific media file, mirroring the shape <see cref="Markdown.Link.CdnMediaResolver.BuildCdnUrl" />
+    ///     Resolves the physical path to a specific media file, mirroring the shape
+    ///     <see cref="Markdown.Link.CdnMediaResolver.BuildCdnUrl" />
     ///     uses for the corresponding public URL.
     /// </summary>
     /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>

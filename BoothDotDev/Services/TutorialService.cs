@@ -15,9 +15,9 @@ namespace BoothDotDev.Services;
 public sealed class TutorialService
 {
     private const string Area = "tutorial";
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TutorialService" /> class.
@@ -40,7 +40,7 @@ public sealed class TutorialService
     /// <returns>The total number of articles.</returns>
     public int GetArticleCount(Visibility visibility = Visibility.None)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return visibility switch
         {
             Visibility.None => context.TutorialArticles.Count(a => a.TrashedAt == null),
@@ -62,8 +62,8 @@ public sealed class TutorialService
             throw new ArgumentNullException(nameof(folder));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<TutorialArticle> articles = context.TutorialArticles.Include(a => a.CurrentDraft)
+        using var context = _dbContextFactory.CreateDbContext();
+        var articles = context.TutorialArticles.Include(a => a.CurrentDraft)
             .Where(a => a.TrashedAt == null && a.CurrentDraft!.Folder == folder.Id);
 
         if (visibility != Visibility.None)
@@ -91,8 +91,8 @@ public sealed class TutorialService
 
         var folderIds = CollectSubtreeFolderIds(folder.Id);
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<TutorialArticle> articles = context.TutorialArticles.Include(a => a.CurrentDraft)
+        using var context = _dbContextFactory.CreateDbContext();
+        var articles = context.TutorialArticles.Include(a => a.CurrentDraft)
             .Where(a => a.TrashedAt == null && folderIds.Contains(a.CurrentDraft!.Folder));
 
         if (visibility != Visibility.None)
@@ -110,7 +110,7 @@ public sealed class TutorialService
     /// <returns>The set of folder IDs in the subtree.</returns>
     private HashSet<Guid> CollectSubtreeFolderIds(Guid rootId)
     {
-        ILookup<Guid, TutorialFolder> childrenByParent = GetAllFolders()
+        var childrenByParent = GetAllFolders()
             .Where(f => f.Parent.HasValue)
             .ToLookup(f => f.Parent!.Value);
 
@@ -120,7 +120,7 @@ public sealed class TutorialService
 
         while (stack.TryPop(out var current))
         {
-            foreach (TutorialFolder child in childrenByParent[current])
+            foreach (var child in childrenByParent[current])
             {
                 if (subtreeIds.Add(child.Id))
                 {
@@ -141,7 +141,7 @@ public sealed class TutorialService
     public IReadOnlyList<TutorialFolder> GetFolders(TutorialFolder? parent = null,
         Visibility visibility = Visibility.None)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         IQueryable<TutorialFolder> folders = context.TutorialFolders;
 
         folders = parent is null ? folders.Where(f => f.Parent == null) : folders.Where(f => f.Parent == parent.Id);
@@ -159,7 +159,7 @@ public sealed class TutorialService
     /// <returns>A read-only view of every folder.</returns>
     public IReadOnlyList<TutorialFolder> GetAllFolders()
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.TutorialFolders.OrderBy(f => f.Title)];
     }
 
@@ -170,7 +170,7 @@ public sealed class TutorialService
     /// <returns>A <see cref="Result{T}" /> containing the folder if that folder was found, or a failure if not found.</returns>
     public Result<TutorialFolder> GetFolder(Guid id)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var folder = context.TutorialFolders.FirstOrDefault(f => f.Id == id);
         return folder is not null ? folder : Result.Fail("Folder not found");
     }
@@ -271,7 +271,7 @@ public sealed class TutorialService
 
         while (folder.Parent is { } parentId)
         {
-            Result<TutorialFolder> currentResult = GetFolder(parentId);
+            var currentResult = GetFolder(parentId);
             if (currentResult.IsFailed)
             {
                 break;
@@ -309,7 +309,7 @@ public sealed class TutorialService
             throw new ArgumentNullException(nameof(article));
         }
 
-        Result<TutorialFolder> folderResult = GetFolder(article.Folder);
+        var folderResult = GetFolder(article.Folder);
         if (folderResult.IsFailed)
         {
             return article.Slug;
@@ -325,7 +325,7 @@ public sealed class TutorialService
     /// <returns>A read-only list of the most recent tutorial articles.</returns>
     public IReadOnlyList<TutorialArticle> GetRecentArticles(ActivitySearchOptions searchOptions)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var articles = context.TutorialArticles.Include(a => a.CurrentDraft).Where(a => a.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
@@ -352,8 +352,8 @@ public sealed class TutorialService
     /// <returns>A read-only view of every article.</returns>
     public IReadOnlyList<TutorialArticle> GetAllArticles(Visibility visibility = Visibility.None)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        IQueryable<TutorialArticle> articles = context.TutorialArticles.Include(a => a.CurrentDraft)
+        using var context = _dbContextFactory.CreateDbContext();
+        var articles = context.TutorialArticles.Include(a => a.CurrentDraft)
             .Where(a => a.TrashedAt == null);
 
         if (visibility != Visibility.None)
@@ -375,7 +375,7 @@ public sealed class TutorialService
     /// <returns>A <see cref="Result{T}" /> containing the article if that article was found, or a failure if not found.</returns>
     public Result<TutorialArticle> GetArticle(Guid id, bool includeTrashed = false)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var article = context.TutorialArticles.Include(a => a.CurrentDraft).FirstOrDefault(a => a.Id == id);
 
         if (article is null || (article.TrashedAt is not null && !includeTrashed))
@@ -402,7 +402,7 @@ public sealed class TutorialService
         }
 
         var tokens = slug.Split('/');
-        TutorialFolder? folder = parentFolder;
+        var folder = parentFolder;
 
         for (var index = 0; index < tokens.Length - 1; index++)
         {
@@ -420,7 +420,7 @@ public sealed class TutorialService
             return Result.Fail("Folder not found");
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         slug = tokens[^1];
         var article = context.TutorialArticles.Include(a => a.CurrentDraft)
             .FirstOrDefault(a => a.Slug == slug && a.TrashedAt == null && a.CurrentDraft!.Folder == folder.Id);
@@ -448,7 +448,7 @@ public sealed class TutorialService
 
         for (var index = 0; index < rangeCount; index++)
         {
-            ReadOnlySpan<char> token = slug[ranges[index]];
+            var token = slug[ranges[index]];
             var folderResult = GetFolder(token, currentFolder);
             if (folderResult.IsFailed)
             {
@@ -472,7 +472,7 @@ public sealed class TutorialService
     {
         var slugString = slug.ToString();
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var folder = parent is null
             ? context.TutorialFolders.FirstOrDefault(a => a.Slug == slugString)
             : context.TutorialFolders.FirstOrDefault(a => a.Slug == slugString && a.Parent == parent.Id);

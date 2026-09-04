@@ -7,7 +7,7 @@ stages:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-test:
+test-cs:
   extends: .default-rules
   stage: verify
   needs: ["build-assets"]
@@ -18,6 +18,18 @@ test:
     when: always
     reports:
       junit: "**/test-results.xml"
+
+test-ts:
+  extends: .default-rules
+  stage: verify
+  image: node:22-alpine
+  script:
+    - npm ci
+    - npm test -- --reporter=junit --outputFile=test-results.xml
+  artifacts:
+    when: always
+    reports:
+      junit: "test-results.xml"
 
 build-assets:
   extends: .default-rules

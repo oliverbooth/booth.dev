@@ -25,26 +25,25 @@ public sealed class TimestampInlineParser : InlineParser
             return false;
         }
 
-        ReadOnlySpan<char> span = slice.Text.AsSpan(slice.Start, slice.Length);
+        var span = slice.Text.AsSpan(slice.Start, slice.Length);
 
-        if (!TryConsumeTimestamp(span, out ReadOnlySpan<char> rawTimestamp, out char format))
+        if (!TryConsumeTimestamp(span, out var rawTimestamp, out var format))
         {
             return false;
         }
 
-        if (!long.TryParse(rawTimestamp, out long timestamp))
+        if (!long.TryParse(rawTimestamp, out var timestamp))
         {
             return false;
         }
 
-        bool hasFormat = format != '\0';
+        var hasFormat = format != '\0';
         processor.Inline = new TimestampInline
         {
-            Format = (TimestampFormat)format,
-            Timestamp = DateTimeOffset.FromUnixTimeSeconds(timestamp)
+            Format = (TimestampFormat)format, Timestamp = DateTimeOffset.FromUnixTimeSeconds(timestamp)
         };
 
-        int paddingCount = hasFormat ? 6 : 4; // <t:*> or optionally <t:*:*>
+        var paddingCount = hasFormat ? 6 : 4; // <t:*> or optionally <t:*:*>
         slice.Start += rawTimestamp.Length + paddingCount;
         return true;
     }
@@ -56,7 +55,11 @@ public sealed class TimestampInlineParser : InlineParser
         timestamp = default;
         format = default;
 
-        if (!source.StartsWith("<t:")) return false;
+        if (!source.StartsWith("<t:"))
+        {
+            return false;
+        }
+
         timestamp = source[3..];
 
         if (timestamp.IndexOf('>') == -1)
@@ -65,7 +68,7 @@ public sealed class TimestampInlineParser : InlineParser
             return false;
         }
 
-        int delimiterIndex = timestamp.IndexOf(':');
+        var delimiterIndex = timestamp.IndexOf(':');
         if (delimiterIndex == 0)
         {
             // invalid format <t::*>

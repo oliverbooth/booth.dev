@@ -31,14 +31,14 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
         Debug.Assert(template.Name == "Snippet");
         Trace.Assert(template.Name == "Snippet");
 
-        IReadOnlyList<string> argumentList = template.ArgumentList;
+        var argumentList = template.ArgumentList;
 
         if (argumentList.Count < 1)
         {
             return DefaultRender(template);
         }
 
-        if (!int.TryParse(argumentList[0], out int snippetId))
+        if (!int.TryParse(argumentList[0], out var snippetId))
         {
             return DefaultRender(template);
         }
@@ -46,13 +46,13 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
         var identifier = Guid.CreateVersion7();
         var snippets = new List<CodeSnippet>();
 
-        IReadOnlyList<string> languages = argumentList.Count > 1
+        var languages = argumentList.Count > 1
             ? argumentList[1].Split(';')
             : _codeSnippetService.GetLanguagesForSnippet(snippetId);
 
-        foreach (string language in languages)
+        foreach (var language in languages)
         {
-            if (_codeSnippetService.TryGetCodeSnippetForLanguage(snippetId, language, out CodeSnippet? snippet))
+            if (_codeSnippetService.TryGetCodeSnippetForLanguage(snippetId, language, out var snippet))
             {
                 snippets.Add(snippet);
             }
@@ -60,7 +60,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
 
         if (snippets.Count == 1)
         {
-            CodeSnippet snippet = snippets[0];
+            var snippet = snippets[0];
             return RenderHtml(snippet);
         }
 
@@ -73,7 +73,7 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
         for (var index = 0; index < languages.Count; index++)
         {
             var language = languages[index];
-            string classList = "";
+            var classList = "";
             if (index == 0)
             {
                 classList = " active";
@@ -102,14 +102,14 @@ internal sealed class CodeSnippetTemplateRenderer : CustomTemplateRenderer
 
         for (var index = 0; index < snippets.Count; index++)
         {
-            string classList = "";
+            var classList = "";
             if (index == 0)
             {
                 classList = " show active";
             }
 
             var snippet = snippets[index];
-            string html = RenderHtml(snippet);
+            var html = RenderHtml(snippet);
             builder.AppendLine($"""
                                 <div class="tab-pane fade{classList}" id="snp-{snippetId}-{identifier:N}-{snippet.Language}" data-identifier="{identifier:N}" role="tabpanel"
                                 aria-labelledby="snp-{snippetId}-{identifier:N}-{snippet.Language}">

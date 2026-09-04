@@ -20,7 +20,7 @@
     <nav class="admin-rail">
         <a asp-page="/Admin/Index" class="admin-rail-brand">
             <span class="mark">
-                <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h"/>
+                <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h" />
             </span>
             <span>Admin</span>
         </a>
@@ -50,7 +50,8 @@
 
         <div class="admin-rail-footer">
             <div class="admin-user">
-                <div class="avatar" data-initial="@CurrentUser.DisplayName[0]"><img src="@CurrentUser.AvatarUrl" alt="@CurrentUser.DisplayName"/></div>
+                <div class="avatar" data-initial="@CurrentUser.DisplayName[0]"><img src="@CurrentUser.AvatarUrl"
+                                                                                    alt="@CurrentUser.DisplayName" /></div>
                 <div>
                     <p class="name">@CurrentUser.DisplayName</p>
                     <p class="role">Admin</p>

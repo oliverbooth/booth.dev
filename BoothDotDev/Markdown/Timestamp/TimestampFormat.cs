@@ -38,5 +38,5 @@ public enum TimestampFormat
     /// <summary>
     ///     Relative date/time format. Example: 1 second ago
     /// </summary>
-    Relative = 'R',
+    Relative = 'R'
 }

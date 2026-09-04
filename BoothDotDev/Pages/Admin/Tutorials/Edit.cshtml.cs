@@ -18,10 +18,10 @@ namespace BoothDotDev.Pages.Admin.Tutorials;
 public sealed class Edit : PageModel
 {
     private const string Area = "tutorial";
+    private readonly CdnMediaService _cdnMediaService;
+    private readonly MarkdownRenderingService _markdownRenderingService;
 
     private readonly TutorialService _tutorialService;
-    private readonly MarkdownRenderingService _markdownRenderingService;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -29,7 +29,8 @@ public sealed class Edit : PageModel
     /// <param name="tutorialService">The tutorial service.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
     /// <param name="cdnMediaService">The CDN media service.</param>
-    public Edit(TutorialService tutorialService, MarkdownRenderingService markdownRenderingService, CdnMediaService cdnMediaService)
+    public Edit(TutorialService tutorialService, MarkdownRenderingService markdownRenderingService,
+        CdnMediaService cdnMediaService)
     {
         _tutorialService = tutorialService;
         _markdownRenderingService = markdownRenderingService;
@@ -146,7 +147,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var articleResult = _tutorialService.GetArticle(id.Value, includeTrashed: true);
+        var articleResult = _tutorialService.GetArticle(id.Value, true);
         if (articleResult.IsFailed)
         {
             return NotFound();
@@ -431,7 +432,7 @@ public sealed class Edit : PageModel
     /// <returns>The built <see cref="TutorialArticleSaveRequest" />.</returns>
     private TutorialArticleSaveRequest BuildSaveRequest()
     {
-        Uri? previewImageUrl = Uri.TryCreate(Input.PreviewImageUrl, UriKind.Absolute, out var uri) ? uri : null;
+        var previewImageUrl = Uri.TryCreate(Input.PreviewImageUrl, UriKind.Absolute, out var uri) ? uri : null;
 
         var content = new TutorialArticleDraftContent(
             Input.Title,
@@ -450,7 +451,7 @@ public sealed class Edit : PageModel
             Input.EnableComments,
             Input.NextPart,
             Input.PreviousPart,
-            RedirectFrom: null,
+            null,
             content);
     }
 

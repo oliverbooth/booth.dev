@@ -20,11 +20,11 @@ public sealed class Login : PageModel
     private const string PasskeyLoginCookieName = "webauthn_login_challenge";
     private static readonly TimeSpan PasskeyChallengeLifetime = TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions CamelCaseJson = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-    private readonly UserService _userService;
+    private readonly IDataProtector _passkeyProtector;
     private readonly PasskeyService _passkeyService;
     private readonly IDataProtector _protector;
-    private readonly IDataProtector _passkeyProtector;
+
+    private readonly UserService _userService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Login" /> class.
@@ -61,6 +61,7 @@ public sealed class Login : PageModel
             {
                 ModelState.AddModelError(string.Empty, error.Message);
             }
+
             return Page();
         }
 
@@ -183,14 +184,6 @@ public sealed class Login : PageModel
         }
     }
 
-    /// <summary>
-    ///     Represents a passkey login ceremony's state, carried between the begin and complete requests via a short-lived,
-    ///     protected cookie.
-    /// </summary>
-    /// <param name="OptionsJson">The assertion options issued at the start of the ceremony.</param>
-    /// <param name="IssuedAt">The date and time the ceremony began.</param>
-    private sealed record PendingPasskeyLogin(string OptionsJson, DateTimeOffset IssuedAt);
-
     private bool TryGetPendingUserId(out Guid userId)
     {
         userId = Guid.Empty;
@@ -220,6 +213,14 @@ public sealed class Login : PageModel
     }
 
     /// <summary>
+    ///     Represents a passkey login ceremony's state, carried between the begin and complete requests via a short-lived,
+    ///     protected cookie.
+    /// </summary>
+    /// <param name="OptionsJson">The assertion options issued at the start of the ceremony.</param>
+    /// <param name="IssuedAt">The date and time the ceremony began.</param>
+    private sealed record PendingPasskeyLogin(string OptionsJson, DateTimeOffset IssuedAt);
+
+    /// <summary>
     ///     Represents the input model for the login form, containing the email and password fields.
     /// </summary>
     public sealed class LoginInput
@@ -228,7 +229,8 @@ public sealed class Login : PageModel
         ///     Gets or sets the email address of the user attempting to log in.
         /// </summary>
         /// <value>The email address of the user attempting to log in.</value>
-        [Required, EmailAddress]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
         /// <summary>

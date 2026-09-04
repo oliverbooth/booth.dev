@@ -31,8 +31,7 @@ export function disposeManimScenes(element: HTMLElement): void {
 }
 
 /**
- * Finds manim-web codeblocks within the given element and mounts each as a live, tabbed scene. No-ops - without
- * loading manim-web at all - if the element contains none.
+ * Finds manim-web codeblocks within the given element and mounts each as a live, tabbed scene.
  * @param element The element within which to find and mount manim-web codeblocks.
  */
 export async function initManimScenes(element: HTMLElement): Promise<void> {
@@ -78,33 +77,50 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
         return;
     }
 
+    const noSource = 'noSource' in codeElement.dataset;
     const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
     const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
-    const {sceneTab, sourceTab, scenePanel, sourcePanel, tabList, wrapper, fullscreenToggle} = buildTabs();
+    const wrapper = document.createElement('div');
+    wrapper.className = 'manim-scene';
+
+    const scenePanel = document.createElement('div');
+    scenePanel.className = 'manim-scene-panel';
+
     (codeToolbar ?? pre).replaceWith(wrapper);
-    sourcePanel.append(codeToolbar ?? pre);
 
-    if (toolbar) {
-        toolbar.classList.add('scene-toolbar');
-        toolbar.hidden = true; // scene tab is active by default
-        tabList.append(toolbar);
+    if (noSource) {
+        // `no-source`: just the scene, no tab chrome to switch to a Source view at all.
+        // so no fullscreen toggle either, since there'd be nowhere to put it
+        wrapper.append(scenePanel);
+    } else {
+        const fullscreenToggle = createFullscreenToggle(wrapper);
+        const {sceneTab, sourceTab, sourcePanel, tabList} = buildTabs();
+        tabList.append(fullscreenToggle);
+        wrapper.append(tabList, scenePanel, sourcePanel);
+        sourcePanel.append(codeToolbar ?? pre);
+
+        if (toolbar) {
+            toolbar.classList.add('scene-toolbar');
+            toolbar.hidden = true; // scene tab is active by default
+            tabList.append(toolbar);
+        }
+
+        sceneTab.addEventListener('click', () => {
+            activateTab(sceneTab, sourceTab, scenePanel, sourcePanel);
+            fullscreenToggle.hidden = false;
+            if (toolbar) {
+                toolbar.hidden = true;
+            }
+        });
+        sourceTab.addEventListener('click', () => {
+            activateTab(sourceTab, sceneTab, sourcePanel, scenePanel);
+            fullscreenToggle.hidden = true;
+            if (toolbar) {
+                toolbar.hidden = false;
+            }
+        });
     }
-
-    sceneTab.addEventListener('click', () => {
-        activateTab(sceneTab, sourceTab, scenePanel, sourcePanel);
-        fullscreenToggle.hidden = false;
-        if (toolbar) {
-            toolbar.hidden = true;
-        }
-    });
-    sourceTab.addEventListener('click', () => {
-        activateTab(sourceTab, sceneTab, sourcePanel, scenePanel);
-        fullscreenToggle.hidden = true;
-        if (toolbar) {
-            toolbar.hidden = false;
-        }
-    });
 
     const globals = window as unknown as {
         Scene: new (container: HTMLElement, options: SceneOptions) => Scene;
@@ -140,36 +156,24 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
  * Builds the Scene/Source tab chrome for a single scene, unpopulated.
  */
 function buildTabs(): {
-    wrapper: HTMLElement;
     tabList: HTMLElement;
     sceneTab: HTMLButtonElement;
     sourceTab: HTMLButtonElement;
-    scenePanel: HTMLElement;
     sourcePanel: HTMLElement;
-    fullscreenToggle: HTMLButtonElement;
 } {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'manim-scene';
-
     const tabList = document.createElement('div');
     tabList.className = 'manim-scene-tabs';
     tabList.setAttribute('role', 'tablist');
 
     const sceneTab = createTabButton('Scene', true);
     const sourceTab = createTabButton('Source', false);
-    const fullscreenToggle = createFullscreenToggle(wrapper);
-    tabList.append(sceneTab, sourceTab, fullscreenToggle);
-
-    const scenePanel = document.createElement('div');
-    scenePanel.className = 'manim-scene-panel';
+    tabList.append(sceneTab, sourceTab);
 
     const sourcePanel = document.createElement('div');
     sourcePanel.className = 'manim-source-panel';
     sourcePanel.hidden = true;
 
-    wrapper.append(tabList, scenePanel, sourcePanel);
-
-    return {wrapper, tabList, sceneTab, sourceTab, scenePanel, sourcePanel, fullscreenToggle};
+    return {tabList, sceneTab, sourceTab, sourcePanel};
 }
 
 /**

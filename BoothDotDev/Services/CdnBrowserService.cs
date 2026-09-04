@@ -12,9 +12,9 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class CdnBrowserService
 {
+    private readonly string _baseUrl;
     private readonly ILogger<CdnBrowserService> _logger;
     private readonly string _root;
-    private readonly string _baseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnBrowserService" /> class.
@@ -222,7 +222,7 @@ public sealed class CdnBrowserService
         }
         else
         {
-            File.Move(oldPath, newPath, overwrite: false);
+            File.Move(oldPath, newPath, false);
         }
 
         return isDirectory ? BuildDirectoryEntry(newPath, dirResult.Value) : BuildFileEntry(newPath, dirResult.Value);
@@ -296,7 +296,7 @@ public sealed class CdnBrowserService
 
         if (Directory.Exists(targetPath))
         {
-            Directory.Delete(targetPath, recursive: true);
+            Directory.Delete(targetPath, true);
             return Result.Ok();
         }
 

@@ -117,14 +117,20 @@ internal sealed class Stats : PageModel
             ? (LastPostDate.DayNumber - FirstPostDate.DayNumber) / (double)(TotalPosts - 1)
             : 0;
 
-        PostsByYear = [.. posts
-            .GroupBy(post => post.PublishedAt.Year)
-            .OrderByDescending(group => group.Key)
-            .Select(group => (Year: group.Key, Count: group.Count()))];
+        PostsByYear =
+        [
+            .. posts
+                .GroupBy(post => post.PublishedAt.Year)
+                .OrderByDescending(group => group.Key)
+                .Select(group => (Year: group.Key, Count: group.Count()))
+        ];
 
-        DistributionYears = [.. Enumerable.Range(FirstPostDate.Year, LastPostDate.Year - FirstPostDate.Year + 1)
-            .OrderByDescending(year => year)
-            .Select(year => BuildDistributionYear(year, publishDates))];
+        DistributionYears =
+        [
+            .. Enumerable.Range(FirstPostDate.Year, LastPostDate.Year - FirstPostDate.Year + 1)
+                .OrderByDescending(year => year)
+                .Select(year => BuildDistributionYear(year, publishDates))
+        ];
     }
 
     /// <summary>
@@ -138,7 +144,7 @@ internal sealed class Stats : PageModel
         var jan1 = new DateOnly(year, 1, 1);
         var dec31 = new DateOnly(year, 12, 31);
         var offset = ((int)jan1.DayOfWeek + 6) % 7; // DayOfWeek is Sunday-based; rebase so Monday is 0
-        DateOnly gridStart = jan1.AddDays(-offset); // preceding Monday, or Jan 1 itself if already one
+        var gridStart = jan1.AddDays(-offset); // preceding Monday, or Jan 1 itself if already one
         var columns = (dec31.DayNumber - gridStart.DayNumber + 7) / 7;
 
         var days = new List<PostDistributionDay>(columns * 7);
@@ -146,7 +152,7 @@ internal sealed class Stats : PageModel
         {
             for (var row = 0; row < 7; row++)
             {
-                DateOnly date = gridStart.AddDays(column * 7 + row);
+                var date = gridStart.AddDays((column * 7) + row);
                 var inYear = date.Year == year;
                 days.Add(new PostDistributionDay(inYear ? date : null, publishDates.Count(d => d == date)));
             }
@@ -171,7 +177,11 @@ internal sealed class Stats : PageModel
 /// <param name="ColumnCount">The number of week-columns in the grid.</param>
 /// <param name="Months">The month labels and the column each one starts at.</param>
 /// <param name="Days">Every cell in the grid, in column-major order (top-to-bottom within each week, left-to-right across weeks).</param>
-internal sealed record PostDistributionYear(int Year, int ColumnCount, IReadOnlyList<PostDistributionMonth> Months, IReadOnlyList<PostDistributionDay> Days);
+internal sealed record PostDistributionYear(
+    int Year,
+    int ColumnCount,
+    IReadOnlyList<PostDistributionMonth> Months,
+    IReadOnlyList<PostDistributionDay> Days);
 
 /// <summary>
 ///     Represents a month label positioned above a <see cref="PostDistributionYear" />'s grid.

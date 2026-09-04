@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using FluentResults;
@@ -12,7 +13,7 @@ using Image = SixLabors.ImageSharp.Image;
 
 namespace BoothDotDev.Pages.Admin.Creations.Artwork;
 
-using ArtworkItem = Data.Models.ArtworkItem;
+using ArtworkItem = ArtworkItem;
 
 /// <summary>
 ///     Represents the page model for editing an artwork item in the admin section.
@@ -22,10 +23,10 @@ using ArtworkItem = Data.Models.ArtworkItem;
 public sealed class Edit : PageModel
 {
     private const string Area = "content";
+    private readonly string _cdnBaseUrl;
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly CreationService _creationService;
-    private readonly CdnMediaService _cdnMediaService;
-    private readonly string _cdnBaseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -87,15 +88,11 @@ public sealed class Edit : PageModel
         if (id is null)
         {
             CreatingNew = true;
-            Input = new EditModel
-            {
-                Visibility = Visibility.Published,
-                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
-            };
+            Input = new EditModel { Visibility = Visibility.Published, PublishedAt = DateTimeOffset.UtcNow.ToLocalTime() };
             return Page();
         }
 
-        var itemResult = _creationService.GetArtworkItem(id.Value, includeTrashed: true);
+        var itemResult = _creationService.GetArtworkItem(id.Value, true);
         if (itemResult.IsFailed)
         {
             return NotFound();
@@ -146,7 +143,7 @@ public sealed class Edit : PageModel
         }
         else
         {
-            var existingResult = _creationService.GetArtworkItem(id.Value, includeTrashed: true);
+            var existingResult = _creationService.GetArtworkItem(id.Value, true);
             if (existingResult.IsFailed)
             {
                 return NotFound();
@@ -188,7 +185,7 @@ public sealed class Edit : PageModel
             return BadRequest("No file was uploaded.");
         }
 
-        var itemResult = _creationService.GetArtworkItem(id, includeTrashed: true);
+        var itemResult = _creationService.GetArtworkItem(id, true);
         if (itemResult.IsFailed)
         {
             return NotFound();
