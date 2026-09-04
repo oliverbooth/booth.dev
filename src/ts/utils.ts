@@ -1,40 +1,97 @@
 /**
- * Formats a timestamp into a human-readable relative time string.
+ * Formats a timestamp into a human-readable relative time string, matching the wording and thresholds of the
+ * server's `DateTimeOffset.Humanize()` call in `TimestampRenderer` exactly, so a `<t:R>` timestamp's once-a-second
+ * client-side refresh doesn't visibly change the phrasing a reader already saw in the server-rendered HTML.
+ *
+ * This is a port of Humanizer's default en `DefaultHumanize` algorithm (see `DateTimeHumanizeAlgorithms` in
+ * Humanizer.Core), not a from-scratch design - the thresholds and one-of-a-kind phrases ("a minute ago", "yesterday",
+ * "one year ago", ...) all mirror it deliberately. If that call in `TimestampRenderer` ever changes, this needs the
+ * matching change too.
  * @param timestamp The timestamp to format.
- * @returns A string representing the relative time (e.g., "5 minutes ago", "in 2 hours").
+ * @param now The instant to measure `timestamp` against. Defaults to the current time; overridable for testing.
+ * @returns A string representing the relative time (e.g., "5 minutes ago", "an hour ago", "yesterday").
  */
-export function formatRelativeTimestamp(timestamp: Date): string {
-    const now = new Date();
-    const diff: number = now.getTime() - timestamp.getTime();
-    const suffix: string = diff < 0 ? 'from now' : 'ago';
+export function formatRelativeTimestamp(timestamp: Date, now: Date = new Date()): string {
+    const diffMs = now.getTime() - timestamp.getTime();
+    const future = diffMs < 0;
+    const totalMs = Math.abs(diffMs);
 
-    const seconds: number = Math.floor(diff / 1000);
-    if (seconds < 60) {
-        return `${seconds} second${seconds !== 1 ? 's' : ''} ${suffix}`;
+    // "now" isn't a <1000ms special case - it's what a 0-second count naturally formats as. Below one full second,
+    // the seconds bucket below computes floor(totalSeconds) = 0, and Humanizer's zero-count phrase is "now"
+    if (totalMs < 1000) {
+        return 'now';
     }
 
-    const minutes: number = Math.floor(diff / 60000);
-    if (minutes < 60) {
-        return `${minutes} minute${minutes !== 1 ? 's' : ''} ${suffix}`;
+    const suffix = future ? 'from now' : 'ago';
+    const totalSeconds = totalMs / 1000;
+    const totalMinutes = totalSeconds / 60;
+    const totalHours = totalMinutes / 60;
+    const totalDays = totalHours / 24;
+
+    // count === 1 gets Humanizer's hardcoded word instead of "1 <unit>s"; anything else is a plain numeral
+    const phrase = (count: number, unitPlural: string, singular: string): string =>
+        count === 1 ? `${singular} ${suffix}` : `${count} ${unitPlural} ${suffix}`;
+
+    if (totalSeconds < 60) {
+        return phrase(Math.floor(totalSeconds), 'seconds', 'one second');
+    }
+    if (totalSeconds < 120) {
+        return phrase(1, 'minutes', 'a minute');
+    }
+    if (totalMinutes < 60) {
+        return phrase(Math.floor(totalMinutes), 'minutes', 'a minute');
+    }
+    if (totalMinutes < 90) {
+        return phrase(1, 'hours', 'an hour');
+    }
+    if (totalHours < 24) {
+        return phrase(Math.floor(totalHours), 'hours', 'an hour');
     }
 
-    const hours: number = Math.floor(diff / 3600000);
-    if (hours < 24) {
-        return `${hours} hour${hours !== 1 ? 's' : ''} ${suffix}`;
+    // from here on, "day" counts are a calendar-date difference (UTC, matching the server's use of
+    // DateTimeOffset.UtcDateTime), not elapsed time - otherwise a timestamp from just after midnight could read
+    // "23 hours ago" server-side but "yesterday" client-side an hour later, or vice versa
+    const dayWord = future ? 'tomorrow' : 'yesterday';
+
+    if (totalHours < 48) {
+        const days = calendarDaysBetween(timestamp, now);
+        return days === 1 ? dayWord : phrase(days, 'days', dayWord);
+    }
+    if (totalDays < 28) {
+        return phrase(Math.floor(totalDays), 'days', dayWord);
+    }
+    if (totalDays < 30) {
+        return isExactlyOneCalendarMonthApart(timestamp, now, future)
+            ? phrase(1, 'months', 'one month')
+            : phrase(Math.floor(totalDays), 'days', dayWord);
+    }
+    if (totalDays < 345) {
+        return phrase(Math.floor(totalDays / 29.5), 'months', 'one month');
     }
 
-    const days: number = Math.floor(diff / 86400000);
-    if (days < 30) {
-        return `${days} day${days !== 1 ? 's' : ''} ${suffix}`;
-    }
+    return phrase(Math.floor(totalDays / 365) || 1, 'years', 'one year');
+}
 
-    const months: number = Math.floor(diff / 2592000000);
-    if (months < 12) {
-        return `${months} month${months !== 1 ? 's' : ''} ${suffix}`;
-    }
+/**
+ * The whole number of UTC calendar days between two instants (e.g. 23:59 and 00:01 the next day are 1 day apart,
+ * even though only 2 minutes elapsed) - Humanizer's "yesterday"/"tomorrow" cutoff is calendar-based, not elapsed-time.
+ */
+function calendarDaysBetween(a: Date, b: Date): number {
+    const aUtc = Date.UTC(a.getUTCFullYear(), a.getUTCMonth(), a.getUTCDate());
+    const bUtc = Date.UTC(b.getUTCFullYear(), b.getUTCMonth(), b.getUTCDate());
+    return Math.round(Math.abs(aUtc - bUtc) / 86400000);
+}
 
-    const years: number = Math.floor(diff / 31536000000);
-    return `${years} year${years !== 1 ? 's' : ''} ${suffix}`;
+/**
+ * Whether `timestamp` falls exactly one calendar month before (or after, if `future`) `now`'s date - e.g. now =
+ * March 15th, timestamp = February 15th. Used only to disambiguate the 28-29 day range, where Humanizer says
+ * "one month ago" for an exact month-to-date match and otherwise falls back to a day count.
+ */
+function isExactlyOneCalendarMonthApart(timestamp: Date, now: Date, future: boolean): boolean {
+    const reference = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + (future ? 1 : -1), now.getUTCDate()));
+    return reference.getUTCFullYear() === timestamp.getUTCFullYear()
+        && reference.getUTCMonth() === timestamp.getUTCMonth()
+        && reference.getUTCDate() === timestamp.getUTCDate();
 }
 
 /**
