@@ -18,7 +18,7 @@ public readonly record struct SpecBound(int Value, bool IsFromEnd)
     /// <returns>A new <see cref="SpecBound" /> instance.</returns>
     public static SpecBound Forward(int value)
     {
-        return new SpecBound(value, IsFromEnd: false);
+        return new SpecBound(value, false);
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public readonly record struct SpecBound(int Value, bool IsFromEnd)
     /// <returns>A new <see cref="SpecBound" /> instance.</returns>
     public static SpecBound Backward(int value)
     {
-        return new SpecBound(value, IsFromEnd: true);
+        return new SpecBound(value, true);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public readonly record struct SpecBound(int Value, bool IsFromEnd)
     public Index ToStartIndex()
     {
         return IsFromEnd
-            ? new Index(Value, fromEnd: true) // spec back-index is already aligned with Index's fromEnd semantics
+            ? new Index(Value, true) // spec back-index is already aligned with Index's fromEnd semantics
             : new Index(Value - 1); // spec is 1-based, Index is 0-based
     }
 
@@ -49,7 +49,7 @@ public readonly record struct SpecBound(int Value, bool IsFromEnd)
     public Index ToEndIndex()
     {
         return IsFromEnd
-            ? new Index(Value - 1, fromEnd: true) // spec end is inclusive, Range.End is exclusive
+            ? new Index(Value - 1, true) // spec end is inclusive, Range.End is exclusive
             : new Index(Value); // 1-based inclusive-end coincides with 0-based exclusive-end
     }
 }

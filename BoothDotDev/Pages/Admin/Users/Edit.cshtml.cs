@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text.Json;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Fido2NetLib;
 using FluentResults;
@@ -13,8 +14,8 @@ using QRCoder;
 
 namespace BoothDotDev.Pages.Admin.Users;
 
-using PasskeyCredential = Data.Models.PasskeyCredential;
-using User = Data.Models.User;
+using PasskeyCredential = PasskeyCredential;
+using User = User;
 
 /// <summary>
 ///     Represents the page model for creating or editing a user in the admin section.
@@ -25,10 +26,10 @@ public sealed class Edit : PageModel
     private const string PasskeyRegistrationCookieName = "webauthn_reg_challenge";
     private static readonly TimeSpan PasskeyChallengeLifetime = TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions CamelCaseJson = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-    private readonly UserService _userService;
     private readonly PasskeyService _passkeyService;
     private readonly IDataProtector _protector;
+
+    private readonly UserService _userService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -244,7 +245,8 @@ public sealed class Edit : PageModel
         }
 
         var originalOptions = CredentialCreateOptions.FromJson(pending.OptionsJson);
-        var result = await _passkeyService.CompleteRegistration(userResult.Value, originalOptions, attestationResponse, pending.Nickname);
+        var result = await _passkeyService.CompleteRegistration(userResult.Value, originalOptions, attestationResponse,
+            pending.Nickname);
 
         return new JsonResult(result.IsSuccess
             ? new { success = true }
@@ -302,15 +304,6 @@ public sealed class Edit : PageModel
             return false;
         }
     }
-
-    /// <summary>
-    ///     Represents a passkey registration ceremony's state, carried between the begin and complete requests via a short-lived,
-    ///     protected cookie.
-    /// </summary>
-    /// <param name="Nickname">The user-supplied label for the passkey being registered.</param>
-    /// <param name="OptionsJson">The credential creation options issued at the start of the ceremony.</param>
-    /// <param name="IssuedAt">The date and time the ceremony began.</param>
-    private sealed record PendingPasskeyRegistration(string? Nickname, string OptionsJson, DateTimeOffset IssuedAt);
 
     /// <summary>
     ///     Reloads <see cref="AvatarUrl" />, <see cref="HasTotp" />, and <see cref="UserId" /> for an existing user,
@@ -373,7 +366,10 @@ public sealed class Edit : PageModel
     /// <summary>
     ///     Redirects back to this user's edit page on success, or re-renders the form with an error on failure.
     /// </summary>
-    /// <param name="id">The ID of the user being edited, to reload display state for on failure. If <see langword="null" />, a new user was being created.</param>
+    /// <param name="id">
+    ///     The ID of the user being edited, to reload display state for on failure. If <see langword="null" />, a new user
+    ///     was being created.
+    /// </param>
     /// <param name="result">The result of a save operation.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
     private IActionResult RedirectOnSuccess(Guid? id, Result<User> result)
@@ -388,6 +384,15 @@ public sealed class Edit : PageModel
 
         return RedirectToPage(new { id = result.Value.Id });
     }
+
+    /// <summary>
+    ///     Represents a passkey registration ceremony's state, carried between the begin and complete requests via a short-lived,
+    ///     protected cookie.
+    /// </summary>
+    /// <param name="Nickname">The user-supplied label for the passkey being registered.</param>
+    /// <param name="OptionsJson">The credential creation options issued at the start of the ceremony.</param>
+    /// <param name="IssuedAt">The date and time the ceremony began.</param>
+    private sealed record PendingPasskeyRegistration(string? Nickname, string OptionsJson, DateTimeOffset IssuedAt);
 
     /// <summary>
     ///     Represents the model for creating or editing a user.

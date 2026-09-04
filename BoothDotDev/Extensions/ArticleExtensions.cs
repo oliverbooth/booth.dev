@@ -48,7 +48,7 @@ internal static class ArticleExtensions
         /// <returns>The code sample count.</returns>
         public int GetCodeSampleCount()
         {
-            MarkdownDocument document = global::Markdig.Markdown.Parse(post.Body, WordCountPipeline);
+            var document = Markdig.Markdown.Parse(post.Body, WordCountPipeline);
             return document.Descendants().OfType<FencedCodeBlock>().Count();
         }
     }
@@ -87,7 +87,7 @@ internal static class ArticleExtensions
     /// <param name="body">The body text in which to count words.</param>
     private static int CountWords(string body)
     {
-        MarkdownDocument document = global::Markdig.Markdown.Parse(body, WordCountPipeline);
+        var document = Markdig.Markdown.Parse(body, WordCountPipeline);
         return CountWords(ExcludeSceneCodeBlocks(body, document).AsSpan());
     }
 
@@ -114,7 +114,7 @@ internal static class ArticleExtensions
         var builder = new StringBuilder(body.Length);
         var cursor = 0;
 
-        foreach (FencedCodeBlock block in sceneBlocks)
+        foreach (var block in sceneBlocks)
         {
             if (block.Span.Start > cursor)
             {

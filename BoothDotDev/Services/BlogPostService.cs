@@ -23,14 +23,15 @@ public sealed class BlogPostService : BackgroundService
     /// </summary>
     public const int DefaultPageSize = 5;
 
-    private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10));
     private const string Area = "blog";
 
-    private readonly ILogger<BlogPostService> _logger;
-    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly UserService _userService;
+    private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10));
     private readonly CdnMediaService _cdnMediaService;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+
+    private readonly ILogger<BlogPostService> _logger;
     private readonly ConcurrentDictionary<Guid, BlogPost> _postCache = [];
+    private readonly UserService _userService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BlogPostService" /> class.
@@ -59,9 +60,9 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>A <see cref="Result{T}" /> containing the newly-created blog post.</returns>
     public Result<BlogPost> CreatePost(BlogPostSaveRequest request)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
 
-        var slugCheck = CheckSlugAvailable(context, request.Slug, excludePostId: null);
+        var slugCheck = CheckSlugAvailable(context, request.Slug, null);
         if (slugCheck.IsFailed)
         {
             return slugCheck;
@@ -104,7 +105,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPost> SaveDraft(Guid id, BlogPostSaveRequest request)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
 
         if (post is null)
@@ -112,7 +113,7 @@ public sealed class BlogPostService : BackgroundService
             return Result.Fail($"Blog post with ID '{id}' not found.");
         }
 
-        var slugCheck = CheckSlugAvailable(context, request.Slug, excludePostId: id);
+        var slugCheck = CheckSlugAvailable(context, request.Slug, id);
         if (slugCheck.IsFailed)
         {
             return slugCheck;
@@ -143,7 +144,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPost> PublishPost(Guid id, BlogPostSaveRequest request)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
 
         if (post is null)
@@ -151,7 +152,7 @@ public sealed class BlogPostService : BackgroundService
             return Result.Fail($"Blog post with ID '{id}' not found.");
         }
 
-        var slugCheck = CheckSlugAvailable(context, request.Slug, excludePostId: id);
+        var slugCheck = CheckSlugAvailable(context, request.Slug, id);
         if (slugCheck.IsFailed)
         {
             return slugCheck;
@@ -184,7 +185,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPost> TrashPost(Guid id)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
 
         if (post is null)
@@ -209,7 +210,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPost> RestorePost(Guid id)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
 
         if (post is null)
@@ -235,7 +236,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result PermanentlyDeletePost(Guid id)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts.Find(id);
 
         if (post is null)
@@ -268,7 +269,7 @@ public sealed class BlogPostService : BackgroundService
         Visibility visibility = Visibility.Published,
         bool includeRedirects = false)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => p.TrashedAt == null);
 
         if (!includeRedirects)
@@ -296,7 +297,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>A read-only list of all blog post categories with their child categories.</returns>
     public IReadOnlyList<BlogPostCategory> GetAllCategories()
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var all = context.BlogPostCategories.ToList();
         var byParent = all.ToLookup(c => c.ParentCategoryId);
 
@@ -316,14 +317,14 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>The total number of blog posts.</returns>
     public int GetBlogPostCount(Visibility visibility = Visibility.None, string[]? tags = null)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => p.TrashedAt == null);
 
         if (tags is { Length: > 0 })
         {
             for (var index = 0; index < tags.Length; index++)
             {
-                string tag = tags[index];
+                var tag = tags[index];
                 tags[index] = tag.Replace('+', '-');
             }
 
@@ -345,7 +346,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>The blog post category with the specified ID.</returns>
     public BlogPostCategory? GetCategory(Guid categoryId)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.BlogPostCategories.Find(categoryId);
     }
 
@@ -356,7 +357,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>A read-only list of the post's drafts, ordered newest first.</returns>
     public IReadOnlyList<BlogPostDraft> GetDraftHistory(Guid id)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.BlogPostDrafts.Where(d => d.BlogPostId == id).OrderByDescending(d => d.CreatedAt)];
     }
 
@@ -371,7 +372,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPostDraft> GetDraft(Guid id, Guid draftId)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var draft = context.BlogPostDrafts.Find(draftId);
 
         if (draft is null || draft.BlogPostId != id)
@@ -389,7 +390,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>A <see cref="Result{T}" /> containing the post's newest draft, or an error if the post has no drafts.</returns>
     public Result<BlogPostDraft> GetNewestDraft(Guid id)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var draft = context.BlogPostDrafts
             .Where(d => d.BlogPostId == id)
             .OrderByDescending(d => d.CreatedAt)
@@ -410,7 +411,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>The next blog post from the specified blog post.</returns>
     public BlogPost? GetNextPost(BlogPost blogPost)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Include(p => p.CurrentDraft)
             .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
@@ -449,8 +450,8 @@ public sealed class BlogPostService : BackgroundService
             throw new ArgumentNullException(nameof(post));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        BlogPostCategory? current = context.BlogPostCategories.Find(post.CategoryId);
+        using var context = _dbContextFactory.CreateDbContext();
+        var current = context.BlogPostCategories.Find(post.CategoryId);
 
         if (current is null)
         {
@@ -472,7 +473,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>The previous blog post from the specified blog post.</returns>
     public BlogPost? GetPreviousPost(BlogPost blogPost)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.BlogPosts
             .Include(p => p.CurrentDraft)
             .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
@@ -495,13 +496,13 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPost> GetPost(BlogPostKey key, bool includeTrashed = false)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => includeTrashed || p.TrashedAt == null);
         var post = key switch
         {
             Guid guid => posts.FirstOrDefault(p => p.Id == guid),
             int intId => posts.FirstOrDefault(p => p.WordPressId == intId),
-            string slug => posts.FirstOrDefault(p => p.Slug == slug),
+            string slug => posts.FirstOrDefault(p => p.Slug == slug)
         };
 
         if (post is null)
@@ -524,7 +525,7 @@ public sealed class BlogPostService : BackgroundService
     /// </returns>
     public Result<BlogPost> GetPost(string slug, DateOnly publishDate)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var post = context.BlogPosts
             .Include(p => p.CurrentDraft)
             .FirstOrDefault(post => post.PublishedAt.Year == publishDate.Year &&
@@ -549,7 +550,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>A read-only list of the most recent blog posts.</returns>
     public IReadOnlyList<BlogPost> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts.Include(p => p.CurrentDraft).Where(p => !p.IsRedirect && p.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
@@ -573,7 +574,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>The top-level blog post categories.</returns>
     public BlogPostCategory[] GetTopLevelCategories()
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.BlogPostCategories.Where(category => category.ParentCategory == null)];
     }
 
@@ -583,7 +584,7 @@ public sealed class BlogPostService : BackgroundService
     /// <returns>A read-only list of trashed blog posts.</returns>
     public IReadOnlyList<BlogPost> GetTrashedPosts()
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var posts = context.BlogPosts
             .Include(p => p.CurrentDraft)
             .Where(p => p.TrashedAt != null)
@@ -657,8 +658,8 @@ public sealed class BlogPostService : BackgroundService
         _logger.LogInformation("Invalidating blog post cache...");
         _postCache.Clear();
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
-        foreach (BlogPost post in context.BlogPosts.Include(p => p.CurrentDraft))
+        using var context = _dbContextFactory.CreateDbContext();
+        foreach (var post in context.BlogPosts.Include(p => p.CurrentDraft))
         {
             _postCache[post.Id] = post;
         }

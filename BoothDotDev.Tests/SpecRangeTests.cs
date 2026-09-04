@@ -68,7 +68,7 @@ internal sealed class SpecRangeTests
     {
         var bound = new SpecBound(specValue, isFromEnd);
 
-        Index index = bound.ToStartIndex();
+        var index = bound.ToStartIndex();
 
         using (Assert.EnterMultipleScope())
         {
@@ -83,7 +83,7 @@ internal sealed class SpecRangeTests
     {
         var bound = new SpecBound(specValue, isFromEnd);
 
-        Index index = bound.ToStartIndex();
+        var index = bound.ToStartIndex();
 
         using (Assert.EnterMultipleScope())
         {
@@ -98,7 +98,7 @@ internal sealed class SpecRangeTests
     {
         var bound = new SpecBound(specValue, isFromEnd);
 
-        Index index = bound.ToEndIndex();
+        var index = bound.ToEndIndex();
 
         using (Assert.EnterMultipleScope())
         {
@@ -113,7 +113,7 @@ internal sealed class SpecRangeTests
     {
         var bound = new SpecBound(specValue, isFromEnd);
 
-        Index index = bound.ToEndIndex();
+        var index = bound.ToEndIndex();
 
         using (Assert.EnterMultipleScope())
         {

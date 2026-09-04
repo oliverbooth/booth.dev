@@ -11,8 +11,6 @@ namespace BoothDotDev.Markdown.Callout;
 /// </summary>
 internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
 {
-    private readonly MarkdownPipeline _pipeline;
-
     private static readonly Dictionary<string, string> CalloutTypes = new()
     {
         ["NOTE"] = "pencil",
@@ -29,8 +27,10 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
         ["BUG"] = "bug",
         ["EXAMPLE"] = "list",
         ["CITE"] = "quote",
-        ["UPDATE"] = "calendar-check",
+        ["UPDATE"] = "calendar-check"
     };
+
+    private readonly MarkdownPipeline _pipeline;
 
     public CalloutRenderer(MarkdownPipeline pipeline)
     {
@@ -55,12 +55,12 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
 
     private static void RenderAsHtml(HtmlRenderer renderer, CalloutBlock block, MarkdownPipeline pipeline)
     {
-        string title = block.Title.Text;
-        ReadOnlySpan<char> type = block.Type.AsSpan();
+        var title = block.Title.Text;
+        var type = block.Type.AsSpan();
         Span<char> upperType = stackalloc char[type.Length];
         type.ToUpperInvariant(upperType);
 
-        if (!CalloutTypes.TryGetValue(upperType.ToString(), out string? tablerIcon))
+        if (!CalloutTypes.TryGetValue(upperType.ToString(), out var tablerIcon))
         {
             tablerIcon = "pencil";
         }
@@ -79,7 +79,7 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
         renderer.Write(tablerIcon);
         renderer.Write("\"></i> ");
 
-        string calloutTitle = title.Length == 0 ? typeString.Humanize(LetterCasing.Sentence) : title;
+        var calloutTitle = title.Length == 0 ? typeString.Humanize(LetterCasing.Sentence) : title;
         WriteTitle(renderer, pipeline, calloutTitle);
 
         renderer.WriteLine(block.Foldable ? "</summary>" : "</div>");
@@ -93,7 +93,7 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
 
     private static void WriteTitle(TextRendererBase renderer, MarkdownPipeline pipeline, string calloutTitle)
     {
-        string html = global::Markdig.Markdown.ToHtml(calloutTitle, pipeline);
+        var html = Markdig.Markdown.ToHtml(calloutTitle, pipeline);
         var document = new HtmlDocument();
         document.LoadHtml(html);
         if (document.DocumentNode.FirstChild is { Name: "p" } child)
@@ -106,8 +106,8 @@ internal sealed class CalloutRenderer : HtmlObjectRenderer<CalloutBlock>
 
     private static void RenderAsText(HtmlRenderer renderer, CalloutBlock block)
     {
-        string title = block.Title.Text;
-        ReadOnlySpan<char> type = block.Type.AsSpan();
+        var title = block.Title.Text;
+        var type = block.Type.AsSpan();
         renderer.WriteLine(title.Length == 0 ? type.ToString().ToUpperInvariant() : title.ToUpperInvariant());
         renderer.WriteChildren(block);
         renderer.EnsureLine();

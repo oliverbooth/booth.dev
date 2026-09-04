@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Projects;
 
-using Project = Data.Models.Project;
+using Project = Project;
 
 /// <summary>
 ///     Represents the page model for editing a project in the admin section.
@@ -19,9 +19,9 @@ using Project = Data.Models.Project;
 public sealed class Edit : PageModel
 {
     private const string Area = "projects";
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly ProjectService _projectService;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -77,9 +77,7 @@ public sealed class Edit : PageModel
             CreatingNew = true;
             Input = new EditModel
             {
-                Status = ProjectStatus.Ongoing,
-                Type = ProjectType.App,
-                CreatedAt = DateTimeOffset.UtcNow.ToLocalTime()
+                Status = ProjectStatus.Ongoing, Type = ProjectType.App, CreatedAt = DateTimeOffset.UtcNow.ToLocalTime()
             };
             return Page();
         }

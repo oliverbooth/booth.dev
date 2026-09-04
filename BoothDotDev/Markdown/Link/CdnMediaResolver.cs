@@ -12,10 +12,10 @@ namespace BoothDotDev.Markdown.Link;
 public sealed class CdnMediaResolver
 {
     private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
-    private readonly MarkdownRenderContext _renderContext;
-    private readonly RazorPartialRenderer _razorPartialRenderer;
     private readonly string _area;
     private readonly string _baseUrl;
+    private readonly RazorPartialRenderer _razorPartialRenderer;
+    private readonly MarkdownRenderContext _renderContext;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnMediaResolver" /> class.
@@ -24,7 +24,8 @@ public sealed class CdnMediaResolver
     /// <param name="razorPartialRenderer">The Razor partial renderer used to render media partials to a string.</param>
     /// <param name="area">The content area (e.g. blog, tutorials, projects) used in the CDN path.</param>
     /// <param name="baseUrl">The base URL of the CDN.</param>
-    public CdnMediaResolver(MarkdownRenderContext renderContext, RazorPartialRenderer razorPartialRenderer, string area, string baseUrl)
+    public CdnMediaResolver(MarkdownRenderContext renderContext, RazorPartialRenderer razorPartialRenderer, string area,
+        string baseUrl)
     {
         _renderContext = renderContext;
         _razorPartialRenderer = razorPartialRenderer;
@@ -91,7 +92,8 @@ public sealed class CdnMediaResolver
     /// <param name="id">The ID of the containing post, used in the CDN path.</param>
     /// <param name="filename">The bare filename to resolve.</param>
     /// <returns>The fully-qualified CDN URL.</returns>
-    public static string BuildCdnUrl(string baseUrl, string area, MediaKind mediaKind, DateTimeOffset date, Guid id, string filename)
+    public static string BuildCdnUrl(string baseUrl, string area, MediaKind mediaKind, DateTimeOffset date, Guid id,
+        string filename)
     {
         return $"{baseUrl}/{area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{id:N}/{filename}";
     }

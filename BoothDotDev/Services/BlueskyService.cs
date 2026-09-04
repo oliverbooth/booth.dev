@@ -62,7 +62,7 @@ public sealed class BlueskyService(
 
             var uri = post.GetProperty("uri").GetString()!;
             // AT-URI: at://did:plc:.../app.bsky.feed.post/{rkey}
-            var rkey = uri.Split('/').Last(); 
+            var rkey = uri.Split('/').Last();
             var atUri = uri["at://".Length..]; // strips "at://" prefix
             var postUrl = $"https://bsky.app/profile/{opts.Handle}/post/{rkey}"; // keep for linking
 

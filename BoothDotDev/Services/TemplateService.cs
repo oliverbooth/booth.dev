@@ -75,7 +75,7 @@ internal sealed class TemplateService
         }
 
         _logger.LogDebug("Inline name is {Name}", template.Name);
-        if (_customTemplateRendererOverrides.TryGetValue(template.Name, out CustomTemplateRenderer? renderer))
+        if (_customTemplateRendererOverrides.TryGetValue(template.Name, out var renderer))
         {
             _logger.LogDebug("This matches renderer {Name}", renderer.GetType().Name);
             return renderer.Render(template);
@@ -147,7 +147,7 @@ internal sealed class TemplateService
 
     private bool PartialExists(string partialName)
     {
-        return _viewEngine.GetView(executingFilePath: null, partialName, isMainPage: false).Success;
+        return _viewEngine.GetView(null, partialName, false).Success;
     }
 
     private string ResolvePartialPath(string name, string? variant)

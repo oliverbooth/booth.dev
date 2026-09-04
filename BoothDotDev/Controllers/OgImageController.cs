@@ -21,14 +21,14 @@ namespace BoothDotDev.Controllers;
 [Route("og")]
 public sealed class OgImageController : ControllerBase
 {
-    private readonly OgImageService _ogImageService;
-    private readonly MarkdownRenderingService _markdownRenderingService;
     private readonly BlogPostService _blogPostService;
-    private readonly DevChallengeService _devChallengeService;
-    private readonly NoteService _noteService;
-    private readonly TutorialService _tutorialService;
-    private readonly ProjectService _projectService;
     private readonly CreationService _creationService;
+    private readonly DevChallengeService _devChallengeService;
+    private readonly MarkdownRenderingService _markdownRenderingService;
+    private readonly NoteService _noteService;
+    private readonly OgImageService _ogImageService;
+    private readonly ProjectService _projectService;
+    private readonly TutorialService _tutorialService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="OgImageController" /> class.
@@ -59,7 +59,8 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("site.png")]
     public IActionResult GetSiteCard()
     {
-        return ServeCached("site", "site", null, () => _ogImageService.RenderFlatCard("BOOTH.DEV", Strings.MyName, Strings.Tagline));
+        return ServeCached("site", "site", null,
+            () => _ogImageService.RenderFlatCard("BOOTH.DEV", Strings.MyName, Strings.Tagline));
     }
 
     /// <summary>
@@ -68,13 +69,13 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("blog/{id:guid}.png")]
     public IActionResult GetBlogCard(Guid id)
     {
-        var result = _blogPostService.GetPost(id, includeTrashed: true);
+        var result = _blogPostService.GetPost(id, true);
         if (result.IsFailed)
         {
             return NotFound();
         }
 
-        BlogPost post = result.Value;
+        var post = result.Value;
         var description = _markdownRenderingService.RenderPlainTextExcerpt(post, out _);
         return ServeCached("blog", id.ToString("N"), post.UpdatedAt ?? post.PublishedAt,
             () => _ogImageService.RenderFlatCard("BLOG POST", post.Title, description));
@@ -86,13 +87,13 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("tutorial/{id:guid}.png")]
     public IActionResult GetTutorialCard(Guid id)
     {
-        var result = _tutorialService.GetArticle(id, includeTrashed: true);
+        var result = _tutorialService.GetArticle(id, true);
         if (result.IsFailed)
         {
             return NotFound();
         }
 
-        TutorialArticle article = result.Value;
+        var article = result.Value;
         var description = _markdownRenderingService.RenderPlainTextExcerpt(article, out _);
         return ServeCached("tutorial", id.ToString("N"), article.UpdatedAt ?? article.PublishedAt,
             () => _ogImageService.RenderFlatCard("TUTORIAL", article.Title, description));
@@ -114,13 +115,13 @@ public sealed class OgImageController : ControllerBase
             return NotFound();
         }
 
-        var result = _devChallengeService.GetChallengeById(challengeId, includeTrashed: true);
+        var result = _devChallengeService.GetChallengeById(challengeId, true);
         if (result.IsFailed)
         {
             return NotFound();
         }
 
-        DevChallenge challenge = result.Value;
+        var challenge = result.Value;
         var description = _markdownRenderingService.RenderPlainTextExcerpt(challenge, out _);
         return ServeCached("challenge", ((Guid)challenge.Id).ToString("N"), challenge.UpdatedAt ?? challenge.PublishedAt,
             () => _ogImageService.RenderFlatCard("CHALLENGE", challenge.Title, description));
@@ -132,13 +133,13 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("note/{id:guid}.png")]
     public IActionResult GetNoteCard(Guid id)
     {
-        var result = _noteService.GetNoteById(id, includeTrashed: true);
+        var result = _noteService.GetNoteById(id, true);
         if (result.IsFailed)
         {
             return NotFound();
         }
 
-        Note note = result.Value;
+        var note = result.Value;
         var description = _markdownRenderingService.RenderPlainTextPreview(note.Content);
         return ServeCached("note", id.ToString("N"), note.UpdatedAt ?? note.PublishedAt,
             () => _ogImageService.RenderFlatCard("NOTE", note.Title, description));
@@ -150,13 +151,13 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("devlog/{id:guid}.png")]
     public IActionResult GetDevlogCard(Guid id)
     {
-        var result = _projectService.GetDevlogById(id, includeTrashed: true);
+        var result = _projectService.GetDevlogById(id, true);
         if (result.IsFailed)
         {
             return NotFound();
         }
 
-        ProjectDevlog devlog = result.Value;
+        var devlog = result.Value;
         var description = _markdownRenderingService.RenderPlainTextPreview(devlog.Body);
         return ServeCached("devlog", id.ToString("N"), devlog.UpdatedAt ?? devlog.PublishedAt,
             () => _ogImageService.RenderFlatCard("DEVLOG", devlog.Title, description));
@@ -174,7 +175,7 @@ public sealed class OgImageController : ControllerBase
             return NotFound();
         }
 
-        Project project = result.Value;
+        var project = result.Value;
         var description = _markdownRenderingService.RenderPlainTextPreview(project.Description);
 
         return ServeCached("project", id.ToString("N"), null, () =>
@@ -192,7 +193,7 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("artwork/{id:guid}.png")]
     public IActionResult GetArtworkCard(Guid id)
     {
-        var result = _creationService.GetArtworkItem(id, includeTrashed: true);
+        var result = _creationService.GetArtworkItem(id, true);
         return GetCreationCard(result.IsFailed ? null : result.Value, "artwork");
     }
 
@@ -202,7 +203,7 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("music/{id:guid}.png")]
     public IActionResult GetMusicCard(Guid id)
     {
-        var result = _creationService.GetMusicItem(id, includeTrashed: true);
+        var result = _creationService.GetMusicItem(id, true);
         return GetCreationCard(result.IsFailed ? null : result.Value, "music");
     }
 
@@ -237,7 +238,7 @@ public sealed class OgImageController : ControllerBase
             return null;
         }
 
-        MediaKind kind = CdnMediaResolver.ResolveMediaKind(filename);
+        var kind = CdnMediaResolver.ResolveMediaKind(filename);
         if (kind != MediaKind.Image)
         {
             return null;
@@ -261,7 +262,8 @@ public sealed class OgImageController : ControllerBase
     {
         var cachePath = Path.Combine(CdnPaths.GetRoot(), "og", OgImageService.TemplateVersion, type, $"{key}.png");
         var isFresh = System.IO.File.Exists(cachePath) &&
-                      (contentUpdatedAt is null || System.IO.File.GetLastWriteTimeUtc(cachePath) >= contentUpdatedAt.Value.UtcDateTime);
+                      (contentUpdatedAt is null ||
+                       System.IO.File.GetLastWriteTimeUtc(cachePath) >= contentUpdatedAt.Value.UtcDateTime);
 
         if (!isFresh)
         {

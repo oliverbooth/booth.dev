@@ -36,7 +36,7 @@ public sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        Notes = _noteService.GetAllNotes(visibility: Visibility.None);
+        Notes = _noteService.GetAllNotes(Visibility.None);
     }
 
     /// <summary>

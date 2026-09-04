@@ -6,9 +6,6 @@ namespace BoothDotDev.Tests;
 [TestFixture]
 internal sealed class CdnBrowserServiceTests
 {
-    private string _root = null!;
-    private CdnBrowserService _service = null!;
-
     [SetUp]
     public void SetUp()
     {
@@ -22,16 +19,19 @@ internal sealed class CdnBrowserServiceTests
     {
         if (Directory.Exists(_root))
         {
-            Directory.Delete(_root, recursive: true);
+            Directory.Delete(_root, true);
         }
     }
+
+    private string _root = null!;
+    private CdnBrowserService _service = null!;
 
     [Test]
     public void Move_FolderIntoItself_Fails()
     {
         Directory.CreateDirectory(Path.Combine(_root, "folder"));
 
-        var result = _service.Move(path: null, "folder", "folder");
+        var result = _service.Move(null, "folder", "folder");
 
         Assert.That(result.IsFailed, Is.True);
     }
@@ -41,7 +41,7 @@ internal sealed class CdnBrowserServiceTests
     {
         Directory.CreateDirectory(Path.Combine(_root, "folder", "child"));
 
-        var result = _service.Move(path: null, "folder", "folder/child");
+        var result = _service.Move(null, "folder", "folder/child");
 
         Assert.That(result.IsFailed, Is.True);
     }
@@ -52,7 +52,7 @@ internal sealed class CdnBrowserServiceTests
         Directory.CreateDirectory(Path.Combine(_root, "source"));
         Directory.CreateDirectory(Path.Combine(_root, "destination"));
 
-        var result = _service.Move(path: null, "source", "destination");
+        var result = _service.Move(null, "source", "destination");
 
         using (Assert.EnterMultipleScope())
         {
@@ -70,7 +70,7 @@ internal sealed class CdnBrowserServiceTests
         Directory.CreateDirectory(Path.Combine(_root, "folder"));
         Directory.CreateDirectory(Path.Combine(_root, "folder-2"));
 
-        var result = _service.Move(path: null, "folder-2", "folder");
+        var result = _service.Move(null, "folder-2", "folder");
 
         Assert.That(result.IsSuccess, Is.True);
     }
@@ -80,7 +80,7 @@ internal sealed class CdnBrowserServiceTests
     {
         Directory.CreateDirectory(Path.Combine(_root, "empty"));
 
-        var result = _service.PreviewDelete(path: null, "empty");
+        var result = _service.PreviewDelete(null, "empty");
 
         using (Assert.EnterMultipleScope())
         {
@@ -100,7 +100,7 @@ internal sealed class CdnBrowserServiceTests
             File.WriteAllText(Path.Combine(folder, $"file{i}.txt"), "");
         }
 
-        var result = _service.PreviewDelete(path: null, "folder", itemCap: 500);
+        var result = _service.PreviewDelete(null, "folder", 500);
 
         using (Assert.EnterMultipleScope())
         {
@@ -120,7 +120,7 @@ internal sealed class CdnBrowserServiceTests
             File.WriteAllText(Path.Combine(folder, $"file{i}.txt"), "");
         }
 
-        var result = _service.PreviewDelete(path: null, "folder", itemCap: 2);
+        var result = _service.PreviewDelete(null, "folder", 2);
 
         using (Assert.EnterMultipleScope())
         {
@@ -135,7 +135,7 @@ internal sealed class CdnBrowserServiceTests
     {
         File.WriteAllText(Path.Combine(_root, "file.txt"), "");
 
-        var result = _service.PreviewDelete(path: null, "file.txt");
+        var result = _service.PreviewDelete(null, "file.txt");
 
         using (Assert.EnterMultipleScope())
         {
@@ -151,7 +151,7 @@ internal sealed class CdnBrowserServiceTests
         Directory.CreateDirectory(folder);
         File.WriteAllText(Path.Combine(folder, "file.txt"), "");
 
-        var result = _service.Delete(path: null, "folder");
+        var result = _service.Delete(null, "folder");
 
         using (Assert.EnterMultipleScope())
         {
@@ -163,9 +163,9 @@ internal sealed class CdnBrowserServiceTests
     [Test]
     public void CreateFolder_Then_ListDirectory_ShowsIt()
     {
-        _service.CreateFolder(path: null, "new-folder");
+        _service.CreateFolder(null, "new-folder");
 
-        var listing = _service.ListDirectory(path: null);
+        var listing = _service.ListDirectory(null);
 
         using (Assert.EnterMultipleScope())
         {

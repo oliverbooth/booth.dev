@@ -12,12 +12,12 @@ namespace BoothDotDev.Services;
 public sealed class RssFeedService
 {
     private readonly BlogPostService _blogPostService;
-    private readonly NoteService _noteService;
-    private readonly TutorialService _tutorialService;
     private readonly CreationService _creationService;
-    private readonly ProjectService _projectService;
     private readonly DevChallengeService _devChallengeService;
     private readonly MarkdownRenderingService _markdownRenderingService;
+    private readonly NoteService _noteService;
+    private readonly ProjectService _projectService;
+    private readonly TutorialService _tutorialService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RssFeedService" /> class.
@@ -57,7 +57,7 @@ public sealed class RssFeedService
         var feedUrl = new Uri(baseUrl, "/blog");
         var blogItems = new List<BlogItem>();
 
-        foreach (BlogPost post in _blogPostService.GetAllBlogPosts())
+        foreach (var post in _blogPostService.GetAllBlogPosts())
         {
             var url = new Uri(baseUrl, $"/blog/{post.Slug}").ToString();
             var excerpt = _markdownRenderingService.RenderExcerpt(post, out _);
@@ -101,7 +101,7 @@ public sealed class RssFeedService
     {
         var items = new List<RssItem>();
 
-        foreach (Note note in _noteService.GetAllNotes())
+        foreach (var note in _noteService.GetAllNotes())
         {
             var url = new Uri(baseUrl, $"/note/{(ShortGuid)note.Id}").ToString();
             items.Add(new RssItem
@@ -128,12 +128,12 @@ public sealed class RssFeedService
     /// <returns>The serialized RSS feed.</returns>
     public string BuildTutorialFeed(Uri baseUrl, TutorialFolder? scope)
     {
-        IReadOnlyList<TutorialArticle> articles = scope is null
+        var articles = scope is null
             ? _tutorialService.GetAllArticles(Visibility.Published)
             : _tutorialService.GetArticlesInSubtree(scope, Visibility.Published);
 
         var items = new List<RssItem>();
-        foreach (TutorialArticle article in articles)
+        foreach (var article in articles)
         {
             var url = new Uri(baseUrl, $"/learn/{_tutorialService.GetFullSlug(article)}").ToString();
             var excerpt = _markdownRenderingService.RenderExcerpt(article, out _);
@@ -165,7 +165,7 @@ public sealed class RssFeedService
         var pageUrl = new Uri(baseUrl, "/create").ToString();
         var items = new List<RssItem>();
 
-        foreach (CreativeItem item in _creationService.GetArtworkItems().Cast<CreativeItem>()
+        foreach (var item in _creationService.GetArtworkItems().Cast<CreativeItem>()
                      .Concat(_creationService.GetMusicItems()))
         {
             items.Add(new RssItem
@@ -192,12 +192,12 @@ public sealed class RssFeedService
     {
         var items = new List<RssItem>();
 
-        IEnumerable<Project> projects = _projectService.GetProjects()
+        var projects = _projectService.GetProjects()
             .Concat(_projectService.GetProjects(ProjectStatus.Past))
             .Concat(_projectService.GetProjects(ProjectStatus.Retired))
             .Concat(_projectService.GetProjects(ProjectStatus.Hiatus));
 
-        foreach (Project project in projects)
+        foreach (var project in projects)
         {
             var url = new Uri(baseUrl, $"/project/{project.Slug}").ToString();
             items.Add(new RssItem
@@ -222,7 +222,7 @@ public sealed class RssFeedService
     {
         var items = new List<RssItem>();
 
-        foreach (DevChallenge challenge in _devChallengeService.GetAllChallenges())
+        foreach (var challenge in _devChallengeService.GetAllChallenges())
         {
             var url = new Uri(baseUrl, $"/challenge/{challenge.Id}").ToString();
             var excerpt = _markdownRenderingService.RenderExcerpt(challenge, out _);

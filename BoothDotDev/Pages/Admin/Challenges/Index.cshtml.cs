@@ -1,4 +1,5 @@
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using DEDrake;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Challenges;
 
-using DevChallenge = Data.Models.DevChallenge;
+using DevChallenge = DevChallenge;
 
 /// <summary>
 ///     Represents the page model for the admin challenges page.
@@ -37,7 +38,7 @@ public sealed class Index : PageModel
     /// </summary>
     public void OnGet()
     {
-        Challenges = _devChallengeService.GetAllChallenges(visibility: Visibility.None);
+        Challenges = _devChallengeService.GetAllChallenges(Visibility.None);
     }
 
     /// <summary>

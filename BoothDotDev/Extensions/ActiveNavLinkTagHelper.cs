@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     A tag helper that adds an <c>active</c> class to a navigation link if the current page matches the specified page match string.
+///     A tag helper that adds an <c>active</c> class to a navigation link if the current page matches the specified page match
+///     string.
 /// </summary>
 [HtmlTargetElement("a", Attributes = "page-match")]
 public sealed class ActiveNavLinkTagHelper : TagHelper

@@ -118,7 +118,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        Uri? previewImageUrl = Uri.TryCreate(Input.PreviewImageUrl, UriKind.Absolute, out var uri) ? uri : null;
+        var previewImageUrl = Uri.TryCreate(Input.PreviewImageUrl, UriKind.Absolute, out var uri) ? uri : null;
         var request = new TutorialFolderSaveRequest(
             Input.Title,
             Input.Slug,

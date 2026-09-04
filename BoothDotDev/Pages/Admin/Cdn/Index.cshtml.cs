@@ -184,7 +184,7 @@ public sealed class Index : PageModel
         }
 
         string[] units = ["KiB", "MiB", "GiB"];
-        double value = bytes / 1024d;
+        var value = bytes / 1024d;
         var unitIndex = 0;
 
         while (value >= 1024 && unitIndex < units.Length - 1)

@@ -9,10 +9,10 @@ namespace BoothDotDev.Services;
 public sealed class ActivityService
 {
     private readonly BlogPostService _blogPostService;
-    private readonly ProjectService _projectService;
-    private readonly TutorialService _tutorialService;
     private readonly DevChallengeService _devChallengeService;
     private readonly NoteService _noteService;
+    private readonly ProjectService _projectService;
+    private readonly TutorialService _tutorialService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ActivityService" /> class.

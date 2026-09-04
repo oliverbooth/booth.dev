@@ -1,9 +1,9 @@
 @page "/note/{id}"
+@inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using DEDrake
-@inject MarkdownRenderingService MarkdownRenderingService
 @model Note
 
 @if (!Model.RetrievedNote.HasValue)

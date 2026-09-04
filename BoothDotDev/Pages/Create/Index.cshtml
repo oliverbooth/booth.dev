@@ -4,7 +4,7 @@
 @using BoothDotDev.Markdown.Link
 @using BoothDotDev.Services
 @using Microsoft.Extensions.Options
-@model BoothDotDev.Pages.Create.Index
+@model Index
 @inject MarkdownRenderingService MarkdownRenderingService
 @inject IOptions<CdnOptions> CdnOptions
 
@@ -13,7 +13,8 @@
     <div class="page-header-row">
         <p class="crumb"><a asp-page="/Index">Home</a> / Create</p>
         <div class="page-actions">
-            <a href="/create.rss" class="icon-link" aria-label="Subscribe to the creations RSS feed" title="RSS feed"><i class="ti ti-rss"></i></a>
+            <a href="/create.rss" class="icon-link" aria-label="Subscribe to the creations RSS feed" title="RSS feed"><i
+                    class="ti ti-rss"></i></a>
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a asp-page="/Admin/Creations/Index" class="btn"><i class="ti ti-edit"></i> Manage</a>
@@ -48,7 +49,8 @@
                     <span class="sub">@duration</span>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <a asp-page="/Admin/Creations/Music/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                        <a asp-page="/Admin/Creations/Music/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit"><i
+                                class="ti ti-edit"></i></a>
                     }
                 </div>
             }

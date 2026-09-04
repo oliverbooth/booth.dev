@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using DEDrake;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Admin.Challenges;
 
-using DevChallenge = Data.Models.DevChallenge;
+using DevChallenge = DevChallenge;
 
 /// <summary>
 ///     Represents the page model for editing a challenge in the admin section.
@@ -20,10 +21,10 @@ using DevChallenge = Data.Models.DevChallenge;
 public sealed class Edit : PageModel
 {
     private const string Area = "challenge";
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly DevChallengeService _devChallengeService;
     private readonly MarkdownRenderingService _markdownRenderingService;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -31,7 +32,8 @@ public sealed class Edit : PageModel
     /// <param name="devChallengeService">The dev challenge service.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
     /// <param name="cdnMediaService">The CDN media service.</param>
-    public Edit(DevChallengeService devChallengeService, MarkdownRenderingService markdownRenderingService, CdnMediaService cdnMediaService)
+    public Edit(DevChallengeService devChallengeService, MarkdownRenderingService markdownRenderingService,
+        CdnMediaService cdnMediaService)
     {
         _devChallengeService = devChallengeService;
         _markdownRenderingService = markdownRenderingService;
@@ -67,7 +69,7 @@ public sealed class Edit : PageModel
     ///     Gets the challenge's full draft history, newest first, for the revision history panel.
     /// </summary>
     /// <value>The challenge's drafts, ordered newest first.</value>
-    public IReadOnlyList<Data.Models.DevChallengeDraft> DraftHistory { get; private set; } = [];
+    public IReadOnlyList<DevChallengeDraft> DraftHistory { get; private set; } = [];
 
     /// <summary>
     ///     Gets a value indicating whether the challenge being edited is trashed.
@@ -96,11 +98,7 @@ public sealed class Edit : PageModel
         if (id is null)
         {
             CreatingNew = true;
-            Input = new EditModel
-            {
-                Visibility = Visibility.Published,
-                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
-            };
+            Input = new EditModel { Visibility = Visibility.Published, PublishedAt = DateTimeOffset.UtcNow.ToLocalTime() };
             return Page();
         }
 
@@ -115,7 +113,7 @@ public sealed class Edit : PageModel
             return NotFound();
         }
 
-        var challengeResult = _devChallengeService.GetChallengeById(challengeId, includeTrashed: true);
+        var challengeResult = _devChallengeService.GetChallengeById(challengeId, true);
         if (challengeResult.IsFailed)
         {
             return NotFound();
@@ -399,7 +397,8 @@ public sealed class Edit : PageModel
     /// <returns>The built <see cref="DevChallengeSaveRequest" />.</returns>
     private DevChallengeSaveRequest BuildSaveRequest()
     {
-        var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Excerpt, Input.Solution, Input.ShowSolution, Input.Visibility);
+        var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Excerpt, Input.Solution,
+            Input.ShowSolution, Input.Visibility);
         return new DevChallengeSaveRequest(Input.PublishedAt, content);
     }
 

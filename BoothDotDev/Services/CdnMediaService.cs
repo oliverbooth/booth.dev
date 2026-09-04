@@ -11,9 +11,9 @@ namespace BoothDotDev.Services;
 /// </summary>
 public sealed class CdnMediaService
 {
+    private readonly string _baseUrl;
     private readonly ILogger<CdnMediaService> _logger;
     private readonly string _root;
-    private readonly string _baseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnMediaService" /> class.
@@ -38,7 +38,7 @@ public sealed class CdnMediaService
     {
         var files = new List<CdnMediaFile>();
 
-        foreach (MediaKind kind in Enum.GetValues<MediaKind>())
+        foreach (var kind in Enum.GetValues<MediaKind>())
         {
             var directory = GetDirectory(area, kind, published, id);
             if (!Directory.Exists(directory))
@@ -86,7 +86,8 @@ public sealed class CdnMediaService
 
         if (file.Length > CdnUploadPolicy.MaxUploadSizeBytes)
         {
-            return Result.Fail($"The uploaded file exceeds the {CdnUploadPolicy.MaxUploadSizeBytes / (1024 * 1024)} MB upload limit.");
+            return Result.Fail(
+                $"The uploaded file exceeds the {CdnUploadPolicy.MaxUploadSizeBytes / (1024 * 1024)} MB upload limit.");
         }
 
         var nameResult = ValidateFileName(file.FileName);
@@ -230,7 +231,7 @@ public sealed class CdnMediaService
             return Result.Fail($"A file named '{newFileName}' already exists.");
         }
 
-        File.Move(oldPath, newPath, overwrite: false);
+        File.Move(oldPath, newPath, false);
 
         var info = new FileInfo(newPath);
         return new CdnMediaFile
@@ -263,7 +264,7 @@ public sealed class CdnMediaService
             return Result.Ok();
         }
 
-        foreach (MediaKind kind in Enum.GetValues<MediaKind>())
+        foreach (var kind in Enum.GetValues<MediaKind>())
         {
             var oldDirectory = GetDirectory(area, kind, oldPublished, id);
             if (!Directory.Exists(oldDirectory))
@@ -283,7 +284,7 @@ public sealed class CdnMediaService
 
             PruneEmptyParents(
                 Path.GetDirectoryName(oldDirectory)!,
-                stopAt: Path.Combine(_root, area, kind.ToString().ToLowerInvariant()));
+                Path.Combine(_root, area, kind.ToString().ToLowerInvariant()));
         }
 
         return Result.Ok();
@@ -302,7 +303,7 @@ public sealed class CdnMediaService
     /// </remarks>
     public void DeleteAllMedia(Guid id, DateTimeOffset published, string area)
     {
-        foreach (MediaKind kind in Enum.GetValues<MediaKind>())
+        foreach (var kind in Enum.GetValues<MediaKind>())
         {
             var directory = GetDirectory(area, kind, published, id);
             if (!Directory.Exists(directory))
@@ -310,11 +311,11 @@ public sealed class CdnMediaService
                 continue;
             }
 
-            Directory.Delete(directory, recursive: true);
+            Directory.Delete(directory, true);
 
             PruneEmptyParents(
                 Path.GetDirectoryName(directory)!,
-                stopAt: Path.Combine(_root, area, kind.ToString().ToLowerInvariant()));
+                Path.Combine(_root, area, kind.ToString().ToLowerInvariant()));
         }
     }
 

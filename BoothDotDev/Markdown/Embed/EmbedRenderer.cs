@@ -35,11 +35,11 @@ public sealed class EmbedRenderer : HtmlObjectRenderer<EmbedInline>
         switch (Path.GetExtension(embed.FileName).ToLowerInvariant())
         {
             case ".html":
-                WriteLocalDocument(renderer, embed.FileName, raw: true);
+                WriteLocalDocument(renderer, embed.FileName, true);
                 break;
 
             case ".md":
-                WriteLocalDocument(renderer, embed.FileName, raw: false);
+                WriteLocalDocument(renderer, embed.FileName, false);
                 break;
 
             default:
@@ -50,11 +50,12 @@ public sealed class EmbedRenderer : HtmlObjectRenderer<EmbedInline>
                 // plain-text representation anyway, so skip it rather than crash.
                 if (_resolver is null)
                 {
-                    _logger.LogDebug("Skipping media embed {FileName} - no resolver bound (likely a plain-text render pass)", embed.FileName);
+                    _logger.LogDebug("Skipping media embed {FileName} - no resolver bound (likely a plain-text render pass)",
+                        embed.FileName);
                     break;
                 }
 
-                var result = _resolver.RenderMediaAsync(embed.FileName, alt: null, title: null).GetAwaiter().GetResult();
+                var result = _resolver.RenderMediaAsync(embed.FileName, null, null).GetAwaiter().GetResult();
                 renderer.Write(result);
                 break;
         }

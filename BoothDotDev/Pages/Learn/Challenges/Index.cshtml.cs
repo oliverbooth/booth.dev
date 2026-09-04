@@ -6,6 +6,5 @@ internal sealed class Index : PageModel
 {
     public void OnGet()
     {
-        
     }
 }

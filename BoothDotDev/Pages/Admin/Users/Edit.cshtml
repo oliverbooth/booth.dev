@@ -1,6 +1,6 @@
 @page "/admin/users/edit/{id:guid?}"
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Users.Edit
+@model Edit
 
 @{
     Layout = "_AdminLayout";
@@ -25,7 +25,8 @@
                 <h1>@(Model.CreatingNew ? "New user" : Model.Input.DisplayName)</h1>
             </div>
             <div style="display:flex;gap:8px">
-                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> @(Model.CreatingNew ? "Create user" : "Save changes")</button>
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i
+                        class="ti ti-cloud"></i> @(Model.CreatingNew ? "Create user" : "Save changes")</button>
             </div>
         </div>
 
@@ -59,7 +60,8 @@
             }
             else
             {
-                <input asp-for="Input.NewPassword" type="password" id="password" autocomplete="new-password" placeholder="Leave blank to keep current password" />
+                <input asp-for="Input.NewPassword" type="password" id="password" autocomplete="new-password"
+                       placeholder="Leave blank to keep current password" />
             }
         </div>
 
@@ -142,7 +144,8 @@
         }
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> @(Model.CreatingNew ? "Create user" : "Save changes")</button>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i
+                    class="ti ti-cloud"></i> @(Model.CreatingNew ? "Create user" : "Save changes")</button>
         </div>
 
     </form>

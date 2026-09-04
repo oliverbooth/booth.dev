@@ -79,7 +79,7 @@
             var first = index == 0;
 
             <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" class="commit">
-                <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }"/>
+                <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }" />
             </a>
         }
     </div>
