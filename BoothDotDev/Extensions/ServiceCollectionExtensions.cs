@@ -32,6 +32,7 @@ internal static class ServiceCollectionExtensions
                 .UseCitations()
                 .UseCustomContainers()
                 .UseDefinitionLists()
+                .UseDiagrams()
                 .UseEmphasisExtras()
                 .UseFigures()
                 .UseFooters()

@@ -314,10 +314,36 @@ public sealed class MarkdownRenderingService
 
         ReplaceRenderer<LinkInlineRenderer>(htmlRenderer,
             new CdnMediaLinkRenderer(context, razorPartialRenderer, area, cdnBaseUrl));
-        ReplaceRenderer<CodeBlockRenderer>(htmlRenderer, new HighlightCodeBlockRenderer());
+        ReplaceRenderer<CodeBlockRenderer>(htmlRenderer, CreateHighlightCodeBlockRenderer(htmlRenderer));
         ReplaceRenderer<EmbedRenderer>(htmlRenderer, new EmbedRenderer(services, _markdownPipeline, resolver));
 
         return htmlRenderer;
+    }
+
+    /// <summary>
+    ///     Creates a <see cref="HighlightCodeBlockRenderer" />, carrying over the <see cref="CodeBlockRenderer.BlockMapping" />
+    ///     and <see cref="CodeBlockRenderer.BlocksAsDiv" /> that pipeline extensions (e.g. <c>UseDiagrams()</c>) configured on
+    ///     the renderer it's about to replace.
+    /// </summary>
+    /// <param name="htmlRenderer">The HTML renderer.</param>
+    /// <returns>The new <see cref="HighlightCodeBlockRenderer" />.</returns>
+    private static HighlightCodeBlockRenderer CreateHighlightCodeBlockRenderer(HtmlRenderer htmlRenderer)
+    {
+        var renderer = new HighlightCodeBlockRenderer();
+        if (htmlRenderer.ObjectRenderers.FindExact<CodeBlockRenderer>() is { } existing)
+        {
+            foreach ((string info, string tag) in existing.BlockMapping)
+            {
+                renderer.BlockMapping[info] = tag;
+            }
+
+            foreach (string info in existing.BlocksAsDiv)
+            {
+                renderer.BlocksAsDiv.Add(info);
+            }
+        }
+
+        return renderer;
     }
 
     private static void ReplaceRenderer<TExisting>(HtmlRenderer htmlRenderer, IMarkdownObjectRenderer replacement)
