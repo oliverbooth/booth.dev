@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Humanizer;
 
@@ -14,7 +13,7 @@ internal sealed class RelativeTimestampHumanizeTests
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private static readonly RelativeTimestampFixture Fixture = LoadFixture();
 
-    public static IEnumerable<TestCaseData> Cases()
+    private static IEnumerable<TestCaseData> TestCases()
     {
         var reference = new DateTimeOffset(Fixture.ReferenceUtc, TimeSpan.Zero);
 
@@ -27,7 +26,7 @@ internal sealed class RelativeTimestampHumanizeTests
         }
     }
 
-    [TestCaseSource(nameof(Cases))]
+    [TestCaseSource(nameof(TestCases))]
     public void Humanize_MatchesFixture(DateTimeOffset target, DateTimeOffset reference, string expected)
     {
         var actual = target.Humanize(reference);
@@ -47,14 +46,11 @@ internal sealed class RelativeTimestampHumanizeTests
                ?? throw new InvalidOperationException("Failed to load the relative-timestamp fixture.");
     }
 
-    /// <summary>
-    ///     Resolves the shared fixture's path relative to this source file, rather than the test runner's working
-    ///     directory, which varies by how the tests are invoked.
-    /// </summary>
-    private static string ResolveFixturePath([CallerFilePath] string sourceFilePath = "")
+    private static string ResolveFixturePath()
     {
-        var testProjectDirectory = Path.GetDirectoryName(sourceFilePath)!;
-        return Path.Combine(testProjectDirectory, "..", "test-fixtures", "relative-timestamp.json");
+        // AppContext.BaseDirectory is always <project>/bin/<config>/<tfm>/ - four levels up is the repo root
+        var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
+        return Path.Combine(repoRoot, "test-fixtures", "relative-timestamp.json");
     }
 
     private sealed record RelativeTimestampFixture(DateTime ReferenceUtc, RelativeTimestampCase[] Cases);
