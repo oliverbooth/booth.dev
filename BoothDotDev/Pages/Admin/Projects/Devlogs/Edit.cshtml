@@ -1,7 +1,7 @@
 @page "/admin/projects/devlogs/edit/{projectId:guid}/{id:guid?}"
 @using BoothDotDev.Data
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Projects.Devlogs.Edit
+@model Edit
 
 @{
     Layout = "_AdminLayout";
@@ -33,7 +33,8 @@
             <div style="display:flex;gap:8px">
                 @if (!Model.CreatingNew)
                 {
-                    <a asp-page="/Projects/DevLog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@Model.Input.Slug" target="_blank" class="btn">
+                    <a asp-page="/Projects/DevLog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@Model.Input.Slug"
+                       target="_blank" class="btn">
                         <i class="ti ti-eye"></i> View entry
                     </a>
                 }
@@ -148,7 +149,8 @@
             else
             {
                 <p class="hint">
-                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as draft.
+                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as
+                    draft.
                 </p>
                 <ul class="draft-list">
                     @foreach (var draft in Model.DraftHistory)
@@ -158,7 +160,8 @@
 
                         <li class="draft-item">
                             <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)"
-                               asp-page="Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@Model.DevlogId" asp-route-draftId="@draft.Id">
+                               asp-page="Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@Model.DevlogId"
+                               asp-route-draftId="@draft.Id">
                                 <div class="draft-item-body">
                                     <p class="name">@draft.Title</p>
                                     <p class="meta">@draft.CreatedAt.Humanize()</p>

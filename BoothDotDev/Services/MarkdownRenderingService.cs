@@ -65,7 +65,7 @@ public sealed class MarkdownRenderingService
         using var writer = new StringWriter();
         using var scope = _serviceScopeFactory.CreateScope();
 
-        HtmlRenderer htmlRenderer = CreateHtmlRenderer(writer, area ?? "content", id, published, scope.ServiceProvider);
+        var htmlRenderer = CreateHtmlRenderer(writer, area ?? "content", id, published, scope.ServiceProvider);
 
         var document = MD.Parse(body, _markdownPipeline);
         htmlRenderer.Render(document);
@@ -253,7 +253,7 @@ public sealed class MarkdownRenderingService
             throw new ArgumentNullException(nameof(markdown));
         }
 
-        List<TocItem> items = MarkdownTocBuilder.BuildToc(markdown);
+        var items = MarkdownTocBuilder.BuildToc(markdown);
         return MarkdownTocBuilder.RenderTocAsHtml(items, request);
     }
 
@@ -275,10 +275,10 @@ public sealed class MarkdownRenderingService
             throw new ArgumentNullException(nameof(body));
         }
 
-        MarkdownDocument document = MD.Parse(body, _markdownPipeline);
+        var document = MD.Parse(body, _markdownPipeline);
         var references = new List<string>();
 
-        foreach (LinkInline link in document.Descendants<LinkInline>())
+        foreach (var link in document.Descendants<LinkInline>())
         {
             if (link.IsImage && !string.IsNullOrEmpty(link.Url))
             {
@@ -286,7 +286,7 @@ public sealed class MarkdownRenderingService
             }
         }
 
-        foreach (EmbedInline embed in document.Descendants<EmbedInline>())
+        foreach (var embed in document.Descendants<EmbedInline>())
         {
             var extension = Path.GetExtension(embed.FileName).ToLowerInvariant();
             if (extension is not (".html" or ".md"))

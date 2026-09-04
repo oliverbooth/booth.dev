@@ -59,7 +59,7 @@
             &middot; <a href="/project/@(Model.Project.Slug)/devlog/@(devlog.Slug).md">View source</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
-                <text> &middot; <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id">Edit</a></text>
+                <text>&middot; <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id">Edit</a></text>
             }
         </span>
     </div>

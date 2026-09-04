@@ -13,8 +13,8 @@ public sealed class TimestampRenderer : HtmlObjectRenderer<TimestampInline>
     /// <inheritdoc />
     protected override void Write(HtmlRenderer renderer, TimestampInline obj)
     {
-        DateTimeOffset timestamp = obj.Timestamp;
-        TimestampFormat format = obj.Format;
+        var timestamp = obj.Timestamp;
+        var format = obj.Format;
 
         renderer.Write("<span class=\"timestamp\" data-timestamp=\"");
         renderer.Write(timestamp.ToUnixTimeSeconds().ToString());

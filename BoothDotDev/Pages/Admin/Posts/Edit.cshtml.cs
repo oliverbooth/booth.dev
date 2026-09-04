@@ -32,7 +32,8 @@ public sealed class Edit : PageModel
     /// <param name="blogPostService">The blog post service.</param>
     /// <param name="cdnMediaService">The CDN media service.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
-    public Edit(BlogPostService blogPostService, CdnMediaService cdnMediaService, MarkdownRenderingService markdownRenderingService)
+    public Edit(BlogPostService blogPostService, CdnMediaService cdnMediaService,
+        MarkdownRenderingService markdownRenderingService)
     {
         _blogPostService = blogPostService;
         _cdnMediaService = cdnMediaService;
@@ -108,7 +109,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var postResult = _blogPostService.GetPost(id.Value, includeTrashed: true);
+        var postResult = _blogPostService.GetPost(id.Value, true);
         if (postResult.IsFailed)
         {
             return NotFound();
@@ -247,7 +248,7 @@ public sealed class Edit : PageModel
             Input.Body,
             id ?? Guid.Empty,
             Input.PublishedAt,
-            area: "blog");
+            "blog");
 
         var category = _blogPostService.GetCategory(Input.CategoryId);
         var proseClass = (category?.FontStyle ?? FontStyle.SansSerif).ToProseClass();

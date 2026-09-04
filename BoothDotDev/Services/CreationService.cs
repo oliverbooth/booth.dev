@@ -11,9 +11,9 @@ namespace BoothDotDev.Services;
 public sealed class CreationService
 {
     private const string Area = "content";
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CreationService" /> class.
@@ -41,7 +41,7 @@ public sealed class CreationService
         return
         [
             .. (visibility == Visibility.None ? items : items.Where(a => a.Visibility == visibility))
-                .OrderByDescending(a => a.PublishedAt)
+            .OrderByDescending(a => a.PublishedAt)
         ];
     }
 
@@ -60,7 +60,7 @@ public sealed class CreationService
         return
         [
             .. (visibility == Visibility.None ? items : items.Where(m => m.Visibility == visibility))
-                .OrderByDescending(m => m.PublishedAt)
+            .OrderByDescending(m => m.PublishedAt)
         ];
     }
 

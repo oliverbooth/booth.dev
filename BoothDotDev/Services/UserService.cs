@@ -37,7 +37,7 @@ public sealed class UserService
     /// <returns>A read-only view of all users, ordered by display name.</returns>
     public IReadOnlyList<User> GetAllUsers()
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.Users.OrderBy(u => u.DisplayName)];
     }
 
@@ -157,7 +157,7 @@ public sealed class UserService
             return user;
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         user = context.Users.Find(id);
 
         if (user is not null)
@@ -191,7 +191,7 @@ public sealed class UserService
             throw new ArgumentNullException(nameof(password));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var user = context.Users.FirstOrDefault(u => u.EmailAddress == email);
 
         if (user is null)

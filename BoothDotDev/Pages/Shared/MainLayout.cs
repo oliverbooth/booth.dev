@@ -2,6 +2,7 @@ using System.Reflection;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Razor.Internal;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Shared;
 
@@ -61,7 +62,7 @@ public abstract class MainLayout : RazorPage<object>
         SiteBaseUrl = new Uri($"{request.Scheme}://{request.Host}");
 
         var env = Context.RequestServices.GetRequiredService<IWebHostEnvironment>();
-        var descriptor = ViewContext.ActionDescriptor as Microsoft.AspNetCore.Mvc.RazorPages.CompiledPageActionDescriptor;
+        var descriptor = ViewContext.ActionDescriptor as CompiledPageActionDescriptor;
 
         if (descriptor?.RelativePath is { } relativePath)
         {

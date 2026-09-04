@@ -11,9 +11,9 @@ namespace BoothDotDev.Services;
 public sealed class NoteService
 {
     private const string Area = "note";
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NoteService" /> class.
@@ -35,10 +35,7 @@ public sealed class NoteService
     {
         using var context = _dbContextFactory.CreateDbContext();
 
-        var note = new Note
-        {
-            PublishedAt = request.PublishedAt.ToUniversalTime()
-        };
+        var note = new Note { PublishedAt = request.PublishedAt.ToUniversalTime() };
 
         // two SaveChanges calls, not one: Note -> NoteDraft (via NoteId) and NoteDraft -> Note (via
         // CurrentDraftId) form a cycle between two rows that are both new, which EF can't resolve in a
@@ -254,7 +251,7 @@ public sealed class NoteService
     /// <returns>A read-only view of the most recent notes, excluding trashed ones.</returns>
     public IReadOnlyList<Note> GetRecentNotes(ActivitySearchOptions searchOptions)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var notes = context.Notes.Include(n => n.CurrentDraft).Where(n => n.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)

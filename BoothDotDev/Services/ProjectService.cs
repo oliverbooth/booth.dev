@@ -16,11 +16,11 @@ public sealed class ProjectService
 {
     private const string ProjectArea = "projects";
     private const string DevlogArea = "devlog";
+    private readonly string _cdnBaseUrl;
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MarkdownRenderingService _markdownRenderingService;
-    private readonly CdnMediaService _cdnMediaService;
-    private readonly string _cdnBaseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProjectService" /> class.
@@ -85,7 +85,7 @@ public sealed class ProjectService
     /// <returns>A read-only list of projects.</returns>
     public IReadOnlyList<Project> GetAllProjects()
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.Projects.OrderBy(p => p.Rank).ThenBy(p => p.Name)];
     }
 
@@ -96,7 +96,7 @@ public sealed class ProjectService
     /// <returns>The number of devlogs for the specified project.</returns>
     public int GetDevlogCount(Option<Project> project = default)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return project.HasValue
             ? context.DevLogs.Count(d => d.TrashedAt == null && d.ProjectId == project.ValueOr((Project)null!).Id)
             : context.DevLogs.Count(d => d.TrashedAt == null);
@@ -113,7 +113,7 @@ public sealed class ProjectService
     /// <returns>A read-only list of devlogs for the specified project, newest-published first.</returns>
     public IReadOnlyList<ProjectDevlog> GetDevlogs(Project project, Visibility visibility = Visibility.None)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var devlogs = context.DevLogs.Include(d => d.CurrentDraft).Where(d => d.TrashedAt == null && d.ProjectId == project.Id);
 
         if (visibility != Visibility.None)
@@ -141,7 +141,7 @@ public sealed class ProjectService
     /// <returns>A read-only list of projects with the specified status.</returns>
     public IReadOnlyList<Project> GetProjects(ProjectStatus status = ProjectStatus.Ongoing)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return [.. context.Projects.Where(p => p.Status == status).OrderBy(p => p.Rank).ThenBy(p => p.Name)];
     }
 
@@ -157,7 +157,7 @@ public sealed class ProjectService
             throw new ArgumentNullException(nameof(devlog));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.DevLogs
             .Include(d => d.CurrentDraft)
             .Where(p => p.TrashedAt == null && p.ProjectId == devlog.ProjectId)
@@ -177,7 +177,7 @@ public sealed class ProjectService
             throw new ArgumentNullException(nameof(devlog));
         }
 
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         return context.DevLogs
             .Include(d => d.CurrentDraft)
             .Where(p => p.TrashedAt == null && p.ProjectId == devlog.ProjectId)
@@ -192,7 +192,7 @@ public sealed class ProjectService
     /// <returns>A read-only list of the most recent devlogs.</returns>
     public IReadOnlyList<ProjectDevlog> GetRecentDevlogs(ActivitySearchOptions searchOptions)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         var devlogs = context.DevLogs.Include(d => d.CurrentDraft).Where(d => d.TrashedAt == null);
 
         if (searchOptions.Visibility != Visibility.None)
@@ -239,10 +239,14 @@ public sealed class ProjectService
     ///     Whether to include the devlog entry if it's trashed. Only the admin editor should pass <see langword="true" /> -
     ///     every public-facing caller should get the trash exclusion for free.
     /// </param>
-    /// <returns><see langword="true" /> if a devlog entry with the specified project and slug is found; otherwise, <see langword="false" />.</returns>
-    public bool TryGetDevlog(Project project, string slug, [NotNullWhen(true)] out ProjectDevlog? devlog, bool includeTrashed = false)
+    /// <returns>
+    ///     <see langword="true" /> if a devlog entry with the specified project and slug is found; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool TryGetDevlog(Project project, string slug, [NotNullWhen(true)] out ProjectDevlog? devlog,
+        bool includeTrashed = false)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         devlog = context.DevLogs.Include(d => d.CurrentDraft)
             .FirstOrDefault(d => d.ProjectId == project.Id && d.Slug == slug && (includeTrashed || d.TrashedAt == null));
         return devlog != null;
@@ -283,7 +287,7 @@ public sealed class ProjectService
     /// </returns>
     public bool TryGetProject(Guid id, [NotNullWhen(true)] out Project? project)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         project = context.Projects.Find(id);
         return project is not null;
     }
@@ -301,7 +305,7 @@ public sealed class ProjectService
     /// </returns>
     public bool TryGetProject(string slug, [NotNullWhen(true)] out Project? project)
     {
-        using AppDbContext context = _dbContextFactory.CreateDbContext();
+        using var context = _dbContextFactory.CreateDbContext();
         project = context.Projects.FirstOrDefault(p => p.Slug == slug);
         return project is not null;
     }
@@ -615,7 +619,8 @@ public sealed class ProjectService
     public Result<ProjectDevlogDraft> GetNewestDraft(Guid id)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var draft = context.ProjectDevlogDrafts.Where(d => d.ProjectDevlogId == id).OrderByDescending(d => d.CreatedAt).FirstOrDefault();
+        var draft = context.ProjectDevlogDrafts.Where(d => d.ProjectDevlogId == id).OrderByDescending(d => d.CreatedAt)
+            .FirstOrDefault();
 
         if (draft is null)
         {
@@ -657,10 +662,7 @@ public sealed class ProjectService
     {
         return new ProjectDevlogDraft
         {
-            ProjectDevlogId = devlogId,
-            Title = content.Title,
-            Body = content.Body,
-            Visibility = content.Visibility
+            ProjectDevlogId = devlogId, Title = content.Title, Body = content.Body, Visibility = content.Visibility
         };
     }
 }

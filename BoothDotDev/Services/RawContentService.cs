@@ -12,10 +12,10 @@ namespace BoothDotDev.Services;
 public sealed class RawContentService
 {
     private readonly BlogPostService _blogPostService;
-    private readonly NoteService _noteService;
-    private readonly TutorialService _tutorialService;
-    private readonly ProjectService _projectService;
     private readonly DevChallengeService _devChallengeService;
+    private readonly NoteService _noteService;
+    private readonly ProjectService _projectService;
+    private readonly TutorialService _tutorialService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RawContentService" /> class.
@@ -70,7 +70,7 @@ public sealed class RawContentService
     /// <returns>A <see cref="Result{T}" /> containing the raw Markdown, or an error if the note can't be shown.</returns>
     public Result<string> BuildNoteRaw(string id, bool isAuthenticated)
     {
-        if (!TryParseShortGuid(id, out Guid guid))
+        if (!TryParseShortGuid(id, out var guid))
         {
             return Result.Fail($"Note '{id}' not found.");
         }
@@ -148,12 +148,12 @@ public sealed class RawContentService
     /// <returns>A <see cref="Result{T}" /> containing the raw Markdown, or an error if the challenge can't be shown.</returns>
     public Result<string> BuildChallengeRaw(string id, bool isAuthenticated)
     {
-        if (!TryParseShortGuid(id, out Guid guid))
+        if (!TryParseShortGuid(id, out var guid))
         {
             return Result.Fail($"Challenge '{id}' not found.");
         }
 
-        var result = _devChallengeService.GetChallengeById((ShortGuid)guid);
+        var result = _devChallengeService.GetChallengeById(guid);
         if (result.IsFailed)
         {
             return Result.Fail($"Challenge '{id}' not found.");
@@ -171,7 +171,7 @@ public sealed class RawContentService
             return raw;
         }
 
-        using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
+        using var builder = ZString.CreateUtf8StringBuilder();
         builder.Append(raw);
         builder.AppendLine();
         builder.AppendLine("---");
@@ -186,7 +186,7 @@ public sealed class RawContentService
     {
         try
         {
-            guid = (Guid)ShortGuid.Parse(id);
+            guid = ShortGuid.Parse(id);
             return true;
         }
         catch (FormatException)
@@ -199,7 +199,7 @@ public sealed class RawContentService
     private static string BuildRaw(string title, string body, DateTimeOffset publishedAt, DateTimeOffset? updatedAt,
         string? author = null)
     {
-        using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
+        using var builder = ZString.CreateUtf8StringBuilder();
         builder.AppendLine("# " + title);
 
         if (author is not null)

@@ -23,22 +23,22 @@ public sealed class TemplateInlineParser : InlineParser
     /// <inheritdoc />
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
-        ReadOnlySpan<char> span = slice.Text.AsSpan()[slice.Start..];
+        var span = slice.Text.AsSpan()[slice.Start..];
         if (!span.StartsWith("{{"))
         {
             return false;
         }
 
-        ReadOnlySpan<char> template = ReadUntilClosure(span);
+        var template = ReadUntilClosure(span);
         if (template.IsEmpty)
         {
             return false;
         }
 
         template = template[2..^2]; // trim {{ and }}
-        ReadOnlySpan<char> name = ReadTemplateName(template, out ReadOnlySpan<char> argumentSpan);
-        int variantIndex = name.IndexOf(':');
-        bool hasVariant = variantIndex > -1;
+        var name = ReadTemplateName(template, out var argumentSpan);
+        var variantIndex = name.IndexOf(':');
+        var hasVariant = variantIndex > -1;
         var variant = ReadOnlySpan<char>.Empty;
 
         if (hasVariant)
@@ -85,14 +85,14 @@ public sealed class TemplateInlineParser : InlineParser
         IList<string> argumentList,
         IDictionary<string, string> paramsList)
     {
-        using Utf8ValueStringBuilder buffer = ZString.CreateUtf8StringBuilder();
+        using var buffer = ZString.CreateUtf8StringBuilder();
         var isKey = true;
 
         for (var index = 0; index < argumentSpan.Length; index++)
         {
             if (isKey)
             {
-                ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, false, out bool hasValue);
+                var result = ReadNext(argumentSpan, ref index, false, out var hasValue);
                 if (!hasValue)
                 {
                     argumentList.Add(result.ToString());
@@ -104,7 +104,7 @@ public sealed class TemplateInlineParser : InlineParser
             }
             else
             {
-                ReadOnlySpan<char> result = ReadNext(argumentSpan, ref index, true, out bool _);
+                var result = ReadNext(argumentSpan, ref index, true, out var _);
                 var key = buffer.ToString();
                 var value = result.ToString();
 
@@ -124,10 +124,10 @@ public sealed class TemplateInlineParser : InlineParser
     {
         var isEscaped = false;
 
-        int startIndex = index;
+        var startIndex = index;
         for (; index < argumentSpan.Length; index++)
         {
-            char currentChar = argumentSpan[index];
+            var currentChar = argumentSpan[index];
             switch (currentChar)
             {
                 case '\\' when isEscaped:
@@ -154,13 +154,13 @@ public sealed class TemplateInlineParser : InlineParser
 
     private static ReadOnlySpan<char> ReadUntilClosure(ReadOnlySpan<char> input)
     {
-        int endIndex = FindClosingBraceIndex(input);
+        var endIndex = FindClosingBraceIndex(input);
         return endIndex != -1 ? input[..(endIndex + 1)] : ReadOnlySpan<char>.Empty;
     }
 
     private static ReadOnlySpan<char> ReadTemplateName(ReadOnlySpan<char> input, out ReadOnlySpan<char> argumentSpan)
     {
-        int argumentStartIndex = input.IndexOf('|');
+        var argumentStartIndex = input.IndexOf('|');
         if (argumentStartIndex == -1)
         {
             argumentSpan = Span<char>.Empty;
@@ -178,8 +178,8 @@ public sealed class TemplateInlineParser : InlineParser
 
         for (var index = 0; index < input.Length - 1; index++)
         {
-            char currentChar = input[index];
-            char nextChar = index < input.Length - 2 ? input[index + 1] : '\0';
+            var currentChar = input[index];
+            var nextChar = index < input.Length - 2 ? input[index + 1] : '\0';
 
             if (IsOpeningBraceSequence(currentChar, nextChar))
             {

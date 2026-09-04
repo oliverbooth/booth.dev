@@ -59,22 +59,23 @@ public sealed class BadgeController : ControllerBase
 
         var url = $"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow}/runs";
 
-        using HttpClient client = _httpClientFactory.CreateClient();
+        using var client = _httpClientFactory.CreateClient();
         using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
         request.Headers.Add("Accept", "application/json");
         request.Headers.Add("Authorization", $"Bearer {githubToken}");
         request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
         request.Headers.UserAgent.Add(new ProductInfoHeaderValue("booth.dev", _version));
 
-        using HttpResponseMessage response = await client.SendAsync(request);
+        using var response = await client.SendAsync(request);
         if (!response.IsSuccessStatusCode)
         {
-            return StatusCode((int)response.StatusCode, new { schemaVersion = 1, label = "build", color = "lightgray", message = "error" });
+            return StatusCode((int)response.StatusCode,
+                new { schemaVersion = 1, label = "build", color = "lightgray", message = "error" });
         }
 
-        WorkflowRunSchema? body = await response.Content.ReadFromJsonAsync<WorkflowRunSchema>();
+        var body = await response.Content.ReadFromJsonAsync<WorkflowRunSchema>();
 
-        WorkflowRun? run = body?.WorkflowRuns.FirstOrDefault(r => r.Status == WorkflowRunStatus.Completed);
+        var run = body?.WorkflowRuns.FirstOrDefault(r => r.Status == WorkflowRunStatus.Completed);
         if (run is null)
         {
             var completedUrl = url + "?status=completed&per_page=1";
@@ -84,16 +85,14 @@ public sealed class BadgeController : ControllerBase
             completedRequest.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
             completedRequest.Headers.UserAgent.Add(new ProductInfoHeaderValue("booth.dev", _version));
 
-            using HttpResponseMessage completedResponse = await client.SendAsync(completedRequest);
+            using var completedResponse = await client.SendAsync(completedRequest);
             if (!completedResponse.IsSuccessStatusCode)
             {
-                return StatusCode((int)completedResponse.StatusCode, new
-                {
-                    schemaVersion = 1, label = "build", color = "lightgray", message = "error"
-                });
+                return StatusCode((int)completedResponse.StatusCode,
+                    new { schemaVersion = 1, label = "build", color = "lightgray", message = "error" });
             }
 
-            WorkflowRunSchema? completedBody = await completedResponse.Content.ReadFromJsonAsync<WorkflowRunSchema>();
+            var completedBody = await completedResponse.Content.ReadFromJsonAsync<WorkflowRunSchema>();
             run = completedBody?.WorkflowRuns.FirstOrDefault();
         }
 
@@ -102,7 +101,7 @@ public sealed class BadgeController : ControllerBase
             return Ok(new { schemaVersion = 1, label = "build", color = "lightgray", message = "unknown" });
         }
 
-        (string message, string color, bool isError) = run.Conclusion switch
+        var (message, color, isError) = run.Conclusion switch
         {
             WorkflowRunConclusion.Failure => ("failing", "red", true),
             WorkflowRunConclusion.Success => ("passing", "brightgreen", false),
@@ -110,23 +109,33 @@ public sealed class BadgeController : ControllerBase
             _ => ("unknown", "lightgrey", false)
         };
 
-        return Ok(new { schemaVersion = 1, label = "build", color, message, isError });
+        return Ok(new
+        {
+            schemaVersion = 1,
+            label = "build",
+            color,
+            message,
+            isError
+        });
     }
 }
 
 file class WorkflowRunSchema
 {
-    [JsonPropertyName("workflow_runs"), JsonInclude]
+    [JsonPropertyName("workflow_runs")]
+    [JsonInclude]
     public WorkflowRun[] WorkflowRuns { get; set; } = [];
 }
 
 file class WorkflowRun
 {
-    [JsonPropertyName("conclusion"), JsonInclude]
+    [JsonPropertyName("conclusion")]
+    [JsonInclude]
     [JsonConverter(typeof(JsonStringEnumConverter<WorkflowRunConclusion>))]
     public WorkflowRunConclusion Conclusion { get; set; } = WorkflowRunConclusion.Unknown;
 
-    [JsonPropertyName("status"), JsonInclude]
+    [JsonPropertyName("status")]
+    [JsonInclude]
     [JsonConverter(typeof(JsonStringEnumConverter<WorkflowRunStatus>))]
     public WorkflowRunStatus Status { get; set; } = WorkflowRunStatus.Unknown;
 }

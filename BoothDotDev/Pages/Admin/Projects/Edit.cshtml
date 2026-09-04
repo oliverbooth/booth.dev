@@ -1,7 +1,7 @@
 @page "/admin/projects/edit/{id:guid?}"
 @using BoothDotDev.Data
 @using Humanizer
-@model BoothDotDev.Pages.Admin.Projects.Edit
+@model Edit
 
 @{
     Layout = "_AdminLayout";
@@ -24,7 +24,8 @@
                         <i class="ti ti-eye"></i> View project
                     </a>
                 }
-                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save project</button>
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save project
+                </button>
             </div>
         </div>
 
@@ -117,73 +118,76 @@
     </form>
 
     <section class="admin-media" id="hero-media" style="margin-top:2rem">
-            <div class="admin-header">
-                <div><h2>Hero image</h2></div>
-            </div>
+        <div class="admin-header">
+            <div><h2>Hero image</h2></div>
+        </div>
 
-            @if (Model.CreatingNew)
+        @if (Model.CreatingNew)
+        {
+            <p class="hint">Save this project before uploading a hero image.</p>
+        }
+        else
+        {
+            @if (Model.HeroUrl is { } heroUrl)
             {
-                <p class="hint">Save this project before uploading a hero image.</p>
+                <img src="@heroUrl" alt="" style="max-width:320px;border-radius:8px;margin-bottom:12px;display:block">
             }
             else
             {
-                @if (Model.HeroUrl is { } heroUrl)
-                {
-                    <img src="@heroUrl" alt="" style="max-width:320px;border-radius:8px;margin-bottom:12px;display:block">
-                }
-                else
-                {
-                    <p class="hint">No hero image uploaded yet.</p>
-                }
-                <p class="hint" id="hero-error" hidden></p>
-                <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile" asp-route-id="@Model.ProjectId">
-                    <input type="file" name="file" accept="image/*" />
-                    <button type="submit" class="btn btn-primary"><i class="ti ti-upload"></i> Upload</button>
-                </form>
+                <p class="hint">No hero image uploaded yet.</p>
             }
+
+            <p class="hint" id="hero-error" hidden></p>
+            <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile" asp-route-id="@Model.ProjectId">
+                <input type="file" name="file" accept="image/*" />
+                <button type="submit" class="btn btn-primary"><i class="ti ti-upload"></i> Upload</button>
+            </form>
+        }
     </section>
 
     <section class="admin-devlogs" id="project-devlogs" style="margin-top:2rem">
-            <div class="admin-header">
-                <div><h2>Devlog entries</h2></div>
-                @if (!Model.CreatingNew)
-                {
-                    <div style="display:flex;gap:8px">
-                        <a asp-page="/Admin/Projects/Devlogs/Trash" asp-route-projectId="@Model.ProjectId" class="btn">
-                            <i class="ti ti-trash"></i> Trash
-                        </a>
-                        <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.ProjectId" class="btn btn-primary">
-                            <i class="ti ti-plus" style="font-size:15px"></i> New devlog entry
-                        </a>
-                    </div>
-                }
-            </div>
+        <div class="admin-header">
+            <div><h2>Devlog entries</h2></div>
+            @if (!Model.CreatingNew)
+            {
+                <div style="display:flex;gap:8px">
+                    <a asp-page="/Admin/Projects/Devlogs/Trash" asp-route-projectId="@Model.ProjectId" class="btn">
+                        <i class="ti ti-trash"></i> Trash
+                    </a>
+                    <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.ProjectId" class="btn btn-primary">
+                        <i class="ti ti-plus" style="font-size:15px"></i> New devlog entry
+                    </a>
+                </div>
+            }
+        </div>
 
-            @if (Model.CreatingNew)
-            {
-                <p class="hint">Save this project before adding devlog entries.</p>
-            }
-            else if (Model.Devlogs.Count == 0)
-            {
-                <p class="hint">No devlog entries yet.</p>
-            }
-            else
-            {
-                <ul class="draft-list">
-                    @foreach (var devlog in Model.Devlogs)
-                    {
-                        <li class="draft-item">
-                            <a class="draft-item-link" asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.ProjectId" asp-route-id="@devlog.Id">
-                                <div class="draft-item-body">
-                                    <p class="name">@devlog.Title</p>
-                                    <p class="meta">@devlog.PublishedAt.Humanize()</p>
-                                </div>
-                                <span class="badge badge-@(devlog.Visibility == Visibility.Published ? "published" : devlog.Visibility == Visibility.Private ? "private" : "unlisted")">@devlog.Visibility</span>
-                            </a>
-                        </li>
-                    }
-                </ul>
-            }
+        @if (Model.CreatingNew)
+        {
+            <p class="hint">Save this project before adding devlog entries.</p>
+        }
+        else if (Model.Devlogs.Count == 0)
+        {
+            <p class="hint">No devlog entries yet.</p>
+        }
+        else
+        {
+            <ul class="draft-list">
+                @foreach (var devlog in Model.Devlogs)
+                {
+                    <li class="draft-item">
+                        <a class="draft-item-link" asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.ProjectId"
+                           asp-route-id="@devlog.Id">
+                            <div class="draft-item-body">
+                                <p class="name">@devlog.Title</p>
+                                <p class="meta">@devlog.PublishedAt.Humanize()</p>
+                            </div>
+                            <span
+                                class="badge badge-@(devlog.Visibility == Visibility.Published ? "published" : devlog.Visibility == Visibility.Private ? "private" : "unlisted")">@devlog.Visibility</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
     </section>
 
     @if (!Model.CreatingNew)

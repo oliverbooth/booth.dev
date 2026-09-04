@@ -1,3 +1,4 @@
+using BoothDotDev;
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using BoothDotDev.Services;
@@ -96,7 +97,7 @@ builder.Services.AddSingleton<IFido2>(services =>
     return new Fido2(new Fido2Configuration
     {
         ServerDomain = webAuthnOptions.RpId,
-        ServerName = BoothDotDev.Strings.MyName,
+        ServerName = Strings.MyName,
         Origins = new HashSet<string>(webAuthnOptions.Origins)
     });
 });
@@ -105,7 +106,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 await ConfigureMigrationsAsync<AppDbContext>(app.Services);
 
 if (!app.Environment.IsDevelopment())
@@ -167,11 +168,11 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
 app.MapGet("/contact", () => Results.StatusCode(StatusCodes.Status410Gone));
-app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", permanent: true));
-app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", permanent: true));
-app.MapGet("/blog/archive", () => Results.Redirect("/blog", permanent: true));
-app.MapGet("/blog/feed", () => Results.Redirect("/blog.rss", permanent: true));
-app.MapGet("/blog/posts/{page:int}", () => Results.Redirect("/blog", permanent: true));
+app.MapGet("/contact/blacklist", () => Results.Redirect("/contact", true));
+app.MapGet("/contact/blacklist/formatted/{format}", () => Results.Redirect("/contact", true));
+app.MapGet("/blog/archive", () => Results.Redirect("/blog", true));
+app.MapGet("/blog/feed", () => Results.Redirect("/blog.rss", true));
+app.MapGet("/blog/posts/{page:int}", () => Results.Redirect("/blog", true));
 app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month, int day, string slug) =>
 {
     var blogPostService = app.Services.GetRequiredService<BlogPostService>();
@@ -179,7 +180,7 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}", (int year, int month
 
     var result = blogPostService.GetPost(slug, date);
     return result.IsSuccess
-        ? Results.Redirect($"/blog/{slug}", permanent: true)
+        ? Results.Redirect($"/blog/{slug}", true)
         : Results.NotFound();
 });
 app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}/raw", (int year, int month, int day, string slug) =>
@@ -188,13 +189,13 @@ app.MapGet("/blog/{year:int}/{month:int}/{day:int}/{slug}/raw", (int year, int m
     var date = new DateOnly(year, month, day);
     var result = blogPostService.GetPost(slug, date);
     return result.IsSuccess
-        ? Results.Redirect($"/blog/{slug}.md", permanent: true)
+        ? Results.Redirect($"/blog/{slug}.md", true)
         : Results.NotFound();
 });
-app.MapGet("/blog/{slug}/raw", (string slug) => Results.Redirect($"/blog/{slug}.md", permanent: true));
-app.MapGet("/tutorials", () => Results.Redirect($"/learn", permanent: true));
-app.MapGet("/tutorials/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", permanent: true));
-app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", permanent: true));
+app.MapGet("/blog/{slug}/raw", (string slug) => Results.Redirect($"/blog/{slug}.md", true));
+app.MapGet("/tutorials", () => Results.Redirect("/learn", true));
+app.MapGet("/tutorials/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", true));
+app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", true));
 
 app.Run();
 return;
@@ -205,7 +206,7 @@ async Task HandleRssFeedAsync(HttpContext context, string path)
     var rssFeedService = context.RequestServices.GetRequiredService<RssFeedService>();
     var segments = path.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-    string? xml = segments.Length switch
+    var xml = segments.Length switch
     {
         1 when segments[0] == "blog" => rssFeedService.BuildBlogFeed(baseUrl),
         1 when segments[0] == "notes" => rssFeedService.BuildNotesFeed(baseUrl),
@@ -244,7 +245,7 @@ async Task HandleRawMarkdownAsync(HttpContext context, string path)
     var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     var isAuthenticated = authenticateResult.Succeeded;
 
-    Result<string> result = segments.Length switch
+    var result = segments.Length switch
     {
         2 when segments[0] == "blog" => rawContentService.BuildBlogPostRaw(segments[1], isAuthenticated),
         2 when segments[0] == "note" => rawContentService.BuildNoteRaw(segments[1], isAuthenticated),

@@ -30,6 +30,7 @@ public sealed class OgImageService
     ///     The pixel height every rendered card is encoded at, exposed for the <c>og:image:height</c> meta tag.
     /// </summary>
     public const int Height = 630;
+
     private const int Margin = 72;
     private const int AccentBarWidth = 6;
     private const int FullWrapLength = Width - Margin - Margin;
@@ -51,10 +52,10 @@ public sealed class OgImageService
     private static readonly Color AccentColor = Color.ParseHex("6161cd");
     private static readonly Color TextPrimaryColor = Color.ParseHex("f2f2f4");
     private static readonly Color TextSecondaryColor = Color.ParseHex("9a9aa5");
+    private readonly Font _descriptionFont;
+    private readonly Font _eyebrowFont;
 
     private readonly FontFamily _interSemiBold;
-    private readonly Font _eyebrowFont;
-    private readonly Font _descriptionFont;
     private readonly Font _wordmarkFont;
 
     /// <summary>
@@ -65,9 +66,9 @@ public sealed class OgImageService
         var collection = new FontCollection();
         var assembly = typeof(OgImageService).Assembly;
 
-        FontFamily interRegular = AddFont(collection, assembly, "Inter-Regular.ttf");
+        var interRegular = AddFont(collection, assembly, "Inter-Regular.ttf");
         _interSemiBold = AddFont(collection, assembly, "Inter-SemiBold.ttf");
-        FontFamily mono = AddFont(collection, assembly, "JetBrainsMono-Regular.ttf");
+        var mono = AddFont(collection, assembly, "JetBrainsMono-Regular.ttf");
 
         _eyebrowFont = mono.CreateFont(20, FontStyle.Regular);
         _descriptionFont = interRegular.CreateFont(28, FontStyle.Regular);
@@ -125,14 +126,12 @@ public sealed class OgImageService
         const float wordmarkRowHeight = 40;
         const float gapAboveWordmark = 32;
 
-        Font titleFont = FitTitleFont(title, wrapLength);
+        var titleFont = FitTitleFont(title, wrapLength);
         var titleOptions = new RichTextOptions(titleFont)
         {
-            Origin = new PointF(Margin, titleY),
-            WrappingLength = wrapLength,
-            LineSpacing = 1.15f
+            Origin = new PointF(Margin, titleY), WrappingLength = wrapLength, LineSpacing = 1.15f
         };
-        FontRectangle titleBounds = TextMeasurer.MeasureSize(title, titleOptions);
+        var titleBounds = TextMeasurer.MeasureSize(title, titleOptions);
 
         // The description flows immediately after wherever the (variable-height, 1-3 line) title actually ends,
         // rather than sitting at a fixed offset - otherwise a short title leaves an awkward gap, and a long one
@@ -154,9 +153,7 @@ public sealed class OgImageService
                 var fitted = FitDescriptionText(Truncate(description, 300), _descriptionFont, maxDescriptionHeight, wrapLength);
                 var descriptionOptions = new RichTextOptions(_descriptionFont)
                 {
-                    Origin = new PointF(Margin, descriptionY),
-                    WrappingLength = wrapLength,
-                    LineSpacing = 1.3f
+                    Origin = new PointF(Margin, descriptionY), WrappingLength = wrapLength, LineSpacing = 1.3f
                 };
                 ctx.DrawText(descriptionOptions, fitted, TextSecondaryColor);
             }
@@ -178,19 +175,21 @@ public sealed class OgImageService
         const float gapAboveDescription = 12;
         const float gapAboveTitle = 8;
 
-        Font titleFont = FitTitleFont(title, PhotoWrapLength);
+        var titleFont = FitTitleFont(title, PhotoWrapLength);
         var titleTextOptions = new TextOptions(titleFont) { WrappingLength = PhotoWrapLength, LineSpacing = 1.15f };
-        FontRectangle titleBounds = TextMeasurer.MeasureSize(title, titleTextOptions);
+        var titleBounds = TextMeasurer.MeasureSize(title, titleTextOptions);
 
         var eyebrowTextOptions = new TextOptions(_eyebrowFont);
-        FontRectangle eyebrowBounds = TextMeasurer.MeasureSize(eyebrow, eyebrowTextOptions);
+        var eyebrowBounds = TextMeasurer.MeasureSize(eyebrow, eyebrowTextOptions);
 
         string? fittedDescription = null;
         FontRectangle descriptionBounds = default;
         if (!string.IsNullOrWhiteSpace(description))
         {
-            fittedDescription = FitDescriptionText(Truncate(description, 300), _descriptionFont, PhotoMaxDescriptionHeight, PhotoWrapLength);
-            var descriptionTextOptions = new TextOptions(_descriptionFont) { WrappingLength = PhotoWrapLength, LineSpacing = 1.3f };
+            fittedDescription = FitDescriptionText(Truncate(description, 300), _descriptionFont, PhotoMaxDescriptionHeight,
+                PhotoWrapLength);
+            var descriptionTextOptions =
+                new TextOptions(_descriptionFont) { WrappingLength = PhotoWrapLength, LineSpacing = 1.3f };
             descriptionBounds = TextMeasurer.MeasureSize(fittedDescription, descriptionTextOptions);
         }
 
@@ -209,9 +208,7 @@ public sealed class OgImageService
 
             var titleOptions = new RichTextOptions(titleFont)
             {
-                Origin = new PointF(Margin, titleY),
-                WrappingLength = PhotoWrapLength,
-                LineSpacing = 1.15f
+                Origin = new PointF(Margin, titleY), WrappingLength = PhotoWrapLength, LineSpacing = 1.15f
             };
             ctx.DrawText(titleOptions, title, TextPrimaryColor);
 
@@ -219,9 +216,7 @@ public sealed class OgImageService
             {
                 var descriptionOptions = new RichTextOptions(_descriptionFont)
                 {
-                    Origin = new PointF(Margin, descriptionY),
-                    WrappingLength = PhotoWrapLength,
-                    LineSpacing = 1.3f
+                    Origin = new PointF(Margin, descriptionY), WrappingLength = PhotoWrapLength, LineSpacing = 1.3f
                 };
                 ctx.DrawText(descriptionOptions, fittedDescription, TextSecondaryColor);
             }
@@ -242,7 +237,7 @@ public sealed class OgImageService
         while (candidate.Length > 0)
         {
             var options = new TextOptions(font) { WrappingLength = wrapLength, LineSpacing = 1.3f };
-            FontRectangle bounds = TextMeasurer.MeasureSize(candidate, options);
+            var bounds = TextMeasurer.MeasureSize(candidate, options);
             if (bounds.Height <= maxHeight)
             {
                 return candidate;
@@ -265,9 +260,9 @@ public sealed class OgImageService
     {
         for (var size = MaxTitleFontSize; size > MinTitleFontSize; size -= 4f)
         {
-            Font candidate = _interSemiBold.CreateFont(size, FontStyle.Regular);
+            var candidate = _interSemiBold.CreateFont(size, FontStyle.Regular);
             var options = new TextOptions(candidate) { WrappingLength = wrapLength, LineSpacing = 1.15f };
-            FontRectangle bounds = TextMeasurer.MeasureSize(title, options);
+            var bounds = TextMeasurer.MeasureSize(title, options);
             if (bounds.Height <= MaxTitleHeight)
             {
                 return candidate;
@@ -286,8 +281,8 @@ public sealed class OgImageService
     private static FontFamily AddFont(FontCollection collection, Assembly assembly, string fileName)
     {
         var resourceName = $"BoothDotDev.Resources.Fonts.{fileName}";
-        using Stream stream = assembly.GetManifestResourceStream(resourceName)
-            ?? throw new InvalidOperationException($"Embedded font resource '{resourceName}' was not found.");
+        using var stream = assembly.GetManifestResourceStream(resourceName)
+                           ?? throw new InvalidOperationException($"Embedded font resource '{resourceName}' was not found.");
         return collection.Add(stream);
     }
 

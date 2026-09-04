@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
+using BoothDotDev.Data.Models;
 using BoothDotDev.Markdown.Link;
 using BoothDotDev.Services;
 using FluentResults;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace BoothDotDev.Pages.Admin.Creations.Music;
 
-using MusicItem = Data.Models.MusicItem;
+using MusicItem = MusicItem;
 
 /// <summary>
 ///     Represents the page model for editing a music item in the admin section.
@@ -20,10 +21,10 @@ using MusicItem = Data.Models.MusicItem;
 public sealed class Edit : PageModel
 {
     private const string Area = "content";
+    private readonly string _cdnBaseUrl;
+    private readonly CdnMediaService _cdnMediaService;
 
     private readonly CreationService _creationService;
-    private readonly CdnMediaService _cdnMediaService;
-    private readonly string _cdnBaseUrl;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -85,15 +86,11 @@ public sealed class Edit : PageModel
         if (id is null)
         {
             CreatingNew = true;
-            Input = new EditModel
-            {
-                Visibility = Visibility.Private,
-                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
-            };
+            Input = new EditModel { Visibility = Visibility.Private, PublishedAt = DateTimeOffset.UtcNow.ToLocalTime() };
             return Page();
         }
 
-        var itemResult = _creationService.GetMusicItem(id.Value, includeTrashed: true);
+        var itemResult = _creationService.GetMusicItem(id.Value, true);
         if (itemResult.IsFailed)
         {
             return NotFound();
@@ -144,7 +141,7 @@ public sealed class Edit : PageModel
         }
         else
         {
-            var existingResult = _creationService.GetMusicItem(id.Value, includeTrashed: true);
+            var existingResult = _creationService.GetMusicItem(id.Value, true);
             if (existingResult.IsFailed)
             {
                 return NotFound();
@@ -186,7 +183,7 @@ public sealed class Edit : PageModel
             return BadRequest("No file was uploaded.");
         }
 
-        var itemResult = _creationService.GetMusicItem(id, includeTrashed: true);
+        var itemResult = _creationService.GetMusicItem(id, true);
         if (itemResult.IsFailed)
         {
             return NotFound();

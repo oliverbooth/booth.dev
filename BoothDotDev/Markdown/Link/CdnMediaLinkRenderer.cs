@@ -13,19 +13,11 @@ namespace BoothDotDev.Markdown.Link;
 /// </summary>
 public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
 {
-    private enum MediaKind
-    {
-        Image,
-        Video,
-        Audio,
-        Misc
-    }
-
     private static readonly FileExtensionContentTypeProvider ContentTypeProvider = new();
-    private readonly MarkdownRenderContext _renderContext;
-    private readonly RazorPartialRenderer _razorPartialRenderer;
     private readonly string _area;
     private readonly string _baseUrl;
+    private readonly RazorPartialRenderer _razorPartialRenderer;
+    private readonly MarkdownRenderContext _renderContext;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CdnMediaLinkRenderer" /> class.
@@ -54,7 +46,7 @@ public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
             return;
         }
 
-        MediaKind mediaKind = ResolveMediaKind(link.Url);
+        var mediaKind = ResolveMediaKind(link.Url);
         var cdnUrl = ResolveCdnUrl(link.Url, mediaKind);
 
         var partialName = mediaKind switch
@@ -119,5 +111,13 @@ public sealed class CdnMediaLinkRenderer : LinkInlineRenderer
         var date = _renderContext.Date;
 
         return $"{_baseUrl}/{_area}/{mediaKind.ToString().ToLowerInvariant()}/{date:yyyy/MM}/{uuid:N}/{url}";
+    }
+
+    private enum MediaKind
+    {
+        Image,
+        Video,
+        Audio,
+        Misc
     }
 }

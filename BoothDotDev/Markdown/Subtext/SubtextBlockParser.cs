@@ -25,14 +25,14 @@ internal sealed class SubtextBlockParser : BlockParser
         }
 
         // a space is required after the -#, unless there's no content at all
-        char afterMarker = processor.PeekChar(2);
+        var afterMarker = processor.PeekChar(2);
         if (afterMarker != ' ' && afterMarker != '\t' && afterMarker != '\0')
         {
             return BlockState.None;
         }
 
-        int column = processor.Column;
-        int start = processor.Start;
+        var column = processor.Column;
+        var start = processor.Start;
 
         processor.NextChar(); // skip '-'
         processor.NextChar(); // skip '#'
@@ -41,11 +41,7 @@ internal sealed class SubtextBlockParser : BlockParser
             processor.NextChar(); // skip the single space separating the marker from the content
         }
 
-        var block = new SubtextBlock(this)
-        {
-            Column = column,
-            Span = new SourceSpan(start, processor.Line.End)
-        };
+        var block = new SubtextBlock(this) { Column = column, Span = new SourceSpan(start, processor.Line.End) };
 
         processor.NewBlocks.Push(block);
 

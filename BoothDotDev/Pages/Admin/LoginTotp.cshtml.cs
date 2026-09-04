@@ -15,8 +15,8 @@ namespace BoothDotDev.Pages.Admin;
 /// </summary>
 public sealed class LoginTotp : PageModel
 {
-    private readonly UserService _userService;
     private readonly IDataProtector _protector;
+    private readonly UserService _userService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LoginTotp" /> class.

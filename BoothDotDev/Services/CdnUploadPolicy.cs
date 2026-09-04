@@ -1,5 +1,4 @@
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
@@ -55,7 +54,7 @@ public static class CdnUploadPolicy
         image.Metadata.XmpProfile = null;
         // ICC color profile is deliberately kept
 
-        IImageEncoder encoder = format.Name switch
+        var encoder = format.Name switch
         {
             "JPEG" => new JpegEncoder { Quality = 100 },
             "WEBP" => new WebpEncoder { Quality = 100 },

@@ -1,12 +1,12 @@
 @page "/blog/{slug}"
+@inject BlogPostService BlogPostService
+@inject CommentService CommentService
+@inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using Humanizer
-@inject BlogPostService BlogPostService
-@inject CommentService CommentService
-@inject MarkdownRenderingService MarkdownRenderingService
 @model Article
 
 @if (Model.Post is not { } post)
@@ -50,7 +50,7 @@
     <h1 style="margin:8px 0 12px;font-size:30px">@post.Title</h1>
 
     <div class="byline">
-        <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="@author.DisplayName"/></div>
+        <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="@author.DisplayName" /></div>
         <span class="meta">
             @author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read
             &middot; <a href="/blog/@(post.Slug).md">View source</a>
@@ -84,7 +84,7 @@
             }
         </div>
     }
-    
+
     @{
         var previousPost = BlogPostService.GetPreviousPost(post);
         var nextPost = BlogPostService.GetNextPost(post);
@@ -204,7 +204,8 @@
                                     @comment.CreatedAt.Humanize()
                                 </abbr>
                             </div>
-                            <div class="legacy-comment-content">@Html.Raw(MarkdownRenderingService.Render(comment, comment.Id, comment.CreatedAt))</div>
+                            <div
+                                class="legacy-comment-content">@Html.Raw(MarkdownRenderingService.Render(comment, comment.Id, comment.CreatedAt))</div>
                         </div>
                     </div>
                 }

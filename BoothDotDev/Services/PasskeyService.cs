@@ -39,12 +39,7 @@ public sealed class PasskeyService
             .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId))
             .ToList();
 
-        var fidoUser = new Fido2User
-        {
-            Id = user.Id.ToByteArray(),
-            Name = user.EmailAddress,
-            DisplayName = user.DisplayName
-        };
+        var fidoUser = new Fido2User { Id = user.Id.ToByteArray(), Name = user.EmailAddress, DisplayName = user.DisplayName };
 
         return _fido2.RequestNewCredential(new RequestNewCredentialParams
         {
@@ -55,8 +50,7 @@ public sealed class PasskeyService
                 // usernameless login requires a resident (discoverable) key - preferred lets some
                 // authenticators silently create a non-resident credential that registers fine but can't
                 // participate in that flow, so this can't be anything less than Required
-                ResidentKey = ResidentKeyRequirement.Required,
-                UserVerification = UserVerificationRequirement.Preferred
+                ResidentKey = ResidentKeyRequirement.Required, UserVerification = UserVerificationRequirement.Preferred
             },
             AttestationPreference = AttestationConveyancePreference.None,
             PubKeyCredParams = PubKeyCredParam.Defaults
@@ -124,8 +118,7 @@ public sealed class PasskeyService
     {
         return _fido2.GetAssertionOptions(new GetAssertionOptionsParams
         {
-            AllowedCredentials = [],
-            UserVerification = UserVerificationRequirement.Preferred
+            AllowedCredentials = [], UserVerification = UserVerificationRequirement.Preferred
         });
     }
 

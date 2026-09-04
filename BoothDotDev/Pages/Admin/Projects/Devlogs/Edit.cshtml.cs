@@ -18,10 +18,10 @@ namespace BoothDotDev.Pages.Admin.Projects.Devlogs;
 public sealed class Edit : PageModel
 {
     private const string Area = "devlog";
+    private readonly CdnMediaService _cdnMediaService;
+    private readonly MarkdownRenderingService _markdownRenderingService;
 
     private readonly ProjectService _projectService;
-    private readonly MarkdownRenderingService _markdownRenderingService;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -111,14 +111,12 @@ public sealed class Edit : PageModel
             CreatingNew = true;
             Input = new EditModel
             {
-                Visibility = Visibility.Published,
-                EnableComments = true,
-                PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
+                Visibility = Visibility.Published, EnableComments = true, PublishedAt = DateTimeOffset.UtcNow.ToLocalTime()
             };
             return Page();
         }
 
-        var devlogResult = _projectService.GetDevlogById(id.Value, includeTrashed: true);
+        var devlogResult = _projectService.GetDevlogById(id.Value, true);
         if (devlogResult.IsFailed)
         {
             return NotFound();

@@ -19,14 +19,14 @@ public static class MarkdownTocBuilder
     /// <returns>A list of <see cref="TocItem" /> representing the table of contents.</returns>
     public static List<TocItem> BuildToc(string markdownSource)
     {
-        MarkdownPipeline pipeline = new MarkdownPipelineBuilder().Build();
-        MarkdownDocument document = global::Markdig.Markdown.Parse(markdownSource, pipeline);
+        var pipeline = new MarkdownPipelineBuilder().Build();
+        var document = Markdig.Markdown.Parse(markdownSource, pipeline);
 
         var headings = new List<TocItem>();
-        foreach (HeadingBlock block in document.Descendants().OfType<HeadingBlock>())
+        foreach (var block in document.Descendants().OfType<HeadingBlock>())
         {
-            int level = block.Level;
-            string text = ExtractInlineText(block.Inline);
+            var level = block.Level;
+            var text = ExtractInlineText(block.Inline);
             headings.Add(new TocItem { Text = text, Level = level });
         }
 
@@ -42,7 +42,7 @@ public static class MarkdownTocBuilder
         }
 
         var sb = new StringBuilder();
-        foreach (Inline child in inline)
+        foreach (var child in inline)
         {
             switch (child)
             {
@@ -84,15 +84,15 @@ public static class MarkdownTocBuilder
     private static void MakeUniqueIds(List<TocItem> headings)
     {
         var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        foreach (TocItem h in headings)
+        foreach (var h in headings)
         {
-            string slug = Slugify(h.Text);
+            var slug = Slugify(h.Text);
             if (string.IsNullOrWhiteSpace(slug))
             {
                 slug = "section";
             }
 
-            if (!counts.TryGetValue(slug, out int c))
+            if (!counts.TryGetValue(slug, out var c))
             {
                 c = 0;
             }
@@ -115,7 +115,7 @@ public static class MarkdownTocBuilder
         var sb = new StringBuilder();
         var lastWasDash = false;
 
-        foreach (char ch in text)
+        foreach (var ch in text)
         {
             if (ch is >= 'a' and <= 'z' or >= '0' and <= '9')
             {
@@ -136,7 +136,7 @@ public static class MarkdownTocBuilder
         }
 
         // trim leading/trailing dash
-        string result = sb.ToString().Trim('-');
+        var result = sb.ToString().Trim('-');
         return result;
     }
 
@@ -145,7 +145,7 @@ public static class MarkdownTocBuilder
         var root = new List<TocItem>();
         var stack = new Stack<TocItem>();
 
-        foreach (TocItem item in flat)
+        foreach (var item in flat)
         {
             // if stack empty -> top-level
             while (stack.Count > 0 && item.Level <= stack.Peek().Level)
@@ -181,7 +181,7 @@ public static class MarkdownTocBuilder
 
         void Render(IEnumerable<TocItem> nodes, int indent)
         {
-            foreach (TocItem item in nodes)
+            foreach (var item in nodes)
             {
                 builder.Append(' ', indent * 2); // two spaces per indent
                 builder.Append($"- [{EscapeMarkdown(item.Text)}](#{item.Id})\n");
@@ -209,7 +209,7 @@ public static class MarkdownTocBuilder
 
         void Render(IEnumerable<TocItem> nodes, int indent)
         {
-            foreach (TocItem n in nodes)
+            foreach (var n in nodes)
             {
                 builder.Append(' ', indent * 2); // two spaces per indent
                 builder.Append($"<li><a href=\"{request?.Path}#{n.Id}\">{HttpUtility.HtmlEncode(n.Text)}</a>");

@@ -19,7 +19,7 @@ public sealed class EmbedInlineParser : InlineParser
     /// <inheritdoc />
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
-        ReadOnlySpan<char> span = slice.Text.AsSpan()[slice.Start..];
+        var span = slice.Text.AsSpan()[slice.Start..];
         if (!span.StartsWith("![["))
         {
             return false;
@@ -31,7 +31,7 @@ public sealed class EmbedInlineParser : InlineParser
             return false;
         }
 
-        ReadOnlySpan<char> inner = span[3..closeIndex]; // trim "![[" and "]]"
+        var inner = span[3..closeIndex]; // trim "![[" and "]]"
         if (inner.IsEmpty)
         {
             return false;

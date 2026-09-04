@@ -5,8 +5,7 @@ namespace BoothDotDev.Vite;
 
 internal sealed class ManifestEntry
 {
-    [JsonPropertyName("file")]
-    public required string File { get; init; }
+    [JsonPropertyName("file")] public required string File { get; init; }
 
     [UsedImplicitly]
     [JsonPropertyName("src")]

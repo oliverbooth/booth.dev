@@ -21,10 +21,10 @@ using Note = Data.Models.Note;
 public sealed class Edit : PageModel
 {
     private const string Area = "note";
+    private readonly CdnMediaService _cdnMediaService;
+    private readonly MarkdownRenderingService _markdownRenderingService;
 
     private readonly NoteService _noteService;
-    private readonly MarkdownRenderingService _markdownRenderingService;
-    private readonly CdnMediaService _cdnMediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
@@ -106,7 +106,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var noteResult = _noteService.GetNoteById(id.Value, includeTrashed: true);
+        var noteResult = _noteService.GetNoteById(id.Value, true);
         if (noteResult.IsFailed)
         {
             return NotFound();

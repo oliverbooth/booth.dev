@@ -8,7 +8,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void SingleLine_ParsesCorrectly()
     {
-        var success = TriviaParser.TryParse("h=L3", out TriviaBlock block, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=L3", out var block, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -18,7 +18,7 @@ internal sealed class TriviaParserTests
             Assert.That(block.Tokens, Has.Count.EqualTo(1));
         }
 
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         Assert.That(token.Lines, Has.Count.EqualTo(1));
         using (Assert.EnterMultipleScope())
         {
@@ -32,10 +32,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void LineRange_ParsesCorrectly()
     {
-        var success = TriviaParser.TryParse("h=L3-L5", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L3-L5", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         Assert.That(token.Lines, Has.Count.EqualTo(1));
         using (Assert.EnterMultipleScope())
         {
@@ -48,7 +48,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void MultipleDisjointLineRanges_ParsesAsSeparateTokens()
     {
-        var success = TriviaParser.TryParse("h=L1-L3,L5-L7", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L1-L3,L5-L7", out var block, out _);
 
         using (Assert.EnterMultipleScope())
         {
@@ -68,10 +68,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void ColumnRange_AttachesToLastLine_WhenUngrouped()
     {
-        var success = TriviaParser.TryParse("h=L3-L5@2..8", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L3-L5@2..8", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(token.IsGrouped, Is.False); // ungrouped: column spec only applies to the last line, per spec
@@ -88,10 +88,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void ColumnRange_AttachesToWholeSpan_WhenGrouped()
     {
-        var success = TriviaParser.TryParse("h=(L3-L5)@2..8", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=(L3-L5)@2..8", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(token.IsGrouped, Is.True);
@@ -108,7 +108,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void DisjointLineSpans_GroupedWithSharedColumns_ParsesAsOneToken()
     {
-        var success = TriviaParser.TryParse("h=(L7-L8,L13-L14)@9..^1", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=(L7-L8,L13-L14)@9..^1", out var block, out _);
 
         using (Assert.EnterMultipleScope())
         {
@@ -116,7 +116,7 @@ internal sealed class TriviaParserTests
             Assert.That(block.Tokens, Has.Count.EqualTo(1));
         }
 
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(token.IsGrouped, Is.True);
@@ -137,10 +137,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void DisjointSingleLines_GroupedWithSharedColumns_ParsesAsOneToken()
     {
-        var success = TriviaParser.TryParse("h=(L3,L9)@2..5", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=(L3,L9)@2..5", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         Assert.That(token.Lines, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
         {
@@ -154,10 +154,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void MultipleColumnRanges_OnSingleLine_ParsesAsGroup()
     {
-        var success = TriviaParser.TryParse("h=L1@(2..8,14..20)", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L1@(2..8,14..20)", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         Assert.That(token.Columns, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
         {
@@ -171,10 +171,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void BackIndexedColumn_ParsesCorrectly()
     {
-        var success = TriviaParser.TryParse("h=L1@2..^2", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L1@2..^2", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(token.Columns![0].Start, Is.EqualTo(SpecBound.Forward(2)));
@@ -185,10 +185,10 @@ internal sealed class TriviaParserTests
     [Test]
     public void BackIndexedLineRange_ParsesCorrectly()
     {
-        var success = TriviaParser.TryParse("h=L5-L^1", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L5-L^1", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(token.Lines[0].Start, Is.EqualTo(SpecBound.Forward(5)));
@@ -199,7 +199,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void FullCombinedExample_ParsesAllPieces()
     {
-        var success = TriviaParser.TryParse("h=L1-L3,L5@2..^2", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=L1-L3,L5@2..^2", out var block, out _);
 
         using (Assert.EnterMultipleScope())
         {
@@ -207,7 +207,7 @@ internal sealed class TriviaParserTests
             Assert.That(block.Tokens, Has.Count.EqualTo(2));
         }
 
-        HighlightToken first = block.Tokens[0];
+        var first = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(first.Lines[0].Start, Is.EqualTo(SpecBound.Forward(1)));
@@ -215,7 +215,7 @@ internal sealed class TriviaParserTests
             Assert.That(first.Columns, Is.Null);
         }
 
-        HighlightToken second = block.Tokens[1];
+        var second = block.Tokens[1];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(second.Lines[0].Start, Is.EqualTo(SpecBound.Forward(5)));
@@ -228,7 +228,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void EmptySpec_FailsWithEmptySpecError()
     {
-        var success = TriviaParser.TryParse("h=", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -240,7 +240,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void WhitespaceInsideBlock_FailsWithUnexpectedWhitespaceError()
     {
-        var success = TriviaParser.TryParse("h= L1-L3", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h= L1-L3", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -252,7 +252,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void InvertedLineRange_FailsWithInvertedRangeError()
     {
-        var success = TriviaParser.TryParse("h=L5-L3", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=L5-L3", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -264,7 +264,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void InvertedColumnRange_FailsWithInvertedRangeError()
     {
-        var success = TriviaParser.TryParse("h=L1@8..2", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=L1@8..2", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -276,7 +276,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void MissingLPrefix_FailsAsMalformed()
     {
-        var success = TriviaParser.TryParse("h=3-5", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=3-5", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -288,7 +288,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void NonNumericBound_FailsWithInvalidNumberError()
     {
-        var success = TriviaParser.TryParse("h=Lx", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=Lx", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {
@@ -302,10 +302,10 @@ internal sealed class TriviaParserTests
     {
         // parens around a single line-spec (no comma) is valid but degenerate - IsGrouped is set
         // but has no visible effect since there's only one line to apply columns across anyway
-        var success = TriviaParser.TryParse("h=(L3)@2..8", out TriviaBlock block, out _);
+        var success = TriviaParser.TryParse("h=(L3)@2..8", out var block, out _);
 
         Assert.That(success, Is.True);
-        HighlightToken token = block.Tokens[0];
+        var token = block.Tokens[0];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(token.IsGrouped, Is.True);
@@ -322,7 +322,7 @@ internal sealed class TriviaParserTests
     [Test]
     public void EmptyLineGroup_FailsAsMalformed()
     {
-        var success = TriviaParser.TryParse("h=()@2..8", out _, out TriviaParseError error);
+        var success = TriviaParser.TryParse("h=()@2..8", out _, out var error);
 
         using (Assert.EnterMultipleScope())
         {

@@ -1,8 +1,8 @@
 @page "/challenge/{id}"
+@inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
-@inject MarkdownRenderingService MarkdownRenderingService
 @model Challenge
 @{
     ViewData["Title"] = Model.DevChallenge.Title;
