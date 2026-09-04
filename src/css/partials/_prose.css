@@ -91,13 +91,6 @@
       }
     }
 
-    &.mermaid {
-      background: none;
-      border: none;
-      padding: 0;
-      text-align: center;
-    }
-
     .kw {
       color: var(--accent);
     }

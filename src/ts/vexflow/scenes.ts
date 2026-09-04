@@ -44,34 +44,50 @@ async function mountNotation(codeElement: HTMLElement): Promise<void> {
         return;
     }
 
+    const noSource = 'noSource' in codeElement.dataset;
     const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
     const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
-    const {notationTab, sourceTab, notationPanel, sourcePanel, tabList, wrapper, themeToggle} = buildTabs();
+    const wrapper = document.createElement('div');
+    wrapper.className = 'vexflow-scene';
+
+    const notationPanel = document.createElement('div');
+    notationPanel.className = 'vexflow-scene-panel';
+
     (codeToolbar ?? pre).replaceWith(wrapper);
-    sourcePanel.append(codeToolbar ?? pre);
 
-    if (toolbar) {
-        toolbar.classList.add('scene-toolbar');
-        toolbar.hidden = true; // Notation tab is active by default
-        tabList.append(toolbar);
+    if (noSource) {
+        // `no-source`: just the notation, no tab chrome to switch to a Source view at all - so no theme toggle
+        // either, since there'd be nowhere to put it; the block stays on the light "paper" default
+        wrapper.append(notationPanel);
+    } else {
+        const themeToggle = createThemeToggle(wrapper);
+        const {notationTab, sourceTab, sourcePanel, tabList} = buildTabs();
+        tabList.append(themeToggle);
+        wrapper.append(tabList, notationPanel, sourcePanel);
+        sourcePanel.append(codeToolbar ?? pre);
+
+        if (toolbar) {
+            toolbar.classList.add('scene-toolbar');
+            toolbar.hidden = true; // Notation tab is active by default
+            tabList.append(toolbar);
+        }
+
+        notationTab.addEventListener('click', () => {
+            activateTab(notationTab, sourceTab, notationPanel, sourcePanel);
+            themeToggle.hidden = false;
+            if (toolbar) {
+                toolbar.hidden = true;
+            }
+        });
+        sourceTab.addEventListener('click', () => {
+            activateTab(sourceTab, notationTab, sourcePanel, notationPanel);
+            themeToggle.hidden = true;
+            if (toolbar) {
+                toolbar.hidden = false;
+            }
+        });
     }
-
-    // the toggle repaints the Notation tab's own ink/background, so it's meaningless while looking at Source
-    notationTab.addEventListener('click', () => {
-        activateTab(notationTab, sourceTab, notationPanel, sourcePanel);
-        themeToggle.hidden = false;
-        if (toolbar) {
-            toolbar.hidden = true;
-        }
-    });
-    sourceTab.addEventListener('click', () => {
-        activateTab(sourceTab, notationTab, sourcePanel, notationPanel);
-        themeToggle.hidden = true;
-        if (toolbar) {
-            toolbar.hidden = false;
-        }
-    });
 
     // resolved from ensureVexFlowLoaded's return value rather than read back off `window` - manim-web also exports a
     // `Renderer`, so `window.Renderer` may silently be *its* class instead, per the collision fallback documented on
@@ -109,39 +125,28 @@ function fitToContent(container: HTMLElement): void {
 }
 
 /**
- * Builds the Notation/Source tab chrome for a single block, unpopulated.
+ * Builds the Notation/Source tab chrome for a single block, unpopulated. The wrapper and notation panel are built by
+ * the caller instead, since a `no-source` block needs those two but none of this.
  */
 function buildTabs(): {
-    wrapper: HTMLElement;
     tabList: HTMLElement;
     notationTab: HTMLButtonElement;
     sourceTab: HTMLButtonElement;
-    notationPanel: HTMLDivElement;
     sourcePanel: HTMLElement;
-    themeToggle: HTMLButtonElement;
 } {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'vexflow-scene';
-
     const tabList = document.createElement('div');
     tabList.className = 'vexflow-scene-tabs';
     tabList.setAttribute('role', 'tablist');
 
     const notationTab = createTabButton('Notation', true);
     const sourceTab = createTabButton('Source', false);
-    const themeToggle = createThemeToggle(wrapper);
-    tabList.append(notationTab, sourceTab, themeToggle);
-
-    const notationPanel = document.createElement('div');
-    notationPanel.className = 'vexflow-scene-panel';
+    tabList.append(notationTab, sourceTab);
 
     const sourcePanel = document.createElement('div');
     sourcePanel.className = 'vexflow-source-panel';
     sourcePanel.hidden = true;
 
-    wrapper.append(tabList, notationPanel, sourcePanel);
-
-    return {wrapper, tabList, notationTab, sourceTab, notationPanel, sourcePanel, themeToggle};
+    return {tabList, notationTab, sourceTab, sourcePanel};
 }
 
 /**

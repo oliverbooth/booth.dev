@@ -8,20 +8,22 @@ namespace BoothDotDev.Markdown.CodeBlock;
 /// <summary>
 ///     Extends the stock <see cref="CodeBlockRenderer" /> to surface a fenced code block's <c>h=...</c> highlight trivia as a
 ///     <c>data-highlight</c> attribute, for client-side application against Prism's rendered tokens; also flags
-///     <c>manim-2d</c>/<c>manim-3d</c> blocks for client-side rendering as a manim-web scene, and <c>vexflow</c> blocks for
-///     client-side rendering as music notation.
+///     <c>manim-2d</c>/<c>manim-3d</c> blocks for client-side rendering as a manim-web scene, <c>vexflow</c> blocks for
+///     client-side rendering as music notation, and <c>mermaid</c> blocks for client-side rendering as a diagram. All
+///     three render tabbed alongside their own source by default; <c>no-source</c> renders just the result with no
+///     source tab, and <c>no-render</c> skips rendering entirely, leaving a plain highlighted codeblock.
 /// </summary>
 public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
 {
     /// <inheritdoc />
     protected override void Write(HtmlRenderer renderer, MarkdownCodeBlock obj)
     {
-        var manimDimension = (string?)null;
+        string? manimDimension = null;
         var isVexFlow = false;
 
-        if (obj is FencedCodeBlock { Arguments.Length: > 0 } fenced)
+        if (obj is FencedCodeBlock fenced)
         {
-            var arguments = fenced.Arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var arguments = fenced.Arguments?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? [];
             var highlightSpec = ExtractHighlightBlock(arguments);
 
             if (highlightSpec is not null)
@@ -34,16 +36,30 @@ public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
                 obj.GetAttributes().AddPropertyIfNotExist("data-line-numbers", string.Empty);
             }
 
-            manimDimension = ExtractManimDimension(arguments);
-            if (manimDimension is not null)
+            if (!arguments.Contains("no-render"))
             {
-                obj.GetAttributes().AddPropertyIfNotExist("data-manim", manimDimension);
-            }
+                manimDimension = ExtractManimDimension(arguments);
+                if (manimDimension is not null)
+                {
+                    obj.GetAttributes().AddPropertyIfNotExist("data-manim", manimDimension);
+                }
 
-            isVexFlow = arguments.Contains("vexflow");
-            if (isVexFlow)
-            {
-                obj.GetAttributes().AddPropertyIfNotExist("data-vexflow", string.Empty);
+                isVexFlow = arguments.Contains("vexflow");
+                if (isVexFlow)
+                {
+                    obj.GetAttributes().AddPropertyIfNotExist("data-vexflow", string.Empty);
+                }
+
+                var isMermaid = fenced.Info == "mermaid";
+                if (isMermaid)
+                {
+                    obj.GetAttributes().AddPropertyIfNotExist("data-mermaid", string.Empty);
+                }
+
+                if ((manimDimension is not null || isVexFlow || isMermaid) && arguments.Contains("no-source"))
+                {
+                    obj.GetAttributes().AddPropertyIfNotExist("data-no-source", string.Empty);
+                }
             }
         }
 

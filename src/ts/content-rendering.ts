@@ -10,9 +10,9 @@ import 'prismjs/plugins/keep-markup/prism-keep-markup.js';
 import 'prismjs/plugins/autoloader/prism-autoloader.js';
 import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
 import {initManimScenes} from './manim/scenes.ts';
+import {initMermaidScenes} from './mermaid/scenes.ts';
 import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 import {initVexFlowScenes} from './vexflow/scenes.ts';
-import mermaid from 'mermaid';
 
 // Prism auto-runs highlightAll() on DOMContentLoaded unless told otherwise; <script data-manual> tag used to suppress this, but
 // that signal doesn't exist for a bundled import, so it's set explicitly here. this MUST run before Prism's own DOMContentLoaded
@@ -25,32 +25,6 @@ Prism.manual = true;
 Prism.plugins.autoloader.languages_path = '/js/prism-components/';
 
 addPrismLanguages();
-
-mermaid.initialize({
-    startOnLoad: false,
-    theme: 'base',
-    themeVariables: {
-        darkMode: true,
-        background: cssVar('--surface-1'),
-        primaryColor: cssVar('--surface-2'),
-        primaryTextColor: cssVar('--text-primary'),
-        primaryBorderColor: cssVar('--accent'),
-        secondaryColor: cssVar('--surface-2'),
-        tertiaryColor: cssVar('--surface-2'),
-        lineColor: cssVar('--text-secondary'),
-        textColor: cssVar('--text-primary'),
-        edgeLabelBackground: cssVar('--surface-1'),
-        fontFamily: cssVar('--font-sans'),
-    },
-});
-
-/**
- * Reads the resolved value of a CSS custom property off the document root.
- * @param name The custom property's name, e.g. `--accent`.
- */
-function cssVar(name: string): string {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
 
 /**
  * Initializes the front-end Markdown content features for the given element, or the entire document if no element is provided.
@@ -65,21 +39,7 @@ export function initContentFeatures(element?: HTMLElement): void {
     renderSpoilers(element);
     initManimScenes(element).catch(error => console.error('Failed to initialize manim-web scenes:', error));
     initVexFlowScenes(element).catch(error => console.error('Failed to initialize vexflow scenes:', error));
-    initMermaidDiagrams(element);
-}
-
-/**
- * Renders mermaid diagrams (fenced ```mermaid code blocks, emitted by Markdig's diagrams extension as
- * `<div class="mermaid">`) within the given element.
- * @param element The element within which to render mermaid diagrams.
- */
-function initMermaidDiagrams(element: HTMLElement): void {
-    const diagrams = element.querySelectorAll<HTMLElement>('.mermaid:not([data-processed])');
-    if (diagrams.length === 0) {
-        return;
-    }
-
-    mermaid.run({nodes: diagrams}).catch(error => console.error('Failed to render mermaid diagrams:', error));
+    initMermaidScenes(element).catch(error => console.error('Failed to initialize mermaid scenes:', error));
 }
 
 /**

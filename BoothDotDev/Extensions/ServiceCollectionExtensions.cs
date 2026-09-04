@@ -32,7 +32,6 @@ internal static class ServiceCollectionExtensions
                 .UseCitations()
                 .UseCustomContainers()
                 .UseDefinitionLists()
-                .UseDiagrams()
                 .UseEmphasisExtras()
                 .UseFigures()
                 .UseFooters()
@@ -43,7 +42,6 @@ internal static class ServiceCollectionExtensions
                 .UsePipeTables()
                 .UseListExtras()
                 .UseTaskLists()
-                .UseDiagrams()
                 .UseAutoLinks()
                 .UseGenericAttributes() // must be last as it is one parser modifying other parsers
 
