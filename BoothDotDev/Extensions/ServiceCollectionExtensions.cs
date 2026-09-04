@@ -26,6 +26,9 @@ internal static class ServiceCollectionExtensions
                 // we have our own "alert blocks" in the form of GitHub and Obsidian style callouts
                 .UseCallouts()
 
+                // Discord-style subtext, e.g. "-# this is smaller, muted text"
+                .UseSubtext()
+
                 // advanced extensions. add explicitly to avoid UseAlertBlocks
                 .UseAbbreviations()
                 .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)

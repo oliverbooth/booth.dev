@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Markdown.Callout;
 using BoothDotDev.Markdown.Embed;
+using BoothDotDev.Markdown.Subtext;
 using BoothDotDev.Markdown.Template;
 using HtmlAgilityPack;
 using Markdig;
@@ -23,6 +24,16 @@ public static class MarkdownExtensions
         public MarkdownPipelineBuilder UseCallouts()
         {
             builder.Extensions.AddIfNotAlready<CalloutExtension>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Enables the use of Discord-style subtext (<c>-#</c>) in this pipeline.
+        /// </summary>
+        /// <returns>The modified Markdig markdown pipeline builder.</returns>
+        public MarkdownPipelineBuilder UseSubtext()
+        {
+            builder.Extensions.AddIfNotAlready<SubtextExtension>();
             return builder;
         }
 
