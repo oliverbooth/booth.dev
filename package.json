@@ -1,13 +1,14 @@
 {
   "name": "booth.dev",
-  "version": "4.5.1",
+  "version": "4.6.0",
   "description": "Source code for https://booth.dev",
   "main": "index.js",
   "scripts": {
     "build": "vite build",
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "version": "node scripts/sync-version.mjs && git add Directory.Build.props"
   },
   "repository": {
     "type": "git",

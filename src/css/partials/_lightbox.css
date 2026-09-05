@@ -52,6 +52,17 @@
   max-height: 75vh;
   object-fit: contain;
   background: var(--surface-1, #000);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.lightbox-video-slot video {
+  display: block;
+  width: 100%;
+  max-height: 75vh;
+  background: var(--surface-1, #000);
 }
 
 .lightbox-caption {
@@ -59,6 +70,18 @@
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--text-muted);
+}
+
+.lightbox-alt-text {
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.lightbox-alt-text strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .lightbox-close {
