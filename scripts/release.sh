@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# Cuts a release: bumps + commits + tags via `npm version`, then pushes the commit and tag
-# together. GitLab turns the new tag into a Release, which fires the Portainer webhook.
+# Cuts a release and pushes it. GitLab turns the new tag into a Release, which fires the
+# Portainer webhook.
 #
-# Usage: scripts/release.sh <patch|minor|major|x.y.z>
+# Usage:
+#   scripts/release.sh
+#       tags the version already sitting in package.json
+#   scripts/release.sh <patch|minor|major|x.y.z>
+#       bumps + commits + tags via `npm version`, in one step
 set -euo pipefail
-
-bump="${1:?Usage: scripts/release.sh <patch|minor|major|x.y.z>}"
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 if [[ "$branch" != "main" ]]; then
@@ -20,5 +22,11 @@ if ! git merge-base --is-ancestor origin/main HEAD; then
     exit 1
 fi
 
-npm version "$bump"
+if [[ $# -gt 0 ]]; then
+    npm version "$1"
+else
+    version="$(node -p "require('./package.json').version")"
+    git tag "v$version"
+fi
+
 git push --follow-tags
