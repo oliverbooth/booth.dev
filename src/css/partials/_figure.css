@@ -1,6 +1,10 @@
 .figure-img-wrap {
   position: relative;
   display: inline-block;
+
+  img[data-lightbox] {
+    cursor: pointer;
+  }
 }
 
 .image-with-alt {
