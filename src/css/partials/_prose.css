@@ -159,6 +159,11 @@
       background: none;
       display: block;
 
+      &[data-wrap] {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
       mark {
         background: var(--warning-text);
         padding: 2px 0;
