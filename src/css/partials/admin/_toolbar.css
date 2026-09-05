@@ -48,3 +48,7 @@
 .bulk-actions[hidden] {
   display: none;
 }
+
+.table-toolbar[hidden] {
+  display: none;
+}
