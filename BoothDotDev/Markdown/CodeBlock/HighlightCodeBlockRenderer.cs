@@ -36,6 +36,11 @@ public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
                 obj.GetAttributes().AddPropertyIfNotExist("data-line-numbers", string.Empty);
             }
 
+            if (arguments.Contains("wrap"))
+            {
+                obj.GetAttributes().AddPropertyIfNotExist("data-wrap", string.Empty);
+            }
+
             if (!arguments.Contains("no-render"))
             {
                 manimDimension = ExtractManimDimension(arguments);
