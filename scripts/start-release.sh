@@ -33,7 +33,7 @@ npm version --no-git-tag-version "$bump"
 version="$(node -p "require('./package.json').version")"
 
 git checkout -b "release/$version"
-git add package.json
+git add package.json package-lock.json
 git commit -m "chore: bump to $version"
 
 echo "Started release/$version"
