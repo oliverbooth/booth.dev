@@ -13,6 +13,8 @@ import {initUserAuthoring} from './admin/user-authoring.ts';
 import {initPasskeyRegistration} from './admin/passkey-registration.ts';
 import {initPasskeyLogin} from './admin/passkey-login.ts';
 import {initCdnBrowser} from './admin/cdn-browser.ts';
+import {initSomedayReorder} from './admin/someday-reorder.ts';
+import {initSomedayEditorPreview} from './admin/someday-editor.ts';
 
 (() => {
     initAltTextPopovers();
@@ -30,4 +32,6 @@ import {initCdnBrowser} from './admin/cdn-browser.ts';
     initPasskeyRegistration();
     initPasskeyLogin();
     initCdnBrowser();
+    initSomedayReorder();
+    initSomedayEditorPreview();
 })();

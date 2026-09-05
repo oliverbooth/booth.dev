@@ -1,0 +1,39 @@
+@page "/someday"
+@inject MarkdownRenderingService MarkdownRenderingService
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@model Someday
+
+@{
+    ViewData["Page"] = "Someday";
+    ViewData["Title"] = "Someday";
+}
+
+<div class="page someday-page">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / Someday</p>
+    <h1>Someday</h1>
+
+    @if (Model.UpdatedAt is { } updatedAt)
+    {
+        <p class="byline"><span class="meta">Updated @updatedAt.ToShortString()</span></p>
+    }
+
+    @if (Model.Entries.Count == 0)
+    {
+        <p class="body-copy">Nothing here yet.</p>
+    }
+    else
+    {
+        @foreach (var entry in Model.Entries)
+        {
+            <section class="someday-entry" id="@entry.Slug">
+                <h2>Someday, @entry.Title</h2>
+                <div class="prose prose--serif">
+                    @Html.Raw(MarkdownRenderingService.Render(entry, entry.Id, entry.PublishedAt))
+                </div>
+            </section>
+        }
+    }
+
+</div>

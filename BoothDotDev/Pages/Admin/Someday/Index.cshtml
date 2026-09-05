@@ -1,0 +1,86 @@
+@page "/admin/someday"
+@using System.Diagnostics
+@using BoothDotDev.Data
+@using Humanizer
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Someday</h1>
+            <p>Reorder, edit, and delete entries on the someday page</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a asp-page="/Admin/Someday/Trash" class="btn icon-btn"><i class="ti ti-trash" style="font-size:15px"></i>Trash</a>
+            <a asp-page="/Admin/Someday/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New entry</a>
+        </div>
+    </div>
+
+    <form method="post" asp-page-handler="Reorder" id="reorder-form"></form>
+
+    @if (Model.Entries.Count == 0)
+    {
+        <p class="table-empty-state">No entries yet</p>
+    }
+    else
+    {
+        <ul class="reorder-list" data-reorder-list data-reorder-form="reorder-form">
+            @foreach (var entry in Model.Entries)
+            {
+                var timestamp = entry.UpdatedAt ?? entry.PublishedAt;
+                var badgeClass = entry.Visibility switch
+                {
+                    Visibility.Published => "published",
+                    Visibility.Private => "private",
+                    _ => "unlisted"
+                };
+
+                <li class="reorder-item" data-reorder-item data-id="@entry.Id" draggable="true">
+                    <i class="ti ti-grip-vertical reorder-handle" aria-hidden="true"></i>
+                    <div class="row-title">Someday, @entry.Title</div>
+                    <span class="badge badge-@badgeClass">
+                        @switch (entry.Visibility)
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span>
+                    <abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr>
+                    <div class="row-actions" draggable="false">
+                        <a asp-page="/Admin/Someday/Edit" asp-route-id="@entry.Id" class="icon-btn" aria-label="Edit"><i
+                                class="ti ti-edit"></i></a>
+                        <a asp-page="/Someday" asp-fragment="@entry.Slug" class="icon-btn" aria-label="View"><i
+                                class="ti ti-eye"></i></a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@entry.Id">
+                            <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <div class="table-toolbar" data-reorder-save hidden>
+            <p class="hint">Order changed - it isn't saved yet.</p>
+            <button type="submit" form="reorder-form" class="btn btn-primary"><i class="ti ti-device-floppy"></i>Save order</button>
+        </div>
+    }
+
+</div>
