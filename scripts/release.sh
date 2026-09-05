@@ -26,7 +26,7 @@ if [[ $# -gt 0 ]]; then
     npm version "$1"
 else
     version="$(node -p "require('./package.json').version")"
-    git tag "v$version"
+    git tag -m "chore: bump to $version" "v$version"
 fi
 
 git push --follow-tags
