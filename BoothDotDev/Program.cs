@@ -81,6 +81,7 @@ builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<RawContentService>();
 builder.Services.AddSingleton<ReadingListService>();
 builder.Services.AddSingleton<RssFeedService>();
+builder.Services.AddSingleton<SomedayEntryService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BlueskyService>();

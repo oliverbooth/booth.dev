@@ -163,6 +163,24 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of someday entries in the database.
+    /// </summary>
+    /// <value>The collection of someday entries.</value>
+    public DbSet<SomedayEntry> SomedayEntries
+    {
+        get => Set<SomedayEntry>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of someday entry drafts in the database.
+    /// </summary>
+    /// <value>The collection of someday entry drafts.</value>
+    public DbSet<SomedayEntryDraft> SomedayEntryDrafts
+    {
+        get => Set<SomedayEntryDraft>();
+    }
+
+    /// <summary>
     ///     Gets the collection of tutorial articles in the database.
     /// </summary>
     /// <value>The collection of tutorial articles.</value>
@@ -224,6 +242,8 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());
+        modelBuilder.ApplyConfiguration(new SomedayEntryConfiguration());
+        modelBuilder.ApplyConfiguration(new SomedayEntryDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());

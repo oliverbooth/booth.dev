@@ -94,3 +94,15 @@
     min-width: 0;
   }
 }
+
+.input-prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  color: var(--text-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
