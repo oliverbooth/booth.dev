@@ -86,9 +86,12 @@ builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BlueskyService>();
 builder.Services.AddSingleton<BookLookupService>();
+builder.Services.AddSingleton<PhoneStatusService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
+builder.Services.Configure<PhoneStatusOptions>(
+    builder.Configuration.GetSection(PhoneStatusOptions.SectionName));
 builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
 builder.Services.Configure<CdnOptions>(
