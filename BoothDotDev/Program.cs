@@ -91,6 +91,7 @@ builder.Services.AddSingleton<WatchlistService>();
 builder.Services.AddSingleton<TmdbLookupService>();
 builder.Services.AddSingleton<TraktAuthService>();
 builder.Services.AddSingleton<TraktSyncService>();
+builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
@@ -100,6 +101,8 @@ builder.Services.Configure<TmdbOptions>(
     builder.Configuration.GetSection(TmdbOptions.SectionName));
 builder.Services.Configure<TraktOptions>(
     builder.Configuration.GetSection(TraktOptions.SectionName));
+builder.Services.Configure<WeatherOptions>(
+    builder.Configuration.GetSection(WeatherOptions.SectionName));
 builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
 builder.Services.Configure<CdnOptions>(
