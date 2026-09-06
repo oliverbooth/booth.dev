@@ -19,6 +19,59 @@
         </div>
     </div>
 
+    @if (Model.TraktError is { } traktError)
+    {
+        <div class="callout" data-callout="danger">
+            <p class="callout-title"><i class="ti ti-alert-triangle"></i> Trakt</p>
+            <div class="callout-body"><p>@traktError</p></div>
+        </div>
+    }
+
+    @if (Model.TraktMessage is { } traktMessage)
+    {
+        <div class="callout" data-callout="success">
+            <p class="callout-title"><i class="ti ti-check"></i> Trakt</p>
+            <div class="callout-body"><p>@traktMessage</p></div>
+        </div>
+    }
+
+    <div class="admin-header">
+        <div>
+            <h2 style="margin:0">Trakt</h2>
+            <p>@(Model.IsTraktConnected ? "Connected - pull whenever your Trakt watchlist or history changes." : "Not connected yet.")</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            @if (Model.IsTraktConnected)
+            {
+                <form method="post" asp-page-handler="SyncTrakt">
+                    <button type="submit" class="btn btn-primary"><i class="ti ti-refresh"></i> Pull from Trakt</button>
+                </form>
+            }
+            else if (Model.PendingChallenge is null)
+            {
+                <form method="post" asp-page-handler="ConnectTrakt">
+                    <button type="submit" class="btn btn-primary"><i class="ti ti-link"></i> Connect Trakt</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    @if (Model.PendingChallenge is { } challenge)
+    {
+        <div class="callout" data-callout="info">
+            <p class="callout-title"><i class="ti ti-key"></i> Finish connecting Trakt</p>
+            <div class="callout-body">
+                <p>
+                    Go to <a href="@challenge.VerificationUrl" target="_blank">@challenge.VerificationUrl</a> and enter this code:
+                    <code style="font-size:16px">@challenge.UserCode</code>
+                </p>
+                <form method="post" asp-page-handler="CheckTraktAuth">
+                    <button type="submit" class="btn"><i class="ti ti-refresh"></i> I've done that &ndash; check now</button>
+                </form>
+            </div>
+        </div>
+    }
+
     <div data-search-scope>
         <div class="table-toolbar">
             <div class="search-input">

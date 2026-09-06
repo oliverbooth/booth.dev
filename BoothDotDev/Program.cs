@@ -89,6 +89,8 @@ builder.Services.AddSingleton<BookLookupService>();
 builder.Services.AddSingleton<PhoneStatusService>();
 builder.Services.AddSingleton<WatchlistService>();
 builder.Services.AddSingleton<TmdbLookupService>();
+builder.Services.AddSingleton<TraktAuthService>();
+builder.Services.AddSingleton<TraktSyncService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
@@ -96,6 +98,8 @@ builder.Services.Configure<PhoneStatusOptions>(
     builder.Configuration.GetSection(PhoneStatusOptions.SectionName));
 builder.Services.Configure<TmdbOptions>(
     builder.Configuration.GetSection(TmdbOptions.SectionName));
+builder.Services.Configure<TraktOptions>(
+    builder.Configuration.GetSection(TraktOptions.SectionName));
 builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
 builder.Services.Configure<CdnOptions>(
