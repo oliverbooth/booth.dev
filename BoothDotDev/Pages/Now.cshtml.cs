@@ -13,6 +13,7 @@ public sealed class Now : PageModel
     private readonly PhoneStatusService _phoneStatusService;
     private readonly ReadingListService _readingListService;
     private readonly WatchlistService _watchlistService;
+    private readonly WeatherService _weatherService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Now" /> class.
@@ -20,11 +21,16 @@ public sealed class Now : PageModel
     /// <param name="readingListService">The reading list service.</param>
     /// <param name="watchlistService">The watchlist service.</param>
     /// <param name="phoneStatusService">The phone status service.</param>
-    public Now(ReadingListService readingListService, WatchlistService watchlistService, PhoneStatusService phoneStatusService)
+    /// <param name="weatherService">The weather service.</param>
+    public Now(ReadingListService readingListService,
+        WatchlistService watchlistService,
+        PhoneStatusService phoneStatusService,
+        WeatherService weatherService)
     {
         _readingListService = readingListService;
         _watchlistService = watchlistService;
         _phoneStatusService = phoneStatusService;
+        _weatherService = weatherService;
     }
 
     /// <summary>
@@ -46,12 +52,20 @@ public sealed class Now : PageModel
     public PhoneStatusSnapshot? PhoneStatus { get; private set; }
 
     /// <summary>
+    ///     Gets the current weather.
+    /// </summary>
+    /// <value>The current weather, or <see langword="null" /> if it isn't configured or couldn't be fetched.</value>
+    public WeatherSnapshot? Weather { get; private set; }
+
+    /// <summary>
     ///     Handles the GET request.
     /// </summary>
-    public void OnGet()
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
+    public async Task OnGetAsync(CancellationToken cancellationToken)
     {
         CurrentlyReading = _readingListService.GetBooks(BookState.Reading);
         CurrentlyWatching = _watchlistService.GetWatchables(WatchableState.Watching);
         PhoneStatus = _phoneStatusService.GetStatus();
+        Weather = await _weatherService.GetCurrentWeatherAsync(cancellationToken);
     }
 }
