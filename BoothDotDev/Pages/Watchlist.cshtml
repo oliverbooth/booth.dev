@@ -1,0 +1,69 @@
+@page "/watchlist"
+@using BoothDotDev.Data
+@using BoothDotDev.Services
+@using Humanizer
+@inject WatchlistService WatchlistService
+@{
+    ViewData["Title"] = "Watchlist";
+}
+
+<div class="page">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / Watchlist</p>
+    <h1>Watchlist</h1>
+
+    <div class="page-intro">
+        <p>Movies and shows I've watched, am watching, or plan to watch. Not exhaustive. Updated whenever I remember to.</p>
+    </div>
+
+    <div data-filter-scope>
+        <div class="filter-row" id="watchlist-filters">
+            <span class="pill active" data-filter="all">All</span>
+            <span class="pill" data-filter="watching">Watching</span>
+            <span class="pill" data-filter="plan-to-watch">Plan to watch</span>
+            <span class="pill" data-filter="watched">Watched</span>
+        </div>
+
+        @{
+            Span<WatchableState> states = [WatchableState.Watching, WatchableState.PlanToWatch, WatchableState.Watched];
+            string[] filterKey = ["watching", "plan-to-watch", "watched"];
+            string[] sectionIcon = ["player-play", "calendar-event", "check"];
+            string[] sectionIconModifier = ["accent", "muted", "success"];
+            string[] itemIcon = ["point-filled", "circle", "check"];
+            string[] itemIconModifier = ["success", "muted", "success"];
+
+            for (var index = 0; index < states.Length; index++)
+            {
+                var state = states[index];
+                var items = WatchlistService.GetWatchables(state);
+
+                <div class="reading-list-section" data-state="@filterKey[index]">
+                    <div class="collapse-inner">
+                        <div class="section-head">
+                            <h2>
+                                <i class="ti ti-@sectionIcon[index] section-icon section-icon--@sectionIconModifier[index]"></i>
+                                @state.Humanize(LetterCasing.Title)
+                            </h2>
+                        </div>
+
+                        <div class="stack-list section-list">
+                            @foreach (var item in items.OrderBy(w => w.Title))
+                            {
+                                <div>
+                                    <div class="stack-icon">
+                                        <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
+                                    </div>
+                                    <div class="stack-meta">
+                                        <p class="title">@item.Title</p>
+                                        <p class="sub">@item.Kind.Humanize(LetterCasing.Title)</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>
