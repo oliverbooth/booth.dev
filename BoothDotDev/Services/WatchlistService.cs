@@ -136,28 +136,48 @@ public sealed class WatchlistService
     ///     Reconciles the watchlist against a fresh pull from Trakt. Adds any watchlist item that isn't already
     ///     tracked as <see cref="WatchableState.PlanToWatch" />, and adds or promotes any watched item to
     ///     <see cref="WatchableState.Watched" /> - except an item already <see cref="WatchableState.Watching" />.
+    ///     A Trakt item matching an existing manually-added entry by title (case-insensitively) and kind is adopted -
+    ///     linked to that entry instead of creating a duplicate - without disturbing whatever state it already has.
     /// </summary>
     /// <param name="watchlist">The items on the Trakt watchlist.</param>
     /// <param name="watched">The items Trakt considers fully watched (movies watched at all; shows watched in full).</param>
-    /// <returns>A summary of how many entries were added or promoted.</returns>
+    /// <returns>A summary of how many entries were added, promoted, or adopted.</returns>
     public WatchlistSyncSummary ReconcileFromTrakt(IReadOnlyList<TraktMediaRef> watchlist, IReadOnlyList<TraktMediaRef> watched)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var existing = context.Watchables
+        var allWatchables = context.Watchables.ToList();
+
+        var byTraktId = allWatchables
             .Where(w => w.TraktId != null)
             .ToDictionary(w => (TraktId: w.TraktId!.Value, w.Kind));
 
+        var unlinkedByTitle = allWatchables
+            .Where(w => w.TraktId is null)
+            .ToDictionary(w => (Title: w.Title.ToLowerInvariant(), w.Kind));
+
         var added = 0;
         var promoted = 0;
+        var adopted = 0;
 
-        foreach (var item in watchlist)
+        (Watchable Watchable, bool IsNew) Resolve(TraktMediaRef item)
         {
-            if (existing.ContainsKey((item.TraktId, item.Kind)))
+            if (byTraktId.TryGetValue((item.TraktId, item.Kind), out var linked))
             {
-                continue;
+                return (linked, false);
             }
 
-            var watchable = new Watchable
+            var titleKey = (Title: item.Title.ToLowerInvariant(), item.Kind);
+            if (unlinkedByTitle.TryGetValue(titleKey, out var unlinked))
+            {
+                unlinked.TraktId = item.TraktId;
+                unlinked.Source = WatchableSource.Trakt;
+                byTraktId[(item.TraktId, item.Kind)] = unlinked;
+                unlinkedByTitle.Remove(titleKey);
+                adopted++;
+                return (unlinked, false);
+            }
+
+            var created = new Watchable
             {
                 Id = Guid.NewGuid(),
                 Title = item.Title,
@@ -166,39 +186,38 @@ public sealed class WatchlistService
                 Source = WatchableSource.Trakt,
                 TraktId = item.TraktId
             };
-            context.Watchables.Add(watchable);
-            existing[(item.TraktId, item.Kind)] = watchable;
+            context.Watchables.Add(created);
+            byTraktId[(item.TraktId, item.Kind)] = created;
             added++;
+            return (created, true);
+        }
+
+        foreach (var item in watchlist)
+        {
+            Resolve(item);
         }
 
         foreach (var item in watched)
         {
-            if (existing.TryGetValue((item.TraktId, item.Kind), out var watchable))
-            {
-                if (watchable.State == WatchableState.PlanToWatch)
-                {
-                    watchable.State = WatchableState.Watched;
-                    promoted++;
-                }
+            var (watchable, isNew) = Resolve(item);
 
-                // Watching is left alone regardless - it only ever changes by hand. Watched is already correct
-                continue;
+            // A brand-new watched-only item is created straight into Watched, not counted as a promotion on top of
+            // being counted as added - it was never really sitting at PlanToWatch first.
+            if (isNew)
+            {
+                watchable.State = WatchableState.Watched;
+            }
+            else if (watchable.State == WatchableState.PlanToWatch)
+            {
+                watchable.State = WatchableState.Watched;
+                promoted++;
             }
 
-            context.Watchables.Add(new Watchable
-            {
-                Id = Guid.NewGuid(),
-                Title = item.Title,
-                Kind = item.Kind,
-                State = WatchableState.Watched,
-                Source = WatchableSource.Trakt,
-                TraktId = item.TraktId
-            });
-            added++;
+            // Watching is left alone regardless - it only ever changes by hand. Watched is already correct.
         }
 
         context.SaveChanges();
-        return new WatchlistSyncSummary(added, promoted);
+        return new WatchlistSyncSummary(added, promoted, adopted);
     }
 
     /// <summary>
@@ -237,4 +256,8 @@ public sealed record TraktMediaRef(int TraktId, WatchableKind Kind, string Title
 ///     The number of entries promoted from <see cref="WatchableState.PlanToWatch" /> to
 ///     <see cref="WatchableState.Watched" />.
 /// </param>
-public sealed record WatchlistSyncSummary(int Added, int Promoted);
+/// <param name="Adopted">
+///     The number of existing manually-added entries linked to a matching Trakt item by title, instead of a
+///     duplicate being created.
+/// </param>
+public sealed record WatchlistSyncSummary(int Added, int Promoted, int Adopted);

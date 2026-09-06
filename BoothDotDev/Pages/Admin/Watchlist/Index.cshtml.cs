@@ -146,7 +146,7 @@ public sealed class Index : PageModel
         else
         {
             var summary = result.Value;
-            TraktMessage = $"Pulled from Trakt: {summary.Added} added, {summary.Promoted} promoted.";
+            TraktMessage = $"Pulled from Trakt: {summary.Added} added, {summary.Promoted} promoted, {summary.Adopted} linked to existing entries.";
         }
 
         return RedirectToPage();
