@@ -73,7 +73,14 @@ public sealed class WatchlistService
     /// <returns>A <see cref="Result{T}" /> containing the added item.</returns>
     public Result<Watchable> AddWatchable(string title, WatchableKind kind, WatchableState state)
     {
-        var watchable = new Watchable { Id = Guid.NewGuid(), Title = title, Kind = kind, State = state };
+        var watchable = new Watchable
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            Kind = kind,
+            State = state,
+            Source = WatchableSource.Manual
+        };
 
         using var context = _dbContextFactory.CreateDbContext();
         context.Watchables.Add(watchable);
@@ -126,6 +133,75 @@ public sealed class WatchlistService
     }
 
     /// <summary>
+    ///     Reconciles the watchlist against a fresh pull from Trakt. Adds any watchlist item that isn't already
+    ///     tracked as <see cref="WatchableState.PlanToWatch" />, and adds or promotes any watched item to
+    ///     <see cref="WatchableState.Watched" /> - except an item already <see cref="WatchableState.Watching" />.
+    /// </summary>
+    /// <param name="watchlist">The items on the Trakt watchlist.</param>
+    /// <param name="watched">The items Trakt considers fully watched (movies watched at all; shows watched in full).</param>
+    /// <returns>A summary of how many entries were added or promoted.</returns>
+    public WatchlistSyncSummary ReconcileFromTrakt(IReadOnlyList<TraktMediaRef> watchlist, IReadOnlyList<TraktMediaRef> watched)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var existing = context.Watchables
+            .Where(w => w.TraktId != null)
+            .ToDictionary(w => (TraktId: w.TraktId!.Value, w.Kind));
+
+        var added = 0;
+        var promoted = 0;
+
+        foreach (var item in watchlist)
+        {
+            if (existing.ContainsKey((item.TraktId, item.Kind)))
+            {
+                continue;
+            }
+
+            var watchable = new Watchable
+            {
+                Id = Guid.NewGuid(),
+                Title = item.Title,
+                Kind = item.Kind,
+                State = WatchableState.PlanToWatch,
+                Source = WatchableSource.Trakt,
+                TraktId = item.TraktId
+            };
+            context.Watchables.Add(watchable);
+            existing[(item.TraktId, item.Kind)] = watchable;
+            added++;
+        }
+
+        foreach (var item in watched)
+        {
+            if (existing.TryGetValue((item.TraktId, item.Kind), out var watchable))
+            {
+                if (watchable.State == WatchableState.PlanToWatch)
+                {
+                    watchable.State = WatchableState.Watched;
+                    promoted++;
+                }
+
+                // Watching is left alone regardless - it only ever changes by hand. Watched is already correct
+                continue;
+            }
+
+            context.Watchables.Add(new Watchable
+            {
+                Id = Guid.NewGuid(),
+                Title = item.Title,
+                Kind = item.Kind,
+                State = WatchableState.Watched,
+                Source = WatchableSource.Trakt,
+                TraktId = item.TraktId
+            });
+            added++;
+        }
+
+        context.SaveChanges();
+        return new WatchlistSyncSummary(added, promoted);
+    }
+
+    /// <summary>
     ///     Removes an item from the watchlist.
     /// </summary>
     /// <param name="id">The ID of the item to remove.</param>
@@ -144,3 +220,21 @@ public sealed class WatchlistService
         return Result.Ok();
     }
 }
+
+/// <summary>
+///     Represents a reference to a single movie or show from Trakt, as needed to reconcile it against the watchlist.
+/// </summary>
+/// <param name="TraktId">The Trakt ID of the item.</param>
+/// <param name="Kind">The kind of the item.</param>
+/// <param name="Title">The title of the item.</param>
+public sealed record TraktMediaRef(int TraktId, WatchableKind Kind, string Title);
+
+/// <summary>
+///     Represents the result of reconciling the watchlist against a fresh pull from Trakt.
+/// </summary>
+/// <param name="Added">The number of entries newly added.</param>
+/// <param name="Promoted">
+///     The number of entries promoted from <see cref="WatchableState.PlanToWatch" /> to
+///     <see cref="WatchableState.Watched" />.
+/// </param>
+public sealed record WatchlistSyncSummary(int Added, int Promoted);

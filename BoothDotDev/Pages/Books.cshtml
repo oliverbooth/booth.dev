@@ -60,7 +60,12 @@
                                             <br>
                                             <span class="stack-author">by @book.Author</span>
                                         </p>
-                                        <a href="https://isbndb.com/book/@book.Isbn" class="isbn-link">@book.Isbn</a>
+                                        <div style="text-align:right">
+                                            <div class="meta-value">@book.Isbn</div>
+                                            <a href="https://www.goodreads.com/book/isbn/@book.Isbn" class="meta-link" target="_blank" rel="noopener">
+                                                <i class="ti ti-external-link" style="font-size:14px"></i> View on Goodreads
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             }

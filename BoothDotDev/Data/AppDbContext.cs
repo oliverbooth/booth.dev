@@ -181,6 +181,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the stored Trakt OAuth credential.
+    /// </summary>
+    /// <value>The stored Trakt OAuth credential.</value>
+    public DbSet<TraktCredential> TraktCredentials
+    {
+        get => Set<TraktCredential>();
+    }
+
+    /// <summary>
     ///     Gets the collection of tutorial articles in the database.
     /// </summary>
     /// <value>The collection of tutorial articles.</value>
@@ -235,6 +244,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<WatchableKind>("public", "watchable_kind", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<WatchableSource>("public", "watchable_source", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<WatchableState>("public", "watchable_state", new NpgsqlSnakeCaseNameTranslator());
 
         modelBuilder.ApplyConfiguration(new ArtworkItemConfiguration());
@@ -255,6 +265,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryDraftConfiguration());
+        modelBuilder.ApplyConfiguration(new TraktCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());

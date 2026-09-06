@@ -53,9 +53,19 @@
                                     <div class="stack-icon">
                                         <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
                                     </div>
-                                    <div class="stack-meta">
-                                        <p class="title">@item.Title</p>
-                                        <p class="sub">@item.Kind.Humanize(LetterCasing.Title)</p>
+                                    <div class="stack-meta stack-meta--row">
+                                        <p class="title">
+                                            @item.Title
+                                            <br>
+                                            <span class="stack-author">@item.Kind.Humanize(LetterCasing.Title)</span>
+                                        </p>
+                                        @if (item.TraktId is { } traktId)
+                                        {
+                                            var traktPath = item.Kind == WatchableKind.Movie ? "movies" : "shows";
+                                            <a href="https://trakt.tv/@traktPath/@traktId" class="meta-link" target="_blank" rel="noopener">
+                                                <i class="ti ti-external-link" style="font-size:14px"></i> View on Trakt
+                                            </a>
+                                        }
                                     </div>
                                 </div>
                             }
