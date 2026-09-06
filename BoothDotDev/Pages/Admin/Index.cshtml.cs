@@ -19,6 +19,7 @@ public sealed class Index : PageModel
     private readonly ProjectService _projectService;
     private readonly ReadingListService _readingListService;
     private readonly TutorialService _tutorialService;
+    private readonly WatchlistService _watchlistService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Index" /> class.
@@ -29,12 +30,14 @@ public sealed class Index : PageModel
     /// <param name="projectService">The project service.</param>
     /// <param name="readingListService">The reading list service.</param>
     /// <param name="tutorialService">The tutorial service.</param>
+    /// <param name="watchlistService">The watchlist service.</param>
     public Index(ActivityService activityService,
         BlogPostService blogPostService,
         NoteService noteService,
         ProjectService projectService,
         ReadingListService readingListService,
-        TutorialService tutorialService)
+        TutorialService tutorialService,
+        WatchlistService watchlistService)
     {
         _activityService = activityService;
         _blogPostService = blogPostService;
@@ -42,6 +45,7 @@ public sealed class Index : PageModel
         _projectService = projectService;
         _readingListService = readingListService;
         _tutorialService = tutorialService;
+        _watchlistService = watchlistService;
     }
 
     /// <summary>
@@ -75,6 +79,12 @@ public sealed class Index : PageModel
     public int BookCount { get; private set; }
 
     /// <summary>
+    ///     Gets the total number of items on the watchlist.
+    /// </summary>
+    /// <value>The total number of items on the watchlist.</value>
+    public int WatchableCount { get; private set; }
+
+    /// <summary>
     ///     Gets a read-only view of recent activity entries, including blog posts, devlog entries, and tutorial articles.
     /// </summary>
     /// <value>A read-only view of recent activity entries.</value>
@@ -97,6 +107,7 @@ public sealed class Index : PageModel
         DevlogCount = _projectService.GetDevlogCount();
         TutorialCount = _tutorialService.GetArticleCount();
         BookCount = _readingListService.GetBookCount();
+        WatchableCount = _watchlistService.GetWatchableCount();
 
         var searchOptions = new ActivitySearchOptions(RecentActivityCount, Visibility.None, ActivitySortStrategy.Updated);
         RecentActivity = _activityService.GetRecentActivity(searchOptions);
