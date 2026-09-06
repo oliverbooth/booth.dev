@@ -43,7 +43,10 @@
         }
     </div>
 
-    <h2>Currently reading</h2>
+    <div class="section-head">
+        <h2>Currently reading</h2>
+        <a asp-page="/Books">See all &rarr;</a>
+    </div>
 
     @if (Model.CurrentlyReading.Count == 0)
     {
@@ -65,7 +68,10 @@
         </div>
     }
 
-    <h2>Currently watching</h2>
+    <div class="section-head">
+        <h2>Currently watching</h2>
+        <a asp-page="/Watchlist">See all &rarr;</a>
+    </div>
 
     @if (Model.CurrentlyWatching.Count == 0)
     {
