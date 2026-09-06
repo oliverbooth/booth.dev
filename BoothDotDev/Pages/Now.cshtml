@@ -1,0 +1,91 @@
+@page "/now"
+@using BoothDotDev.Data
+@model Now
+
+@{
+    ViewData["Title"] = "Now";
+}
+
+<div class="page">
+
+    <p class="crumb"><a asp-page="/Index">Home</a> / Now</p>
+    <h1>Now</h1>
+
+    <div class="page-intro">
+        <p>What I'm up to right now. A <a href="https://slashpages.net/#now">/now page</a>, of sorts.</p>
+    </div>
+
+    <div class="card-grid" style="margin-bottom:2rem">
+        <div class="card">
+            <div class="card-body">
+                <p class="desc">Local time</p>
+                <p class="title" id="now-clock" style="font-size:28px">&hellip;</p>
+            </div>
+        </div>
+
+        @if (Model.PhoneStatus is { } status)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <p class="desc">Phone battery</p>
+                    <p class="title" style="font-size:28px">
+                        @status.BatteryLevel%
+                        @if (status.IsCharging)
+                        {
+                            <i class="ti ti-bolt" style="font-size:20px;color:var(--accent)"></i>
+                        }
+                    </p>
+                    <p class="branch">
+                        Checked in <span data-timestamp="@status.ReportedAt.ToUnixTimeSeconds()" data-format="R"></span>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <h2>Currently reading</h2>
+
+    @if (Model.CurrentlyReading.Count == 0)
+    {
+        <p class="page-intro">Nothing on the go right now. See the full <a asp-page="/Books">reading list</a>.</p>
+    }
+    else
+    {
+        <div class="stack-list section-list">
+            @foreach (var book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
+            {
+                <div>
+                    <div class="stack-icon"><i class="ti ti-book"></i></div>
+                    <div class="stack-meta">
+                        <p class="title">@book.Title</p>
+                        <p class="sub">by @book.Author</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <h2>Currently watching</h2>
+
+    @if (Model.CurrentlyWatching.Count == 0)
+    {
+        <p class="page-intro">Nothing on the go right now. See the full <a asp-page="/Watchlist">watchlist</a>.</p>
+    }
+    else
+    {
+        <div class="stack-list section-list">
+            @foreach (var item in Model.CurrentlyWatching.OrderBy(w => w.Title))
+            {
+                <div>
+                    <div class="stack-icon">
+                        <i class="ti ti-@(item.Kind == WatchableKind.Movie ? "movie" : "device-tv")"></i>
+                    </div>
+                    <div class="stack-meta">
+                        <p class="title">@item.Title</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>

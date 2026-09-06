@@ -216,6 +216,15 @@ public sealed class AppDbContext : DbContext
         get => Set<User>();
     }
 
+    /// <summary>
+    ///     Gets the collection of watchlist items in the database.
+    /// </summary>
+    /// <value>The collection of watchlist items.</value>
+    public DbSet<Watchable> Watchables
+    {
+        get => Set<Watchable>();
+    }
+
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -225,6 +234,8 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<WatchableKind>("public", "watchable_kind", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<WatchableState>("public", "watchable_state", new NpgsqlSnakeCaseNameTranslator());
 
         modelBuilder.ApplyConfiguration(new ArtworkItemConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());
@@ -248,5 +259,6 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialFolderConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new WatchableConfiguration());
     }
 }

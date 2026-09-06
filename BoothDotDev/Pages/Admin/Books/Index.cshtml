@@ -1,0 +1,77 @@
+@page "/admin/books"
+@using BoothDotDev.Data
+@using Humanizer
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Books</h1>
+            <p>Add, update, and remove entries on the reading list</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a asp-page="/Admin/Books/Create" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New book</a>
+        </div>
+    </div>
+
+    <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search books&hellip;">
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>ISBN</th>
+                <th>State</th>
+                <th style="text-align:right">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var book in Model.Books)
+            {
+                <tr>
+                    <td>
+                        <div class="row-title" data-search>@book.Title</div>
+                        <div class="row-sub" data-search>by @book.Author</div>
+                    </td>
+                    <td data-search>@book.Isbn</td>
+                    <td>
+                        <form method="post" asp-page-handler="SetState" class="row-actions" style="justify-content:flex-start">
+                            <input type="hidden" name="isbn" value="@book.Isbn">
+                            <select name="state" aria-label="State" class="inline-select">
+                                @foreach (var state in Enum.GetValues<BookState>())
+                                {
+                                    <option value="@state" selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
+                                }
+                            </select>
+                            <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <form method="post" asp-page-handler="Delete" data-confirm="Remove '@book.Title' from the reading list?">
+                                <input type="hidden" name="isbn" value="@book.Isbn">
+                                <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr data-search-empty hidden>
+                <td colspan="4" class="table-empty-state">No books found</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -7,6 +7,7 @@ import {initAltTextPopovers} from './images.ts';
 import {initLightbox} from './lightbox.ts';
 import {initTerminalTypewriters} from './terminal.ts';
 import {initAvatarFallback} from './avatar-fallback.ts';
+import {initNowClock} from './now-clock.ts';
 
 (() => {
     initFavicon();
@@ -18,4 +19,5 @@ import {initAvatarFallback} from './avatar-fallback.ts';
     initLightbox();
     initTerminalTypewriters();
     initAvatarFallback();
+    initNowClock();
 })();
