@@ -1,0 +1,73 @@
+@page "/admin/books/create"
+@using BoothDotDev.Data
+@using Humanizer
+@model Create
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Books/Index">Books</a> / New book</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div><h1>New book</h1></div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save">
+                    <i class="ti ti-cloud"></i> Add to reading list
+                </button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="lookup-query">Look up by title or ISBN</label>
+            <div class="input-with-button">
+                <input type="text" id="lookup-query" placeholder="Project Hail Mary, or 9780593135204">
+                <button type="button" class="btn" id="lookup-btn"><i class="ti ti-search"></i> Search</button>
+            </div>
+            <p class="hint" id="lookup-hint" hidden></p>
+            <ul class="draft-list lookup-results" id="lookup-results" hidden></ul>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="title">Title</label>
+                <input type="text" id="title" asp-for="Input.Title" data-book-field="title">
+            </div>
+            <div class="field">
+                <label for="author">Author</label>
+                <input type="text" id="author" asp-for="Input.Author" data-book-field="author">
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" asp-for="Input.Isbn" data-book-field="isbn">
+                <p class="hint">Can't be changed later &mdash; delete and re-add the book if it's wrong.</p>
+            </div>
+            <div class="field">
+                <label asp-for="Input.State">State</label>
+                <select asp-for="Input.State">
+                    @foreach (var state in Enum.GetValues<BookState>())
+                    {
+                        <option value="@state">@state.Humanize(LetterCasing.Title)</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save">
+                <i class="ti ti-cloud"></i> Add to reading list
+            </button>
+        </div>
+
+    </form>
+
+</div>

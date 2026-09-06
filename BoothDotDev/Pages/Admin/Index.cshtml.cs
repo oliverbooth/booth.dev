@@ -17,6 +17,7 @@ public sealed class Index : PageModel
     private readonly BlogPostService _blogPostService;
     private readonly NoteService _noteService;
     private readonly ProjectService _projectService;
+    private readonly ReadingListService _readingListService;
     private readonly TutorialService _tutorialService;
 
     /// <summary>
@@ -26,17 +27,20 @@ public sealed class Index : PageModel
     /// <param name="blogPostService">The blog post service.</param>
     /// <param name="noteService">The note service.</param>
     /// <param name="projectService">The project service.</param>
+    /// <param name="readingListService">The reading list service.</param>
     /// <param name="tutorialService">The tutorial service.</param>
     public Index(ActivityService activityService,
         BlogPostService blogPostService,
         NoteService noteService,
         ProjectService projectService,
+        ReadingListService readingListService,
         TutorialService tutorialService)
     {
         _activityService = activityService;
         _blogPostService = blogPostService;
         _noteService = noteService;
         _projectService = projectService;
+        _readingListService = readingListService;
         _tutorialService = tutorialService;
     }
 
@@ -65,6 +69,12 @@ public sealed class Index : PageModel
     public int ProjectCount { get; private set; }
 
     /// <summary>
+    ///     Gets the total number of books on the reading list.
+    /// </summary>
+    /// <value>The total number of books on the reading list.</value>
+    public int BookCount { get; private set; }
+
+    /// <summary>
     ///     Gets a read-only view of recent activity entries, including blog posts, devlog entries, and tutorial articles.
     /// </summary>
     /// <value>A read-only view of recent activity entries.</value>
@@ -86,6 +96,7 @@ public sealed class Index : PageModel
         ProjectCount = _projectService.GetProjectCount();
         DevlogCount = _projectService.GetDevlogCount();
         TutorialCount = _tutorialService.GetArticleCount();
+        BookCount = _readingListService.GetBookCount();
 
         var searchOptions = new ActivitySearchOptions(RecentActivityCount, Visibility.None, ActivitySortStrategy.Updated);
         RecentActivity = _activityService.GetRecentActivity(searchOptions);

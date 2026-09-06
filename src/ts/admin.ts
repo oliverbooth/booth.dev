@@ -15,6 +15,7 @@ import {initPasskeyLogin} from './admin/passkey-login.ts';
 import {initCdnBrowser} from './admin/cdn-browser.ts';
 import {initSomedayReorder} from './admin/someday-reorder.ts';
 import {initSomedayEditorPreview} from './admin/someday-editor.ts';
+import {initBookLookup} from './admin/book-lookup.ts';
 
 (() => {
     initAltTextPopovers();
@@ -34,4 +35,5 @@ import {initSomedayEditorPreview} from './admin/someday-editor.ts';
     initCdnBrowser();
     initSomedayReorder();
     initSomedayEditorPreview();
+    initBookLookup();
 })();
