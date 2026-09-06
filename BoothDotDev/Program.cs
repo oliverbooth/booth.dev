@@ -85,6 +85,7 @@ builder.Services.AddSingleton<SomedayEntryService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BlueskyService>();
+builder.Services.AddSingleton<BookLookupService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<BlueskyOptions>(
     builder.Configuration.GetSection(BlueskyOptions.SectionName));
