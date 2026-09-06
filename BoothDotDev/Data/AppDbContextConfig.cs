@@ -23,6 +23,7 @@ public static class AppDbContextConfig
             options.MapEnum<ProjectType>("project_type", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<Visibility>("visibility", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<WatchableKind>("watchable_kind", "public", new NpgsqlSnakeCaseNameTranslator());
+            options.MapEnum<WatchableSource>("watchable_source", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<WatchableState>("watchable_state", "public", new NpgsqlSnakeCaseNameTranslator());
         });
         builder.UseSnakeCaseNamingConvention();
