@@ -54,6 +54,9 @@
             <div class="topnav-secondary">
                 <a asp-page="/About" page-match="/About">About</a>
                 <a asp-page="/Donate" page-match="/Donate">Donate</a>
+                <button type="button" class="icon-link" data-palette-trigger aria-label="Search (Ctrl+K)" title="Search (Ctrl+K)">
+                    <i class="ti ti-search"></i>
+                </button>
             </div>
         </nav>
     </header>
@@ -94,6 +97,17 @@
         <div class="lightbox-video-slot" hidden></div>
         <figcaption class="lightbox-caption"></figcaption>
     </figure>
+</dialog>
+
+<dialog id="command-palette" class="command-palette">
+    <div class="command-palette-input-row">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" class="command-palette-input" placeholder="Jump to..." aria-label="Search pages and content"
+               autocomplete="off" spellcheck="false" />
+        <kbd class="command-palette-esc">Esc</kbd>
+    </div>
+    <ul class="command-palette-results" role="listbox" aria-label="Search results"></ul>
+    <p class="command-palette-empty" hidden>No matches.</p>
 </dialog>
 
 <nav class="bottom-nav">
