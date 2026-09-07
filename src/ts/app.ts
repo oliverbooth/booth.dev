@@ -1,3 +1,4 @@
+import {initCommandPalette} from './command-palette.ts';
 import {initCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
 import {initEasterEggs} from './easter-eggs.ts';
@@ -17,6 +18,7 @@ import {initNowClock} from './now-clock.ts';
     initEasterEggs();
     initFiltering();
     initLightbox();
+    initCommandPalette();
     initTerminalTypewriters();
     initAvatarFallback();
     initNowClock();

@@ -21,6 +21,7 @@
 @import "partials/_figure.css";
 @import "partials/_prism-toolbar.css";
 @import "partials/_lightbox.css";
+@import "partials/_command-palette.css";
 @import "partials/_manim.css";
 @import "partials/_vexflow.css";
 @import "partials/_mermaid.css";
