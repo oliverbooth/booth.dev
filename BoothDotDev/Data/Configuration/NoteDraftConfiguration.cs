@@ -18,7 +18,7 @@ internal sealed class NoteDraftConfiguration : IEntityTypeConfiguration<NoteDraf
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.Title).IsRequired().HasMaxLength(255);
         builder.Property(e => e.Content).IsRequired().HasMaxLength(10000).HasConversion<MarkdownValueConverter>();
-        builder.Property(e => e.FontStyle).IsRequired().HasDefaultValue(FontStyle.Serif);
+        builder.Property(e => e.FontStyle).IsRequired().HasDefaultValue(FontStyle.Serif).ValueGeneratedNever();
         builder.Property(e => e.Visibility).IsRequired();
 
         builder.HasOne<Note>().WithMany().HasForeignKey(e => e.NoteId).OnDelete(DeleteBehavior.Cascade);
