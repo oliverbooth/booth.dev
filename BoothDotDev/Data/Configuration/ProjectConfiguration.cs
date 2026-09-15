@@ -28,7 +28,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.Property(e => e.RemoteUrl);
         builder.Property(e => e.RemoteTarget);
         builder.Property(e => e.Tagline);
-        builder.Property(e => e.Type).IsRequired().HasDefaultValue(ProjectType.App);
+        builder.Property(e => e.Type).IsRequired().HasDefaultValue(ProjectType.App).ValueGeneratedNever();
         builder.Property(e => e.Languages);
 
         builder.HasIndex(e => e.Slug).IsUnique();
