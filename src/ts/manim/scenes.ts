@@ -132,6 +132,13 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
         : new globals.Scene(scenePanel, SCENE_OPTIONS);
     mountedScenes.set(scenePanel, scene);
 
+    const originalDispose = scene.dispose.bind(scene);
+    (scene as Scene & { isDisposed: boolean }).isDisposed = false;
+    scene.dispose = () => {
+        (scene as Scene & { isDisposed: boolean }).isDisposed = true;
+        originalDispose();
+    };
+
     const resizeObserver = new ResizeObserver(() => {
         if (!scenePanel.isConnected) {
             resizeObserver.disconnect();
