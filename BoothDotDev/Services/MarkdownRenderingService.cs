@@ -208,6 +208,25 @@ public sealed class MarkdownRenderingService
     }
 
     /// <summary>
+    ///     Renders the full plain-text content of a raw Markdown string, with no truncation.
+    /// </summary>
+    /// <param name="markdown">The raw Markdown to render.</param>
+    /// <returns>The rendered plain text.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="markdown" /> is <see langword="null" />.</exception>
+    /// <remarks>
+    ///     For consumers that need the entire body to search over (the command palette index) rather than a preview.
+    /// </remarks>
+    public string RenderPlainText(string markdown)
+    {
+        if (markdown is null)
+        {
+            throw new ArgumentNullException(nameof(markdown));
+        }
+
+        return ToPlainText(StripLatex(markdown));
+    }
+
+    /// <summary>
     ///     Renders Markdown to plain text, then decodes the result.
     /// </summary>
     /// <param name="markdown">The Markdown to render.</param>

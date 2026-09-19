@@ -125,6 +125,32 @@
   }
 }
 
+.command-palette-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-palette-item-snippet {
+  margin: 2px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-muted);
+
+  mark {
+    background: none;
+    color: inherit;
+    font-weight: 600;
+  }
+}
+
+.command-palette-item.is-active .command-palette-item-snippet {
+  color: inherit;
+  opacity: 0.8;
+}
+
 .command-palette-empty {
   margin: 0;
   padding: 28px 16px;
