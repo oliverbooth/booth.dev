@@ -70,8 +70,9 @@ public sealed class WatchlistService
     /// <param name="title">The title.</param>
     /// <param name="kind">The kind.</param>
     /// <param name="state">The state.</param>
-    /// <returns>A <see cref="Result{T}" /> containing the added item.</returns>
-    public Result<Watchable> AddWatchable(string title, WatchableKind kind, WatchableState state)
+    /// <param name="traktId">The Trakt ID to link the item to, if any.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the added item, or an error if the Trakt ID is already linked.</returns>
+    public Result<Watchable> AddWatchable(string title, WatchableKind kind, WatchableState state, int? traktId = null)
     {
         var watchable = new Watchable
         {
@@ -79,10 +80,16 @@ public sealed class WatchlistService
             Title = title,
             Kind = kind,
             State = state,
-            Source = WatchableSource.Manual
+            Source = WatchableSource.Manual,
+            TraktId = traktId
         };
 
         using var context = _dbContextFactory.CreateDbContext();
+        if (FindTraktConflict(context, traktId, kind, exceptId: null) is { } conflict)
+        {
+            return Result.Fail(conflict);
+        }
+
         context.Watchables.Add(watchable);
         context.SaveChanges();
         return Result.Ok(watchable);
@@ -95,8 +102,12 @@ public sealed class WatchlistService
     /// <param name="title">The new title.</param>
     /// <param name="kind">The new kind.</param>
     /// <param name="state">The new state.</param>
-    /// <returns>A <see cref="Result{T}" /> containing the updated item, or an error if no item with the specified ID was found.</returns>
-    public Result<Watchable> UpdateWatchable(Guid id, string title, WatchableKind kind, WatchableState state)
+    /// <param name="traktId">The Trakt ID to link the item to, or <see langword="null" /> to unlink it.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated item, or an error if no item with the specified ID was found
+    ///     or the Trakt ID is already linked to another item.
+    /// </returns>
+    public Result<Watchable> UpdateWatchable(Guid id, string title, WatchableKind kind, WatchableState state, int? traktId)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var watchable = context.Watchables.Find(id);
@@ -105,11 +116,37 @@ public sealed class WatchlistService
             return Result.Fail($"No watchlist item with ID '{id}' was found.");
         }
 
+        if (FindTraktConflict(context, traktId, kind, exceptId: id) is { } conflict)
+        {
+            return Result.Fail(conflict);
+        }
+
         watchable.Title = title;
         watchable.Kind = kind;
         watchable.State = state;
+        watchable.TraktId = traktId;
         context.SaveChanges();
         return Result.Ok(watchable);
+    }
+
+    /// <summary>
+    ///     Checks whether another item is already linked to a Trakt ID, which the unique index would otherwise
+    ///     reject with an unfriendly error at save time.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="traktId">The Trakt ID about to be linked.</param>
+    /// <param name="kind">The kind of the item about to be linked.</param>
+    /// <param name="exceptId">The ID of the item being linked, which can't conflict with itself.</param>
+    /// <returns>An error message naming the conflicting item, or <see langword="null" /> if there's no conflict.</returns>
+    private static string? FindTraktConflict(AppDbContext context, int? traktId, WatchableKind kind, Guid? exceptId)
+    {
+        if (traktId is not { } id)
+        {
+            return null;
+        }
+
+        var other = context.Watchables.FirstOrDefault(w => w.TraktId == id && w.Kind == kind && w.Id != exceptId);
+        return other is null ? null : $"'{other.Title}' is already linked to that Trakt item.";
     }
 
     /// <summary>

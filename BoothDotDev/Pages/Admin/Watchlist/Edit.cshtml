@@ -61,6 +61,18 @@
             </select>
         </div>
 
+        <div class="field">
+            <label asp-for="Input.Trakt">Trakt</label>
+            <input type="text" asp-for="Input.Trakt" placeholder="ID, slug, IMDb ID or trakt.tv link" autocomplete="off">
+            <p class="hint">
+                Links this entry to its Trakt page. Leave empty to unlink.
+                @if (Model.TraktUrl is { } traktUrl)
+                {
+                    <a href="@traktUrl" class="meta-link" target="_blank" rel="noopener">Check current match <i class="ti ti-external-link"></i></a>
+                }
+            </p>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Save</button>
         </div>
