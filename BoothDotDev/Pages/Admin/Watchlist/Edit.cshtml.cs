@@ -14,6 +14,7 @@ namespace BoothDotDev.Pages.Admin.Watchlist;
 public sealed class Edit : PageModel
 {
     private readonly TmdbLookupService _tmdbLookupService;
+    private readonly TraktSyncService _traktSyncService;
     private readonly WatchlistService _watchlistService;
 
     /// <summary>
@@ -21,10 +22,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="watchlistService">The watchlist service.</param>
     /// <param name="tmdbLookupService">The TMDB lookup service.</param>
-    public Edit(WatchlistService watchlistService, TmdbLookupService tmdbLookupService)
+    /// <param name="traktSyncService">The Trakt sync service.</param>
+    public Edit(WatchlistService watchlistService, TmdbLookupService tmdbLookupService, TraktSyncService traktSyncService)
     {
         _watchlistService = watchlistService;
         _tmdbLookupService = tmdbLookupService;
+        _traktSyncService = traktSyncService;
     }
 
     /// <summary>
@@ -38,6 +41,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <value>The ID of the item being edited, or <see langword="null" /> if a new item is being created.</value>
     public Guid? Id { get; private set; }
+
+    /// <summary>
+    ///     Gets the URL of the item's page on Trakt.
+    /// </summary>
+    /// <value>The URL, or <see langword="null" /> if the item isn't linked to Trakt.</value>
+    public string? TraktUrl { get; private set; }
 
     /// <summary>
     ///     Gets or sets the item being edited, if any.
@@ -68,7 +77,19 @@ public sealed class Edit : PageModel
 
         var watchable = result.Value;
         Id = watchable.Id;
-        Input = new EditModel { Title = watchable.Title, Kind = watchable.Kind, State = watchable.State };
+        Input = new EditModel
+        {
+            Title = watchable.Title,
+            Kind = watchable.Kind,
+            State = watchable.State,
+            Trakt = watchable.TraktId?.ToString()
+        };
+
+        if (watchable.TraktId is { } traktId)
+        {
+            TraktUrl = $"https://trakt.tv/{(watchable.Kind == WatchableKind.Movie ? "movies" : "shows")}/{traktId}";
+        }
+
         return Page();
     }
 
@@ -96,8 +117,9 @@ public sealed class Edit : PageModel
     ///     Handles the POST request for saving the item.
     /// </summary>
     /// <param name="id">The ID of the item being edited. If <see langword="null" />, a new item is being created.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    public IActionResult OnPostSave(Guid? id)
+    public async Task<IActionResult> OnPostSaveAsync(Guid? id, CancellationToken cancellationToken)
     {
         CreatingNew = id is null;
 
@@ -106,10 +128,34 @@ public sealed class Edit : PageModel
             return Page();
         }
 
+        int? traktId = null;
+        if (Input.Trakt?.Trim() is { Length: > 0 } reference)
+        {
+            var existing = id is { } existingId ? _watchlistService.GetWatchableById(existingId).ValueOrDefault : null;
+
+            // an untouched field doesn't need re-verifying against Trakt on every save
+            if (existing is { TraktId: { } current } && existing.Kind == Input.Kind &&
+                int.TryParse(reference, out var typed) && typed == current)
+            {
+                traktId = current;
+            }
+            else
+            {
+                var resolved = await _traktSyncService.ResolveAsync(Input.Kind, reference, cancellationToken);
+                if (resolved.IsFailed)
+                {
+                    ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Trakt)}", resolved.Errors[0].Message);
+                    return Page();
+                }
+
+                traktId = resolved.Value.TraktId;
+            }
+        }
+
         var title = Input.Title.Trim();
         var result = id is null
-            ? _watchlistService.AddWatchable(title, Input.Kind, Input.State)
-            : _watchlistService.UpdateWatchable(id.Value, title, Input.Kind, Input.State);
+            ? _watchlistService.AddWatchable(title, Input.Kind, Input.State, traktId)
+            : _watchlistService.UpdateWatchable(id.Value, title, Input.Kind, Input.State, traktId);
 
         if (result.IsFailed)
         {
@@ -161,5 +207,11 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The state of the item.</value>
         public WatchableState State { get; set; } = WatchableState.PlanToWatch;
+
+        /// <summary>
+        ///     Gets or sets the Trakt item to link to: an ID, slug, IMDb ID, or <c>trakt.tv</c> URL.
+        /// </summary>
+        /// <value>The reference, or <see langword="null" /> if the item shouldn't be linked to Trakt.</value>
+        public string? Trakt { get; set; }
     }
 }

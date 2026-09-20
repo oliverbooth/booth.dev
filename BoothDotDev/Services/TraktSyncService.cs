@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using BoothDotDev.Data;
@@ -84,6 +85,82 @@ public sealed class TraktSyncService(
         var watched = watchedMoviesResult.Value.Concat(fullyWatchedShows).ToArray();
         var summary = watchlistService.ReconcileFromTrakt(watchlistResult.Value, watched);
         return Result.Ok(summary);
+    }
+
+    /// <summary>
+    ///     Looks up a single movie or show on Trakt, so an entry can be linked to it by hand.
+    /// </summary>
+    /// <param name="kind">The kind of item to look up.</param>
+    /// <param name="reference">
+    ///     A Trakt ID, Trakt slug, IMDb ID, or a <c>trakt.tv</c> movie/show URL.
+    /// </param>
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the matching item, or an error if none was found.</returns>
+    public async Task<Result<TraktMediaRef>> ResolveAsync(
+        WatchableKind kind, string reference, CancellationToken cancellationToken)
+    {
+        var referenceResult = ParseReference(kind, reference);
+        if (referenceResult.IsFailed)
+        {
+            return referenceResult.ToResult();
+        }
+
+        var noun = kind == WatchableKind.Movie ? "movie" : "show";
+        var path = $"/{(kind == WatchableKind.Movie ? "movies" : "shows")}/{Uri.EscapeDataString(referenceResult.Value)}";
+
+        try
+        {
+            // public endpoint, only needs the API key
+            using var response = await SendAsync(null, path, cancellationToken);
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return Result.Fail($"Trakt has no {noun} matching '{reference.Trim()}'.");
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Result.Fail($"Trakt returned {(int)response.StatusCode} looking up that {noun}.");
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using var document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+
+            var title = document.RootElement.GetProperty("title").GetString() ?? string.Empty;
+            var traktId = document.RootElement.GetProperty("ids").GetProperty("trakt").GetInt32();
+            return Result.Ok(new TraktMediaRef(traktId, kind, title));
+        }
+        catch (HttpRequestException exception)
+        {
+            logger.LogWarning(exception, "Couldn't reach Trakt to resolve '{Reference}'", reference);
+            return Result.Fail("Couldn't reach Trakt. Try again in a moment.");
+        }
+    }
+
+    /// <summary>
+    ///     Extracts the identifier to look up from user input, unwrapping a <c>trakt.tv</c> URL if that's what was given.
+    /// </summary>
+    /// <param name="kind">The kind of item the identifier is expected to refer to.</param>
+    /// <param name="reference">The raw input.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the ID or slug, or an error if the input can't be used.</returns>
+    private static Result<string> ParseReference(WatchableKind kind, string reference)
+    {
+        reference = reference.Trim();
+        if (!Uri.TryCreate(reference, UriKind.Absolute, out var uri))
+        {
+            return Result.Ok(reference);
+        }
+
+        // trakt.tv, www.trakt.tv, app.trakt.tv, ...
+        if (uri.Host is not "trakt.tv" && !uri.Host.EndsWith(".trakt.tv", StringComparison.OrdinalIgnoreCase) ||
+            uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries) is not [("movies" or "shows") and var type, var slug, ..])
+        {
+            return Result.Fail("That doesn't look like a Trakt movie or show link.");
+        }
+
+        var linkKind = type == "movies" ? WatchableKind.Movie : WatchableKind.Show;
+        return linkKind == kind
+            ? Result.Ok(slug)
+            : Result.Fail($"That's a link to a {type[..^1]}, but this entry is a {(kind == WatchableKind.Movie ? "movie" : "show")}.");
     }
 
     /// <summary>
@@ -194,14 +271,18 @@ public sealed class TraktSyncService(
     /// <summary>
     ///     Sends an authenticated GET request to the Trakt API.
     /// </summary>
-    /// <param name="accessToken">The access token to authenticate with.</param>
+    /// <param name="accessToken">The access token to authenticate with, or <see langword="null" /> for a public endpoint.</param>
     /// <param name="path">The API path to request, including any query string.</param>
     /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
     /// <returns>The response.</returns>
-    private async Task<HttpResponseMessage> SendAsync(string accessToken, string path, CancellationToken cancellationToken)
+    private async Task<HttpResponseMessage> SendAsync(string? accessToken, string path, CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiBaseUrl}{path}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        if (accessToken is not null)
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        }
+
         request.Headers.Add("trakt-api-key", options.CurrentValue.ClientId);
         request.Headers.Add("trakt-api-version", "2");
 
