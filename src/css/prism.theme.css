@@ -41,7 +41,6 @@ pre[class*="language-"] {
   &.block-comment,
   &.cdata {
     color: var(--prism-comment);
-    font-style: italic;
   }
 
   &.string,
