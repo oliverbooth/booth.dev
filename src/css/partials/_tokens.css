@@ -224,17 +224,17 @@
   --text-primary: var(--text);
   --text-secondary: var(--text-muted);
 
-  --success-bg: rgba(63, 185, 80, 0.14);
-  --success-text: #5fd576;
+  --success-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
+  --success-text: var(--teal-text);
 
-  --warning-bg: rgba(224, 166, 52, 0.14);
-  --warning-text: #e0a634;
+  --warning-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
+  --warning-text: var(--coral-text);
 
   --danger-bg: var(--dont-bg);
   --danger-text: var(--dont-text);
 
-  --info-bg: rgba(97, 97, 205, 0.14);
-  --info-text: #8a8ae0;
+  --info-bg: var(--brand-chip);
+  --info-text: var(--brand-text);
 
   --font-sans: var(--font-body);
   --font-voice: "Source Serif 4", Georgia, "Times New Roman", serif;
