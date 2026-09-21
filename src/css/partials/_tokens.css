@@ -61,15 +61,17 @@
   --tag-bg: oklch(30% 0.04 275);
   --tag-text: oklch(85% 0.04 275);
 
-  --tint-brand: oklch(25% 0.035 275);
-  --tint-coral: oklch(26% 0.045 40);
-  --tint-teal: oklch(25% 0.035 165);
-  --tint-magenta: oklch(26% 0.045 340);
+  /* dark tints keep their lightness low but carry real chroma, and the teal leans blue.
+     low-chroma warm hues at this lightness read as brown/olive/maroon */
+  --tint-brand: oklch(26% 0.06 275);
+  --tint-coral: oklch(27% 0.08 32);
+  --tint-teal: oklch(25% 0.062 195);
+  --tint-magenta: oklch(27% 0.085 335);
 
-  --row-tint-brand: oklch(23% 0.025 275);
-  --row-tint-coral: oklch(24% 0.03 40);
-  --row-tint-teal: oklch(23% 0.025 165);
-  --row-tint-magenta: oklch(24% 0.03 340);
+  --row-tint-brand: oklch(24% 0.05 275);
+  --row-tint-coral: oklch(25% 0.065 32);
+  --row-tint-teal: oklch(23% 0.05 195);
+  --row-tint-magenta: oklch(25% 0.07 335);
 
   --input-focus-bg: oklch(26% 0.03 275);
 
