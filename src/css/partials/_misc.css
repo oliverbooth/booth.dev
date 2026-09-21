@@ -44,9 +44,16 @@
 }
 
 .lede {
-  font-size: 15px;
-  color: var(--text-secondary);
+  max-width: 600px;
   margin: 0 0 1.75rem;
+  color: var(--text-muted);
+  font-size: 17px;
+  line-height: 1.7;
+
+  a {
+    color: var(--brand-text);
+    text-underline-offset: 3px;
+  }
 }
 
 .filter-row {
@@ -59,12 +66,15 @@
 .icon-link {
   display: inline-flex;
   align-items: center;
-  color: var(--accent);
-  font-weight: 700;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 20px;
   text-decoration: none;
 
-  &:hover {
-    color: var(--accent-hover);
+  &:hover,
+  &:focus-visible {
+    color: var(--text);
   }
 }
 

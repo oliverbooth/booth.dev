@@ -47,6 +47,118 @@
   }
 }
 
+/* blog archive rows; the tinted, tilted box is .collapse-inner itself so the filter's collapse animation shrinks it away */
+.post-list {
+  margin-bottom: 3rem;
+}
+
+.post-row {
+  --tilt: -1deg;
+  --tint: var(--row-tint-brand);
+
+  margin-bottom: 16px;
+  color: inherit;
+  text-decoration: none;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .collapse-inner {
+    border-radius: var(--radius-md);
+    background: var(--tint);
+    box-shadow: var(--shadow-card-soft);
+    transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+    transition: transform 0.25s ease;
+  }
+
+  &:focus-visible .collapse-inner {
+    transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
+  }
+
+  @media (hover: hover) {
+    &:hover .collapse-inner {
+      transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
+    }
+  }
+
+  &:nth-child(4n + 2) {
+    --tilt: 1deg;
+    --tint: var(--row-tint-coral);
+  }
+
+  &:nth-child(4n + 3) {
+    --tilt: -0.5deg;
+    --tint: var(--row-tint-teal);
+  }
+
+  &:nth-child(4n + 4) {
+    --tilt: 0.5deg;
+    --tint: var(--row-tint-magenta);
+  }
+}
+
+.post-row-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+}
+
+.post-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.post-row-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.post-row-title {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.post-row-sub {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.post-row-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+@media (max-width: 760px) {
+  .post-row-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .post-row-meta {
+    flex-direction: row;
+    gap: 10px;
+  }
+}
+
 .stack-icon {
   width: 32px;
   height: 32px;

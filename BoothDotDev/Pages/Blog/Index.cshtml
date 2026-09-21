@@ -4,6 +4,7 @@
 @using DEDrake
 @model Index
 @inject BlogPostService BlogPostService
+@inject MarkdownRenderingService MarkdownRenderingService
 
 <div class="page">
 
@@ -40,41 +41,47 @@
             <a class="pill" asp-page="/Someday">Someday</a>
         </div>
 
-        <div class="commit-log" style="margin-bottom:3rem">
-            @for (var index = 0; index < Model.BlogPosts.Count; index++)
+        <div class="post-list">
+            @foreach (var post in Model.BlogPosts)
             {
-                var post = Model.BlogPosts[index];
-                var first = index == 0;
                 var categoryResult = BlogPostService.GetParentCategory(post);
                 var category = categoryResult.IsSuccess ? categoryResult.Value : null;
 
-                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug"
-                   class="commit"
-                   data-state="@category?.Id">
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-state="@category?.Id">
                     <div class="collapse-inner">
-                        <div class="commit-dot@(first ? "" : " muted")"></div>
-                        <div class="commit-meta">
-                            <span class="commit-hash">@post.Id.ToCommitSha()</span><span class="commit-tag">blog</span>
+                        <div class="post-row-body">
+                            <div class="post-row-text">
+                                <div class="post-row-head">
+                                    <span class="badge badge-brand">post</span>
+                                    <span class="post-row-title">@post.Title</span>
+                                </div>
+                                <span class="post-row-sub">@MarkdownRenderingService.RenderPlainTextExcerpt(post, out _)</span>
+                            </div>
+                            <div class="post-row-meta">
+                                <span class="meta-value">@post.PublishedAt.ToShortString()</span>
+                                <span class="meta-value">@post.GetEstimatedReadingTime() min read</span>
+                            </div>
                         </div>
-                        <p class="commit-title">@post.Title</p>
-                        <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.PublishedAt.ToShortString()</p>
                     </div>
                 </a>
             }
 
-            @for (var index = 0; index < Model.Notes.Count; index++)
+            @foreach (var note in Model.Notes)
             {
-                var note = Model.Notes[index];
-                var first = index == 0;
-
-                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="commit" data-kind="note" data-state="note">
+                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="post-row" data-kind="note" data-state="note">
                     <div class="collapse-inner">
-                        <div class="commit-dot@(first ? "" : " muted")"></div>
-                        <div class="commit-meta">
-                            <span class="commit-hash">@note.Id.ToCommitSha()</span><span class="commit-tag">note</span>
+                        <div class="post-row-body">
+                            <div class="post-row-text">
+                                <div class="post-row-head">
+                                    <span class="badge badge-coral">note</span>
+                                    <span class="post-row-title">@note.Title</span>
+                                </div>
+                                <span class="post-row-sub">@MarkdownRenderingService.RenderPlainTextPreview(note.Content, 160)</span>
+                            </div>
+                            <div class="post-row-meta">
+                                <span class="meta-value">@note.PublishedAt.ToShortString()</span>
+                            </div>
                         </div>
-                        <p class="commit-title">@note.Title</p>
-                        <p class="commit-sub">@note.PublishedAt.ToShortString()</p>
                     </div>
                 </a>
             }

@@ -68,15 +68,17 @@
   --tint-teal: oklch(25% 0.062 195);
   --tint-magenta: oklch(27% 0.085 335);
 
-  --row-tint-brand: oklch(24% 0.05 275);
-  --row-tint-coral: oklch(25% 0.065 32);
-  --row-tint-teal: oklch(23% 0.05 195);
-  --row-tint-magenta: oklch(25% 0.07 335);
+  /* rows come in long stacks, so they stay quieter than the pinned cards above */
+  --row-tint-brand: oklch(23.5% 0.032 275);
+  --row-tint-coral: oklch(24% 0.036 36);
+  --row-tint-teal: oklch(23% 0.03 180);
+  --row-tint-magenta: oklch(24% 0.038 338);
 
   --input-focus-bg: oklch(26% 0.03 275);
 
   --table-head-bg: oklch(27% 0.035 275);
   --table-stripe: oklch(20% 0.02 275);
+  --track-bg: oklch(22% 0.02 275);
 
   --do-bg: oklch(28% 0.05 165);
   --do-text: oklch(85% 0.08 165);
@@ -161,6 +163,7 @@
 
   --table-head-bg: oklch(92% 0.025 275);
   --table-stripe: oklch(96% 0.015 275);
+  --track-bg: oklch(89% 0.015 275);
 
   --do-bg: oklch(94% 0.03 165);
   --do-text: oklch(35% 0.09 165);

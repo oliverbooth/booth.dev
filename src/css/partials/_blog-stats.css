@@ -1,39 +1,60 @@
 .stats-bars {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin: 1rem 0 2.5rem;
 }
 
 .stats-bar-row {
+  --bar: var(--brand-text);
+
   display: grid;
-  grid-template-columns: 3.5rem 1fr 3rem;
+  grid-template-columns: 3rem 1fr 2.5rem;
   align-items: center;
   gap: 12px;
+
+  /* the text-safe accents, so the fill still stands out from the track in light mode */
+  &:nth-child(4n + 2) {
+    --bar: var(--coral-text);
+  }
+
+  &:nth-child(4n + 3) {
+    --bar: var(--teal-text);
+  }
+
+  &:nth-child(4n + 4) {
+    --bar: var(--magenta-text);
+  }
 }
 
 .stats-bar-label,
 .stats-bar-count {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 12.5px;
+}
+
+.stats-bar-label {
+  color: var(--text-faint);
 }
 
 .stats-bar-count {
+  color: var(--text-muted);
   text-align: right;
 }
 
 .stats-bar-track {
-  background: var(--surface-1);
-  border-radius: 4px;
-  height: 1.1rem;
+  background: var(--track-bg);
+  border-radius: 8px;
+  height: 20px;
   overflow: hidden;
 }
 
 .stats-bar-fill {
   height: 100%;
-  background: var(--accent);
-  border-radius: 4px;
+  min-width: 12px;
+  background: var(--bar);
+  border-radius: 8px;
 }
 
 .commit-graph-year {
@@ -41,9 +62,8 @@
 }
 
 .commit-graph-year h3 {
-  margin: 0 0 0.5rem;
-  font-size: 15px;
-  color: var(--text-secondary);
+  margin: 0 0 8px;
+  font-size: 16px;
 }
 
 .commit-graph {
@@ -55,7 +75,8 @@
   grid-template-columns: repeat(var(--commit-graph-columns), var(--cell));
   gap: 3px;
   margin-bottom: 4px;
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   color: var(--text-faint);
   white-space: nowrap;
 }
@@ -70,17 +91,14 @@
 }
 
 .commit-graph-cell {
-  border-radius: 2px;
-  background: var(--surface-1);
-  border: 1px solid var(--border);
+  border-radius: 2.5px;
+  background: var(--track-bg);
 }
 
 .commit-graph-cell--empty {
   background: transparent;
-  border-color: transparent;
 }
 
 .commit-graph-cell.has-post {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--brand-text);
 }
