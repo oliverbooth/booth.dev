@@ -1,84 +1,50 @@
 .btn {
+  --btn-tilt: 1deg;
+
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: var(--radius);
-  padding: 9px 16px;
-  border: 0.5px solid var(--border-strong);
-  background: transparent;
-  color: var(--text-primary);
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transform: rotate(calc(var(--btn-tilt) * var(--motion) * var(--tilt-on)));
+  transition: transform 0.25s ease;
 
-  animation: elastic-btn-hover-off 0.2s;
-  transform: scale(1);
-
-  &:hover {
-    background: var(--surface-1);
-
-    animation: elastic-btn-hover-on 0.2s;
-    transform: scale(1.1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .btn {
-    transition: none;
-    animation: none;
-
-    &:hover {
-      animation: none;
-      transform: scale(1);
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      transform: rotate(0deg) scale(calc(1 + 0.05 * var(--motion)));
     }
+  }
+
+  &:active:not(:disabled) {
+    transform: rotate(0deg) scale(calc(1 - 0.03 * var(--motion)));
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 }
 
 .btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  --btn-tilt: -1.5deg;
 
-  &:hover {
-    background: var(--accent-hover);
-    border-color: var(--accent-hover);
-  }
+  background: var(--cta-bg);
+  box-shadow: var(--shadow-cta);
+  color: #fff;
 }
 
 .btn-danger {
   background: var(--danger-bg);
-  border-color: var(--danger-text);
-  color: var(--danger-text) !important;
-}
-
-@keyframes elastic-btn-hover-on {
-  0%   {
-    transform: scale(1);
-    animation-timing-function: ease-in;
-  }
-  50%  {
-    transform: scale(0.9,1);
-    animation-timing-function: linear;
-  }
-  100% {
-    transform: scale(1.1);
-    animation-timing-function: ease-out;
-  }
-}
-
-@keyframes elastic-btn-hover-off {
-  0%   {
-    transform: scale(1.1);
-    animation-timing-function: ease-in;
-  }
-  50%  {
-    transform: scale(1,0.9);
-    animation-timing-function: linear;
-  }
-  100% {
-    transform: scale(1);
-    animation-timing-function: ease-out;
-  }
+  color: var(--danger-text);
 }

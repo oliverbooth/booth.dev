@@ -1,4 +1,7 @@
 .admin-shell {
+  /* TODO: interim! keeps the new buttons flat until admin restyle */
+  --tilt-on: 0;
+
   display: flex;
   min-height: 100vh;
 }

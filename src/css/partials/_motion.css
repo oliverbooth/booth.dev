@@ -1,5 +1,8 @@
 :root {
   --motion: 1;
+
+  /* set to 0 on a container to keep everything inside it untilted */
+  --tilt-on: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
