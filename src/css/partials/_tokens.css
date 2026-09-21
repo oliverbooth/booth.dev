@@ -16,6 +16,10 @@
   --radius-lg: 20px;
   --radius-pill: 999px;
 
+  --width-narrow: 700px;
+  --width-mid: 760px;
+  --width-wide: 1040px;
+
   --terminal-dot-1: #ff5f57;
   --terminal-dot-2: #febc2e;
   --terminal-dot-3: #28c840;
@@ -218,9 +222,8 @@
   --info-bg: rgba(97, 97, 205, 0.14);
   --info-text: #8a8ae0;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-body);
   --font-voice: "Source Serif 4", Georgia, "Times New Roman", serif;
 
   --radius: var(--radius-sm);
-  --content-width: 640px;
 }
