@@ -1,4 +1,5 @@
 @page "/blog"
+@using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using DEDrake
@@ -52,7 +53,14 @@
                         <div class="post-row-body">
                             <div class="post-row-text">
                                 <div class="post-row-head">
-                                    <span class="badge badge-brand">post</span>
+                                    @if (category is not null)
+                                    {
+                                        <span class="badge @(category.FontStyle == FontStyle.Serif ? "badge-magenta" : "")">@category.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-brand">post</span>
+                                    }
                                     <span class="post-row-title">@post.Title</span>
                                 </div>
                                 <span class="post-row-sub">@MarkdownRenderingService.RenderPlainTextExcerpt(post, out _)</span>
