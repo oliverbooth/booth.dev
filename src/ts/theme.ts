@@ -57,22 +57,35 @@ export function currentTheme(): Theme {
     return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 }
 
-function applyTheme(theme: Theme, fade: boolean): void {
+function applyTheme(theme: Theme, animate: boolean): void {
     const root = document.documentElement;
     if (root.dataset.theme === theme) {
         return;
     }
 
-    // the fade rule only exists while this attribute is set, so it never interferes with ordinary hover transitions
-    if (fade) {
-        root.dataset.themeFading = '';
-        window.clearTimeout(fadeTimer);
-        fadeTimer = window.setTimeout(() => delete root.dataset.themeFading, FADE_DURATION_MS);
+    const swap = (): void => {
+        root.dataset.theme = theme;
+        syncToggles(theme);
+        document.dispatchEvent(new CustomEvent('themechange', {detail: {theme}}));
+    };
+
+    if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        swap();
+        return;
     }
 
-    root.dataset.theme = theme;
-    syncToggles(theme);
-    document.dispatchEvent(new CustomEvent('themechange', {detail: {theme}}));
+    // one GPU cross-fade of the whole page, rather than transitioning every element: far cheaper, and the header and
+    // page can't drift out of step with each other
+    if (document.startViewTransition) {
+        document.startViewTransition(swap);
+        return;
+    }
+
+    // fallback for browsers without view transitions; the fade rule only exists while this attribute is set
+    root.dataset.themeFading = '';
+    window.clearTimeout(fadeTimer);
+    fadeTimer = window.setTimeout(() => delete root.dataset.themeFading, FADE_DURATION_MS);
+    swap();
 }
 
 function syncToggles(theme: Theme): void {
