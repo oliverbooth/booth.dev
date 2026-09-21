@@ -1,0 +1,61 @@
+namespace BoothDotDev.Pages.Shared.Partials;
+
+/// <summary>
+///     Represents the data shown in the header of a content page: the badge and tags, the title, and the byline.
+/// </summary>
+public sealed class ContentHeader
+{
+    /// <summary>
+    ///     Gets the title of the content.
+    /// </summary>
+    /// <value>The title.</value>
+    public required string Title { get; init; }
+
+    /// <summary>
+    ///     Gets the text of the badge shown before the tags, such as the category or content type.
+    /// </summary>
+    /// <value>The badge text, or <see langword="null" /> to show no badge.</value>
+    public string? Badge { get; init; }
+
+    /// <summary>
+    ///     Gets the CSS class modifier selecting the badge's colour, such as <c>badge-magenta</c>.
+    /// </summary>
+    /// <value>The badge class. The default is an empty string, which is the default teal badge.</value>
+    public string BadgeClass { get; init; } = string.Empty;
+
+    /// <summary>
+    ///     Gets the tags to link to the blog's tag filter.
+    /// </summary>
+    /// <value>The tags.</value>
+    public IReadOnlyList<string> Tags { get; init; } = [];
+
+    /// <summary>
+    ///     Gets the display name of the author.
+    /// </summary>
+    /// <value>The author's display name, or <see langword="null" /> to show no author.</value>
+    public string? AuthorName { get; init; }
+
+    /// <summary>
+    ///     Gets the URL of the author's avatar.
+    /// </summary>
+    /// <value>The avatar URL, or <see langword="null" /> to show only the author's initial.</value>
+    public Uri? AuthorAvatarUrl { get; init; }
+
+    /// <summary>
+    ///     Gets the pieces of metadata shown under the author's name, joined with a separator.
+    /// </summary>
+    /// <value>The metadata, such as the publish date and reading time.</value>
+    public IReadOnlyList<string> Meta { get; init; } = [];
+
+    /// <summary>
+    ///     Gets the URL of the content's Markdown source.
+    /// </summary>
+    /// <value>The source URL, or <see langword="null" /> to show no link.</value>
+    public string? SourceUrl { get; init; }
+
+    /// <summary>
+    ///     Gets the URL of the admin edit page for the content.
+    /// </summary>
+    /// <value>The edit URL, or <see langword="null" /> to show no link (for visitors who can't edit).</value>
+    public string? EditUrl { get; init; }
+}

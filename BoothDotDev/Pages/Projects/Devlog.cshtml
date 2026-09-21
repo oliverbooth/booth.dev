@@ -1,6 +1,7 @@
 @page "/project/{projectSlug}/devlog/{slug}"
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @model Devlog
 @inject ProjectService ProjectService
@@ -46,25 +47,31 @@
         </div>
     }
 
-    <span class="eyebrow">Devlog</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@devlog.Title</h1>
+    @{
+        var meta = new List<string> { $"published {published.ToShortString()}", $"{devlog.GetEstimatedReadingTime()} min read" };
+        if (devlog.UpdatedAt is { } updated)
+        {
+            meta.Add($"updated {updated.ToShortString()}");
+        }
+    }
 
-    <div class="byline">
-        <span class="meta">
-            @published.ToShortString() &middot; @devlog.GetEstimatedReadingTime() min read
-            @if (devlog.UpdatedAt is { } updated)
-            {
-                <text>&middot; updated @updated.ToShortString()</text>
-            }
-            &middot; <a href="/project/@(Model.Project.Slug)/devlog/@(devlog.Slug).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text>&middot; <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+    @{
+        var header = new ContentHeader
+        {
+            Title = devlog.Title,
+            Badge = Model.Project.Name,
+            BadgeClass = "badge-brand",
+            Meta = meta,
+            SourceUrl = $"/project/{Model.Project.Slug}/devlog/{devlog.Slug}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true
+                ? Url.Page("/Admin/Projects/Devlogs/Edit", new { projectId = Model.Project.Id, id = devlog.Id })
+                : null
+        };
+    }
 
-    <div class="prose" style="margin-top:2.5rem">
+    <partial name="Partials/_ContentHeader" model="header" />
+
+    <div class="prose">
         @Html.Raw(MarkdownRenderingService.Render(devlog, devlog.Id, devlog.PublishedAt))
     </div>
 

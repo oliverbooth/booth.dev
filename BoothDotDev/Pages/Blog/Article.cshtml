@@ -5,6 +5,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @model Article
@@ -46,27 +47,22 @@
         </div>
     }
 
-    <div class="post-tags">
-        <span class="badge @(category.FontStyle == FontStyle.Serif ? "badge-magenta" : "")">@category.Name</span>
-        @foreach (var tag in post.Tags)
+    @{
+        var header = new ContentHeader
         {
-            <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
-        }
-    </div>
-    <h1 class="post-title">@post.Title</h1>
+            Title = post.Title,
+            Badge = category.Name,
+            BadgeClass = category.FontStyle == FontStyle.Serif ? "badge-magenta" : "",
+            Tags = post.Tags,
+            AuthorName = author.DisplayName,
+            AuthorAvatarUrl = author.AvatarUrl,
+            Meta = [$"published {published.ToShortString()}", $"{post.GetEstimatedReadingTime()} min read"],
+            SourceUrl = $"/blog/{post.Slug}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Posts/Edit", new { id = post.Id }) : null
+        };
+    }
 
-    <div class="byline">
-        <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="" /></div>
-        <div class="byline-text">
-            <div class="byline-name">@author.DisplayName</div>
-            <div class="byline-meta">published @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</div>
-        </div>
-        <a href="/blog/@(post.Slug).md" class="byline-link">view source</a>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="byline-link">edit</a>
-        }
-    </div>
+    <partial name="Partials/_ContentHeader" model="header" />
 
     @if (post.ShowTableOfContents)
     {
@@ -78,7 +74,7 @@
         </details>
     }
 
-    <div class="prose @category.FontStyle.ToProseClass()" style="margin-top:2.5rem">
+    <div class="prose @category.FontStyle.ToProseClass()">
         @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.PublishedAt))
     </div>
 

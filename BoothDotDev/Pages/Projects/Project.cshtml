@@ -25,116 +25,127 @@
         }
     </div>
 
-    <div class="card" style="cursor:default">
-        <div class="card-icon project-hero-icon">
-            <img src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
-        </div>
-        <div class="card-body project-body">
+    @{
+        var statusClass = project.Status switch
+        {
+            ProjectStatus.Past => "done",
+            ProjectStatus.Retired => "retired",
+            ProjectStatus.Hiatus => "hiatus",
+            _ => ""
+        };
 
-            <div class="project-status">
-                <span class="dot"></span>
-                <span class="status-label">
-                    @switch (project.Status)
-                    {
-                        case ProjectStatus.Ongoing:
-                            <text>In Active Development</text>
-                            break;
-                        case ProjectStatus.Past:
-                            <text>Completed</text>
-                            break;
-                        case ProjectStatus.Retired:
-                            <text>Retired</text>
-                            break;
-                        case ProjectStatus.Hiatus:
-                            <text>On Hiatus</text>
-                            break;
-                    }
-                </span>
-            </div>
+        var statusText = project.Status switch
+        {
+            ProjectStatus.Ongoing => "in active development",
+            ProjectStatus.Past => "completed",
+            ProjectStatus.Retired => "retired",
+            ProjectStatus.Hiatus => "on hiatus",
+            _ => project.Status.ToString().ToLower()
+        };
 
-            <h1 class="project-title">@project.Name</h1>
+        var icon = project.RemoteTarget switch
+        {
+            "GitHub" => "brand-github",
+            "GitLab" => "brand-gitlab",
+            "Itch.io" => "building-store",
+            "PlayStore" => "brand-google-play",
+            _ => "world"
+        };
 
-            <div class="project-desc">
-                @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
-            </div>
+        var linkText = project.RemoteTarget switch
+        {
+            "GitHub" => "Repository",
+            "GitLab" => "Repository",
+            "Itch.io" => "itch.io Page",
+            "PlayStore" => "Google Play Store Page",
+            _ => "External site"
+        };
 
-            @if (!string.IsNullOrWhiteSpace(project.Details))
-            {
-                <div class="prose project-details">
-                    @Html.Raw(ProjectService.GetDetails(project))
-                </div>
-            }
+        var languages = project.Languages.Where(language => language != "various").ToList();
+    }
 
-            @if (project.Languages is { Count: > 0 } and not ["various"])
-            {
-                <div class="tag-row">
-                    @foreach (var language in project.Languages)
-                    {
-                        if (language == "various")
-                        {
-                            continue;
-                        }
+    <span class="status @statusClass"><span class="dot"></span>@statusText</span>
+    <h1 class="project-title">@project.Name</h1>
 
-                        <span class="tag">
-                            <img src="~/img/lang/@(language).svg" asp-append-version="true"
-                                 alt="@ProgrammingLanguage.GetNameFromShorthand(language)">
-                            @ProgrammingLanguage.GetNameFromShorthand(language)
-                        </span>
-                    }
-                </div>
-            }
-
-            <div class="action-row">
-                @{
-                    var icon = project.RemoteTarget switch
-                    {
-                        "GitHub" => "brand-github",
-                        "GitLab" => "brand-gitlab",
-                        "Itch.io" => "building-store",
-                        "PlayStore" => "brand-google-play",
-                        _ => "world"
-                    };
-
-                    var linkText = project.RemoteTarget switch
-                    {
-                        "GitHub" => "Repository",
-                        "GitLab" => "Repository",
-                        "Itch.io" => "itch.io Page",
-                        "PlayStore" => "Google Play Store Page",
-                        _ => "External site"
-                    };
-                }
-                <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon" style="font-size:15px"></i> @linkText</a>
-                @*<a href="#" class="btn">Devlog</a>*@
-            </div>
-
-            <div class="project-devlog">
-                <p class="project-devlog-title">Recent devlog entries</p>
-                @{
-                    var devlogVisibility = User.Identity?.IsAuthenticated == true ? Visibility.None : Visibility.Published;
-                    var devlogEntries = ProjectService.GetDevlogs(project, devlogVisibility);
-
-                    if (devlogEntries.Count == 0)
-                    {
-                        <p class="lede">No devlog entries available.</p>
-                    }
-                    else
-                    {
-                        <div class="project-devlog-list">
-                            @foreach (var entry in devlogEntries.Take(2))
-                            {
-                                <div class="project-devlog-row">
-                                    <span><a asp-page="/Projects/DevLog" asp-route-projectSlug="@project.Slug"
-                                             asp-route-slug="@entry.Slug">@entry.Title</a></span>
-                                    <span class="project-devlog-time">@entry.PublishedAt.Humanize()</span>
-                                </div>
-                            }
-                        </div>
-                    }
-                }
-            </div>
-
-        </div>
+    <div class="project-desc">
+        @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
     </div>
+
+    @if (languages.Count > 0)
+    {
+        <div class="tag-row">
+            @foreach (var language in languages)
+            {
+                <span class="tag">
+                    <img src="~/img/lang/@(language).svg" asp-append-version="true"
+                         alt="@ProgrammingLanguage.GetNameFromShorthand(language)">
+                    @ProgrammingLanguage.GetNameFromShorthand(language)
+                </span>
+            }
+        </div>
+    }
+
+    <div class="action-row">
+        <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon"></i> @linkText</a>
+    </div>
+
+    <div class="project-frame">
+        <img src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
+    </div>
+
+    <dl class="project-facts">
+        <div>
+            <dt>started</dt>
+            <dd>@project.CreatedAt.ToString("MMM yyyy").ToLower()</dd>
+        </div>
+        <div>
+            <dt>status</dt>
+            <dd>@statusText</dd>
+        </div>
+        @if (languages.Count > 0)
+        {
+            <div>
+                <dt>stack</dt>
+                <dd>@string.Join(", ", languages.Select(language => ProgrammingLanguage.GetNameFromShorthand(language)))</dd>
+            </div>
+        }
+    </dl>
+
+    @if (!string.IsNullOrWhiteSpace(project.Details))
+    {
+        <div class="prose project-details">
+            @Html.Raw(ProjectService.GetDetails(project))
+        </div>
+    }
+
+    @{
+        var devlogVisibility = User.Identity?.IsAuthenticated == true ? Visibility.None : Visibility.Published;
+        var devlogEntries = ProjectService.GetDevlogs(project, devlogVisibility);
+    }
+
+    <section class="project-devlog" aria-labelledby="devlog-heading">
+        <div class="section-head">
+            <h2 id="devlog-heading">Recent devlogs</h2>
+        </div>
+
+        @if (devlogEntries.Count == 0)
+        {
+            <p class="lede">No devlog entries available.</p>
+        }
+        else
+        {
+            <div class="stack-list">
+                @foreach (var entry in devlogEntries.Take(3))
+                {
+                    <a asp-page="/Projects/DevLog" asp-route-projectSlug="@project.Slug" asp-route-slug="@entry.Slug">
+                        <div class="stack-meta">
+                            <p class="title">@entry.Title</p>
+                        </div>
+                        <span class="meta-value">@entry.PublishedAt.Humanize()</span>
+                    </a>
+                }
+            </div>
+        }
+    </section>
 
 </div>

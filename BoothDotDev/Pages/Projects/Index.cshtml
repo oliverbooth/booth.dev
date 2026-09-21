@@ -13,7 +13,7 @@
         .Concat(ProjectService.GetProjects(ProjectStatus.Hiatus));
 }
 
-<div class="page-wide">
+<div class="page-grid">
 
     <div class="page-header-row">
         <p class="crumb"><a asp-page="/Index">Home</a> / Projects</p>
@@ -52,7 +52,7 @@
                     <p class="desc">@Markdown.ToPlainText(project.Description)</p>
 
                     <span class="status @statusClass">
-                        <span class="dot" style="margin-right:5px"></span>
+                        <span class="dot"></span>
                         @switch (project.Status.ToString())
                         {
                             case "Ongoing":

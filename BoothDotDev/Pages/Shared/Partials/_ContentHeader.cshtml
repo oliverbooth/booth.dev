@@ -1,0 +1,44 @@
+@model ContentHeader
+
+@if (Model.Badge is not null || Model.Tags.Count > 0)
+{
+    <div class="post-tags">
+        @if (Model.Badge is not null)
+        {
+            <span class="badge @Model.BadgeClass">@Model.Badge</span>
+        }
+        @foreach (var tag in Model.Tags)
+        {
+            <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
+        }
+    </div>
+}
+
+<h1 class="post-title">@Model.Title</h1>
+
+<div class="byline">
+    @if (Model.AuthorName is { } authorName)
+    {
+        <div class="avatar" data-initial="@authorName[0]">
+            @if (Model.AuthorAvatarUrl is { } avatarUrl)
+            {
+                <img src="@avatarUrl" alt="" />
+            }
+        </div>
+    }
+    <div class="byline-text">
+        @if (Model.AuthorName is not null)
+        {
+            <div class="byline-name">@Model.AuthorName</div>
+        }
+        <div class="byline-meta">@string.Join(" \u00b7 ", Model.Meta)</div>
+    </div>
+    @if (Model.SourceUrl is { } sourceUrl)
+    {
+        <a href="@sourceUrl" class="byline-link">view source</a>
+    }
+    @if (Model.EditUrl is { } editUrl)
+    {
+        <a href="@editUrl" class="byline-link">edit</a>
+    }
+</div>

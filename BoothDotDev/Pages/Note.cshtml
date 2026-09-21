@@ -2,6 +2,7 @@
 @inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using DEDrake
 @model Note
@@ -33,20 +34,21 @@
         </div>
     }
 
-    <span class="eyebrow">Note</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@note.Title</h1>
+    @{
+        var header = new ContentHeader
+        {
+            Title = note.Title,
+            Badge = "note",
+            BadgeClass = "badge-coral",
+            Meta = [$"published {published.ToShortString()}"],
+            SourceUrl = $"/note/{(ShortGuid)note.Id}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Notes/Edit", new { id = note.Id }) : null
+        };
+    }
 
-    <div class="byline">
-        <span class="meta">
-            @published.ToShortString() &middot; <a href="/note/@((ShortGuid)note.Id).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+    <partial name="Partials/_ContentHeader" model="header" />
 
-    <div class="prose @note.FontStyle.ToProseClass()" style="margin-top:2.5rem">
+    <div class="prose @note.FontStyle.ToProseClass()">
         @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
     </div>
 </div>
