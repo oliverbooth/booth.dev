@@ -242,7 +242,7 @@
   --info-text: var(--brand-text);
 
   --font-sans: var(--font-body);
-  --font-voice: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-voice: "Lora Variable", "Lora", Georgia, serif;
 
   --radius: var(--radius-sm);
 }

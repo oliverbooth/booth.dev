@@ -289,62 +289,63 @@
 .post-nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin: 2rem 0;
+  gap: 16px;
+  margin: 2.5rem 0;
 }
 
 .post-nav-link {
+  --tilt: -1deg;
+  --tint: var(--row-tint-brand);
+
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 1rem 1.25rem;
-  text-decoration: none;
-  color: inherit;
-  background: var(--surface-2);
-  transition: background 0.12s ease;
   min-width: 0;
+  padding: 18px 22px;
+  border-radius: var(--radius-md);
+  background: var(--tint);
+  box-shadow: var(--shadow-card-soft);
+  color: inherit;
+  text-decoration: none;
+  transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+  transition: transform 0.25s ease;
 
-  &:hover {
-    background: var(--surface-1);
+  &:focus-visible {
+    transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
+    }
   }
 }
 
 .post-nav-link--next {
-  text-align: right;
+  --tilt: 1deg;
+  --tint: var(--row-tint-coral);
+
   align-items: flex-end;
-  border-left: 0.5px solid var(--border);
+  text-align: right;
 }
 
 .post-nav-label {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
-  font-family: var(--font-mono);
   color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+  font-size: 12px;
 }
 
 .post-nav-title {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-primary);
+  max-width: 100%;
   overflow: hidden;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100%;
-}
-
-.post-nav-empty {
-  background: var(--surface-2);
-  padding: 1rem 1.25rem;
-}
-
-.post-nav-empty--next {
-  border-left: 0.5px solid var(--border);
 }
 
 .track-play {
@@ -386,9 +387,7 @@
     grid-template-columns: 1fr;
   }
 
-  .post-nav-link--next,
-  .post-nav-empty--next {
-    border-left: none;
-    border-top: 0.5px solid var(--border);
+  .post-nav-empty {
+    display: none;
   }
 }

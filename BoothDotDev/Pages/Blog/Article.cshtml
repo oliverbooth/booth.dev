@@ -46,19 +46,26 @@
         </div>
     }
 
-    <span class="eyebrow">@category.Name</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@post.Title</h1>
+    <div class="post-tags">
+        <span class="badge @(category.FontStyle == FontStyle.Serif ? "badge-magenta" : "")">@category.Name</span>
+        @foreach (var tag in post.Tags)
+        {
+            <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
+        }
+    </div>
+    <h1 class="post-title">@post.Title</h1>
 
     <div class="byline">
-        <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="@author.DisplayName" /></div>
-        <span class="meta">
-            @author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read
-            &middot; <a href="/blog/@(post.Slug).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id">Edit</a></text>
-            }
-        </span>
+        <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="" /></div>
+        <div class="byline-text">
+            <div class="byline-name">@author.DisplayName</div>
+            <div class="byline-meta">published @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read</div>
+        </div>
+        <a href="/blog/@(post.Slug).md" class="byline-link">view source</a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="byline-link">edit</a>
+        }
     </div>
 
     @if (post.ShowTableOfContents)
@@ -74,16 +81,6 @@
     <div class="prose @category.FontStyle.ToProseClass()" style="margin-top:2.5rem">
         @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.PublishedAt))
     </div>
-
-    @if (post.Tags.Count > 0)
-    {
-        <div style="border-top:0.5px solid var(--border);margin-top:2.5rem;padding-top:1.25rem;display:flex;gap:6px">
-            @foreach (var tag in post.Tags)
-            {
-                <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
-            }
-        </div>
-    }
 
     @{
         var previousPost = BlogPostService.GetPreviousPost(post);
