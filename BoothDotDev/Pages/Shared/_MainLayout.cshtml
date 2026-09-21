@@ -95,7 +95,12 @@
     </main>
 
     <footer class="site-footer">
-        <p>&copy; @DateTime.Now.Year &middot; Made with <i class="ti ti-heart-filled"></i> by @Strings.MyName &middot; Version @Version</p>
+        @{
+            // the informational version carries the full commit hash after a '+'; show a short one
+            var hashIndex = Version.IndexOf('+');
+            var shortVersion = hashIndex >= 0 ? Version[..Math.Min(Version.Length, hashIndex + 8)] : Version;
+        }
+        <p>&copy; @DateTime.Now.Year &middot; Made with <i class="ti ti-heart-filled"></i> by @Strings.MyName &middot; <span title="@Version">Version @shortVersion</span></p>
         <ul class="site-footer-links">
             <li><a href="https://git.booth.dev/oliver/booth.dev">Source</a></li>
             <li><a asp-page="/Privacy/Index">Privacy</a></li>
