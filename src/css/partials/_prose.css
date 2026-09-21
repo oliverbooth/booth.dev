@@ -250,15 +250,16 @@
   }
 
   pre {
-    background: var(--surface-1);
-    border: 0.5px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    margin: 1.5rem 0;
+    background: var(--syntax-bg);
+    color: var(--syntax-text);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card-soft);
+    padding: 22px 26px;
+    margin: 1.75rem 0;
     overflow-x: auto;
     font-family: var(--font-mono);
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.7;
 
     &.language-ansi {
       background: #0c0c0c !important;
@@ -268,11 +269,11 @@
     }
 
     .kw {
-      color: var(--accent);
+      color: var(--syntax-keyword);
     }
 
     .str {
-      color: var(--success-text);
+      color: var(--syntax-string);
     }
 
     code {
@@ -280,6 +281,7 @@
       background: none;
       color: inherit;
       display: block;
+      font-size: 1em;
 
       &[data-wrap] {
         white-space: pre-wrap;
@@ -287,21 +289,23 @@
       }
 
       mark {
-        background: var(--warning-text);
+        background: var(--syntax-number);
         padding: 2px 0;
         border-radius: 2px;
-        color: var(--surface-1) !important;
+        color: var(--syntax-bg) !important;
 
         * {
-          color: var(--surface-1) !important;
+          color: var(--syntax-bg) !important;
         }
       }
 
+      /* Prism's "tag" token shares its class name with the .tag pill component */
       .tag {
-        font-size: inherit;
-        border: none;
+        display: inline;
         padding: 0;
         border-radius: 0;
+        background: none;
+        font: inherit;
         text-decoration: none;
       }
     }

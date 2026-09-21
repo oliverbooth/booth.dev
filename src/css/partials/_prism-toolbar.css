@@ -1,60 +1,85 @@
-.code-toolbar > .toolbar, .scene-toolbar.toolbar {
+.scene-toolbar.toolbar {
   font-family: var(--font-sans) !important;
 }
 
-div.code-toolbar > .toolbar {
-  position: absolute;
-  z-index: 10;
-  top: 0.5rem;
-  right: 0.5rem;
-  line-height: 1;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+/* the frame Prism's toolbar plugin wraps around <pre>: a permanent header bar above the code */
+div.code-toolbar {
+  display: flex;
+  flex-direction: column;
+  margin: 1.75rem 0;
+  border-radius: var(--radius-md);
+  background: var(--syntax-bg);
+  box-shadow: var(--shadow-card-soft);
+  overflow: hidden;
 
-  > .toolbar-item {
-    display: inline-block;
-    line-height: 1;
+  > pre {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
 
-    > a,
-    > button,
-    > span {
-      padding: 0.3rem 0.55rem;
-      line-height: 1;
+  > .toolbar {
+    position: static;
+    order: -1;
+    /* Prism emits the copy button before the language label, so the row is reversed to put the label on the left */
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--code-header-bg);
+    font-family: var(--font-mono);
+    opacity: 1;
 
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 4px;
-      box-shadow: none;
+    > .toolbar-item {
+      display: inline-flex;
 
-      color: #eaeaf0;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-
-      transition: background-color 0.15s ease, border-color 0.15s ease;
-    }
-
-    > button {
-      background-color: rgba(0, 0, 0, 0.65); /* re-assert over the button-reset below */
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      font: inherit;
-      font-size: 0.7rem;
-      line-height: 1;
-      overflow: visible;
-      user-select: none;
-
-      &:hover,
-      &:focus-visible {
-        background: var(--accent, #6161cd);
-        border-color: var(--accent, #6161cd);
-        color: #fff;
+      /* language label: quiet text, not a chip; --syntax-punct because this bar is dark in both themes */
+      > span {
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background: none;
+        box-shadow: none;
+        color: var(--syntax-punct);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: lowercase;
       }
 
-      &:focus-visible {
-        outline: 2px solid #fff;
-        outline-offset: 2px;
+      /* the copy button; the icon flips to a check when Prism reports success */
+      > button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 8px;
+        background: var(--tag-bg);
+        box-shadow: none;
+        color: var(--tag-text);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+        text-transform: lowercase;
+        cursor: pointer;
+
+        &::before {
+          content: "\ea7a";
+          font-family: "tabler-icons";
+          font-size: 13px;
+        }
+
+        &[data-copy-state="copy-success"]::before {
+          content: "\ea5e";
+        }
+
+        &:hover,
+        &:focus-visible {
+          background: color-mix(in oklch, var(--tag-bg), var(--brand) 14%);
+        }
       }
     }
   }
