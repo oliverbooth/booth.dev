@@ -24,15 +24,21 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+  }
 
   a {
-    font-size: 13px;
-    color: var(--text-secondary);
+    font-size: 14px;
+    color: var(--text-muted);
     text-decoration: none;
 
-    &:hover {
-      color: var(--text-primary);
+    &:hover,
+    &:focus-visible {
+      color: var(--text);
     }
   }
 }
