@@ -78,18 +78,6 @@
         </nav>
     </header>
 
-    @if (QuineSource is not null)
-    {
-        <div class="code-bg" aria-hidden="true">
-            @for (var index = 0; index < 4; index++)
-            {
-                @QuineSource
-                @Environment.NewLine
-                @Environment.NewLine
-            }
-        </div>
-    }
-
     <main class="main">
         @RenderBody()
     </main>

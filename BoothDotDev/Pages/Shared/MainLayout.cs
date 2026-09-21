@@ -2,7 +2,6 @@ using System.Reflection;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Razor.Internal;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Shared;
 
@@ -41,12 +40,6 @@ public abstract class MainLayout : RazorPage<object>
     }
 
     /// <summary>
-    ///     Gets the source code of the current page for display in the Quine section.
-    /// </summary>
-    /// <value>The source code of the current page.</value>
-    public string? QuineSource { get; private set; }
-
-    /// <summary>
     ///     Gets the website's version string.
     /// </summary>
     /// <value>The website's version string.</value>
@@ -55,26 +48,14 @@ public abstract class MainLayout : RazorPage<object>
     /// <summary>
     ///     Initializes the layout.
     /// </summary>
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         var request = Context.Request;
         CurrentUrl = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
         SiteBaseUrl = new Uri($"{request.Scheme}://{request.Host}");
 
-        var env = Context.RequestServices.GetRequiredService<IWebHostEnvironment>();
-        var descriptor = ViewContext.ActionDescriptor as CompiledPageActionDescriptor;
-
-        if (descriptor?.RelativePath is { } relativePath)
-        {
-            var file = env.ContentRootFileProvider.GetFileInfo(relativePath);
-            if (file.Exists)
-            {
-                using var reader = new StreamReader(file.CreateReadStream());
-                QuineSource = await reader.ReadToEndAsync();
-            }
-        }
-
         var attribute = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
         Version = attribute?.InformationalVersion ?? "<unknown>";
+        return Task.CompletedTask;
     }
 }

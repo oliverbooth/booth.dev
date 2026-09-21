@@ -25,7 +25,6 @@ html {
   margin: 0 auto;
   padding: 3rem 2rem 4rem;
   position: relative;
-  background: var(--bg);
 }
 
 .page {
