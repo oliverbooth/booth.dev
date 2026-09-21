@@ -1,0 +1,20 @@
+/* toggle shows the current theme's icon */
+:root[data-theme="light"] .theme-toggle .ti-moon,
+:root:not([data-theme="light"]) .theme-toggle .ti-sun {
+  display: none;
+}
+
+/* theme.ts sets data-theme-fading for the length of a switch; outside that window this rule doesn't exist */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-theme-fading] *,
+  :root[data-theme-fading] *::before,
+  :root[data-theme-fading] *::after {
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease,
+      fill 0.4s ease,
+      stroke 0.4s ease !important;
+  }
+}

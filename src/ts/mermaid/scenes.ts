@@ -5,15 +5,15 @@ mermaid.initialize({
     theme: 'base',
     themeVariables: {
         darkMode: true,
-        background: cssVar('--surface-1'),
-        primaryColor: cssVar('--surface-2'),
-        primaryTextColor: cssVar('--text-primary'),
-        primaryBorderColor: cssVar('--accent'),
-        secondaryColor: cssVar('--surface-2'),
-        tertiaryColor: cssVar('--surface-2'),
-        lineColor: cssVar('--text-secondary'),
-        textColor: cssVar('--text-primary'),
-        edgeLabelBackground: cssVar('--surface-1'),
+        background: cssColor('--surface-1'),
+        primaryColor: cssColor('--surface-2'),
+        primaryTextColor: cssColor('--code-text'),
+        primaryBorderColor: cssColor('--accent'),
+        secondaryColor: cssColor('--surface-2'),
+        tertiaryColor: cssColor('--surface-2'),
+        lineColor: cssColor('--syntax-punct'),
+        textColor: cssColor('--code-text'),
+        edgeLabelBackground: cssColor('--surface-1'),
         fontFamily: cssVar('--font-sans'),
     },
 });
@@ -24,6 +24,24 @@ mermaid.initialize({
  */
 function cssVar(name: string): string {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/**
+ * Reads a CSS custom property holding a color and converts it to sRGB hex. Mermaid's color parser doesn't understand
+ * modern color spaces like `oklch()`, which is what the theme tokens resolve to, so the browser does the conversion.
+ * @param name The custom property's name, e.g. `--code-text`.
+ */
+function cssColor(name: string): string {
+    const context = document.createElement('canvas').getContext('2d');
+    if (!context) {
+        return cssVar(name);
+    }
+
+    context.fillStyle = cssVar(name);
+    context.fillRect(0, 0, 1, 1);
+    const [red, green, blue, alpha] = context.getImageData(0, 0, 1, 1).data;
+    const channels = alpha === 255 ? [red, green, blue] : [red, green, blue, alpha];
+    return '#' + channels.map(channel => channel.toString(16).padStart(2, '0')).join('');
 }
 
 /**

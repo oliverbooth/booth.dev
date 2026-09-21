@@ -9,8 +9,10 @@ import {initLightbox} from './lightbox.ts';
 import {initTerminalTypewriters} from './terminal.ts';
 import {initAvatarFallback} from './avatar-fallback.ts';
 import {initNowClock} from './now-clock.ts';
+import {initTheme} from './theme.ts';
 
 (() => {
+    initTheme();
     initFavicon();
     initAltTextPopovers();
     initCopyButtons();

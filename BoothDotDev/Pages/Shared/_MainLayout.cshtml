@@ -11,6 +11,22 @@
     <meta property="og:url" content="@CurrentUrl">
     <meta property="twitter:url" content="@CurrentUrl">
     <meta name="theme-color" content="#6161cd">
+    <script>
+        // runs before first paint to avoid a flash of the wrong theme; keep in step with resolveTheme() in theme.ts
+        (() => {
+            let theme = null;
+            try {
+                theme = localStorage.getItem('theme');
+            } catch {
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+
+            document.documentElement.dataset.theme = theme;
+        })();
+    </script>
     <title>@PageTitle</title>
 
     @Html.Raw(HtmlUtility.CreateMetaTagsForContent(ViewData["Post"], SiteBaseUrl, MarkdownRenderingService, PageTitle, Strings.Tagline))
@@ -56,6 +72,10 @@
                 <a asp-page="/Donate" page-match="/Donate">Donate</a>
                 <button type="button" class="icon-link" data-palette-trigger aria-label="Search (Ctrl+K)" title="Search (Ctrl+K)">
                     <i class="ti ti-search"></i>
+                </button>
+                <button type="button" class="icon-link theme-toggle" data-theme-toggle aria-label="Dark mode" title="Toggle dark mode">
+                    <i class="ti ti-sun" aria-hidden="true"></i>
+                    <i class="ti ti-moon" aria-hidden="true"></i>
                 </button>
             </div>
         </nav>
