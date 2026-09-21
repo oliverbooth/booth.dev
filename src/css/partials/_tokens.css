@@ -36,12 +36,17 @@
   --surface-nav: oklch(24% 0.03 275);
   --text: oklch(96% 0.006 275);
   --text-muted: oklch(74% 0.02 275);
-  --text-faint: oklch(58% 0.02 275);
+  --text-faint: oklch(64% 0.02 275);
   --text-nav: oklch(78% 0.02 275);
 
   --brand-text: oklch(80% 0.1 275);
   --brand-chip: oklch(28% 0.05 275);
   --marker-bg: oklch(35% 0.08 95);
+
+  /* text-safe accents: same hues as the fills, adjusted to clear AA on the backgrounds they sit on */
+  --coral-text: var(--accent-coral);
+  --teal-text: var(--accent-teal);
+  --magenta-text: oklch(74% 0.19 340);
 
   --shadow-card: 0 16px 32px -12px oklch(5% 0.02 275 / 0.7);
   --shadow-card-soft: 0 8px 18px -8px oklch(5% 0.02 275 / 0.55);
@@ -49,7 +54,7 @@
   --shadow-toggle: 0 6px 16px -4px oklch(10% 0.02 275 / 0.7);
   --shadow-hero-text: 0 4px 24px oklch(50% 0.2 280 / 0.4);
 
-  --cta-bg: linear-gradient(135deg, var(--brand), oklch(60% 0.2 300));
+  --cta-bg: linear-gradient(135deg, var(--brand), oklch(57% 0.2 300));
   --cta-alt-bg: oklch(28% 0.03 275);
   --shadow-cta: 0 14px 26px -8px oklch(50% 0.2 280 / 0.55);
 
@@ -79,7 +84,7 @@
   --callout-warning-bg: oklch(28% 0.05 70);
   --callout-warning-text: oklch(82% 0.1 70);
   --callout-private-bg: oklch(27% 0.05 340);
-  --callout-private-text: var(--accent-magenta);
+  --callout-private-text: var(--magenta-text);
   --callout-unlisted-bg: oklch(23% 0.015 275);
   --callout-unlisted-text: oklch(65% 0.015 275);
 
@@ -87,11 +92,11 @@
   --code-text: oklch(88% 0.03 275);
   --syntax-bg: oklch(16% 0.02 275);
   --syntax-text: oklch(88% 0.02 275);
-  --syntax-comment: oklch(50% 0.02 275);
-  --syntax-punct: oklch(60% 0.02 275);
+  --syntax-comment: oklch(59% 0.02 275);
+  --syntax-punct: oklch(68% 0.02 275);
 
   --archived-bg: oklch(20% 0.015 275);
-  --archived-text: oklch(58% 0.015 275);
+  --archived-text: oklch(61% 0.015 275);
 
   --palette-overlay: oklch(5% 0.02 275 / 0.6);
   --palette-bg: oklch(19% 0.02 275);
@@ -114,12 +119,16 @@
   --surface-nav: oklch(97% 0.012 275);
   --text: oklch(23% 0.02 275);
   --text-muted: oklch(45% 0.02 275);
-  --text-faint: oklch(58% 0.015 275);
+  --text-faint: oklch(50% 0.015 275);
   --text-nav: oklch(40% 0.02 275);
 
-  --brand-text: var(--brand);
+  --brand-text: oklch(50% 0.17 275);
   --brand-chip: oklch(92% 0.03 275);
   --marker-bg: oklch(85% 0.1 95);
+
+  --coral-text: oklch(48% 0.16 38);
+  --teal-text: oklch(45% 0.136 165);
+  --magenta-text: oklch(48% 0.16 340);
 
   --shadow-card: 0 14px 30px -12px oklch(45% 0.06 275 / 0.32);
   --shadow-card-soft: 0 8px 18px -8px oklch(45% 0.06 275 / 0.24);
@@ -153,11 +162,11 @@
   --dont-text: oklch(45% 0.11 25);
 
   --callout-note-bg: oklch(94% 0.03 275);
-  --callout-note-text: var(--brand);
+  --callout-note-text: var(--brand-text);
   --callout-warning-bg: oklch(93% 0.05 75);
   --callout-warning-text: oklch(45% 0.11 60);
   --callout-private-bg: oklch(93% 0.03 340);
-  --callout-private-text: var(--accent-magenta);
+  --callout-private-text: var(--magenta-text);
   --callout-unlisted-bg: oklch(90% 0.008 275);
   --callout-unlisted-text: oklch(45% 0.015 275);
 
@@ -165,11 +174,11 @@
   --code-text: oklch(88% 0.03 275);
   --syntax-bg: oklch(20% 0.02 275);
   --syntax-text: oklch(88% 0.02 275);
-  --syntax-comment: oklch(55% 0.02 275);
+  --syntax-comment: oklch(61% 0.02 275);
   --syntax-punct: oklch(68% 0.02 275);
 
   --archived-bg: oklch(90% 0.012 275);
-  --archived-text: oklch(50% 0.015 275);
+  --archived-text: oklch(47% 0.015 275);
 
   --palette-overlay: oklch(15% 0.02 275 / 0.45);
   --palette-bg: oklch(98% 0.008 275);
