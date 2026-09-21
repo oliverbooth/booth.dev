@@ -3,15 +3,17 @@ import {defaultKeymap, history, historyKeymap} from '@codemirror/commands';
 import {markdown} from '@codemirror/lang-markdown';
 import {languages} from '@codemirror/language-data';
 import {syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from '@codemirror/language';
+import {Compartment} from '@codemirror/state';
 import {keymap} from '@codemirror/view';
 import {tags} from '@lezer/highlight';
+import {currentTheme} from '../theme.ts';
 
 const highlightStyle = HighlightStyle.define([
-    {tag: tags.heading, fontWeight: 'bold', color: 'var(--accent)'},
+    {tag: tags.heading, fontWeight: 'bold', color: 'var(--brand-text)'},
     {tag: tags.strong, fontWeight: 'bold'},
     {tag: tags.emphasis, fontStyle: 'italic'},
     {tag: tags.monospace, fontFamily: 'var(--font-mono)', fontSize: '0.85em'},
-    {tag: tags.link, color: 'var(--accent)', textDecoration: 'underline'},
+    {tag: tags.link, color: 'var(--brand-text)', textDecoration: 'underline'},
     {tag: tags.angleBracket, color: 'var(--text-faint)'},
     {tag: tags.comment, color: 'var(--prism-comment)'},
     {tag: tags.string, color: 'var(--prism-string)'},
@@ -47,29 +49,43 @@ async function mountEditor(textarea: HTMLTextAreaElement): Promise<void> {
     const rows: number = textarea.rows || 10;
     const maxHeight: string = `${rows * lineHeightPx}px`;
 
-    const viewTheme = EditorView.theme({
+    // the editor is styled to match the other form fields (see _forms.css); `dark` only picks CodeMirror's own defaults
+    const buildTheme = (dark: boolean) => EditorView.theme({
         '&': {
-            color: 'var(--text-primary)',
+            color: 'var(--text)',
             fontSize: '14px',
             lineHeight: '1.8',
         },
         '.cm-content': {
             fontFamily: 'var(--font-mono)',
-            padding: '0.75rem',
-            caretColor: 'var(--text-primary)',
+            padding: '11px 14px',
+            caretColor: 'var(--text)',
         },
         '.cm-scroller': {overflow: 'auto'},
         '.cm-cursor, .cm-dropCursor': {
-            borderLeftColor: 'var(--text-primary)',
+            borderLeftColor: 'var(--text)',
             borderLeftWidth: '2px',
         },
         '&.cm-editor': {
             maxHeight,
-            background: 'var(--surface-1)',
-            border: '0.5px solid var(--border)',
-            borderRadius: '8px',
+            background: 'var(--surface)',
+            boxShadow: 'inset 0 -2px 0 var(--text-faint)',
+            borderRadius: '12px',
+            transition: 'background-color 0.15s ease, box-shadow 0.15s ease',
         },
-    }, {dark: true});
+        // CodeMirror's own focus outline is replaced by the thicker brand underline; the transparent outline
+        // only shows in forced-colors mode
+        '&.cm-editor.cm-focused': {
+            outline: '2px solid transparent',
+            outlineOffset: '2px',
+            background: 'var(--input-focus-bg)',
+            boxShadow: 'inset 0 -3px 0 var(--brand-text)',
+        },
+        '&.cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
+            background: 'color-mix(in oklch, var(--brand) 35%, transparent)',
+        },
+    }, {dark});
+    const themeCompartment = new Compartment();
 
     const view = new EditorView({
         doc: textarea.value,
@@ -86,7 +102,7 @@ async function mountEditor(textarea: HTMLTextAreaElement): Promise<void> {
             markdown({codeLanguages: languages}),
             syntaxHighlighting(defaultHighlightStyle, {fallback: true}),
             syntaxHighlighting(highlightStyle),
-            viewTheme,
+            themeCompartment.of(buildTheme(currentTheme() === 'dark')),
             EditorView.lineWrapping,
             EditorView.updateListener.of((update) => {
                 if (update.docChanged) {
@@ -95,6 +111,11 @@ async function mountEditor(textarea: HTMLTextAreaElement): Promise<void> {
                 }
             }),
         ],
+    });
+
+    // CodeMirror themes are fixed at mount, so a theme switch has to reconfigure each open editor
+    document.addEventListener('themechange', () => {
+        view.dispatch({effects: themeCompartment.reconfigure(buildTheme(currentTheme() === 'dark'))});
     });
 
     textarea.style.display = 'none';

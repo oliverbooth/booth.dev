@@ -71,6 +71,8 @@
   --row-tint-teal: oklch(23% 0.025 165);
   --row-tint-magenta: oklch(24% 0.03 340);
 
+  --input-focus-bg: oklch(26% 0.03 275);
+
   --table-head-bg: oklch(27% 0.035 275);
   --table-stripe: oklch(20% 0.02 275);
 
@@ -152,6 +154,8 @@
   --row-tint-coral: oklch(96% 0.025 40);
   --row-tint-teal: oklch(96% 0.02 165);
   --row-tint-magenta: oklch(96% 0.025 340);
+
+  --input-focus-bg: oklch(91% 0.02 275);
 
   --table-head-bg: oklch(92% 0.025 275);
   --table-stripe: oklch(96% 0.015 275);
