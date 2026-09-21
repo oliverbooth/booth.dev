@@ -2,6 +2,7 @@
 @inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @model Challenge
 @{
@@ -30,36 +31,27 @@
         </div>
     }
 
-    <span class="eyebrow">Challenge</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@challenge.Title</h1>
+    @{
+        var header = new ContentHeader
+        {
+            Title = challenge.Title,
+            Badge = "challenge",
+            BadgeClass = "badge-magenta",
+            Meta = [$"published {challenge.PublishedAt.ToShortString()}", hasSolution ? "solution available" : "solution locked"],
+            SourceUrl = $"/challenge/{challenge.Id}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Challenges/Edit", new { id = challenge.Id }) : null
+        };
+    }
 
-    <div class="byline">
-        <span class="meta">
-            Published @challenge.PublishedAt.ToShortString()
-            &middot;
-            @if (hasSolution)
-            {
-                <span style="color:var(--success-text)"><i class="ti ti-check" style="font-size:13px;vertical-align:-1px"></i> Solution available</span>
-            }
-            else
-            {
-                <span style="color:var(--text-faint)"><i class="ti ti-lock" style="font-size:13px;vertical-align:-1px"></i> Solution locked</span>
-            }
-            &middot; <a href="/challenge/@(challenge.Id).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+    <partial name="Partials/_ContentHeader" model="header" />
 
-    <div class="prose" style="margin-top:2rem">
+    <div class="prose">
         @Html.Raw(MarkdownRenderingService.Render(challenge.Description, challenge.Id, challenge.PublishedAt, "challenge"))
     </div>
 
     @if (hasSolution)
     {
-        <div class="prose" style="margin-top:2rem">
+        <div class="prose challenge-solution">
             <details class="callout" data-callout="success">
                 <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
                 <div class="callout-body">
@@ -70,8 +62,8 @@
     }
     else
     {
-        <div class="challenge-locked" style="margin-top:2rem">
-            <i class="ti ti-lock" style="font-size:22px"></i>
+        <div class="challenge-locked">
+            <span class="challenge-locked-icon"><i class="ti ti-lock" aria-hidden="true"></i></span>
             <p class="challenge-locked-title">Solution not released yet</p>
             <p class="challenge-locked-desc">Give it a real attempt first. Check back later for the official solution.</p>
         </div>

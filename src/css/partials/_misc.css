@@ -1,3 +1,7 @@
+.mb-section {
+  margin-bottom: 2.5rem;
+}
+
 .section-head {
   display: flex;
   align-items: baseline;

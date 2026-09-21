@@ -9,7 +9,7 @@
     ViewData["Page"] = "Challenges";
 }
 
-<div class="page-wide">
+<div class="page-grid">
 
     <div class="page-header-row">
         <p class="crumb"><a asp-page="/Index">Home</a> / Challenges</p>
@@ -36,7 +36,7 @@
                 <div class="card-icon">
                     <i class="ti ti-code"></i>
                     <span class="card-status-badge@(hasSolution ? "" : " done")">
-                        <i class="ti @(hasSolution ? "ti-check" : "ti-lock")" style="font-size:12px"></i>
+                        <i class="ti @(hasSolution ? "ti-check" : "ti-lock")" aria-hidden="true"></i>
                         @(hasSolution ? "Solution unlocked" : "Solution locked")
                     </span>
                 </div>

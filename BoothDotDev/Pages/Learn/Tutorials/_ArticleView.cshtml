@@ -1,6 +1,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using FluentResults
 @using Humanizer
@@ -19,6 +20,38 @@
 
 @{
     var published = article.PublishedAt;
+
+    var series = new List<TutorialArticle>();
+    if (article.HasOtherParts)
+    {
+        // walk back to the first part, then forward through the rest; the sets guard against a malformed cycle
+        var first = article;
+        var visited = new HashSet<Guid> { article.Id };
+        while (first.PreviousPart is { } previousId
+               && TutorialService.GetArticle(previousId) is { IsSuccess: true } previous
+               && visited.Add(previous.Value.Id))
+        {
+            first = previous.Value;
+        }
+
+        series.Add(first);
+        visited = [first.Id];
+        var cursor = first;
+        while (cursor.NextPart is { } nextId
+               && TutorialService.GetArticle(nextId) is { IsSuccess: true } next
+               && visited.Add(next.Value.Id))
+        {
+            series.Add(next.Value);
+            cursor = next.Value;
+        }
+
+        // unpublished parts are only listed for the site owner, or when it's the article being read
+        var isOwner = User.Identity?.IsAuthenticated == true;
+        series = [.. series.Where(part => part.Id == article.Id || part.Visibility == Visibility.Published || isOwner)];
+    }
+
+    var partNumber = series.FindIndex(part => part.Id == article.Id) + 1;
+    var seriesFolder = TutorialService.GetFolder(article.Folder);
 
     var parents = new Stack<TutorialFolder>();
     Guid? parent = article.Folder;
@@ -67,19 +100,46 @@
         </div>
     }
 
-    <span class="eyebrow">Tutorial</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@article.Title</h1>
+    @{
+        var meta = new List<string> { $"published {published.ToShortString()}", $"{article.GetEstimatedReadingTime()} min read" };
+        if (series.Count > 1)
+        {
+            meta.Insert(0, $"part {partNumber} of {series.Count}");
+        }
 
-    <div class="byline">
-        <span class="meta">
-            @published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read
-            &middot; <a href="/learn/@(TutorialService.GetFullSlug(article)).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+        var header = new ContentHeader
+        {
+            Title = article.Title,
+            Badge = "tutorial",
+            Meta = meta,
+            SourceUrl = $"/learn/{TutorialService.GetFullSlug(article)}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Tutorials/Edit", new { id = article.Id }) : null
+        };
+    }
+
+    <partial name="Partials/_ContentHeader" model="header" />
+
+    @if (series.Count > 1)
+    {
+        <nav class="series-box" aria-label="Series">
+            <p class="series-title">series@(seriesFolder.IsSuccess ? $": {seriesFolder.Value.Title.ToLower()}" : "")</p>
+            <ol>
+                @for (var index = 0; index < series.Count; index++)
+                {
+                    var part = series[index];
+                    var isCurrent = part.Id == article.Id;
+
+                    <li>
+                        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(part)"
+                           aria-current="@(isCurrent ? "page" : null)" class="@(isCurrent ? "current" : "")">
+                            <span class="series-num">@((index + 1).ToString("00"))</span>
+                            <span>@part.Title</span>
+                        </a>
+                    </li>
+                }
+            </ol>
+        </nav>
+    }
 
     @if (article.ShowTableOfContents)
     {
@@ -91,7 +151,7 @@
         </details>
     }
 
-    <div class="prose" style="margin-top:2.5rem">
+    <div class="prose">
         @Html.Raw(MarkdownRenderingService.Render(article, article.Id, article.PublishedAt))
     </div>
 

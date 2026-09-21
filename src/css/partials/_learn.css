@@ -1,0 +1,90 @@
+.series-box {
+  margin: 0 0 2rem;
+  padding: 18px 22px;
+  border-radius: var(--radius-md);
+  background: var(--row-tint-brand);
+  box-shadow: var(--shadow-card-soft);
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--text);
+    }
+
+    &.current {
+      color: var(--brand-text);
+      font-weight: 700;
+    }
+  }
+}
+
+.series-title {
+  margin: 0 0 10px;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.series-num {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+.challenge-solution {
+  margin-top: 2rem;
+}
+
+.challenge-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2rem;
+  padding: 32px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--row-tint-magenta);
+  box-shadow: var(--shadow-card-soft);
+  text-align: center;
+}
+
+.challenge-locked-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
+  color: var(--magenta-text);
+  font-size: 22px;
+}
+
+.challenge-locked-title {
+  margin: 6px 0 0;
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.challenge-locked-desc {
+  max-width: 380px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
