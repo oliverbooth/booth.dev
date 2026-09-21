@@ -75,8 +75,10 @@
   }
 
   h1 {
+    color: var(--text);
     font-size: 30px;
     margin: 2.5rem 0 1rem;
+    text-shadow: none;
   }
 
   h2 {
@@ -400,10 +402,8 @@
 
 .post-title {
   margin: 0 0 14px;
-  color: var(--brand-text);
   font-size: 44px;
   line-height: 1.1;
-  text-shadow: var(--shadow-hero-text);
 }
 
 .post-tags {
@@ -442,4 +442,9 @@ abbr[title] {
   font-size: 0.85em;
   color: var(--text-faint);
   text-align: center;
+
+  a {
+    color: var(--brand-text);
+    text-underline-offset: 3px;
+  }
 }

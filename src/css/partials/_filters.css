@@ -29,6 +29,12 @@
     min-height: 0;
   }
 
+  /* expanded sections clip with a margin so shadows and tilted corners aren't cut off; collapsing needs a hard clip */
+  &:not(.is-collapsed) > .collapse-inner {
+    overflow: clip;
+    overflow-clip-margin: 24px;
+  }
+
   &.is-collapsed {
     grid-template-rows: 0fr;
     opacity: 0;

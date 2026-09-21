@@ -37,10 +37,12 @@ h3 {
 }
 
 h1 {
+  color: var(--brand-text);
   font-size: 48px;
   font-weight: 800;
   line-height: 1.1;
   margin: 0 0 1.5rem;
+  text-shadow: var(--shadow-hero-text);
 }
 
 h2 {

@@ -16,7 +16,7 @@
 
     @if (Model.UpdatedAt is { } updatedAt)
     {
-        <p class="byline"><span class="meta">Updated @updatedAt.ToShortString()</span></p>
+        <p class="page-updated">Updated @updatedAt.ToShortString()</p>
     }
 
     @if (Model.Entries.Count == 0)
@@ -25,11 +25,16 @@
     }
     else
     {
-        @foreach (var entry in Model.Entries)
+        string[] badgeStyles = ["badge-brand", "badge-coral", "", "badge-magenta"];
+
+        @for (var index = 0; index < Model.Entries.Count; index++)
         {
+            var entry = Model.Entries[index];
+
             <section class="someday-entry" id="@entry.Slug">
+                <span class="badge @badgeStyles[index % badgeStyles.Length]">@((index + 1).ToString("00"))</span>
                 <h2>Someday, @entry.Title</h2>
-                <div class="prose prose--serif">
+                <div class="prose">
                     @Html.Raw(MarkdownRenderingService.Render(entry, entry.Id, entry.PublishedAt))
                 </div>
             </section>

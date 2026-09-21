@@ -159,6 +159,8 @@
 
   h1 {
     margin: 0 0 4px;
+    color: var(--text);
+    text-shadow: none;
   }
 
   p {
