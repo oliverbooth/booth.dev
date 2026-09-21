@@ -67,7 +67,7 @@
 
 .project-devlog-title {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   margin: 0 0 10px;
 }
 
@@ -84,6 +84,6 @@
 
   .project-devlog-time {
     font-size: 13px;
-    color: var(--text-muted);
+    color: var(--text-faint);
   }
 }

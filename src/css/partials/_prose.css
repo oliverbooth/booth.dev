@@ -9,7 +9,7 @@
 
   .md-subtext {
     font-size: 0.8em;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin: 0 0 0.25rem;
   }
 
@@ -245,6 +245,6 @@ abbr[title] {
 
 .page-footnote {
   font-size: 0.85em;
-  color: var(--text-muted);
+  color: var(--text-faint);
   text-align: center;
 }

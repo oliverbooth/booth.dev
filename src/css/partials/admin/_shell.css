@@ -59,7 +59,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-muted);
+  color: var(--text-faint);
   padding: 6px 10px 4px;
 }
 
@@ -130,7 +130,7 @@
 
   .role {
     font-size: 11px;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin: 0;
   }
 }

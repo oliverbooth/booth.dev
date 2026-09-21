@@ -5,7 +5,7 @@
 .no-comment {
   text-align: center;
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--text-faint);
 }
 
 .legacy-comments-heading {
@@ -17,7 +17,7 @@
 
 .legacy-comments-subtitle {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   margin: 4px 0 1.5rem;
   text-align: center;
 }
@@ -82,7 +82,7 @@
 
 .legacy-comment-time {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   text-decoration: none;
 }
 

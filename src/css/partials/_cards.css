@@ -32,7 +32,7 @@
   overflow: hidden;
 
   &.done {
-    color: var(--text-muted);
+    color: var(--text-faint);
   }
 
   img {
@@ -58,7 +58,7 @@
   -webkit-backdrop-filter: blur(4px);
 
   &.done {
-    color: var(--text-muted);
+    color: var(--text-faint);
   }
 }
 
@@ -81,7 +81,7 @@
   .branch {
     font-family: var(--font-mono);
     font-size: 11px;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin: 0 0 8px;
     display: flex;
     align-items: center;

@@ -30,6 +30,6 @@
 }
 
 .path-sep {
-  color: var(--text-muted);
+  color: var(--text-faint);
   font-size: 13px;
 }

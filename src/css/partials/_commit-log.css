@@ -40,7 +40,7 @@
   }
 
   &.muted {
-    background: var(--text-muted);
+    background: var(--text-faint);
   }
 }
 
@@ -54,7 +54,7 @@
 .commit-hash {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-faint);
 }
 
 .commit-tag {
@@ -70,7 +70,7 @@
 
 .commit-sub {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   margin: 0;
 }
 

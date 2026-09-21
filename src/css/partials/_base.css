@@ -2,10 +2,6 @@
   box-sizing: border-box;
 }
 
-html {
-  color-scheme: dark;
-}
-
 body {
   margin: 0;
   background: var(--bg);
@@ -117,7 +113,7 @@ button:focus-visible,
 
   i {
     font-size: 32px;
-    color: var(--text-muted);
+    color: var(--text-faint);
   }
   
   img {
@@ -137,7 +133,7 @@ button:focus-visible,
 
 .footnote {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   margin-top: 2rem;
 }
 

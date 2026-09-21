@@ -69,7 +69,7 @@
   padding: 1rem 1.25rem;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: var(--text-muted);
+  color: var(--text-faint);
 }
 
 .lightbox-alt-text {

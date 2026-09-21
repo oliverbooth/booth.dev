@@ -14,7 +14,7 @@
   --callout-question: var(--warning-text);
   --callout-warning: var(--warning-text);
 
-  --callout-cite: var(--text-muted);
+  --callout-cite: var(--text-faint);
 
   --callout-failure: var(--danger-text);
   --callout-danger: var(--danger-text);

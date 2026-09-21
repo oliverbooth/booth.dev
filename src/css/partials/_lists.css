@@ -51,7 +51,7 @@
 
   .sub {
     font-size: 13px;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin: 0;
   }
 }
@@ -63,11 +63,11 @@
 }
 
 .section-icon--accent { color: var(--accent); }
-.section-icon--muted { color: var(--text-muted); }
+.section-icon--muted { color: var(--text-faint); }
 .section-icon--success { color: var(--success-text); }
 
 .item-icon--accent { color: var(--accent); }
-.item-icon--muted { color: var(--text-muted); }
+.item-icon--muted { color: var(--text-faint); }
 .item-icon--success { color: var(--success-text); }
 
 .stack-meta--row {
@@ -79,14 +79,14 @@
 }
 
 .stack-author {
-  color: var(--text-muted);
+  color: var(--text-faint);
   font-weight: 400;
 }
 
 .meta-value {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   white-space: nowrap;
 }
 
@@ -95,7 +95,7 @@
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   text-decoration: none;
   white-space: nowrap;
 
@@ -142,7 +142,7 @@
 
 .copy-icon {
   font-size: 15px;
-  color: var(--text-muted);
+  color: var(--text-faint);
   cursor: pointer;
   flex-shrink: 0;
   transition: color 0.15s ease;
@@ -189,7 +189,7 @@
   gap: 4px;
   font-size: 12px;
   font-family: var(--font-mono);
-  color: var(--text-muted);
+  color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }

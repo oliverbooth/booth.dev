@@ -69,7 +69,7 @@
   flex-shrink: 0;
 
   &.done {
-    background: var(--text-muted);
+    background: var(--text-faint);
   }
 }
 

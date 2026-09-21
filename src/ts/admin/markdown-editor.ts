@@ -12,7 +12,7 @@ const highlightStyle = HighlightStyle.define([
     {tag: tags.emphasis, fontStyle: 'italic'},
     {tag: tags.monospace, fontFamily: 'var(--font-mono)', fontSize: '0.85em'},
     {tag: tags.link, color: 'var(--accent)', textDecoration: 'underline'},
-    {tag: tags.angleBracket, color: 'var(--text-muted)'},
+    {tag: tags.angleBracket, color: 'var(--text-faint)'},
     {tag: tags.comment, color: 'var(--prism-comment)'},
     {tag: tags.string, color: 'var(--prism-string)'},
     {tag: [tags.function(tags.variableName), tags.function(tags.propertyName)], color: 'var(--prism-function)'},
