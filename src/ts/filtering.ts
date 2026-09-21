@@ -18,8 +18,10 @@ export function initFiltering(): void {
             const filter: string = pill.dataset.filter ?? 'all';
             const filterKind: string = pill.dataset.filterKind ?? 'post';
 
-            pills.forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
+            for (const p of pills) {
+                p.classList.toggle('active', p === pill);
+                p.setAttribute('aria-pressed', String(p === pill));
+            }
 
             for (const section of sections) {
                 const sectionKind: string = section.dataset.kind ?? 'post';

@@ -1,28 +1,53 @@
+/* ---------- filter chips ---------- */
 .pill {
-  font-size: 13px;
-  color: var(--text-secondary);
-  padding: 5px 12px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
 
-  &.active {
-    color: var(--accent);
-    background: var(--accent-tint);
-    font-weight: 500;
+  &:is(button, a) {
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    &:is(button, a):not(.active, [aria-pressed="true"]):hover {
+      color: var(--text);
+    }
+  }
+
+  &.active,
+  &[aria-pressed="true"] {
+    background: var(--brand-text);
+    color: var(--on-brand-text);
   }
 }
 
+/* ---------- tags ---------- */
 .tag {
   display: inline-flex;
   align-items: center;
-  font-size: 12px;
-  color: var(--text-secondary);
-  border: 0.5px solid var(--border-strong);
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
   text-decoration: none;
-  
+
+  &:is(a):hover {
+    background: color-mix(in oklch, var(--tag-bg), var(--brand) 14%);
+  }
+
   img {
     height: 12px;
     width: auto;
@@ -31,40 +56,51 @@
   }
 }
 
+/* ---------- status / kind badges (teal by default) ---------- */
+.badge,
 .status {
+  --badge-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
+  --badge-text: var(--teal-text);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-family: var(--font-mono);
   font-size: 11px;
-  padding: 2px 9px;
-  border-radius: 20px;
-  color: var(--success-text);
-  background: var(--success-bg);
+  font-weight: 600;
 
-  &.done {
-    color: var(--text-secondary);
-    background: var(--surface-1);
+  .dot {
+    background: currentColor;
   }
+}
 
-  &.hiatus {
-    color: var(--warning-text);
-    background: var(--warning-bg);
-    .dot {
-      background: var(--warning-text);
-    }
-  }
+.badge-coral,
+.status.hiatus {
+  --badge-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
+  --badge-text: var(--coral-text);
+}
 
-  &.retired {
-    color: var(--danger-text);
-    background: var(--danger-bg);
-    .dot {
-      background: var(--danger-text);
-    }
-  }
+.badge-magenta,
+.status.retired {
+  --badge-bg: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
+  --badge-text: var(--magenta-text);
+}
+
+.badge-brand,
+.status.done {
+  --badge-bg: var(--brand-chip);
+  --badge-text: var(--brand-text);
 }
 
 .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #3fb950;
+  background: var(--accent-teal);
   display: inline-block;
   flex-shrink: 0;
 
@@ -73,12 +109,12 @@
   }
 }
 
+/* ---------- eyebrow label ---------- */
 .eyebrow {
-  font-size: 12px;
+  display: inline-block;
+  color: var(--brand-text);
+  font-family: var(--font-mono);
+  font-size: 13px;
   font-weight: 500;
-  color: var(--accent);
-}
-
-.filter-row .pill {
-  cursor: pointer;
+  transform: rotate(calc(-1deg * var(--motion) * var(--tilt-on)));
 }

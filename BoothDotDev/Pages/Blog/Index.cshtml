@@ -31,12 +31,12 @@
 
     <div data-filter-scope>
         <div class="filter-row">
-            <span class="pill active">All</span>
+            <button type="button" class="pill active" aria-pressed="true">All</button>
             @foreach (var category in Model.BlogPostCategories)
             {
-                <span class="pill" data-filter="@category.Id">@category.Name</span>
+                <button type="button" class="pill" aria-pressed="false" data-filter="@category.Id">@category.Name</button>
             }
-            <span class="pill" data-filter-kind="note">Notes</span>
+            <button type="button" class="pill" aria-pressed="false" data-filter-kind="note">Notes</button>
             <a class="pill" asp-page="/Someday">Someday</a>
         </div>
 

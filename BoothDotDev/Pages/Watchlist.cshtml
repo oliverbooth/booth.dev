@@ -18,10 +18,10 @@
 
     <div data-filter-scope>
         <div class="filter-row" id="watchlist-filters">
-            <span class="pill active" data-filter="all">All</span>
-            <span class="pill" data-filter="watching">Watching</span>
-            <span class="pill" data-filter="plan-to-watch">Plan to watch</span>
-            <span class="pill" data-filter="watched">Watched</span>
+            <button type="button" class="pill active" aria-pressed="true" data-filter="all">All</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="watching">Watching</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="plan-to-watch">Plan to watch</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="watched">Watched</button>
         </div>
 
         @{

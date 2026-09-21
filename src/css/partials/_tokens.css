@@ -40,6 +40,7 @@
   --text-nav: oklch(78% 0.02 275);
 
   --brand-text: oklch(80% 0.1 275);
+  --on-brand-text: oklch(16% 0.02 275);
   --brand-chip: oklch(28% 0.05 275);
   --marker-bg: oklch(35% 0.08 95);
 
@@ -122,6 +123,7 @@
   --text-nav: oklch(40% 0.02 275);
 
   --brand-text: oklch(50% 0.17 275);
+  --on-brand-text: #fff;
   --brand-chip: oklch(92% 0.03 275);
   --marker-bg: oklch(85% 0.1 95);
 
