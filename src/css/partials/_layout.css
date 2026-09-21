@@ -2,6 +2,9 @@ html,
 body {
   height: 100%;
 }
+html {
+  scroll-padding-top: 6rem;
+}
 
 .layout {
   display: flex;
@@ -65,6 +68,10 @@ body {
 }
 
 @media (max-width: 760px) {
+  .layout {
+    padding-bottom: 90px;
+  }
+
   .page,
   .page-wide,
   .page-grid {

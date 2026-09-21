@@ -54,12 +54,9 @@
 
 <body>
 <div class="layout">
-    <header>
+    <header class="site-header">
         <nav class="topnav">
-            <a asp-page="/Index" class="topnav-brand">
-                <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h" />
-                <span>@Strings.MyName</span>
-            </a>
+            <a asp-page="/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
             <div class="topnav-links">
                 <a asp-page="/Index" page-match="/Index">Home</a>
                 <a asp-page="/Blog/Index" page-match="/Blog">Write</a>
@@ -73,7 +70,7 @@
                 <button type="button" class="icon-link" data-palette-trigger aria-label="Search (Ctrl+K)" title="Search (Ctrl+K)">
                     <i class="ti ti-search"></i>
                 </button>
-                <button type="button" class="icon-link theme-toggle" data-theme-toggle aria-label="Dark mode" title="Toggle dark mode">
+                <button type="button" class="theme-toggle" data-theme-toggle aria-label="Dark mode" title="Toggle dark mode">
                     <i class="ti ti-sun" aria-hidden="true"></i>
                     <i class="ti ti-moon" aria-hidden="true"></i>
                 </button>
@@ -136,6 +133,11 @@
     <a asp-page="/Projects/Index" page-match="/Projects"><i class="ti ti-code"></i>Build</a>
     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn"><i class="ti ti-school"></i>Learn</a>
     <a asp-page="/More" page-match="/More"><i class="ti ti-menu-2"></i>More</a>
+    <button type="button" class="theme-toggle" data-theme-toggle>
+        <i class="ti ti-sun" aria-hidden="true"></i>
+        <i class="ti ti-moon" aria-hidden="true"></i>
+        Dark
+    </button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script>

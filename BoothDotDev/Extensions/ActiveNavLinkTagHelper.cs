@@ -37,6 +37,7 @@ public sealed class ActiveNavLinkTagHelper : TagHelper
         {
             var existing = output.Attributes["class"]?.Value?.ToString();
             output.Attributes.SetAttribute("class", string.IsNullOrEmpty(existing) ? "active" : $"{existing} active");
+            output.Attributes.SetAttribute("aria-current", "page");
         }
     }
 }
