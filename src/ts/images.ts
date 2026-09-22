@@ -1,61 +1,55 @@
+const COLLAPSED_LABEL = 'alt';
+
 /**
- * Initializes ALT text popovers for images.
+ * Initializes the ALT badges on figures: clicking one expands it in place to show the image's description, replacing
+ * the "alt" label; clicking it again, clicking elsewhere, or pressing Escape collapses it back.
  */
 export function initAltTextPopovers(): void {
-    let openPopover: HTMLElement | null = null;
     let openBadge: HTMLButtonElement | null = null;
 
-    function closeOpenPopover(): void {
-        openPopover?.remove();
-        openPopover = null;
-        openBadge = null;
+    function collapse(badge: HTMLButtonElement): void {
+        badge.classList.remove('is-open');
+        badge.setAttribute('aria-expanded', 'false');
+        badge.textContent = COLLAPSED_LABEL;
+        if (openBadge === badge) {
+            openBadge = null;
+        }
+    }
+
+    function expand(badge: HTMLButtonElement): void {
+        if (openBadge && openBadge !== badge) {
+            collapse(openBadge);
+        }
+
+        badge.classList.add('is-open');
+        badge.setAttribute('aria-expanded', 'true');
+        badge.textContent = badge.dataset.altText ?? COLLAPSED_LABEL;
+        openBadge = badge;
     }
 
     document.addEventListener('click', (event: MouseEvent) => {
         const target = event.target as Element | null;
         const badge: HTMLButtonElement | null = target?.closest<HTMLButtonElement>('.alt-badge') ?? null;
-        const clickedInsidePopover: boolean = target?.closest<HTMLElement>('.alt-popover') !== null;
 
-        if (clickedInsidePopover) {
-            closeOpenPopover();
+        if (badge) {
+            event.stopPropagation();
+            if (badge === openBadge) {
+                collapse(badge);
+            } else {
+                expand(badge);
+            }
+
             return;
         }
 
-        if (badge && badge === openBadge) {
-            closeOpenPopover();
-            return;
+        if (openBadge) {
+            collapse(openBadge);
         }
-
-        if (openPopover) {
-            closeOpenPopover();
-        }
-
-        if (!badge) {
-            return;
-        }
-
-        event.stopPropagation();
-
-        const wrap: HTMLElement | null = badge.closest<HTMLElement>('.figure-img-wrap');
-        if (!wrap) {
-            return;
-        }
-
-        const popover: HTMLDivElement = document.createElement('div');
-        popover.className = 'alt-popover';
-        popover.setAttribute('role', 'status');
-        popover.textContent = badge.dataset.altText ?? '';
-        wrap.appendChild(popover);
-
-        openPopover = popover;
-        openBadge = badge;
-
-        requestAnimationFrame(() => popover.classList.add('is-open'));
     });
 
     document.addEventListener('keydown', (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-            closeOpenPopover();
+        if (event.key === 'Escape' && openBadge) {
+            collapse(openBadge);
         }
     });
 }

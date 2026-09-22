@@ -271,9 +271,9 @@
     line-height: 1.7;
 
     &.language-ansi {
-      background: #0c0c0c !important;
+      background: var(--syntax-bg) !important;
       code {
-        background: #0c0c0c !important;
+        background: var(--syntax-bg) !important;
       }
     }
 

@@ -12,7 +12,7 @@
         <img src="@Model.Url" alt="@Model.Alt" class="figure-img img-fluid" data-lightbox data-lightbox-src="@Model.Url" />
         @if (hasAlt)
         {
-            <button type="button" class="alt-badge" aria-label="Show image description" data-alt-text="@Model.Alt">ALT</button>
+            <button type="button" class="alt-badge" aria-expanded="false" aria-label="alt text" data-alt-text="@Model.Alt">alt</button>
         }
     </div>
     @if (hasTitle)

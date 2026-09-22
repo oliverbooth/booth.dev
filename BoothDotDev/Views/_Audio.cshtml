@@ -9,7 +9,7 @@
         </audio>
         @if (!string.IsNullOrWhiteSpace(Model.Alt))
         {
-            <button type="button" class="alt-badge" aria-label="Show image description" data-alt-text="@Model.Alt">ALT</button>
+            <button type="button" class="alt-badge" aria-expanded="false" aria-label="alt text" data-alt-text="@Model.Alt">alt</button>
         }
     </div>
     @if (!string.IsNullOrEmpty(Model.Title))

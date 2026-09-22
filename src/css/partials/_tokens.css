@@ -95,14 +95,16 @@
   --callout-private-text: var(--magenta-text);
   --callout-unlisted-bg: oklch(23% 0.015 275);
   --callout-unlisted-text: oklch(65% 0.015 275);
+  --callout-success-bg: oklch(26% 0.04 195);
+  --callout-success-text: var(--teal-text);
 
-  --code-bg: oklch(16% 0.02 275);
-  --code-text: oklch(88% 0.03 275);
   --syntax-bg: oklch(16% 0.02 275);
   --syntax-text: oklch(88% 0.02 275);
   --syntax-comment: oklch(59% 0.02 275);
   --syntax-punct: oklch(68% 0.02 275);
   --code-header-bg: oklch(13% 0.02 275);
+  --scrim-bg: oklch(10% 0.02 275 / 0.85);
+  --scrim-text: oklch(96% 0.006 275);
 
   /* markdown editor highlighting: the editor sits on a field surface, not a code surface, so it needs its own set */
   --md-keyword: var(--syntax-keyword);
@@ -192,14 +194,16 @@
   --callout-private-text: var(--magenta-text);
   --callout-unlisted-bg: oklch(90% 0.008 275);
   --callout-unlisted-text: oklch(45% 0.015 275);
+  --callout-success-bg: oklch(93% 0.035 195);
+  --callout-success-text: var(--teal-text);
 
-  --code-bg: oklch(20% 0.02 275);
-  --code-text: oklch(88% 0.03 275);
   --syntax-bg: oklch(20% 0.02 275);
   --syntax-text: oklch(88% 0.02 275);
   --syntax-comment: oklch(61% 0.02 275);
   --syntax-punct: oklch(68% 0.02 275);
   --code-header-bg: oklch(24% 0.02 275);
+  --scrim-bg: oklch(20% 0.02 275 / 0.85);
+  --scrim-text: oklch(96% 0.006 275);
 
   --md-keyword: oklch(46% 0.17 340);
   --md-string: oklch(42% 0.11 150);

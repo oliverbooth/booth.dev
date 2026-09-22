@@ -30,7 +30,7 @@
 
     @if (post.Visibility == Visibility.Private)
     {
-        <div class="callout" data-callout="warning">
+        <div class="callout" data-callout="private">
             <p class="callout-title"><i class="ti ti-lock"></i> This post is private</p>
             <div class="callout-body">
                 <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
@@ -39,7 +39,7 @@
     }
     else if (post.Visibility == Visibility.Unlisted)
     {
-        <div class="callout" data-callout="note">
+        <div class="callout" data-callout="unlisted">
             <p class="callout-title"><i class="ti ti-eye-off"></i> This post is unlisted</p>
             <div class="callout-body">
                 <p>It doesn't appear in listings or search, but anyone with this link can view it.</p>
