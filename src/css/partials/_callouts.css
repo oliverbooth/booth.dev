@@ -88,6 +88,16 @@
     background: color-mix(in oklch, var(--text) 12%, transparent);
   }
 
+  /* the body is already indented to align with the title text, so a list's own hanging indent would double up */
+  ul, ol {
+    padding-left: 1.1em;
+    list-style-position: inside;
+
+    ul, ol {
+      padding-left: 1.4em;
+    }
+  }
+
   code {
     font-family: var(--font-mono);
     font-size: 0.85em;
