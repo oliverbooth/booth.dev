@@ -68,6 +68,7 @@
 }
 
 .callout-body {
+  margin-left: 26px;
   color: var(--text);
   font-size: 13.5px;
   line-height: 1.6;
@@ -139,7 +140,8 @@ details.callout {
   }
 
   .callout-body {
-    padding: 0 20px 20px;
+    margin-left: 0;
+    padding: 0 20px 20px 46px;
   }
 }
 
