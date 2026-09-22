@@ -1,29 +1,17 @@
 @page "/error/429"
-<div class="error-page">
-    <div class="error-card">
+@using BoothDotDev.Pages.Shared.Partials
 
-        <div class="terminal" style="margin-bottom:1.75rem">
-            <div class="terminal-bar">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> for i in {1..999}; do curl
-                    booth.dev; done
-                </div>
-                <div class="out" style="margin-top:6px">429: rate limit exceeded, retry after 30s</div>
-            </div>
-        </div>
+@{
+    var hero = new ErrorHero
+    {
+        Code = 429,
+        Title = "slow down a little",
+        Body = "Too many requests, too quickly. Give it a moment to cool off and try again shortly - the limit resets on its own.",
+        Tag = "too many requests",
+        Icon = "ti-hand-stop",
+        Tint = "warn",
+        ShowRetry = true,
+    };
+}
 
-        <p class="error-code">Error 429</p>
-        <h1 class="error-title">Too Many Requests</h1>
-        <p class="error-desc">Slow down a little. You've made too many requests in too short a window &mdash; try again shortly.</p>
-
-        <div class="error-actions">
-            <a asp-page="/Index" class="btn btn-primary">Back home</a>
-            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
-        </div>
-
-    </div>
-</div>
+<partial name="Partials/_ErrorHero" model="hero" />

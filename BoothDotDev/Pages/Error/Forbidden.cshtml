@@ -1,28 +1,16 @@
 @page "/error/403"
-<div class="error-page">
-    <div class="error-card">
+@using BoothDotDev.Pages.Shared.Partials
 
-        <div class="terminal" style="margin-bottom:1.75rem">
-            <div class="terminal-bar">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> cat /app/data/private.md</div>
-                <div class="out" style="margin-top:6px">cat: /app/data/private.md: Permission denied</div>
-            </div>
-        </div>
+@{
+    var hero = new ErrorHero
+    {
+        Code = 403,
+        Title = "you're not allowed in here",
+        Body = "You don't have permission to view this page. If you think that's wrong, it might be worth logging in - or double-checking you've got the right link.",
+        Tag = "forbidden",
+        Icon = "ti-lock",
+        Tint = "danger",
+    };
+}
 
-        <p class="error-code">Error 403</p>
-        <h1 class="error-title">Forbidden</h1>
-        <p class="error-desc">You don't have permission to view this. If you think that's wrong, it probably isn't, but you're welcome to
-            ask.</p>
-
-        <div class="error-actions">
-            <a asp-page="/Index" class="btn btn-primary">Back home</a>
-            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
-        </div>
-
-    </div>
-</div>
+<partial name="Partials/_ErrorHero" model="hero" />

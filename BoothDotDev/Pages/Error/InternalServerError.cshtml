@@ -1,27 +1,17 @@
 @page "/error/500"
-<div class="error-page">
-    <div class="error-card">
+@using BoothDotDev.Pages.Shared.Partials
 
-        <div class="terminal" style="margin-bottom:1.75rem">
-            <div class="terminal-bar">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> dotnet run</div>
-                <div class="out" style="margin-top:6px">Unhandled exception. Something broke on this end, not yours.</div>
-            </div>
-        </div>
+@{
+    var hero = new ErrorHero
+    {
+        Code = 500,
+        Title = "something broke on my end",
+        Body = "Not you - me. Something went wrong on the server while handling this. I've probably already been notified. Try again in a bit.",
+        Tag = "internal server error",
+        Icon = "ti-bug",
+        Tint = "danger",
+        ShowRetry = true,
+    };
+}
 
-        <p class="error-code">Error 500</p>
-        <h1 class="error-title">Internal Server Error</h1>
-        <p class="error-desc">Something went wrong on the server. It's been logged, and it's on me to fix, not you.</p>
-
-        <div class="error-actions">
-            <a asp-page="/Index" class="btn btn-primary">Back home</a>
-            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
-        </div>
-
-    </div>
-</div>
+<partial name="Partials/_ErrorHero" model="hero" />

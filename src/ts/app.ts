@@ -9,6 +9,7 @@ import {initLightbox} from './lightbox.ts';
 import {initTerminalTypewriters} from './terminal.ts';
 import {initAvatarFallback} from './avatar-fallback.ts';
 import {initNowClock} from './now-clock.ts';
+import {initRetryButtons} from './retry-button.ts';
 import {initHeaderAutoHide} from './header-auto-hide.ts';
 import {initTheme} from './theme.ts';
 
@@ -26,4 +27,5 @@ import {initTheme} from './theme.ts';
     initTerminalTypewriters();
     initAvatarFallback();
     initNowClock();
+    initRetryButtons();
 })();

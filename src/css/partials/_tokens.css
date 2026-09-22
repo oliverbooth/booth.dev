@@ -79,6 +79,8 @@
   --table-head-bg: oklch(27% 0.035 275);
   --table-stripe: oklch(20% 0.02 275);
   --track-bg: oklch(22% 0.02 275);
+  --warn-tile-bg: oklch(27% 0.055 70);
+  --warn-tile-text: oklch(80% 0.13 65);
 
   --do-bg: oklch(28% 0.05 165);
   --do-text: oklch(85% 0.08 165);
@@ -174,6 +176,8 @@
   --table-head-bg: oklch(92% 0.025 275);
   --table-stripe: oklch(96% 0.015 275);
   --track-bg: oklch(89% 0.015 275);
+  --warn-tile-bg: oklch(93% 0.05 75);
+  --warn-tile-text: oklch(42% 0.12 65);
 
   --do-bg: oklch(94% 0.03 165);
   --do-text: oklch(35% 0.09 165);

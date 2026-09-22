@@ -1,27 +1,16 @@
 @page "/error/418"
-<div class="error-page">
-    <div class="error-card">
+@using BoothDotDev.Pages.Shared.Partials
 
-        <div class="terminal" style="margin-bottom:1.75rem">
-            <div class="terminal-bar">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> curl -X BREW booth.dev/coffee</div>
-                <div class="out" style="margin-top:6px">418 I'm a teapot &mdash; short and stout</div>
-            </div>
-        </div>
+@{
+    var hero = new ErrorHero
+    {
+        Code = 418,
+        Title = "i'm a teapot",
+        Body = "This server refuses to brew coffee because it is, permanently, a teapot. This is a real HTTP status code. I did not make it up.",
+        Tag = "i'm a teapot",
+        Icon = "ti-teapot",
+        Tint = "brand",
+    };
+}
 
-        <p class="error-code">Error 418</p>
-        <h1 class="error-title">I'm a teapot</h1>
-        <p class="error-desc">This server is, briefly and by design, a teapot. RFC 2324 demands nothing less.</p>
-
-        <div class="error-actions">
-            <a asp-page="/Index" class="btn btn-primary">Back home</a>
-            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
-        </div>
-
-    </div>
-</div>
+<partial name="Partials/_ErrorHero" model="hero" />
