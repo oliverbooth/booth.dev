@@ -52,17 +52,7 @@
         <div><h2 style="margin:0">Recent activity</h2></div>
     </div>
 
-    <table class="data-table">
-        <thead>
-        <tr>
-            <th>Item</th>
-            <th>Type</th>
-            <th>Visibility</th>
-            <th>Updated</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
+    <ul class="admin-row-list">
         @foreach (var activity in Model.RecentActivity)
         {
             var timestamp = activity.UpdatedAt ?? activity.PublishedAt;
@@ -73,12 +63,8 @@
                 _ => "unlisted"
             };
 
-            <tr>
-                <td>
-                    <div class="row-title">@activity.Title</div>
-                </td>
-                <td>@activity.Category.Humanize()</td>
-                <td><span class="badge badge-@badgeClass">
+            <li class="admin-row">
+                <span class="badge badge-@badgeClass">
                     @switch (activity.Visibility)
                         {
                             case Visibility.Published:
@@ -96,18 +82,17 @@
                             default:
                                 throw new UnreachableException();
                         }
-                </span></td>
-                <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
-                <td>
-                    <div class="row-actions">
-                        <a asp-page="@activity.PagePath" asp-all-route-data="activity.RouteValues" class="icon-btn">
-                            <i class="ti ti-eye"></i>
-                        </a>
-                    </div>
-                </td>
-            </tr>
+                </span>
+                <div class="row-body">
+                    <div class="row-title">@activity.Title</div>
+                    <div class="row-sub">@activity.Category.Humanize()</div>
+                </div>
+                <span class="row-meta"><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></span>
+                <div class="row-actions">
+                    <a asp-page="@activity.PagePath" asp-all-route-data="activity.RouteValues" class="icon-btn">view</a>
+                </div>
+            </li>
         }
-        </tbody>
-    </table>
+    </ul>
 
 </div>

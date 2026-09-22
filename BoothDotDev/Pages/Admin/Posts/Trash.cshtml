@@ -34,6 +34,10 @@
                     <i class="ti ti-search"></i>
                     <input type="text" id="search" placeholder="Search trash&hellip;">
                 </div>
+                <label class="select-all-label">
+                    <input type="checkbox" data-select-all aria-label="Select all">
+                    select all
+                </label>
             </div>
 
             <div class="bulk-actions" data-bulk-actions hidden>
@@ -45,18 +49,7 @@
             <form id="bulk-delete-form" method="post" asp-page-handler="PermanentlyDeleteBulk"
                   data-confirm="Permanently delete {count} post(s)? This cannot be undone."></form>
 
-            <table class="data-table">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" data-select-all aria-label="Select all"></th>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Visibility</th>
-                    <th>Trashed</th>
-                    <th style="text-align:right">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+            <ul class="admin-row-list">
                 @foreach (var post in Model.BlogPosts)
                 {
                     var badgeClass = post.Visibility switch
@@ -66,15 +59,10 @@
                         _ => "unlisted"
                     };
 
-                    <tr>
-                        <td><input type="checkbox" name="ids" value="@post.Id" form="bulk-delete-form" data-row-select
-                                   aria-label="Select @post.Title"></td>
-                        <td>
-                            <div class="row-title" data-search>@post.Title</div>
-                            <div class="row-sub" data-search>/blog/@post.Slug</div>
-                        </td>
-                        <td>@BlogPostService.GetCategory(post.CategoryId)?.Name</td>
-                        <td><span class="badge badge-@badgeClass">
+                    <li class="admin-row" data-search-item>
+                        <input type="checkbox" name="ids" value="@post.Id" form="bulk-delete-form" data-row-select
+                               aria-label="Select @post.Title">
+                        <span class="badge badge-@badgeClass">
                         @switch (post.Visibility)
                                 {
                                     case Visibility.Published:
@@ -92,30 +80,28 @@
                                     default:
                                         throw new UnreachableException();
                                 }
-                    </span></td>
-                        <td><abbr title="@post.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@post.TrashedAt!.Value.Humanize()</abbr>
-                        </td>
-                        <td>
-                            <div class="row-actions">
-                                <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn" aria-label="Edit"><i
-                                        class="ti ti-edit"></i></a>
-                                <form method="post" asp-page-handler="Restore" asp-route-id="@post.Id">
-                                    <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
-                                </form>
-                                <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@post.Id"
-                                      data-confirm="Permanently delete '@post.Title'? This cannot be undone.">
-                                    <button type="submit" class="icon-btn danger" aria-label="Delete permanently"><i
-                                            class="ti ti-trash-x"></i></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
+                        </span>
+                        <div class="row-body">
+                            <div class="row-title" data-search>@post.Title</div>
+                            <div class="row-sub" data-search>@BlogPostService.GetCategory(post.CategoryId)?.Name</div>
+                        </div>
+                        <span class="row-meta">
+                            <abbr title="@post.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@post.TrashedAt!.Value.Humanize()</abbr>
+                        </span>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn">edit</a>
+                            <form method="post" asp-page-handler="Restore" asp-route-id="@post.Id">
+                                <button type="submit" class="icon-btn">restore</button>
+                            </form>
+                            <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@post.Id"
+                                  data-confirm="Permanently delete '@post.Title'? This cannot be undone.">
+                                <button type="submit" class="icon-btn danger">delete</button>
+                            </form>
+                        </div>
+                    </li>
                 }
-                <tr data-search-empty hidden>
-                    <td colspan="6" class="table-empty-state">No posts found</td>
-                </tr>
-                </tbody>
-            </table>
+                <li class="list-empty-state" data-search-empty hidden>No posts found</li>
+            </ul>
         </div>
     }
 

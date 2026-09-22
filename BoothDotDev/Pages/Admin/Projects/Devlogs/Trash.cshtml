@@ -37,6 +37,10 @@
                     <i class="ti ti-search"></i>
                     <input type="text" id="search" placeholder="Search trash&hellip;">
                 </div>
+                <label class="select-all-label">
+                    <input type="checkbox" data-select-all aria-label="Select all">
+                    select all
+                </label>
             </div>
 
             <div class="bulk-actions" data-bulk-actions hidden>
@@ -48,17 +52,7 @@
             <form id="bulk-delete-form" method="post" asp-page-handler="PermanentlyDeleteBulk" asp-route-projectId="@Model.Project.Id"
                   data-confirm="Permanently delete {count} devlog entry(s)? This cannot be undone."></form>
 
-            <table class="data-table">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" data-select-all aria-label="Select all"></th>
-                    <th>Title</th>
-                    <th>Visibility</th>
-                    <th>Trashed</th>
-                    <th style="text-align:right">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+            <ul class="admin-row-list">
                 @foreach (var devlog in Model.Devlogs)
                 {
                     var badgeClass = devlog.Visibility switch
@@ -68,13 +62,10 @@
                         _ => "unlisted"
                     };
 
-                    <tr>
-                        <td><input type="checkbox" name="ids" value="@devlog.Id" form="bulk-delete-form" data-row-select
-                                   aria-label="Select @devlog.Title"></td>
-                        <td>
-                            <div class="row-title" data-search>@devlog.Title</div>
-                        </td>
-                        <td><span class="badge badge-@badgeClass">
+                    <li class="admin-row" data-search-item>
+                        <input type="checkbox" name="ids" value="@devlog.Id" form="bulk-delete-form" data-row-select
+                               aria-label="Select @devlog.Title">
+                        <span class="badge badge-@badgeClass">
                         @switch (devlog.Visibility)
                                 {
                                     case Visibility.Published:
@@ -92,33 +83,30 @@
                                     default:
                                         throw new UnreachableException();
                                 }
-                    </span></td>
-                        <td><abbr
-                                title="@devlog.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@devlog.TrashedAt!.Value.Humanize()</abbr>
-                        </td>
-                        <td>
-                            <div class="row-actions">
-                                <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id"
-                                   class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
-                                <form method="post" asp-page-handler="Restore" asp-route-projectId="@Model.Project.Id"
-                                      asp-route-id="@devlog.Id">
-                                    <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
-                                </form>
-                                <form method="post" asp-page-handler="PermanentlyDelete" asp-route-projectId="@Model.Project.Id"
-                                      asp-route-id="@devlog.Id"
-                                      data-confirm="Permanently delete '@devlog.Title'? This cannot be undone.">
-                                    <button type="submit" class="icon-btn danger" aria-label="Delete permanently"><i
-                                            class="ti ti-trash-x"></i></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
+                        </span>
+                        <div class="row-body">
+                            <div class="row-title" data-search>@devlog.Title</div>
+                        </div>
+                        <span class="row-meta">
+                            <abbr title="@devlog.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@devlog.TrashedAt!.Value.Humanize()</abbr>
+                        </span>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id"
+                               class="icon-btn">edit</a>
+                            <form method="post" asp-page-handler="Restore" asp-route-projectId="@Model.Project.Id"
+                                  asp-route-id="@devlog.Id">
+                                <button type="submit" class="icon-btn">restore</button>
+                            </form>
+                            <form method="post" asp-page-handler="PermanentlyDelete" asp-route-projectId="@Model.Project.Id"
+                                  asp-route-id="@devlog.Id"
+                                  data-confirm="Permanently delete '@devlog.Title'? This cannot be undone.">
+                                <button type="submit" class="icon-btn danger">delete</button>
+                            </form>
+                        </div>
+                    </li>
                 }
-                <tr data-search-empty hidden>
-                    <td colspan="5" class="table-empty-state">No devlog entries found</td>
-                </tr>
-                </tbody>
-            </table>
+                <li class="list-empty-state" data-search-empty hidden>No devlog entries found</li>
+            </ul>
         </div>
     }
 

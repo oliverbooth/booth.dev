@@ -80,53 +80,34 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Kind</th>
-                <th>State</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var item in Model.Watchables)
             {
-                <tr>
-                    <td>
+                <li class="admin-row" data-search-item>
+                    <div class="row-body">
                         <div class="row-title" data-search>@item.Title</div>
-                    </td>
-                    <td data-search>@item.Kind.Humanize(LetterCasing.Title)</td>
-                    <td>
-                        <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions"
-                              style="justify-content:flex-start">
-                            <select name="state" aria-label="State" class="inline-select">
-                                @foreach (var state in Enum.GetValues<WatchableState>())
-                                {
-                                    <option value="@state" selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
-                                }
-                            </select>
-                            <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
+                        <div class="row-sub" data-search>@item.Kind.Humanize(LetterCasing.Title)</div>
+                    </div>
+                    <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions">
+                        <select name="state" aria-label="State" class="inline-select">
+                            @foreach (var state in Enum.GetValues<WatchableState>())
+                            {
+                                <option value="@state" selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
+                            }
+                        </select>
+                        <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
+                    </form>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Watchlist/Edit" asp-route-id="@item.Id" class="icon-btn">edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
+                              data-confirm="Remove '@item.Title' from the watchlist?">
+                            <button type="submit" class="icon-btn danger">delete</button>
                         </form>
-                    </td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="/Admin/Watchlist/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit">
-                                <i class="ti ti-edit"></i>
-                            </a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
-                                  data-confirm="Remove '@item.Title' from the watchlist?">
-                                <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="4" class="table-empty-state">No watchlist entries found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No watchlist entries found</li>
+        </ul>
     </div>
 
 </div>

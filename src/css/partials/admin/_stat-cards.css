@@ -6,8 +6,9 @@
 }
 
 .stat-card {
-  background: var(--surface-1);
-  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  border-radius: var(--radius-md);
   padding: 1rem 1.1rem;
 
   .label {
@@ -17,8 +18,10 @@
   }
 
   .value {
+    font-family: var(--font-heading);
     font-size: 22px;
-    font-weight: 500;
+    font-weight: 700;
+    color: var(--text);
     margin: 0;
   }
 }

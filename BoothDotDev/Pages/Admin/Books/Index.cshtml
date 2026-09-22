@@ -27,51 +27,34 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>ISBN</th>
-                <th>State</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var book in Model.Books)
             {
-                <tr>
-                    <td>
+                <li class="admin-row" data-search-item>
+                    <div class="row-body">
                         <div class="row-title" data-search>@book.Title</div>
-                        <div class="row-sub" data-search>by @book.Author</div>
-                    </td>
-                    <td data-search>@book.Isbn</td>
-                    <td>
-                        <form method="post" asp-page-handler="SetState" class="row-actions" style="justify-content:flex-start">
+                        <div class="row-sub" data-search>by @book.Author · @book.Isbn</div>
+                    </div>
+                    <form method="post" asp-page-handler="SetState" class="row-actions">
+                        <input type="hidden" name="isbn" value="@book.Isbn">
+                        <select name="state" aria-label="State" class="inline-select">
+                            @foreach (var state in Enum.GetValues<BookState>())
+                            {
+                                <option value="@state" selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
+                            }
+                        </select>
+                        <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
+                    </form>
+                    <div class="row-actions">
+                        <form method="post" asp-page-handler="Delete" data-confirm="Remove '@book.Title' from the reading list?">
                             <input type="hidden" name="isbn" value="@book.Isbn">
-                            <select name="state" aria-label="State" class="inline-select">
-                                @foreach (var state in Enum.GetValues<BookState>())
-                                {
-                                    <option value="@state" selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
-                                }
-                            </select>
-                            <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
+                            <button type="submit" class="icon-btn danger">delete</button>
                         </form>
-                    </td>
-                    <td>
-                        <div class="row-actions">
-                            <form method="post" asp-page-handler="Delete" data-confirm="Remove '@book.Title' from the reading list?">
-                                <input type="hidden" name="isbn" value="@book.Isbn">
-                                <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="4" class="table-empty-state">No books found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No books found</li>
+        </ul>
     </div>
 
 </div>

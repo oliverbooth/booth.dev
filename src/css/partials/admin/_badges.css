@@ -1,29 +1,24 @@
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  padding: 3px 9px;
-  border-radius: 20px;
-}
-
 .badge-published {
-  color: var(--success-text);
-  background: var(--success-bg);
+  --badge-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
+  --badge-text: var(--teal-text);
 }
 
 .badge-unlisted {
-  color: var(--text-secondary);
-  background: var(--surface-1);
+  --badge-bg: var(--tag-bg);
+  --badge-text: var(--text-muted);
 }
 
 .badge-private {
-  color: var(--danger-text, #e0575c);
-  background: var(--danger-bg, rgba(224, 87, 92, 0.14));
+  --badge-bg: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
+  --badge-text: var(--magenta-text);
 }
 
 .badge-missing {
-  color: var(--warning-text);
-  background: var(--warning-bg);
+  --badge-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
+  --badge-text: var(--coral-text);
   flex-shrink: 0;
+}
+
+.badge .dot {
+  background: currentColor;
 }

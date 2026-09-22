@@ -31,17 +31,7 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Visibility</th>
-                <th>Published</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var creation in Model.Creations)
             {
                 var badgeClass = creation.Visibility switch
@@ -53,12 +43,8 @@
                 var isMusic = creation.Type == "Music";
                 var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
 
-                <tr>
-                    <td>
-                        <div class="row-title" data-search>@creation.Title</div>
-                    </td>
-                    <td><span data-search>@creation.Type</span></td>
-                    <td><span class="badge badge-@badgeClass">
+                <li class="admin-row" data-search-item>
+                    <span class="badge badge-@badgeClass">
                     @switch (creation.Visibility)
                             {
                                 case Visibility.Published:
@@ -76,25 +62,22 @@
                                 default:
                                     throw new UnreachableException();
                             }
-                </span></td>
-                    <td><abbr title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn" aria-label="Edit"><i
-                                    class="ti ti-edit"></i></a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id" asp-route-type="@creation.Type">
-                                <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                    </span>
+                    <div class="row-body">
+                        <div class="row-title" data-search>@creation.Title</div>
+                        <div class="row-sub" data-search>@creation.Type</div>
+                    </div>
+                    <span class="row-meta"><abbr title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></span>
+                    <div class="row-actions">
+                        <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn">edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id" asp-route-type="@creation.Type">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="5" class="table-empty-state">No creations found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No creations found</li>
+        </ul>
     </div>
 
 </div>

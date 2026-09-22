@@ -33,6 +33,10 @@
                     <i class="ti ti-search"></i>
                     <input type="text" id="search" placeholder="Search trash&hellip;">
                 </div>
+                <label class="select-all-label">
+                    <input type="checkbox" data-select-all aria-label="Select all">
+                    select all
+                </label>
             </div>
 
             <div class="bulk-actions" data-bulk-actions hidden>
@@ -44,17 +48,7 @@
             <form id="bulk-delete-form" method="post" asp-page-handler="PermanentlyDeleteBulk"
                   data-confirm="Permanently delete {count} challenge(s)? This cannot be undone."></form>
 
-            <table class="data-table">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" data-select-all aria-label="Select all"></th>
-                    <th>Title</th>
-                    <th>Visibility</th>
-                    <th>Trashed</th>
-                    <th style="text-align:right">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+            <ul class="admin-row-list">
                 @foreach (var challenge in Model.Challenges)
                 {
                     var badgeClass = challenge.Visibility switch
@@ -64,13 +58,10 @@
                         _ => "unlisted"
                     };
 
-                    <tr>
-                        <td><input type="checkbox" name="ids" value="@challenge.Id" form="bulk-delete-form" data-row-select
-                                   aria-label="Select @challenge.Title"></td>
-                        <td>
-                            <div class="row-title" data-search>@challenge.Title</div>
-                        </td>
-                        <td><span class="badge badge-@badgeClass">
+                    <li class="admin-row" data-search-item>
+                        <input type="checkbox" name="ids" value="@challenge.Id" form="bulk-delete-form" data-row-select
+                               aria-label="Select @challenge.Title">
+                        <span class="badge badge-@badgeClass">
                         @switch (challenge.Visibility)
                                 {
                                     case Visibility.Published:
@@ -88,31 +79,27 @@
                                     default:
                                         throw new UnreachableException();
                                 }
-                    </span></td>
-                        <td><abbr
-                                title="@challenge.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@challenge.TrashedAt!.Value.Humanize()</abbr>
-                        </td>
-                        <td>
-                            <div class="row-actions">
-                                <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn" aria-label="Edit"><i
-                                        class="ti ti-edit"></i></a>
-                                <form method="post" asp-page-handler="Restore" asp-route-id="@challenge.Id">
-                                    <button type="submit" class="icon-btn" aria-label="Restore"><i class="ti ti-trash-off"></i></button>
-                                </form>
-                                <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@challenge.Id"
-                                      data-confirm="Permanently delete '@challenge.Title'? This cannot be undone.">
-                                    <button type="submit" class="icon-btn danger" aria-label="Delete permanently"><i
-                                            class="ti ti-trash-x"></i></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
+                        </span>
+                        <div class="row-body">
+                            <div class="row-title" data-search>@challenge.Title</div>
+                        </div>
+                        <span class="row-meta">
+                            <abbr title="@challenge.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@challenge.TrashedAt!.Value.Humanize()</abbr>
+                        </span>
+                        <div class="row-actions">
+                            <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn">edit</a>
+                            <form method="post" asp-page-handler="Restore" asp-route-id="@challenge.Id">
+                                <button type="submit" class="icon-btn">restore</button>
+                            </form>
+                            <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@challenge.Id"
+                                  data-confirm="Permanently delete '@challenge.Title'? This cannot be undone.">
+                                <button type="submit" class="icon-btn danger">delete</button>
+                            </form>
+                        </div>
+                    </li>
                 }
-                <tr data-search-empty hidden>
-                    <td colspan="5" class="table-empty-state">No challenges found</td>
-                </tr>
-                </tbody>
-            </table>
+                <li class="list-empty-state" data-search-empty hidden>No challenges found</li>
+            </ul>
         </div>
     }
 

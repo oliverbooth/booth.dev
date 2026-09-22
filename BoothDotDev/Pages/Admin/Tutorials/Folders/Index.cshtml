@@ -35,16 +35,7 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Path</th>
-                <th>Visibility</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var folder in Model.Folders)
             {
                 var badgeClass = folder.Visibility switch
@@ -54,13 +45,8 @@
                     _ => "unlisted"
                 };
 
-                <tr>
-                    <td>
-                        <div class="row-title" data-search>@folder.Title</div>
-                    </td>
-                    <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)"
-                              data-search>@Model.GetPath(folder)</span></td>
-                    <td><span class="badge badge-@badgeClass">
+                <li class="admin-row" data-search-item>
+                    <span class="badge badge-@badgeClass">
                     @switch (folder.Visibility)
                             {
                                 case Visibility.Published:
@@ -78,26 +64,23 @@
                                 default:
                                     throw new UnreachableException();
                             }
-                </span></td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@folder.Id" class="icon-btn" aria-label="Edit"><i
-                                    class="ti ti-edit"></i></a>
-                            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@Model.GetPath(folder)" class="icon-btn" aria-label="View"><i
-                                    class="ti ti-eye"></i></a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@folder.Id"
-                                  data-confirm="Delete this folder? This can't be undone.">
-                                <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                    </span>
+                    <div class="row-body">
+                        <div class="row-title" data-search>@folder.Title</div>
+                        <div class="row-sub" data-search>@Model.GetPath(folder)</div>
+                    </div>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@folder.Id" class="icon-btn">edit</a>
+                        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@Model.GetPath(folder)" class="icon-btn">view</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@folder.Id"
+                              data-confirm="Delete this folder? This can't be undone.">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="4" class="table-empty-state">No folders found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No folders found</li>
+        </ul>
     </div>
 
 </div>

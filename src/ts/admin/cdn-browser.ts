@@ -7,18 +7,18 @@ interface DeletePreview {
 
 /**
  * Initializes the admin CDN file browser: upload (button + desktop drag-and-drop), new folder, rename,
- * move (row-to-row drag-and-drop + an explicit "type a path" control), and delete.
+ * move (tile-to-tile drag-and-drop + an explicit "type a path" control), and delete.
  */
 export function initCdnBrowser(): void {
     const container = document.querySelector<HTMLElement>('#cdn-browser');
     const form = document.querySelector<HTMLFormElement>('#cdn-form');
-    const table = document.querySelector<HTMLTableElement>('#cdn-table');
+    const grid = document.querySelector<HTMLElement>('#cdn-grid');
     const errorBox = document.querySelector<HTMLElement>('#cdn-error');
     const newFolderButton = document.querySelector<HTMLButtonElement>('#cdn-new-folder-btn');
     const uploadButton = document.querySelector<HTMLButtonElement>('#cdn-upload-btn');
     const fileInput = document.querySelector<HTMLInputElement>('#cdn-file-input');
 
-    if (!container || !form || !table || !errorBox || !newFolderButton || !uploadButton || !fileInput) {
+    if (!container || !form || !grid || !errorBox || !newFolderButton || !uploadButton || !fileInput) {
         return;
     }
 
@@ -42,28 +42,28 @@ export function initCdnBrowser(): void {
         void handleUpload(form, files, clearError, showError);
     });
 
-    table.addEventListener('click', (event) => {
+    grid.addEventListener('click', (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
-        const row = button?.closest<HTMLTableRowElement>('tr[data-name]');
-        if (!button || !row) {
+        const tile = button?.closest<HTMLElement>('[data-name]');
+        if (!button || !tile) {
             return;
         }
 
         switch (button.dataset.action) {
             case 'rename':
-                void handleRename(form, row, clearError, showError);
+                void handleRename(form, tile, clearError, showError);
                 break;
             case 'move':
-                void handleMovePrompt(form, row, currentPath(), clearError, showError);
+                void handleMovePrompt(form, tile, currentPath(), clearError, showError);
                 break;
             case 'delete':
-                void handleDelete(form, row, clearError, showError);
+                void handleDelete(form, tile, clearError, showError);
                 break;
         }
     });
 
     initUploadDropzone(container, files => void handleUpload(form, files, clearError, showError));
-    initRowDragMove(table, currentPath(), (name, destination) => void performMove(form, name, destination, clearError, showError));
+    initTileDragMove(grid, currentPath(), (name, destination) => void performMove(form, name, destination, clearError, showError));
 }
 
 /**
@@ -117,65 +117,65 @@ function initUploadDropzone(container: HTMLElement, onDrop: (files: File[]) => v
 }
 
 /**
- * Initializes dragging a row onto a folder row to move it there. Keyed off a custom MIME type that an OS
+ * Initializes dragging a tile onto a folder tile to move it there. Keyed off a custom MIME type that an OS
  * file drag never carries, so this never fires for a desktop-file-onto-page upload drag.
- * @param table The table on which to listen for drag/drop events.
+ * @param grid The grid on which to listen for drag/drop events.
  * @param initialPath The current folder path, used to construct the destination path.
- * @param onMove Callback invoked with the source name and destination path when a row is dropped onto a folder row.
+ * @param onMove Callback invoked with the source name and destination path when a tile is dropped onto a folder tile.
  */
-function initRowDragMove(table: HTMLTableElement, initialPath: string, onMove: (name: string, destination: string) => void): void {
-    table.addEventListener('dragstart', (event) => {
-        const row = (event.target as HTMLElement).closest<HTMLTableRowElement>('tr[data-name]');
-        if (!row || !event.dataTransfer) {
+function initTileDragMove(grid: HTMLElement, initialPath: string, onMove: (name: string, destination: string) => void): void {
+    grid.addEventListener('dragstart', (event) => {
+        const tile = (event.target as HTMLElement).closest<HTMLElement>('[data-name]');
+        if (!tile || !event.dataTransfer) {
             return;
         }
-        event.dataTransfer.setData(MOVE_MIME, row.dataset.name ?? '');
+        event.dataTransfer.setData(MOVE_MIME, tile.dataset.name ?? '');
         event.dataTransfer.effectAllowed = 'move';
     });
 
-    let overTarget: HTMLTableRowElement | null = null;
+    let overTarget: HTMLElement | null = null;
     const clearOverTarget = (): void => {
-        overTarget?.classList.remove('cdn-row--drop-target');
+        overTarget?.classList.remove('cdn-tile--drop-target');
         overTarget = null;
     };
 
-    table.addEventListener('dragover', (event) => {
+    grid.addEventListener('dragover', (event) => {
         if (!event.dataTransfer?.types.includes(MOVE_MIME)) {
             return;
         }
-        const folderRow = (event.target as HTMLElement).closest<HTMLTableRowElement>('tr[data-kind="folder"]');
-        if (!folderRow) {
+        const folderTile = (event.target as HTMLElement).closest<HTMLElement>('[data-kind="folder"]');
+        if (!folderTile) {
             clearOverTarget();
             return;
         }
         event.preventDefault(); // required for drop to fire
-        if (overTarget !== folderRow) {
+        if (overTarget !== folderTile) {
             clearOverTarget();
-            overTarget = folderRow;
-            overTarget.classList.add('cdn-row--drop-target');
+            overTarget = folderTile;
+            overTarget.classList.add('cdn-tile--drop-target');
         }
     });
 
-    table.addEventListener('dragleave', (event) => {
+    grid.addEventListener('dragleave', (event) => {
         const related = event.relatedTarget as Node | null;
-        if (!related || !table.contains(related)) {
+        if (!related || !grid.contains(related)) {
             clearOverTarget();
         }
     });
 
-    table.addEventListener('drop', (event) => {
+    grid.addEventListener('drop', (event) => {
         if (!event.dataTransfer?.types.includes(MOVE_MIME)) {
             return;
         }
-        const folderRow = (event.target as HTMLElement).closest<HTMLTableRowElement>('tr[data-kind="folder"]');
+        const folderTile = (event.target as HTMLElement).closest<HTMLElement>('[data-kind="folder"]');
         clearOverTarget();
-        if (!folderRow) {
+        if (!folderTile) {
             return;
         }
         event.preventDefault();
 
         const sourceName = event.dataTransfer.getData(MOVE_MIME);
-        const targetName = folderRow.dataset.name;
+        const targetName = folderTile.dataset.name;
         if (!sourceName || !targetName || sourceName === targetName) {
             return; // dropped on itself - no-op
         }
@@ -239,11 +239,11 @@ async function handleUpload(
 
 async function handleRename(
     form: HTMLFormElement,
-    row: HTMLTableRowElement,
+    tile: HTMLElement,
     clearError: () => void,
     showError: (message: string) => void
 ): Promise<void> {
-    const name = row.dataset.name;
+    const name = tile.dataset.name;
     if (!name) {
         return;
     }
@@ -267,12 +267,12 @@ async function handleRename(
 
 async function handleMovePrompt(
     form: HTMLFormElement,
-    row: HTMLTableRowElement,
+    tile: HTMLElement,
     currentPath: string,
     clearError: () => void,
     showError: (message: string) => void
 ): Promise<void> {
-    const name = row.dataset.name;
+    const name = tile.dataset.name;
     if (!name) {
         return;
     }
@@ -306,16 +306,16 @@ async function performMove(
 
 async function handleDelete(
     form: HTMLFormElement,
-    row: HTMLTableRowElement,
+    tile: HTMLElement,
     clearError: () => void,
     showError: (message: string) => void
 ): Promise<void> {
-    const name = row.dataset.name;
+    const name = tile.dataset.name;
     if (!name) {
         return;
     }
 
-    if (row.dataset.kind === 'folder') {
+    if (tile.dataset.kind === 'folder') {
         let preview: DeletePreview;
         try {
             const formData = new FormData(form);
