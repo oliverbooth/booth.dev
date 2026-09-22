@@ -1,3 +1,4 @@
+import {initTheme} from './theme.ts';
 import {initFavicon} from './favicon.ts';
 import {initCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
@@ -19,6 +20,7 @@ import {initBookLookup} from './admin/book-lookup.ts';
 import {initWatchableLookup} from './admin/watchable-lookup.ts';
 
 (() => {
+    initTheme();
     initAltTextPopovers();
     initFavicon();
     initCopyButtons();
