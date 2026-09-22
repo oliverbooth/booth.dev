@@ -76,7 +76,6 @@ async function mountDiagram(codeElement: HTMLElement): Promise<void> {
     const source = codeElement.textContent ?? '';
     const noSource = 'noSource' in codeElement.dataset;
     const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
-    const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
     const wrapper = document.createElement('div');
     wrapper.className = 'mermaid-scene';
@@ -94,26 +93,13 @@ async function mountDiagram(codeElement: HTMLElement): Promise<void> {
     } else {
         const {diagramTab, sourceTab, sourcePanel, tabList} = buildTabs();
         wrapper.append(tabList, diagramPanel, sourcePanel);
+        // the source panel just wraps the code block as-is (header bar, copy button and all - already styled by
+        // _prism-toolbar.css); `hidden` on the panel hides all of that along with it, so there's nothing further to
+        // wire up per tab switch
         sourcePanel.append(codeToolbar ?? pre);
 
-        if (toolbar) {
-            toolbar.classList.add('scene-toolbar');
-            toolbar.hidden = true; // Diagram tab is active by default
-            tabList.append(toolbar);
-        }
-
-        diagramTab.addEventListener('click', () => {
-            activateTab(diagramTab, sourceTab, diagramPanel, sourcePanel);
-            if (toolbar) {
-                toolbar.hidden = true;
-            }
-        });
-        sourceTab.addEventListener('click', () => {
-            activateTab(sourceTab, diagramTab, sourcePanel, diagramPanel);
-            if (toolbar) {
-                toolbar.hidden = false;
-            }
-        });
+        diagramTab.addEventListener('click', () => activateTab(diagramTab, sourceTab, diagramPanel, sourcePanel));
+        sourceTab.addEventListener('click', () => activateTab(sourceTab, diagramTab, sourcePanel, diagramPanel));
     }
 
     try {
@@ -135,11 +121,15 @@ function buildTabs(): {
 } {
     const tabList = document.createElement('div');
     tabList.className = 'mermaid-scene-tabs';
-    tabList.setAttribute('role', 'tablist');
+
+    const tabGroup = document.createElement('div');
+    tabGroup.className = 'scene-tab-group';
+    tabGroup.setAttribute('role', 'tablist');
 
     const diagramTab = createTabButton('Diagram', true);
     const sourceTab = createTabButton('Source', false);
-    tabList.append(diagramTab, sourceTab);
+    tabGroup.append(diagramTab, sourceTab);
+    tabList.append(tabGroup);
 
     const sourcePanel = document.createElement('div');
     sourcePanel.className = 'mermaid-source-panel';
