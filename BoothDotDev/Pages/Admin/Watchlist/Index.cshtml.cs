@@ -57,17 +57,30 @@ public sealed class Index : PageModel
     public string? TraktMessage { get; set; }
 
     /// <summary>
-    ///     Gets every item on the watchlist.
+    ///     The display order, label, and dot colour for each state's group.
     /// </summary>
-    /// <value>Every item on the watchlist.</value>
-    public IReadOnlyCollection<Watchable> Watchables { get; private set; } = [];
+    private static readonly (WatchableState State, string Label, string DotClass)[] StateOrder =
+    [
+        (WatchableState.Watching, "watching", "dot"),
+        (WatchableState.PlanToWatch, "plan to watch", "dot dot-coral"),
+        (WatchableState.Watched, "watched", "dot dot-magenta")
+    ];
+
+    /// <summary>
+    ///     Gets the watchlist items, grouped by state, in <see cref="StateOrder" />.
+    /// </summary>
+    /// <value>The state groups.</value>
+    public IReadOnlyList<StateGroup> StateGroups { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request.
     /// </summary>
     public void OnGet()
     {
-        Watchables = _watchlistService.GetAllWatchables();
+        var watchables = _watchlistService.GetAllWatchables();
+        StateGroups = StateOrder
+            .Select(s => new StateGroup(s.State, s.Label, s.DotClass, watchables.Where(w => w.State == s.State).ToArray()))
+            .ToArray();
         IsTraktConnected = _traktAuthService.IsConnected();
         PendingChallenge = _traktAuthService.GetPendingChallenge();
     }
@@ -151,4 +164,13 @@ public sealed class Index : PageModel
 
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Represents a group of watchlist items sharing a state, for display in the admin listing.
+    /// </summary>
+    /// <param name="State">The state shared by every item in the group.</param>
+    /// <param name="Label">The lowercase display label for the state.</param>
+    /// <param name="DotClass">The CSS class for this state's indicator dot.</param>
+    /// <param name="Watchables">The items in this state.</param>
+    public sealed record StateGroup(WatchableState State, string Label, string DotClass, IReadOnlyList<Watchable> Watchables);
 }

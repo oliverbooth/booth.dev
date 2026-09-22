@@ -7,14 +7,14 @@
   gap: 9px;
 }
 
-/* ---------- folder-grouped lists (tutorials) ---------- */
-.folder-groups {
+/* ---------- grouped lists (tutorials by folder, reading list / watchlist by state) ---------- */
+.row-groups {
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
 
-.folder-group-header {
+.row-group-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -26,14 +26,14 @@
   }
 }
 
-.folder-group-title {
+.row-group-title {
   font-family: var(--font-heading);
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
 }
 
-.folder-group-count {
+.row-group-count {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-faint);
@@ -45,6 +45,32 @@
 
   .admin-row {
     padding: 12px 16px;
+  }
+}
+
+/* a group's own list doubles as a drop zone when its rows are draggable (reading list, watchlist) */
+.admin-row-list--dropzone {
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  transition: background-color 0.12s ease, outline-color 0.12s ease;
+  outline: 2px dashed transparent;
+  outline-offset: 4px;
+
+  &.is-drop-target {
+    background: color-mix(in oklch, var(--brand) 8%, transparent);
+    outline-color: var(--brand-text);
+  }
+}
+
+.admin-row[draggable="true"] {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.is-dragging {
+    opacity: 0.4;
   }
 }
 

@@ -36,14 +36,14 @@
         }
         else
         {
-            <div class="folder-groups">
+            <div class="row-groups">
                 @foreach (var group in Model.FolderGroups)
                 {
-                    <div class="folder-group">
-                        <div class="folder-group-header">
+                    <div class="row-group">
+                        <div class="row-group-header">
                             <i class="ti ti-folder"></i>
-                            <span class="folder-group-title">@(group.Folder?.Title ?? "unfiled")</span>
-                            <span class="folder-group-count">@("part".ToQuantity(group.Articles.Count))</span>
+                            <span class="row-group-title">@(group.Folder?.Title ?? "unfiled")</span>
+                            <span class="row-group-count">@("part".ToQuantity(group.Articles.Count))</span>
                         </div>
                         <ul class="admin-row-list admin-row-list--nested">
                             @for (var i = 0; i < group.Articles.Count; i++)

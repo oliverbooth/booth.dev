@@ -18,6 +18,7 @@ import {initSomedayReorder} from './admin/someday-reorder.ts';
 import {initSomedayEditorPreview} from './admin/someday-editor.ts';
 import {initBookLookup} from './admin/book-lookup.ts';
 import {initWatchableLookup} from './admin/watchable-lookup.ts';
+import {initStateGroups} from './admin/state-groups.ts';
 
 (() => {
     initTheme();
@@ -40,4 +41,5 @@ import {initWatchableLookup} from './admin/watchable-lookup.ts';
     initSomedayEditorPreview();
     initBookLookup();
     initWatchableLookup();
+    initStateGroups();
 })();

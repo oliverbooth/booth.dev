@@ -110,6 +110,14 @@
   }
 }
 
+.dot-coral {
+  background: var(--accent-coral);
+}
+
+.dot-magenta {
+  background: var(--accent-magenta);
+}
+
 /* ---------- eyebrow label ---------- */
 .eyebrow {
   display: inline-block;

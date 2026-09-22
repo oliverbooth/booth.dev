@@ -27,34 +27,45 @@
             </div>
         </div>
 
-        <ul class="admin-row-list">
-            @foreach (var book in Model.Books)
+        <div class="row-groups" data-state-groups>
+            @foreach (var group in Model.StateGroups)
             {
-                <li class="admin-row" data-search-item>
-                    <div class="row-body">
-                        <div class="row-title" data-search>@book.Title</div>
-                        <div class="row-sub" data-search>by @book.Author · @book.Isbn</div>
+                <div class="row-group">
+                    <div class="row-group-header">
+                        <span class="@group.DotClass"></span>
+                        <span class="row-group-title">@group.Label</span>
+                        <span class="row-group-count">@("book".ToQuantity(group.Books.Count))</span>
                     </div>
-                    <form method="post" asp-page-handler="SetState" class="row-actions">
-                        <input type="hidden" name="isbn" value="@book.Isbn">
-                        <select name="state" aria-label="State" class="inline-select">
-                            @foreach (var state in Enum.GetValues<BookState>())
-                            {
-                                <option value="@state" selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
-                            }
-                        </select>
-                        <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
-                    </form>
-                    <div class="row-actions">
-                        <form method="post" asp-page-handler="Delete" data-confirm="Remove '@book.Title' from the reading list?">
-                            <input type="hidden" name="isbn" value="@book.Isbn">
-                            <button type="submit" class="icon-btn danger">delete</button>
-                        </form>
-                    </div>
-                </li>
+                    <ul class="admin-row-list admin-row-list--dropzone" data-state-drop-zone data-state="@group.State">
+                        @foreach (var book in group.Books)
+                        {
+                            <li class="admin-row" draggable="true" data-search-item data-state-item data-id="@book.Isbn">
+                                <div class="row-body">
+                                    <div class="row-title" data-search>@book.Title</div>
+                                    <div class="row-sub" data-search>by @book.Author · @book.Isbn</div>
+                                </div>
+                                <form method="post" asp-page-handler="SetState" class="row-actions" data-state-form>
+                                    <input type="hidden" name="isbn" value="@book.Isbn">
+                                    <select name="state" aria-label="State" class="inline-select">
+                                        @foreach (var state in Enum.GetValues<BookState>())
+                                        {
+                                            <option value="@state" selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
+                                        }
+                                    </select>
+                                </form>
+                                <div class="row-actions">
+                                    <form method="post" asp-page-handler="Delete" data-confirm="Remove '@book.Title' from the reading list?">
+                                        <input type="hidden" name="isbn" value="@book.Isbn">
+                                        <button type="submit" class="icon-btn danger">delete</button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
             }
-            <li class="list-empty-state" data-search-empty hidden>No books found</li>
-        </ul>
+        </div>
+        <p class="list-empty-state" data-search-empty hidden>No books found</p>
     </div>
 
 </div>

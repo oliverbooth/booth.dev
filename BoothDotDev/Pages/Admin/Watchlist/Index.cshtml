@@ -80,34 +80,45 @@
             </div>
         </div>
 
-        <ul class="admin-row-list">
-            @foreach (var item in Model.Watchables)
+        <div class="row-groups" data-state-groups>
+            @foreach (var group in Model.StateGroups)
             {
-                <li class="admin-row" data-search-item>
-                    <div class="row-body">
-                        <div class="row-title" data-search>@item.Title</div>
-                        <div class="row-sub" data-search>@item.Kind.Humanize(LetterCasing.Title)</div>
+                <div class="row-group">
+                    <div class="row-group-header">
+                        <span class="@group.DotClass"></span>
+                        <span class="row-group-title">@group.Label</span>
+                        <span class="row-group-count">@("title".ToQuantity(group.Watchables.Count))</span>
                     </div>
-                    <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions">
-                        <select name="state" aria-label="State" class="inline-select">
-                            @foreach (var state in Enum.GetValues<WatchableState>())
-                            {
-                                <option value="@state" selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
-                            }
-                        </select>
-                        <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
-                    </form>
-                    <div class="row-actions">
-                        <a asp-page="/Admin/Watchlist/Edit" asp-route-id="@item.Id" class="icon-btn">edit</a>
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
-                              data-confirm="Remove '@item.Title' from the watchlist?">
-                            <button type="submit" class="icon-btn danger">delete</button>
-                        </form>
-                    </div>
-                </li>
+                    <ul class="admin-row-list admin-row-list--dropzone" data-state-drop-zone data-state="@group.State">
+                        @foreach (var item in group.Watchables)
+                        {
+                            <li class="admin-row" draggable="true" data-search-item data-state-item data-id="@item.Id">
+                                <div class="row-body">
+                                    <div class="row-title" data-search>@item.Title</div>
+                                    <div class="row-sub" data-search>@item.Kind.Humanize(LetterCasing.Title)</div>
+                                </div>
+                                <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions" data-state-form>
+                                    <select name="state" aria-label="State" class="inline-select">
+                                        @foreach (var state in Enum.GetValues<WatchableState>())
+                                        {
+                                            <option value="@state" selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
+                                        }
+                                    </select>
+                                </form>
+                                <div class="row-actions">
+                                    <a asp-page="/Admin/Watchlist/Edit" asp-route-id="@item.Id" class="icon-btn">edit</a>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
+                                          data-confirm="Remove '@item.Title' from the watchlist?">
+                                        <button type="submit" class="icon-btn danger">delete</button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
             }
-            <li class="list-empty-state" data-search-empty hidden>No watchlist entries found</li>
-        </ul>
+        </div>
+        <p class="list-empty-state" data-search-empty hidden>No watchlist entries found</p>
     </div>
 
 </div>

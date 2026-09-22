@@ -25,17 +25,30 @@ public sealed class Index : PageModel
     }
 
     /// <summary>
-    ///     Gets every book on the reading list.
+    ///     The display order, label, and dot colour for each state's group.
     /// </summary>
-    /// <value>Every book on the reading list.</value>
-    public IReadOnlyCollection<Book> Books { get; private set; } = [];
+    private static readonly (BookState State, string Label, string DotClass)[] StateOrder =
+    [
+        (BookState.Reading, "reading", "dot"),
+        (BookState.PlanToRead, "plan to read", "dot dot-coral"),
+        (BookState.Read, "read", "dot dot-magenta")
+    ];
+
+    /// <summary>
+    ///     Gets the books, grouped by reading state, in <see cref="StateOrder" />.
+    /// </summary>
+    /// <value>The state groups.</value>
+    public IReadOnlyList<StateGroup> StateGroups { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request.
     /// </summary>
     public void OnGet()
     {
-        Books = _readingListService.GetAllBooks();
+        var books = _readingListService.GetAllBooks();
+        StateGroups = StateOrder
+            .Select(s => new StateGroup(s.State, s.Label, s.DotClass, books.Where(b => b.State == s.State).ToArray()))
+            .ToArray();
     }
 
     /// <summary>
@@ -60,4 +73,13 @@ public sealed class Index : PageModel
         _readingListService.DeleteBook(isbn);
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Represents a group of books sharing a reading state, for display in the admin listing.
+    /// </summary>
+    /// <param name="State">The state shared by every book in the group.</param>
+    /// <param name="Label">The lowercase display label for the state.</param>
+    /// <param name="DotClass">The CSS class for this state's indicator dot.</param>
+    /// <param name="Books">The books in this state.</param>
+    public sealed record StateGroup(BookState State, string Label, string DotClass, IReadOnlyList<Book> Books);
 }
