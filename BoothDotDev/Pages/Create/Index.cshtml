@@ -45,7 +45,7 @@
                             <p class="sub">@item.Description</p>
                         }
                     </div>
-                    <audio controls src="@musicUrl" style="height:32px"></audio>
+                    <audio controls src="@musicUrl" class="track-audio"></audio>
                     <span class="sub">@duration</span>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
@@ -68,11 +68,11 @@
             var resolver = new CdnMediaResolver(context, null!, "content", CdnOptions.Value.BaseUrl);
             var cdnUrl = resolver.ResolveCdnUrl(item.FileName, mediaKind);
 
-            <figure class="masonry-cell @(first ? "tall" : "short")" style="position:relative">
+            <figure class="masonry-cell @(first ? "tall" : "short")">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a asp-page="/Admin/Creations/Artwork/Edit" asp-route-id="@item.Id" class="icon-btn"
-                       aria-label="Edit" style="position:absolute;top:8px;right:8px;z-index:1">
+                       aria-label="Edit">
                         <i class="ti ti-edit"></i>
                     </a>
                 }
