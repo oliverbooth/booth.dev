@@ -1,23 +1,24 @@
+/* a macOS-style window: dark in both themes, like code blocks */
 .terminal {
-  background: var(--surface-1);
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
   margin-bottom: 2.5rem;
+  border-radius: var(--radius-md);
+  background: var(--syntax-bg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
 .terminal-bar {
   display: flex;
-  gap: 6px;
-  padding: 10px 14px;
-  border-bottom: 0.5px solid var(--border);
+  gap: 8px;
+  padding: 12px 18px;
+  background: var(--code-header-bg);
 }
 
 .terminal-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--border-strong);
+  background: var(--syntax-punct);
 
   &:nth-child(1) {
     background: var(--terminal-dot-1);
@@ -33,81 +34,25 @@
 }
 
 .terminal-body {
-  padding: 1.25rem 1.5rem 1.5rem;
+  padding: 20px 24px 24px;
+  color: var(--syntax-text);
   font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.9;
+  font-size: 13.5px;
+  line-height: 1.6;
 
   .prompt {
-    color: var(--accent);
+    color: var(--syntax-func);
   }
 
   .path {
-    color: var(--text-faint);
+    color: var(--syntax-punct);
   }
 
   .out {
-    color: var(--text-secondary);
-    font-size: 13px;
+    color: var(--syntax-string);
   }
 
   .out--danger {
-    color: var(--danger-text);
-  }
-
-  .cursor {
-    border-right: 2px solid var(--accent);
-    animation: blink 1s step-end infinite;
-  }
-}
-
-.terminal-block {
-  margin: 8px 0 16px;
-}
-
-.terminal-name {
-  font-family: var(--font-sans);
-  font-size: 34px;
-  margin: 0 0 6px;
-  background: linear-gradient(90deg, var(--accent) 0%, #a370d6 50%, #007ec6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.terminal-name-block {
-  font-family: var(--font-sans);
-}
-
-.terminal-tagline {
-  color: var(--text-secondary);
-  font-size: 15px;
-  margin: 0;
-}
-
-.terminal-link {
-  color: var(--accent);
-}
-
-.terminal-line {
-  min-height: 1.9em;
-}
-
-.terminal-actions {
-  margin-top: 20px;
-  display: flex;
-  gap: 8px;
-  font-family: var(--font-sans);
-}
-
-@keyframes blink {
-  50% {
-    border-color: transparent;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .terminal-body .cursor {
-    animation: none;
+    color: var(--accent-coral);
   }
 }

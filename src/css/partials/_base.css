@@ -28,12 +28,14 @@ img {
   display: block;
 }
 
+/* interface headings are lowercase; authored titles and article headings opt out below */
 h1,
 h2,
 h3 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.15;
+  text-transform: lowercase;
 }
 
 h1 {
@@ -115,10 +117,13 @@ p {
 }
 
 .avatar-box {
-  width: 88px;
-  height: 88px;
-  border-radius: 12px;
-  background: var(--surface-1);
+  width: 112px;
+  height: 112px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transform: rotate(calc(-3deg * var(--motion) * var(--tilt-on)));
+  overflow: hidden;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -132,7 +137,6 @@ p {
   img {
     width: 100%;
     height: 100%;
-    border-radius: 12px;
     object-fit: cover;
   }
 }

@@ -90,6 +90,13 @@
     margin: 1.75rem 0 0.5rem;
   }
 
+  /* headings inside authored content keep the case they were written in */
+  h1,
+  h2,
+  h3 {
+    text-transform: none;
+  }
+
   h4 {
     margin: 1.5rem 0 0.5rem;
     color: var(--brand-text);
@@ -400,10 +407,71 @@
   flex-shrink: 0;
 }
 
+.doc-card {
+  margin-top: 2rem;
+  padding: 28px 32px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  /* policy copy sits a step quieter than article prose */
+  color: var(--text-muted);
+  font-size: 15.5px;
+  line-height: 1.75;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  strong {
+    color: var(--text);
+  }
+
+  /* sections: a coloured dot before each heading, and a soft divider between them */
+  h2 {
+    --dot: var(--accent-coral);
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2rem 0 0.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in oklch, var(--text) 10%, transparent);
+    color: var(--text);
+    font-size: 22px;
+    text-transform: lowercase;
+
+    &::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--dot);
+    }
+
+    &:nth-of-type(4n + 2) {
+      --dot: var(--accent-teal);
+    }
+
+    &:nth-of-type(4n + 3) {
+      --dot: var(--accent-magenta);
+    }
+
+    &:nth-of-type(4n + 4) {
+      --dot: var(--brand-text);
+    }
+  }
+}
+
 .post-title {
   margin: 0 0 14px;
   font-size: 44px;
   line-height: 1.1;
+  text-transform: none;
 }
 
 .post-tags {

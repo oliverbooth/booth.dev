@@ -8,9 +8,10 @@
 <div class="page">
 
     <p class="crumb"><a asp-page="/Index">Home</a> / It's 5 O'Clock Somewhere Privacy Policy</p>
-    <h1>@ViewData["Title"]</h1>
-    <p class="meta" style="margin:8px 0 2rem">
-        Last updated <span title="@lastUpdated.ToString("D")">@lastUpdated.Humanize()</span>
+    <span class="eyebrow">for It's 5 O'Clock Somewhere -</span>
+    <h1>Privacy Policy</h1>
+    <p class="page-updated">
+        Last updated <abbr title="@lastUpdated.ToString("D")">@lastUpdated.Humanize()</abbr>
     </p>
 
     <div class="callout" data-callout="info">
@@ -18,7 +19,7 @@
         For the generalised privacy policy, please <a asp-page="/Privacy/GooglePlay">click here</a>.
     </div>
 
-    <div class="prose" style="margin-top:2rem">
+    <div class="prose doc-card">
         <p>
             This Privacy Policy describes how your personal information is collected, used, and shared when you use or
             interact with the application <em>It's 5 O'Clock Somewhere</em> (the "Application").

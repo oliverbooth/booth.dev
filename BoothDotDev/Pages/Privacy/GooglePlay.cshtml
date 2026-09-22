@@ -8,12 +8,13 @@
 <div class="page">
 
     <p class="crumb"><a asp-page="/Index">Home</a> / Google Play Privacy Policy</p>
-    <h1>@ViewData["Title"]</h1>
-    <p class="meta" style="margin:8px 0 2rem">
-        Last updated <span title="@lastUpdated.ToString("D")">@lastUpdated.Humanize()</span>
+    <span class="eyebrow">for my Google Play apps -</span>
+    <h1>Privacy Policy</h1>
+    <p class="page-updated">
+        Last updated <abbr title="@lastUpdated.ToString("D")">@lastUpdated.Humanize()</abbr>
     </p>
 
-    <div class="callout" data-callout="info" style="margin-bottom:1rem">
+    <div class="callout" data-callout="info">
         This Privacy Policy differs from the policy that applies to this website. For this website's privacy policy,
         please <a asp-page="/Privacy/Index">click here</a>.
     </div>
@@ -22,7 +23,7 @@
         that applies to that application, please <a asp-page="/Privacy/FiveOClockSomewhere">click here</a>.
     </div>
 
-    <div class="prose" style="margin-top:2rem">
+    <div class="prose doc-card">
         <p>
             This Privacy Policy describes how your personal information is collected, used, and shared when you use or
             interact with applications that I publish on the <a href="https://play.google.com/store/">Google Play Store</a>.

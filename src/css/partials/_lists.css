@@ -257,11 +257,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  width: 52px;
+  width: 56px;
   flex-shrink: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
 
   svg {
     width: 18px;
@@ -270,24 +271,29 @@
 }
 
 .crypto-address {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-secondary);
   flex: 1;
   overflow: hidden;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .copy-icon {
-  font-size: 15px;
-  color: var(--text-faint);
-  cursor: pointer;
   flex-shrink: 0;
+  padding: 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
   transition: color 0.15s ease;
 
-  &:hover {
-    color: var(--text-secondary);
+  &:hover,
+  &:focus-visible {
+    color: var(--text);
   }
 }
 
@@ -351,6 +357,10 @@
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.track-audio {
+  height: 32px;
 }
 
 .track-play {

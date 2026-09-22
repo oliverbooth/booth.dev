@@ -4,6 +4,13 @@
 
   display: flex;
   min-height: 100vh;
+
+  /* TODO: the admin mixes interface and authored headings; it gets its own lowercase pass in the admin restyle */
+  h1,
+  h2,
+  h3 {
+    text-transform: none;
+  }
 }
 
 .admin-rail {

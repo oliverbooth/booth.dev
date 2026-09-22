@@ -19,14 +19,15 @@ export function initCopyButtons() {
     }
 }
 
-function showCopyFeedback(icon: HTMLElement): void {
-    const originalClasses = icon.className;
-    icon.classList.remove('ti-copy');
-    icon.classList.add('ti-check');
-    icon.style.color = 'var(--success-text)';
+function showCopyFeedback(button: HTMLElement): void {
+    const glyph: HTMLElement = button.querySelector<HTMLElement>('i') ?? button;
+    const originalClasses = glyph.className;
+    glyph.classList.remove('ti-copy');
+    glyph.classList.add('ti-check');
+    button.style.color = 'var(--teal-text)';
 
     setTimeout(() => {
-        icon.className = originalClasses;
-        icon.style.color = '';
+        glyph.className = originalClasses;
+        button.style.color = '';
     }, 1200);
 }

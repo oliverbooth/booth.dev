@@ -1,5 +1,6 @@
 .project-title {
   margin: 12px 0 14px;
+  text-transform: none;
 }
 
 .project-desc {

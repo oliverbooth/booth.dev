@@ -3,6 +3,7 @@
   color: var(--text-faint);
   font-family: var(--font-mono);
   font-size: 12.5px;
+  text-transform: lowercase;
 }
 
 /* each entry is a tinted, tilted card */
