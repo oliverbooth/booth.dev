@@ -35,3 +35,27 @@
     cursor: grabbing;
   }
 }
+
+/* keyboard/screen-reader equivalent to dragging the handle above */
+.reorder-move {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.reorder-move-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--text-faint);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--text);
+    }
+  }
+}

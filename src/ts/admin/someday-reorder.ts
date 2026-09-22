@@ -1,6 +1,8 @@
 /**
- * Initializes drag-to-reorder for the admin someday list. Dragging a row live-reorders the DOM; dropping it reveals
- * a "Save order" bar that submits the new order as a plain form post, so nothing is persisted until confirmed.
+ * Initializes reordering for the admin someday list, by dragging a row or by its move-up/move-down buttons (a
+ * keyboard- and screen-reader-reachable equivalent to the drag, since HTML5 drag-and-drop has no keyboard path of
+ * its own). Either one live-reorders the DOM and reveals a "Save order" bar that submits the new order as a plain
+ * form post, so nothing is persisted until confirmed.
  */
 export function initSomedayReorder(): void {
     const list = document.querySelector<HTMLElement>('[data-reorder-list]');
@@ -10,6 +12,29 @@ export function initSomedayReorder(): void {
     if (!list || !saveBar || !form) {
         return;
     }
+
+    list.addEventListener('click', (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-move]');
+        const item = button?.closest<HTMLElement>('[data-reorder-item]');
+        if (!button || !item) {
+            return;
+        }
+
+        const sibling = button.dataset.move === 'up' ? item.previousElementSibling : item.nextElementSibling;
+        if (!sibling) {
+            return; // already at that end of the list
+        }
+
+        if (button.dataset.move === 'up') {
+            item.parentElement?.insertBefore(item, sibling);
+        } else {
+            item.parentElement?.insertBefore(sibling, item);
+        }
+
+        button.focus(); // the button moved with the row; keep focus on it rather than losing it to the body
+        syncHiddenInputs(list, form);
+        saveBar.hidden = false;
+    });
 
     let dragged: HTMLElement | null = null;
 
