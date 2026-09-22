@@ -112,35 +112,7 @@
         </div>
     }
 
-    <a id="comments"></a>
-
-    @if (post.EnableComments)
-    {
-        <div class="giscus"></div>
-
-        @section Scripts
-        {
-            <script src="https://giscus.app/client.js"
-                    data-repo="oliverbooth/booth.dev"
-                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
-                    data-category="Comments"
-                    data-category-id="DIC_kwDODp0rOs4Ce_Nj"
-                    data-mapping="pathname"
-                    data-strict="0"
-                    data-reactions-enabled="1"
-                    data-emit-metadata="0"
-                    data-input-position="bottom"
-                    data-theme="dark"
-                    data-lang="en"
-                    crossorigin="anonymous"
-                    async>
-            </script>
-        }
-    }
-    else
-    {
-        <p class="no-comment">Comments are not enabled for this post.</p>
-    }
+    <partial name="Partials/_Comments" model="post.EnableComments" />
 
     @{
         var commentCount = CommentService.GetLegacyCommentCount(post);
