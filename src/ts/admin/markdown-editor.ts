@@ -2,7 +2,7 @@ import {EditorView} from 'codemirror';
 import {defaultKeymap, history, historyKeymap} from '@codemirror/commands';
 import {markdown} from '@codemirror/lang-markdown';
 import {languages} from '@codemirror/language-data';
-import {syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from '@codemirror/language';
+import {defaultHighlightStyle, HighlightStyle, syntaxHighlighting} from '@codemirror/language';
 import {Compartment} from '@codemirror/state';
 import {keymap} from '@codemirror/view';
 import {tags} from '@lezer/highlight';

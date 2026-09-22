@@ -127,7 +127,7 @@ function close(): void {
             refs?.dialog.classList.remove('is-closing');
             refs?.dialog.close();
         },
-        { once: true }
+        {once: true}
     );
 }
 

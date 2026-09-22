@@ -151,8 +151,9 @@ public sealed class TraktSyncService(
         }
 
         // trakt.tv, www.trakt.tv, app.trakt.tv, ...
-        if (uri.Host is not "trakt.tv" && !uri.Host.EndsWith(".trakt.tv", StringComparison.OrdinalIgnoreCase) ||
-            uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries) is not [("movies" or "shows") and var type, var slug, ..])
+        if ((uri.Host is not "trakt.tv" && !uri.Host.EndsWith(".trakt.tv", StringComparison.OrdinalIgnoreCase)) ||
+            uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries) is not
+                [("movies" or "shows") and var type, var slug, ..])
         {
             return Result.Fail("That doesn't look like a Trakt movie or show link.");
         }
@@ -160,7 +161,8 @@ public sealed class TraktSyncService(
         var linkKind = type == "movies" ? WatchableKind.Movie : WatchableKind.Show;
         return linkKind == kind
             ? Result.Ok(slug)
-            : Result.Fail($"That's a link to a {type[..^1]}, but this entry is a {(kind == WatchableKind.Movie ? "movie" : "show")}.");
+            : Result.Fail(
+                $"That's a link to a {type[..^1]}, but this entry is a {(kind == WatchableKind.Movie ? "movie" : "show")}.");
     }
 
     /// <summary>

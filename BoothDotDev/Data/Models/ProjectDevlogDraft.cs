@@ -21,7 +21,7 @@ public sealed class ProjectDevlogDraft : IEquatable<ProjectDevlogDraft>
     ///     Gets the ID of this draft.
     /// </summary>
     /// <value>The ID of this draft.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets the ID of the devlog entry this draft belongs to.
@@ -40,6 +40,30 @@ public sealed class ProjectDevlogDraft : IEquatable<ProjectDevlogDraft>
     /// </summary>
     /// <value>The visibility.</value>
     public Visibility Visibility { get; set; }
+
+    /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="ProjectDevlogDraft" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(ProjectDevlogDraft? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="ProjectDevlogDraft" /> are equal.
@@ -70,30 +94,6 @@ public sealed class ProjectDevlogDraft : IEquatable<ProjectDevlogDraft>
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="ProjectDevlogDraft" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(ProjectDevlogDraft? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -103,7 +103,7 @@ public sealed class ProjectDevlogDraft : IEquatable<ProjectDevlogDraft>
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is ProjectDevlogDraft other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is ProjectDevlogDraft other && Equals(other));
     }
 
     /// <summary>

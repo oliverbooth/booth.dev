@@ -34,7 +34,7 @@ public sealed class Project : IEquatable<Project>
     ///     Gets the ID of the project.
     /// </summary>
     /// <value>The ID of the project.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the set of languages used for this project.
@@ -83,12 +83,36 @@ public sealed class Project : IEquatable<Project>
     /// </summary>
     /// <value>The tagline.</value>
     public string? Tagline { get; set; }
-    
+
     /// <summary>
     ///     Gets or sets the type of the project.
     /// </summary>
     /// <value>The type of the project.</value>
     public ProjectType Type { get; set; } = ProjectType.App;
+
+    /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="Project" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(Project? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="Project" /> are equal.
@@ -119,30 +143,6 @@ public sealed class Project : IEquatable<Project>
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="Project" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(Project? other)
-    {
-        if (ReferenceEquals(null, other))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -152,7 +152,7 @@ public sealed class Project : IEquatable<Project>
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is Project other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is Project other && Equals(other));
     }
 
     /// <summary>

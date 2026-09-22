@@ -28,5 +28,5 @@ public enum ProjectType
     /// <summary>
     ///     A website.
     /// </summary>
-    Website,
+    Website
 }

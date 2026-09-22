@@ -25,6 +25,6 @@ public sealed class BlueskyOptions
     /// <summary>
     ///     Gets or sets the duration in minutes for which to cache the Bluesky feed.
     /// </summary>
-    /// <value>The duration in minutes for which to cache the Bluesky feed.</value>   
+    /// <value>The duration in minutes for which to cache the Bluesky feed.</value>
     public int CacheDurationMinutes { get; init; } = 5;
 }

@@ -101,7 +101,8 @@
                                     <select name="state" aria-label="State" class="inline-select">
                                         @foreach (var state in Enum.GetValues<WatchableState>())
                                         {
-                                            <option value="@state" selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
+                                            <option value="@state"
+                                                    selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
                                         }
                                     </select>
                                 </form>

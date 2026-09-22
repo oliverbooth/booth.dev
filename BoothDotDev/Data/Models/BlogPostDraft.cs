@@ -12,12 +12,6 @@ public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
     public Guid BlogPostId { get; internal set; }
 
     /// <summary>
-    ///     Gets or sets the body of the post, as of this draft.
-    /// </summary>
-    /// <value>The body of the post.</value>
-    public string Body { get; set; } = string.Empty;
-
-    /// <summary>
     ///     Gets or sets the category ID of the post, as of this draft.
     /// </summary>
     /// <value>The category ID of the post.</value>
@@ -30,16 +24,10 @@ public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
     public DateTimeOffset CreatedAt { get; internal set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
-    ///     Gets or sets the excerpt of the post, as of this draft, if it has one.
-    /// </summary>
-    /// <value>The excerpt, or <see langword="null" /> if this draft has no excerpt.</value>
-    public string? Excerpt { get; set; }
-
-    /// <summary>
     ///     Gets the ID of this draft.
     /// </summary>
     /// <value>The ID of this draft.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets a value indicating whether to show the table of contents for the post, as of this draft.
@@ -76,6 +64,42 @@ public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
     public Visibility Visibility { get; set; }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="BlogPostDraft" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(BlogPostDraft? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
+    ///     Gets or sets the body of the post, as of this draft.
+    /// </summary>
+    /// <value>The body of the post.</value>
+    public string Body { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the excerpt of the post, as of this draft, if it has one.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if this draft has no excerpt.</value>
+    public string? Excerpt { get; set; }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="BlogPostDraft" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="BlogPostDraft" /> to compare.</param>
@@ -104,30 +128,6 @@ public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="BlogPostDraft" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(BlogPostDraft? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -137,7 +137,7 @@ public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is BlogPostDraft other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is BlogPostDraft other && Equals(other));
     }
 
     /// <summary>

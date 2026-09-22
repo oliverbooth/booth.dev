@@ -76,10 +76,10 @@
             <DependentUpon>_MainLayout.cshtml</DependentUpon>
         </Compile>
         <Compile Update="Pages\Shared\Partials\ActivityEntryCommit.cshtml.cs">
-          <DependentUpon>_ActivityEntryCommit.cshtml</DependentUpon>
+            <DependentUpon>_ActivityEntryCommit.cshtml</DependentUpon>
         </Compile>
         <Compile Update="Pages\Shared\AdminLayout.cs">
-          <DependentUpon>_AdminLayout.cshtml</DependentUpon>
+            <DependentUpon>_AdminLayout.cshtml</DependentUpon>
         </Compile>
     </ItemGroup>
 

@@ -67,28 +67,29 @@
                                aria-label="Select @devlog.Title">
                         <span class="badge badge-@badgeClass">
                         @switch (devlog.Visibility)
-                                {
-                                    case Visibility.Published:
-                                        <text><span class="dot"></span> Published</text>
-                                        break;
+                            {
+                                case Visibility.Published:
+                                    <text><span class="dot"></span> Published</text>
+                                    break;
 
-                                    case Visibility.Private:
-                                        <text><i class="ti ti-lock"></i> Private</text>
-                                        break;
+                                case Visibility.Private:
+                                    <text><i class="ti ti-lock"></i> Private</text>
+                                    break;
 
-                                    case Visibility.Unlisted:
-                                        <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                        break;
+                                case Visibility.Unlisted:
+                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                    break;
 
-                                    default:
-                                        throw new UnreachableException();
-                                }
+                                default:
+                                    throw new UnreachableException();
+                            }
                         </span>
                         <div class="row-body">
                             <div class="row-title" data-search>@devlog.Title</div>
                         </div>
                         <span class="row-meta">
-                            <abbr title="@devlog.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@devlog.TrashedAt!.Value.Humanize()</abbr>
+                            <abbr
+                                title="@devlog.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@devlog.TrashedAt!.Value.Humanize()</abbr>
                         </span>
                         <div class="row-actions">
                             <a asp-page="/Admin/Projects/Devlogs/Edit" asp-route-projectId="@Model.Project.Id" asp-route-id="@devlog.Id"

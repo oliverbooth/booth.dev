@@ -63,28 +63,29 @@
                                aria-label="Select @challenge.Title">
                         <span class="badge badge-@badgeClass">
                         @switch (challenge.Visibility)
-                                {
-                                    case Visibility.Published:
-                                        <text><span class="dot"></span> Published</text>
-                                        break;
+                            {
+                                case Visibility.Published:
+                                    <text><span class="dot"></span> Published</text>
+                                    break;
 
-                                    case Visibility.Private:
-                                        <text><i class="ti ti-lock"></i> Private</text>
-                                        break;
+                                case Visibility.Private:
+                                    <text><i class="ti ti-lock"></i> Private</text>
+                                    break;
 
-                                    case Visibility.Unlisted:
-                                        <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                        break;
+                                case Visibility.Unlisted:
+                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                    break;
 
-                                    default:
-                                        throw new UnreachableException();
-                                }
+                                default:
+                                    throw new UnreachableException();
+                            }
                         </span>
                         <div class="row-body">
                             <div class="row-title" data-search>@challenge.Title</div>
                         </div>
                         <span class="row-meta">
-                            <abbr title="@challenge.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@challenge.TrashedAt!.Value.Humanize()</abbr>
+                            <abbr
+                                title="@challenge.TrashedAt!.Value.ToString("yyyy-MM-dd HH:mm:ss")">@challenge.TrashedAt!.Value.Humanize()</abbr>
                         </span>
                         <div class="row-actions">
                             <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn">edit</a>

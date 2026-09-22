@@ -48,11 +48,11 @@ public abstract class CreativeItem
     /// </summary>
     /// <value>The visibility.</value>
     public Visibility Visibility { get; set; } = Visibility.Published;
-    
+
     /// <summary>
     ///     Gets or sets a value indicating whether this creative item is a work in progress.
     /// </summary>
-    /// <value><see langword="true"/> if this creative item is a work in progress; otherwise, <see langword="false"/>.</value>
+    /// <value><see langword="true" /> if this creative item is a work in progress; otherwise, <see langword="false" />.</value>
     public bool IsWorkInProgress { get; set; }
 
     /// <summary>

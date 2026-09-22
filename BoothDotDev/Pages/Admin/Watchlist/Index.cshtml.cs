@@ -13,6 +13,16 @@ namespace BoothDotDev.Pages.Admin.Watchlist;
 [Authorize(Policy = "Admin")]
 public sealed class Index : PageModel
 {
+    /// <summary>
+    ///     The display order, label, and dot colour for each state's group.
+    /// </summary>
+    private static readonly (WatchableState State, string Label, string DotClass)[] StateOrder =
+    [
+        (WatchableState.Watching, "watching", "dot"),
+        (WatchableState.PlanToWatch, "plan to watch", "dot dot-coral"),
+        (WatchableState.Watched, "watched", "dot dot-magenta")
+    ];
+
     private readonly TraktAuthService _traktAuthService;
     private readonly TraktSyncService _traktSyncService;
     private readonly WatchlistService _watchlistService;
@@ -55,16 +65,6 @@ public sealed class Index : PageModel
     /// <value>The status message, or <see langword="null" /> if none is pending.</value>
     [TempData]
     public string? TraktMessage { get; set; }
-
-    /// <summary>
-    ///     The display order, label, and dot colour for each state's group.
-    /// </summary>
-    private static readonly (WatchableState State, string Label, string DotClass)[] StateOrder =
-    [
-        (WatchableState.Watching, "watching", "dot"),
-        (WatchableState.PlanToWatch, "plan to watch", "dot dot-coral"),
-        (WatchableState.Watched, "watched", "dot dot-magenta")
-    ];
 
     /// <summary>
     ///     Gets the watchlist items, grouped by state, in <see cref="StateOrder" />.
@@ -159,7 +159,8 @@ public sealed class Index : PageModel
         else
         {
             var summary = result.Value;
-            TraktMessage = $"Pulled from Trakt: {summary.Added} added, {summary.Promoted} promoted, {summary.Adopted} linked to existing entries.";
+            TraktMessage =
+                $"Pulled from Trakt: {summary.Added} added, {summary.Promoted} promoted, {summary.Adopted} linked to existing entries.";
         }
 
         return RedirectToPage();

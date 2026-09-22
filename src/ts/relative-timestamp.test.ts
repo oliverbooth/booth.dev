@@ -5,7 +5,7 @@ import {formatRelativeTimestamp} from './utils.ts';
 
 interface RelativeTimestampFixture {
     referenceUtc: string;
-    cases: {targetUtc: string; expected: string}[];
+    cases: { targetUtc: string; expected: string }[];
 }
 
 const fixturePath = fileURLToPath(new URL('../../test-fixtures/relative-timestamp.json', import.meta.url));

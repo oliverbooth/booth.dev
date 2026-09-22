@@ -91,12 +91,18 @@
 
 .tile-icon-box--ko-fi {
   background: var(--ko-fi-tint);
-  i { color: var(--accent) !important; }
+
+  i {
+    color: var(--accent) !important;
+  }
 }
 
 .tile-icon-box--bmac {
   background: var(--buy-me-a-coffee-tint);
-  i { color: black !important; }
+
+  i {
+    color: black !important;
+  }
 }
 
 .tile-external-icon {

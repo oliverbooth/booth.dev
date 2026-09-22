@@ -65,24 +65,25 @@
                                     </div>
                                     <span class="badge badge-@badgeClass">
                                     @switch (article.Visibility)
-                                            {
-                                                case Visibility.Published:
-                                                    <text><span class="dot"></span> Published</text>
-                                                    break;
+                                        {
+                                            case Visibility.Published:
+                                                <text><span class="dot"></span> Published</text>
+                                                break;
 
-                                                case Visibility.Private:
-                                                    <text><i class="ti ti-lock"></i> Private</text>
-                                                    break;
+                                            case Visibility.Private:
+                                                <text><i class="ti ti-lock"></i> Private</text>
+                                                break;
 
-                                                case Visibility.Unlisted:
-                                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                                    break;
+                                            case Visibility.Unlisted:
+                                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                                break;
 
-                                                default:
-                                                    throw new UnreachableException();
-                                            }
+                                            default:
+                                                throw new UnreachableException();
+                                        }
                                     </span>
-                                    <span class="row-meta"><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></span>
+                                    <span class="row-meta"><abbr
+                                            title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></span>
                                     <div class="row-actions">
                                         <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id" class="icon-btn">edit</a>
                                         <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@path" class="icon-btn">view</a>

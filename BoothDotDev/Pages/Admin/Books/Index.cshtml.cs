@@ -13,6 +13,16 @@ namespace BoothDotDev.Pages.Admin.Books;
 [Authorize(Policy = "Admin")]
 public sealed class Index : PageModel
 {
+    /// <summary>
+    ///     The display order, label, and dot colour for each state's group.
+    /// </summary>
+    private static readonly (BookState State, string Label, string DotClass)[] StateOrder =
+    [
+        (BookState.Reading, "reading", "dot"),
+        (BookState.PlanToRead, "plan to read", "dot dot-coral"),
+        (BookState.Read, "read", "dot dot-magenta")
+    ];
+
     private readonly ReadingListService _readingListService;
 
     /// <summary>
@@ -23,16 +33,6 @@ public sealed class Index : PageModel
     {
         _readingListService = readingListService;
     }
-
-    /// <summary>
-    ///     The display order, label, and dot colour for each state's group.
-    /// </summary>
-    private static readonly (BookState State, string Label, string DotClass)[] StateOrder =
-    [
-        (BookState.Reading, "reading", "dot"),
-        (BookState.PlanToRead, "plan to read", "dot dot-coral"),
-        (BookState.Read, "read", "dot dot-magenta")
-    ];
 
     /// <summary>
     ///     Gets the books, grouped by reading state, in <see cref="StateOrder" />.

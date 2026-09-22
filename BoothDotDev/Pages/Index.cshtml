@@ -1,7 +1,6 @@
 @page "/"
-@using BoothDotDev.Pages.Shared.Partials
-@using BoothDotDev.Services
 @using BoothDotDev.Extensions
+@using BoothDotDev.Services
 @model Index
 @inject ProjectService ProjectService
 
@@ -76,7 +75,8 @@
     <section class="home-section" aria-labelledby="home-activity">
         <div class="section-head">
             <h2 id="home-activity">Latest activity</h2>
-            <a asp-page="/Blog/Index"><span class="command-link">git log --all</span> <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+            <a asp-page="/Blog/Index"><span class="command-link">git log --all</span> <i class="ti ti-arrow-right"
+                                                                                         aria-hidden="true"></i></a>
         </div>
 
         <div class="stack-list">

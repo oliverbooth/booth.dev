@@ -49,12 +49,14 @@
                                     <select name="state" aria-label="State" class="inline-select">
                                         @foreach (var state in Enum.GetValues<BookState>())
                                         {
-                                            <option value="@state" selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
+                                            <option value="@state"
+                                                    selected="@(state == book.State)">@state.Humanize(LetterCasing.Title)</option>
                                         }
                                     </select>
                                 </form>
                                 <div class="row-actions">
-                                    <form method="post" asp-page-handler="Delete" data-confirm="Remove '@book.Title' from the reading list?">
+                                    <form method="post" asp-page-handler="Delete"
+                                          data-confirm="Remove '@book.Title' from the reading list?">
                                         <input type="hidden" name="isbn" value="@book.Isbn">
                                         <button type="submit" class="icon-btn danger">delete</button>
                                     </form>

@@ -10,12 +10,10 @@ public enum WatchableKind
     /// <summary>
     ///     The item is a movie.
     /// </summary>
-    [PgName("movie")]
-    Movie,
+    [PgName("movie")] Movie,
 
     /// <summary>
     ///     The item is a TV show.
     /// </summary>
-    [PgName("show")]
-    Show
+    [PgName("show")] Show
 }

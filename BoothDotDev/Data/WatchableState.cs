@@ -10,18 +10,15 @@ public enum WatchableState
     /// <summary>
     ///     The item has been watched and finished.
     /// </summary>
-    [PgName("watched")]
-    Watched,
+    [PgName("watched")] Watched,
 
     /// <summary>
     ///     The item is currently being watched.
     /// </summary>
-    [PgName("watching")]
-    Watching,
+    [PgName("watching")] Watching,
 
     /// <summary>
     ///     The item is on a future watchlist.
     /// </summary>
-    [PgName("plan_to_watch")]
-    PlanToWatch
+    [PgName("plan_to_watch")] PlanToWatch
 }

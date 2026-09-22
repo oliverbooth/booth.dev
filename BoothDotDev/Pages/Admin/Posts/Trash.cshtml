@@ -64,22 +64,22 @@
                                aria-label="Select @post.Title">
                         <span class="badge badge-@badgeClass">
                         @switch (post.Visibility)
-                                {
-                                    case Visibility.Published:
-                                        <text><span class="dot"></span> Published</text>
-                                        break;
+                            {
+                                case Visibility.Published:
+                                    <text><span class="dot"></span> Published</text>
+                                    break;
 
-                                    case Visibility.Private:
-                                        <text><i class="ti ti-lock"></i> Private</text>
-                                        break;
+                                case Visibility.Private:
+                                    <text><i class="ti ti-lock"></i> Private</text>
+                                    break;
 
-                                    case Visibility.Unlisted:
-                                        <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                        break;
+                                case Visibility.Unlisted:
+                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                    break;
 
-                                    default:
-                                        throw new UnreachableException();
-                                }
+                                default:
+                                    throw new UnreachableException();
+                            }
                         </span>
                         <div class="row-body">
                             <div class="row-title" data-search>@post.Title</div>

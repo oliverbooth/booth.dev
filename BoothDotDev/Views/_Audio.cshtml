@@ -5,7 +5,7 @@
 <figure class="figure text-center @(!string.IsNullOrWhiteSpace(Model.Alt) ? "image-with-alt" : "")">
     <div class="figure-img-wrap">
         <audio controls>
-            <source src="@Model.Url" type="@Model.MimeType" class="figure-img"/>
+            <source src="@Model.Url" type="@Model.MimeType" class="figure-img" />
         </audio>
         @if (!string.IsNullOrWhiteSpace(Model.Alt))
         {
