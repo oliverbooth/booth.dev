@@ -9,7 +9,9 @@ internal sealed class Index : PageModel
 {
     private const int RecentActivityCount = 5;
     private const int ProjectCount = 6;
+    private const int LatestPostCount = 3;
     private readonly ActivityService _activityService;
+    private readonly BlogPostService _blogPostService;
     private readonly ProjectService _projectService;
 
     /// <summary>
@@ -17,11 +19,19 @@ internal sealed class Index : PageModel
     /// </summary>
     /// <param name="activityService">The activity service.</param>
     /// <param name="projectService">The project service.</param>
-    public Index(ActivityService activityService, ProjectService projectService)
+    /// <param name="blogPostService">The blog post service.</param>
+    public Index(ActivityService activityService, ProjectService projectService, BlogPostService blogPostService)
     {
         _activityService = activityService;
         _projectService = projectService;
+        _blogPostService = blogPostService;
     }
+
+    /// <summary>
+    ///     Gets the latest blog posts.
+    /// </summary>
+    /// <value>The latest blog posts.</value>
+    public IReadOnlyList<BlogPost> LatestPosts { get; private set; } = [];
 
     /// <summary>
     ///     Gets the recent activity.
@@ -42,5 +52,6 @@ internal sealed class Index : PageModel
     {
         RecentActivity = _activityService.GetRecentActivity(new ActivitySearchOptions(RecentActivityCount));
         Projects = [.. _projectService.GetProjects().Concat(_projectService.GetProjects(ProjectStatus.Past)).Take(ProjectCount)];
+        LatestPosts = _blogPostService.GetRecentBlogPosts(new ActivitySearchOptions(LatestPostCount));
     }
 }

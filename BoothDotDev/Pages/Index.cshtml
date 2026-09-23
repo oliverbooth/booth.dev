@@ -3,6 +3,7 @@
 @using BoothDotDev.Services
 @model Index
 @inject ProjectService ProjectService
+@inject MarkdownRenderingService MarkdownRenderingService
 
 @{
     string[] statuses =
@@ -39,7 +40,7 @@
 
             <div class="home-hero-actions">
                 <a asp-page="/Portfolio/Index" class="btn btn-primary">see my stuff <i class="ti ti-arrow-right"></i></a>
-                <a asp-page="/Blog/Index" class="btn">Read the blog</a>
+                <a asp-page="/Blog/Index" class="btn">read a thing</a>
             </div>
         </div>
 
@@ -67,6 +68,26 @@
                     <div class="card-body">
                         <p class="title">@project.Name</p>
                     </div>
+                </a>
+            }
+        </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="home-writing">
+        <div class="section-head">
+            <h2 id="home-writing">Things I've Written</h2>
+            <a asp-page="/Blog/Index">View all <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <div class="stack-list">
+            @foreach (var post in Model.LatestPosts)
+            {
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug">
+                    <div class="stack-meta">
+                        <p class="title">@post.Title</p>
+                        <p class="sub">@MarkdownRenderingService.RenderPlainTextExcerpt(post, out _)</p>
+                    </div>
+                    <span class="meta-value">@post.PublishedAt.ToShortString()</span>
                 </a>
             }
         </div>
