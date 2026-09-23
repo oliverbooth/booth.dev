@@ -27,7 +27,6 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / Donate</p>
     <span class="eyebrow">no pressure, but -</span>
     <h1>Buy Me a Coffee</h1>
 
@@ -45,15 +44,19 @@
     </div>
 
     <div class="support-grid">
-        <a href="https://www.buymeacoffee.com/oliverbooth" class="support-card">
-            <span class="support-icon support-icon--bmac"><i class="ti ti-cup"></i></span>
+        <a href="https://www.buymeacoffee.com/oliverbooth" class="support-card support-card--bmac">
+            <span class="support-icon support-icon--bmac">
+                <img src="~/img/bmc-logo.svg" alt="" asp-append-version="true" />
+            </span>
             <span>
                 <p class="support-title">Buy Me a Coffee</p>
                 <p class="support-sub">one-off or monthly</p>
             </span>
         </a>
-        <a href="https://ko-fi.com/oliverbooth" class="support-card">
-            <span class="support-icon support-icon--ko-fi"><i class="ti ti-coffee"></i></span>
+        <a href="https://ko-fi.com/oliverbooth" class="support-card support-card--kofi">
+            <span class="support-icon support-icon--ko-fi">
+                <img src="~/img/kofi_symbol.svg" alt="" asp-append-version="true" />
+            </span>
             <span>
                 <p class="support-title">Ko-fi</p>
                 <p class="support-sub">no fees, one-time</p>
@@ -62,12 +65,11 @@
     </div>
 
     <h2>Or, Crypto</h2>
-    <p class="body-copy">Send directly, no middleman. Tap an address to copy it.</p>
 
     <div class="crypto-grid">
         <div class="crypto-card">
             <div class="crypto-card-head">
-                <span class="crypto-icon crypto-icon--btc">BTC</span>
+                <span class="crypto-icon crypto-icon--btc"><i class="ti ti-coin-bitcoin-filled"></i></span>
                 <span class="crypto-name">Bitcoin</span>
             </div>
             <div class="crypto-qr">@Html.Raw(btcQrSvg)</div>
@@ -75,7 +77,7 @@
         </div>
         <div class="crypto-card">
             <div class="crypto-card-head">
-                <span class="crypto-icon crypto-icon--eth">ETH</span>
+                <span class="crypto-icon crypto-icon--eth"><i class="ti ti-currency-ethereum"></i></span>
                 <span class="crypto-name">Ethereum</span>
             </div>
             <div class="crypto-qr">@Html.Raw(ethQrSvg)</div>

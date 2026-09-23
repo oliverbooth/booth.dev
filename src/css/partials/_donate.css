@@ -33,6 +33,30 @@
       transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
     }
   }
+
+  &.support-card--bmac {
+    background: var(--bmc-bg);
+
+    .support-title {
+      color: var(--bmc-text);
+    }
+
+    .support-sub {
+      color: var(--bmc-text-muted);
+    }
+  }
+
+  &.support-card--kofi {
+    background: var(--kofi-bg);
+
+    .support-title {
+      color: var(--kofi-text);
+    }
+
+    .support-sub {
+      color: var(--kofi-text-muted);
+    }
+  }
 }
 
 .support-icon {
@@ -43,16 +67,19 @@
   height: 44px;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  font-size: 20px;
-  color: var(--text);
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
 
   &.support-icon--ko-fi {
-    background: var(--ko-fi-tint);
+    background: var(--kofi-icon-bg);
   }
 
   &.support-icon--bmac {
-    background: var(--buy-me-a-coffee-tint);
-    color: #000;
+    background: var(--bmc-icon-bg);
   }
 }
 
@@ -79,19 +106,22 @@
 
 .crypto-card {
   --tilt: -1deg;
+  --ink: var(--coral-text);
 
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 20px 20px 22px;
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--tint-coral);
   box-shadow: var(--shadow-card-soft);
   transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
   transition: transform 0.25s ease;
 
   &:nth-child(2) {
     --tilt: 1deg;
+    --ink: var(--teal-text);
+    background: var(--tint-teal);
   }
 
   @media (hover: hover) {
@@ -125,7 +155,7 @@
   }
 
   &.crypto-icon--eth {
-    background: var(--brand);
+    background: var(--accent-teal);
   }
 }
 
@@ -133,7 +163,7 @@
   font-family: var(--font-heading);
   font-size: 15px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--ink);
 }
 
 /* the QR SVG is rendered fixed black-on-white regardless of theme (see Donate.cshtml) - the white card around it

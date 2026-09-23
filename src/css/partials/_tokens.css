@@ -83,6 +83,15 @@
   --tag-bg: oklch(30% 0.04 275);
   --tag-text: oklch(85% 0.04 275);
 
+  --bmc-bg: oklch(28% 0.05 55);
+  --bmc-icon-bg: oklch(35% 0.08 55);
+  --bmc-text: oklch(88% 0.05 55);
+  --bmc-text-muted: oklch(65% 0.04 55);
+  --kofi-bg: oklch(28% 0.05 20);
+  --kofi-icon-bg: oklch(35% 0.09 20);
+  --kofi-text: oklch(88% 0.06 20);
+  --kofi-text-muted: oklch(65% 0.05 20);
+
   /* dark tints keep their lightness low but carry real chroma, and the teal leans blue.
      low-chroma warm hues at this lightness read as brown/olive/maroon */
   --tint-brand: oklch(26% 0.06 275);
@@ -211,6 +220,15 @@
   --tag-bg: oklch(93% 0.025 275);
   --tag-text: oklch(38% 0.05 275);
 
+  --bmc-bg: oklch(94% 0.035 55);
+  --bmc-icon-bg: oklch(88% 0.08 55);
+  --bmc-text: oklch(32% 0.06 55);
+  --bmc-text-muted: oklch(48% 0.04 55);
+  --kofi-bg: oklch(94% 0.035 20);
+  --kofi-icon-bg: oklch(87% 0.09 20);
+  --kofi-text: oklch(35% 0.08 20);
+  --kofi-text-muted: oklch(50% 0.05 20);
+
   --tint-brand: oklch(95% 0.03 275);
   --tint-coral: oklch(95% 0.035 40);
   --tint-teal: oklch(95% 0.03 165);
@@ -301,9 +319,6 @@
   --accent-hover: #7070d6;
   --accent-tint: rgba(97, 97, 205, 0.12);
   --accent-tint-strong: rgba(97, 97, 205, 0.2);
-
-  --ko-fi-tint: #192025;
-  --buy-me-a-coffee-tint: #f9dd00;
 
   --surface-1: #151519;
   --surface-2: #1a1a1f;
