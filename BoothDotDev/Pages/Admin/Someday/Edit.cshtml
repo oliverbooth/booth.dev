@@ -1,11 +1,18 @@
 @page "/admin/someday/edit/{id:guid?}"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @using Humanizer
 @model Edit
 
 @{
     Layout = "_AdminLayout";
     var entryModel = Model.Input;
+    var huePicker = new HuePicker
+    {
+        Name = "Input.Color",
+        Selected = entryModel.Color,
+        AutoDescription = "derived from this entry's position on the page"
+    };
 }
 
 <div class="admin-page admin-page--split">
@@ -70,6 +77,11 @@
                     }
                 </select>
             </div>
+        </div>
+
+        <div class="field">
+            <label>Colour</label>
+            <partial name="Partials/_HuePicker" model="huePicker" />
         </div>
 
         <div class="form-actions">

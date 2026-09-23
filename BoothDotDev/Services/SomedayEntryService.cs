@@ -41,7 +41,7 @@ public sealed class SomedayEntryService
             return Result.Fail($"Slug '{request.Slug}' is already in use.");
         }
 
-        var entry = new SomedayEntry { Slug = request.Slug, SortOrder = request.SortOrder };
+        var entry = new SomedayEntry { Slug = request.Slug, SortOrder = request.SortOrder, Color = request.Color };
 
         // two SaveChanges calls, not one: SomedayEntry -> SomedayEntryDraft (via SomedayEntryId) and
         // SomedayEntryDraft -> SomedayEntry (via CurrentDraftId) form a cycle between two rows that are both
@@ -87,6 +87,7 @@ public sealed class SomedayEntryService
 
         entry.Slug = request.Slug;
         entry.SortOrder = request.SortOrder;
+        entry.Color = request.Color;
 
         context.SaveChanges();
         return entry;
@@ -121,6 +122,7 @@ public sealed class SomedayEntryService
 
         entry.Slug = request.Slug;
         entry.SortOrder = request.SortOrder;
+        entry.Color = request.Color;
         entry.CurrentDraftId = draft.Id;
         entry.UpdatedAt = DateTimeOffset.UtcNow;
 

@@ -123,7 +123,10 @@ public sealed class Edit : PageModel
         DraftHistory = _somedayEntryService.GetDraftHistory(id.Value);
         IsTrashed = entry.TrashedAt is not null;
         ViewingDraftId = draft.Id;
-        Input = new EditModel { Title = draft.Title, Body = draft.Body, Slug = entry.Slug, Visibility = draft.Visibility };
+        Input = new EditModel
+        {
+            Title = draft.Title, Body = draft.Body, Slug = entry.Slug, Color = entry.Color, Visibility = draft.Visibility
+        };
 
         return Page();
     }
@@ -365,7 +368,7 @@ public sealed class Edit : PageModel
             : _somedayEntryService.GetAllEntries().Count;
 
         var content = new SomedayEntryDraftContent(Input.Title, Input.Body, Input.Visibility);
-        return new SomedayEntrySaveRequest(Input.Slug, sortOrder, content);
+        return new SomedayEntrySaveRequest(Input.Slug, sortOrder, Input.Color, content);
     }
 
     /// <summary>
@@ -409,6 +412,12 @@ public sealed class Edit : PageModel
         /// <value>The slug of the entry.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Slug { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the colour of the entry's card.
+        /// </summary>
+        /// <value>The colour of the entry, or <see langword="null" /> to derive it from the entry's position.</value>
+        public PaletteHue? Color { get; set; }
 
         /// <summary>
         ///     Gets or sets the visibility of the entry.

@@ -9,6 +9,10 @@ public static class PaletteHueExtensions
 {
     private static readonly PaletteHue[] Hues = Enum.GetValues<PaletteHue>();
 
+    // enum order puts brand and grape (both purple-ish) side by side; this order keeps neighbours visually distinct
+    private static readonly PaletteHue[] PositionOrder =
+        [PaletteHue.Brand, PaletteHue.Tangerine, PaletteHue.Mint, PaletteHue.Pink, PaletteHue.Sun, PaletteHue.Sky, PaletteHue.Grape];
+
     /// <summary>
     ///     Deterministically derives a <see cref="PaletteHue" /> from an identifier, for entities that have not been
     ///     assigned an explicit colour.
@@ -25,6 +29,17 @@ public static class PaletteHueExtensions
         }
 
         return Hues[hash % (uint)Hues.Length];
+    }
+
+    /// <summary>
+    ///     Derives a <see cref="PaletteHue" /> from an item's position in a list, for entities that have not been
+    ///     assigned an explicit colour.
+    /// </summary>
+    /// <param name="index">The zero-based position of the item.</param>
+    /// <returns>A <see cref="PaletteHue" />, cycling so that adjacent items are always different.</returns>
+    public static PaletteHue FromPosition(int index)
+    {
+        return PositionOrder[index % PositionOrder.Length];
     }
 
     /// <param name="hue">The <see cref="PaletteHue" />.</param>

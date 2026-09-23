@@ -42,3 +42,59 @@
     min-width: 0;
   }
 }
+
+.hue-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hue-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  /* wide enough for the longest hue name ("tangerine") so the swatches sit equidistant */
+  width: 64px;
+  cursor: pointer;
+
+  /* the radio itself is visually hidden; the swatch stands in for it */
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hue-swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--solid);
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+  }
+
+  .hue-name {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  input:checked + .hue-swatch {
+    outline-color: var(--text);
+  }
+
+  input:checked ~ .hue-name {
+    color: var(--text);
+  }
+
+  input:focus-visible + .hue-swatch {
+    outline: 2px solid var(--brand-text);
+  }
+}
+
+.hue-option--auto .hue-swatch {
+  background: none;
+  border: 2px dashed var(--text-faint);
+}

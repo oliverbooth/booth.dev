@@ -14,5 +14,6 @@ public sealed record SomedayEntryDraftContent(string Title, string Body, Visibil
 /// </summary>
 /// <param name="Slug">The slug of the entry.</param>
 /// <param name="SortOrder">The entry's position on the someday page.</param>
+/// <param name="Color">The colour of the entry's card, or <see langword="null" /> to derive it from its position.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
-public sealed record SomedayEntrySaveRequest(string Slug, int SortOrder, SomedayEntryDraftContent Content);
+public sealed record SomedayEntrySaveRequest(string Slug, int SortOrder, PaletteHue? Color, SomedayEntryDraftContent Content);
