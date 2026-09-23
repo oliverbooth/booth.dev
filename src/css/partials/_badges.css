@@ -20,12 +20,13 @@
   }
 
   @media (hover: hover) {
-    &:is(button, a):not(.active, [aria-pressed="true"]):hover {
+    &:is(button, a):not(.active, .pill--solid, [aria-pressed="true"]):hover {
       color: var(--text);
     }
   }
 
   &.active,
+  &.pill--solid,
   &[aria-pressed="true"] {
     background: var(--brand-text);
     color: var(--on-brand-text);

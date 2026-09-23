@@ -92,6 +92,22 @@
   --kofi-text: oklch(88% 0.06 20);
   --kofi-text-muted: oklch(65% 0.05 20);
 
+  --github-bg: oklch(23% 0.01 275);
+  --github-icon-bg: oklch(96% 0 0);
+  --github-glyph: #181717;
+  --bluesky-bg: oklch(24% 0.035 240);
+  --bluesky-icon-bg: #0085ff;
+  --bluesky-glyph: #ffffff;
+  --itch-bg: oklch(24% 0.035 20);
+  --itch-icon-bg: #fa5c5c;
+  --itch-glyph: #ffffff;
+  --gamejolt-bg: oklch(23% 0.03 125);
+  --gamejolt-icon-bg: #191919;
+  --gamejolt-glyph: #ccff00;
+  --linkedin-bg: oklch(24% 0.035 265);
+  --linkedin-icon-bg: #0a66c2;
+  --linkedin-glyph: #ffffff;
+
   /* dark tints keep their lightness low but carry real chroma, and the teal leans blue.
      low-chroma warm hues at this lightness read as brown/olive/maroon */
   --tint-brand: oklch(26% 0.06 275);
@@ -228,6 +244,22 @@
   --kofi-icon-bg: oklch(87% 0.09 20);
   --kofi-text: oklch(35% 0.08 20);
   --kofi-text-muted: oklch(50% 0.05 20);
+
+  --github-bg: oklch(96% 0.006 275);
+  --github-icon-bg: #181717;
+  --github-glyph: #ffffff;
+  --bluesky-bg: oklch(96% 0.025 240);
+  --bluesky-icon-bg: #0085ff;
+  --bluesky-glyph: #ffffff;
+  --itch-bg: oklch(96% 0.025 20);
+  --itch-icon-bg: #fa5c5c;
+  --itch-glyph: #ffffff;
+  --gamejolt-bg: oklch(96% 0.04 125);
+  --gamejolt-icon-bg: #191919;
+  --gamejolt-glyph: #ccff00;
+  --linkedin-bg: oklch(96% 0.025 265);
+  --linkedin-icon-bg: #0a66c2;
+  --linkedin-glyph: #ffffff;
 
   --tint-brand: oklch(95% 0.03 275);
   --tint-coral: oklch(95% 0.035 40);
