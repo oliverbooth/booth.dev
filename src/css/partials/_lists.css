@@ -354,7 +354,6 @@
 
 .post-nav-link--next {
   --tilt: 1deg;
-  --tint: var(--row-tint-coral);
 
   align-items: flex-end;
   text-align: right;

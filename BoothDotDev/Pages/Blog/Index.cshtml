@@ -45,18 +45,19 @@
         <div class="post-list">
             @foreach (var post in Model.BlogPosts)
             {
-                var categoryResult = BlogPostService.GetParentCategory(post);
-                var category = categoryResult.IsSuccess ? categoryResult.Value : null;
-                var postHue = category?.EffectiveColor ?? PaletteHue.Brand;
+                var rootCategoryResult = BlogPostService.GetParentCategory(post);
+                var rootCategory = rootCategoryResult.IsSuccess ? rootCategoryResult.Value : null;
+                var displayCategory = BlogPostService.GetCategory(post.CategoryId) ?? rootCategory;
+                var postHue = displayCategory?.EffectiveColor ?? PaletteHue.Brand;
 
-                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()" data-state="@category?.Id">
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()" data-state="@rootCategory?.Id">
                     <div class="collapse-inner">
                         <div class="post-row-body">
                             <div class="post-row-text">
                                 <div class="post-row-head">
-                                    @if (category is not null)
+                                    @if (displayCategory is not null)
                                     {
-                                        <span class="badge @category.EffectiveColor.ToBadgeClass()">@category.Name</span>
+                                        <span class="badge @displayCategory.EffectiveColor.ToBadgeClass()">@displayCategory.Name</span>
                                     }
                                     else
                                     {
