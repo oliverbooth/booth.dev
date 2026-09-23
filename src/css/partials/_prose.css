@@ -322,11 +322,29 @@
 
   &.prose--serif {
     font-family: var(--font-voice);
-    font-size: 17.5px;
+    /* Patrick Hand's x-height reads noticeably smaller than Lora's at the same pixel size, and its letterforms
+       are narrow enough at normal tracking to feel cramped */
+    font-size: 21px;
     line-height: 1.85;
+    letter-spacing: 0.3px;
 
     p {
       margin-bottom: 1.5rem;
+    }
+
+    .callout-body {
+      font-size: 16px;
+    }
+
+    /* Patrick Hand ships no italic face, so em/i renders as a synthetic (browser-skewed) oblique - the slant eats
+       into the following word's leading space, so give italic runs a bit of their own breathing room */
+    em,
+    i {
+      margin-right: 0.15em;
+    }
+
+    figcaption {
+      font-size: 16px;
     }
   }
 

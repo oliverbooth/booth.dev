@@ -326,7 +326,7 @@
   --info-text: var(--brand-text);
 
   --font-sans: var(--font-body);
-  --font-voice: "Lora Variable", "Lora", Georgia, serif;
+  --font-voice: "Patrick Hand", cursive, sans-serif;
 
   --radius: var(--radius-sm);
 }

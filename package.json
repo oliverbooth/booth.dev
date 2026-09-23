@@ -38,6 +38,7 @@
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/lora": "^5.3.0",
     "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource/patrick-hand": "^5.3.0",
     "@types/three": "^0.185.4",
     "codemirror": "^6.0.2",
     "katex": "^0.18.4",
