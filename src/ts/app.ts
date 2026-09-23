@@ -1,5 +1,5 @@
 import {initCommandPalette} from './command-palette.ts';
-import {initCopyButtons} from './clipboard.ts';
+import {initCopyButtons, initCryptoCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
 import {initEasterEggs} from './easter-eggs.ts';
 import {initFavicon} from './favicon.ts';
@@ -20,6 +20,7 @@ import {initTheme} from './theme.ts';
     initFavicon();
     initAltTextPopovers();
     initCopyButtons();
+    initCryptoCopyButtons();
     initContentFeatures();
     initEasterEggs();
     initFiltering();

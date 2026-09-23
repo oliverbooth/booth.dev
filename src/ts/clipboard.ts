@@ -31,3 +31,31 @@ function showCopyFeedback(button: HTMLElement): void {
         button.style.color = '';
     }, 1200);
 }
+
+/**
+ * Adds copy-on-click to every `.crypto-copy` button (the Donate page's crypto address chips): clicking one copies its
+ * `data-address` and swaps its own label to "Copied!" briefly, rather than relying on a separate icon button.
+ */
+export function initCryptoCopyButtons(): void {
+    for (const button of document.querySelectorAll<HTMLButtonElement>('.crypto-copy')) {
+        const address = button.dataset.address;
+        if (!address) {
+            continue;
+        }
+
+        const originalText = button.textContent ?? address;
+
+        button.addEventListener('click', () => {
+            navigator.clipboard.writeText(address).then(() => {
+                button.textContent = 'copied!';
+                button.classList.add('is-copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('is-copied');
+                }, 1500);
+            }).catch(() => {
+                // clipboard API unavailable or permission denied — fail silently, button just won't confirm
+            });
+        });
+    }
+}
