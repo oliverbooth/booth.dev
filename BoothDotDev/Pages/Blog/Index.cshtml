@@ -33,12 +33,12 @@
 
     <div data-filter-scope>
         <div class="filter-row">
-            <button type="button" class="pill active" aria-pressed="true">All</button>
+            <button type="button" class="pill active" aria-pressed="true" data-hue="brand">All</button>
             @foreach (var category in Model.BlogPostCategories)
             {
-                <button type="button" class="pill" aria-pressed="false" data-filter="@category.Id">@category.Name</button>
+                <button type="button" class="pill" aria-pressed="false" data-filter="@category.Id" data-hue="@category.EffectiveColor.ToDataHue()">@category.Name</button>
             }
-            <button type="button" class="pill" aria-pressed="false" data-filter-kind="note">Notes</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter-kind="note" data-hue="sun">Notes</button>
             <a class="pill" asp-page="/Someday">Someday</a>
         </div>
 
