@@ -64,4 +64,11 @@ public sealed class ContentHeader
     /// </summary>
     /// <value>The edit URL, or <see langword="null" /> to show no link (for visitors who can't edit).</value>
     public string? EditUrl { get; init; }
+
+    /// <summary>
+    ///     Gets a value indicating whether to show the reader a toggle to switch this content's voice font
+    ///     (<c>prose--serif</c>) to the default sans-serif for readability.
+    /// </summary>
+    /// <value><see langword="true" /> to show the toggle; otherwise, <see langword="false" />.</value>
+    public bool ShowVoiceFontToggle { get; init; }
 }

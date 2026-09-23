@@ -348,6 +348,26 @@
     }
   }
 
+  :root[data-voice-font="sans"] &.prose--serif {
+    font-family: var(--font-body);
+    font-size: 17.5px;
+    line-height: 1.75;
+    letter-spacing: normal;
+
+    .callout-body {
+      font-size: 13.5px;
+    }
+
+    figcaption {
+      font-size: 13px;
+    }
+
+    em,
+    i {
+      margin-right: 0;
+    }
+  }
+
   &.prose--sans {
     font-family: var(--font-body);
   }
@@ -408,6 +428,20 @@
     font-size: 11.5px;
     font-weight: 600;
     text-underline-offset: 3px;
+  }
+
+  button.byline-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+
+    &[aria-pressed="true"] {
+      color: var(--text);
+    }
   }
 }
 

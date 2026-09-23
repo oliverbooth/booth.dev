@@ -26,6 +26,20 @@
 
             document.documentElement.dataset.theme = theme;
         })();
+
+        // runs before first paint to avoid a flash of the serif voice font on pages the reader opted out of;
+        // keep in step with voice-font.ts
+        (() => {
+            let voiceFont = null;
+            try {
+                voiceFont = localStorage.getItem('voiceFont');
+            } catch {
+            }
+
+            if (voiceFont === 'sans') {
+                document.documentElement.dataset.voiceFont = 'sans';
+            }
+        })();
     </script>
     <title>@PageTitle</title>
 

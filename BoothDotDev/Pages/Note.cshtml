@@ -43,7 +43,8 @@
             Hue = "sun",
             Meta = [$"published {published.ToShortString()}"],
             SourceUrl = $"/note/{(ShortGuid)note.Id}.md",
-            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Notes/Edit", new { id = note.Id }) : null
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Notes/Edit", new { id = note.Id }) : null,
+            ShowVoiceFontToggle = note.FontStyle == FontStyle.Serif
         };
     }
 

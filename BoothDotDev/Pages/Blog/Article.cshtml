@@ -59,7 +59,8 @@
             AuthorAvatarUrl = author.AvatarUrl,
             Meta = [$"published {published.ToShortString()}", $"{post.GetEstimatedReadingTime()} min read"],
             SourceUrl = $"/blog/{post.Slug}.md",
-            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Posts/Edit", new { id = post.Id }) : null
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Posts/Edit", new { id = post.Id }) : null,
+            ShowVoiceFontToggle = category.FontStyle == FontStyle.Serif
         };
     }
 

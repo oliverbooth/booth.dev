@@ -13,9 +13,11 @@ import {initNowClock} from './now-clock.ts';
 import {initRetryButtons} from './retry-button.ts';
 import {initHeaderAutoHide} from './header-auto-hide.ts';
 import {initTheme} from './theme.ts';
+import {initVoiceFontToggle} from './voice-font.ts';
 
 (() => {
     initTheme();
+    initVoiceFontToggle();
     initHeaderAutoHide();
     initFavicon();
     initAltTextPopovers();
