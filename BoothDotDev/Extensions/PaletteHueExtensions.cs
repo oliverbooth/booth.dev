@@ -11,7 +11,7 @@ public static class PaletteHueExtensions
 
     // enum order puts brand and grape (both purple-ish) side by side; this order keeps neighbours visually distinct
     private static readonly PaletteHue[] PositionOrder =
-        [PaletteHue.Brand, PaletteHue.Tangerine, PaletteHue.Mint, PaletteHue.Pink, PaletteHue.Sun, PaletteHue.Sky, PaletteHue.Grape];
+        [PaletteHue.Brand, PaletteHue.Mint, PaletteHue.Sun, PaletteHue.Pink, PaletteHue.Sky, PaletteHue.Tangerine, PaletteHue.Grape];
 
     /// <summary>
     ///     Deterministically derives a <see cref="PaletteHue" /> from an identifier, for entities that have not been
