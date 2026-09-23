@@ -53,6 +53,7 @@
             Title = post.Title,
             Badge = category.Name,
             BadgeClass = category.EffectiveColor.ToBadgeClass(),
+            Hue = category.EffectiveColor.ToDataHue(),
             Tags = post.Tags,
             AuthorName = author.DisplayName,
             AuthorAvatarUrl = author.AvatarUrl,

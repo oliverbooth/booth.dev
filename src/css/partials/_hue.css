@@ -1,15 +1,31 @@
 /* ---------- semantic content-type hue ---------- */
-[data-hue="brand"] { --ink: var(--brand-text); }
-[data-hue="tangerine"] { --ink: var(--coral-text); }
-[data-hue="mint"] { --ink: var(--teal-text); }
-[data-hue="pink"] { --ink: var(--magenta-text); }
-[data-hue="grape"] { --ink: var(--grape-text); }
-[data-hue="sun"] { --ink: var(--sun-text); }
-[data-hue="sky"] { --ink: var(--sky-text); }
+[data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-text); }
+[data-hue="tangerine"] { --ink: var(--coral-text); --solid: var(--accent-coral); --on-solid: var(--on-coral-text); }
+[data-hue="mint"] { --ink: var(--teal-text); --solid: var(--accent-teal); --on-solid: var(--on-teal-text); }
+[data-hue="pink"] { --ink: var(--magenta-text); --solid: var(--accent-magenta); --on-solid: var(--on-magenta-text); }
+[data-hue="grape"] { --ink: var(--grape-text); --solid: var(--accent-grape); --on-solid: var(--on-grape-text); }
+[data-hue="sun"] { --ink: var(--sun-text); --solid: var(--accent-sun); --on-solid: var(--on-sun-text); }
+[data-hue="sky"] { --ink: var(--sky-text); --solid: var(--accent-sky); --on-solid: var(--on-sky-text); }
 
 /* icon chip inside a hued row (e.g. .stack-icon on a "currently reading" row) picks up the row's hue */
 [data-hue] .stack-icon {
   background: color-mix(in oklch, var(--ink) 16%, transparent);
+  color: var(--ink);
+}
+
+/* the category/type pill itself: solid fill + on-solid text, matching the mockup (tint/muted colours are for
+   .status/.badge elsewhere that aren't tied to a content-type hue, so they're untouched) */
+[data-hue] .badge {
+  background: var(--solid);
+  color: var(--on-solid);
+}
+
+/* the title of a hued card/row picks up the hue as its own colour, same as the mockup's per-card "ink" */
+[data-hue] .card-body .title,
+[data-hue] .stack-meta .title,
+[data-hue] .post-row-title,
+[data-hue] .post-nav-title,
+.post-title[data-hue] {
   color: var(--ink);
 }
 

@@ -60,7 +60,8 @@
         {
             Title = devlog.Title,
             Badge = Model.Project.Name,
-            BadgeClass = "badge-brand",
+            BadgeClass = "badge-sky",
+            Hue = "sky",
             Meta = meta,
             SourceUrl = $"/project/{Model.Project.Slug}/devlog/{devlog.Slug}.md",
             EditUrl = User.Identity?.IsAuthenticated == true

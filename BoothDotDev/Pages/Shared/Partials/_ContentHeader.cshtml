@@ -2,7 +2,7 @@
 
 @if (Model.Badge is not null || Model.Tags.Count > 0)
 {
-    <div class="post-tags">
+    <div class="post-tags" data-hue="@Model.Hue">
         @if (Model.Badge is not null)
         {
             <span class="badge @Model.BadgeClass">@Model.Badge</span>
@@ -14,7 +14,7 @@
     </div>
 }
 
-<h1 class="post-title">@Model.Title</h1>
+<h1 class="post-title" data-hue="@Model.Hue">@Model.Title</h1>
 
 <div class="byline">
     @if (Model.AuthorName is { } authorName)

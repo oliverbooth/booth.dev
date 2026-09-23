@@ -37,6 +37,7 @@
             Title = challenge.Title,
             Badge = "challenge",
             BadgeClass = "badge-magenta",
+            Hue = "pink",
             Meta = [$"published {challenge.PublishedAt.ToShortString()}", hasSolution ? "solution available" : "solution locked"],
             SourceUrl = $"/challenge/{challenge.Id}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Challenges/Edit", new { id = challenge.Id }) : null

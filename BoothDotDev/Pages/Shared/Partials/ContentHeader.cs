@@ -24,6 +24,12 @@ public sealed class ContentHeader
     public string BadgeClass { get; init; } = string.Empty;
 
     /// <summary>
+    ///     Gets the <c>data-hue</c> attribute value driving the badge's solid fill and the title's ink colour.
+    /// </summary>
+    /// <value>The hue's <c>data-hue</c> value, or <see langword="null" /> to render with no hue at all.</value>
+    public string? Hue { get; init; }
+
+    /// <summary>
     ///     Gets the tags to link to the blog's tag filter.
     /// </summary>
     /// <value>The tags.</value>

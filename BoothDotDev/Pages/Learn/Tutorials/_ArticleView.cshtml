@@ -111,6 +111,7 @@
         {
             Title = article.Title,
             Badge = "tutorial",
+            Hue = "mint",
             Meta = meta,
             SourceUrl = $"/learn/{TutorialService.GetFullSlug(article)}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Tutorials/Edit", new { id = article.Id }) : null
