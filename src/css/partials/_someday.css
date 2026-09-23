@@ -52,9 +52,6 @@
 
   .prose {
     color: var(--text-muted);
-    font-family: var(--font-body);
-    font-size: 15.5px;
-    line-height: 1.7;
 
     > :last-child {
       margin-bottom: 0;
