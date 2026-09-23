@@ -1,11 +1,11 @@
 /* ---------- semantic content-type hue ---------- */
-[data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-solid); }
-[data-hue="tangerine"] { --ink: var(--coral-text); --solid: var(--accent-coral); --on-solid: var(--on-coral-text); }
-[data-hue="mint"] { --ink: var(--teal-text); --solid: var(--accent-teal); --on-solid: var(--on-teal-text); }
-[data-hue="pink"] { --ink: var(--magenta-text); --solid: var(--accent-magenta); --on-solid: var(--on-magenta-text); }
-[data-hue="grape"] { --ink: var(--grape-text); --solid: var(--accent-grape); --on-solid: var(--on-grape-text); }
-[data-hue="sun"] { --ink: var(--sun-text); --solid: var(--accent-sun); --on-solid: var(--on-sun-text); }
-[data-hue="sky"] { --ink: var(--sky-text); --solid: var(--accent-sky); --on-solid: var(--on-sky-text); }
+[data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-solid); --glow: var(--shadow-hero-text); }
+[data-hue="tangerine"] { --ink: var(--coral-text); --solid: var(--accent-coral); --on-solid: var(--on-coral-text); --glow: var(--glow-tangerine); }
+[data-hue="mint"] { --ink: var(--teal-text); --solid: var(--accent-teal); --on-solid: var(--on-teal-text); --glow: var(--glow-mint); }
+[data-hue="pink"] { --ink: var(--magenta-text); --solid: var(--accent-magenta); --on-solid: var(--on-magenta-text); --glow: var(--glow-pink); }
+[data-hue="grape"] { --ink: var(--grape-text); --solid: var(--accent-grape); --on-solid: var(--on-grape-text); --glow: var(--glow-grape); }
+[data-hue="sun"] { --ink: var(--sun-text); --solid: var(--accent-sun); --on-solid: var(--on-sun-text); --glow: var(--glow-sun); }
+[data-hue="sky"] { --ink: var(--sky-text); --solid: var(--accent-sky); --on-solid: var(--on-sky-text); --glow: var(--glow-sky); }
 
 /* icon chip inside a hued row (e.g. .stack-icon on a "currently reading" row) picks up the row's hue */
 [data-hue] .stack-icon {
@@ -27,6 +27,10 @@
 [data-hue] .post-nav-title,
 .post-title[data-hue] {
   color: var(--ink);
+}
+
+.post-title[data-hue] {
+  text-shadow: var(--glow);
 }
 
 .card[data-hue="brand"] { --tint: var(--tint-brand); --pin: var(--brand); }
