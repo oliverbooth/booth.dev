@@ -1,4 +1,4 @@
-@page "/project/{slug}"
+@page "/portfolio/{slug}"
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
@@ -18,7 +18,7 @@
 <div class="page">
 
     <div class="page-header-row">
-        <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Projects/Index">Projects</a> / @project.Name</p>
+        <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Made">Stuff I Made</a> / @project.Name</p>
         @if (User.Identity?.IsAuthenticated == true)
         {
             <a asp-page="/Admin/Projects/Edit" asp-route-id="@project.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>

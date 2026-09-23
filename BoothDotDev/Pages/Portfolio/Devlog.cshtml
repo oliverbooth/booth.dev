@@ -1,4 +1,4 @@
-@page "/project/{projectSlug}/devlog/{slug}"
+@page "/portfolio/{projectSlug}/devlog/{slug}"
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Pages.Shared.Partials
@@ -23,7 +23,7 @@
 
     <p class="crumb">
         <a asp-page="/Index">Home</a> /
-        <a asp-page="/Projects/Index">Projects</a> /
+        <a asp-page="/Made">Stuff I Made</a> /
         <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
         @devlog.Title
     </p>

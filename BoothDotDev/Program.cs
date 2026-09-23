@@ -213,6 +213,11 @@ app.MapGet("/blog/{slug}/raw", (string slug) => Results.Redirect($"/blog/{slug}.
 app.MapGet("/tutorials", () => Results.Redirect("/learn", true));
 app.MapGet("/tutorials/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", true));
 app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", true));
+app.MapGet("/create", () => Results.Redirect("/portfolio", true));
+app.MapGet("/projects", () => Results.Redirect("/portfolio", true));
+app.MapGet("/project/{slug}", (string slug) => Results.Redirect($"/portfolio/{slug}", true));
+app.MapGet("/project/{projectSlug}/devlog", (string slug) => Results.Redirect($"/portfolio/{slug}", true));
+app.MapGet("/project/{projectSlug}/devlog/{slug}", (string projectSlug, string slug) => Results.Redirect($"/portfolio/{projectSlug}/devlog/{slug}", true));
 
 app.Run();
 return;

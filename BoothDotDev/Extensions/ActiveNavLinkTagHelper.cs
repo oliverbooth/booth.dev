@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace BoothDotDev.Extensions;
 
 /// <summary>
-///     A tag helper that adds an <c>active</c> class to a navigation link if the current page matches the specified page match
-///     string.
+///     A tag helper that adds an <c>active</c> class to a navigation link if the current page matches one of the specified,
+///     comma-separated page match strings.
 /// </summary>
 [HtmlTargetElement("a", Attributes = "page-match")]
 public sealed class ActiveNavLinkTagHelper : TagHelper
 {
     /// <summary>
-    ///     Gets or sets the string to match against the current page route value.
+    ///     Gets or sets the comma-separated page match strings to match against the current page route value.
     /// </summary>
     /// <value>The page match string.</value>
     [HtmlAttributeName("page-match")]
@@ -30,8 +30,9 @@ public sealed class ActiveNavLinkTagHelper : TagHelper
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
         var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
-        var isActive = currentPage.Equals(PageMatch, StringComparison.OrdinalIgnoreCase)
-                       || currentPage.StartsWith(PageMatch + "/", StringComparison.OrdinalIgnoreCase);
+        var isActive = PageMatch.Split(',').Any(match =>
+            currentPage.Equals(match, StringComparison.OrdinalIgnoreCase)
+            || currentPage.StartsWith(match + "/", StringComparison.OrdinalIgnoreCase));
 
         if (isActive)
         {

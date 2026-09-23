@@ -58,10 +58,9 @@
             <a asp-page="/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
             <div class="topnav-links">
                 <a asp-page="/Index" page-match="/Index">Home</a>
+                <a asp-page="/Portfolio/Index" page-match="/Portfolio,/Projects,/Create">Stuff I Made</a>
                 <a asp-page="/Blog/Index" page-match="/Blog">Write</a>
-                <a asp-page="/Projects/Index" page-match="/Projects">Build</a>
                 <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn">Learn</a>
-                <a asp-page="/Create/Index" page-match="/Create">Create</a>
             </div>
             <div class="topnav-secondary">
                 <a asp-page="/About" page-match="/About">About</a>
@@ -119,8 +118,8 @@
 
 <nav class="bottom-nav">
     <a asp-page="/Index" page-match="/Index"><i class="ti ti-home"></i>Home</a>
+    <a asp-page="/Portfolio/Index" page-match="/Portfolio,/Projects,/Create"><i class="ti ti-hammer"></i>Made</a>
     <a asp-page="/Blog/Index" page-match="/Blog"><i class="ti ti-pencil"></i>Write</a>
-    <a asp-page="/Projects/Index" page-match="/Projects"><i class="ti ti-code"></i>Build</a>
     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn"><i class="ti ti-school"></i>Learn</a>
     <a asp-page="/More" page-match="/More"><i class="ti ti-menu-2"></i>More</a>
     <button type="button" class="theme-toggle" data-theme-toggle>

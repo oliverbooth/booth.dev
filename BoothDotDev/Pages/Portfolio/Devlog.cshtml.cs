@@ -4,7 +4,7 @@ using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BoothDotDev.Pages.Projects;
+namespace BoothDotDev.Pages.Portfolio;
 
 internal sealed class Devlog : PageModel
 {
