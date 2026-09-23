@@ -12,6 +12,7 @@
   font-weight: 700;
   line-height: 1.2;
   text-decoration: none;
+  text-transform: lowercase;
   white-space: nowrap;
 
   &:is(button, a) {
@@ -28,6 +29,12 @@
   &[aria-pressed="true"] {
     background: var(--brand-text);
     color: var(--on-brand-text);
+  }
+
+  &[data-hue].active,
+  &[data-hue][aria-pressed="true"] {
+    background: var(--solid);
+    color: var(--on-solid);
   }
 }
 

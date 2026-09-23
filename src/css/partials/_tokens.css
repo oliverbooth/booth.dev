@@ -1,6 +1,7 @@
 /* ---------- theme-independent ---------- */
 :root {
   --brand: #6161cd;
+  --on-brand-solid: #ffffff;
   --accent-coral: oklch(72% 0.19 38);
   --accent-teal: oklch(75% 0.16 165);
   --accent-magenta: oklch(70% 0.19 340);

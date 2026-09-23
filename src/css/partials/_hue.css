@@ -1,5 +1,5 @@
 /* ---------- semantic content-type hue ---------- */
-[data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-text); }
+[data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-solid); }
 [data-hue="tangerine"] { --ink: var(--coral-text); --solid: var(--accent-coral); --on-solid: var(--on-coral-text); }
 [data-hue="mint"] { --ink: var(--teal-text); --solid: var(--accent-teal); --on-solid: var(--on-teal-text); }
 [data-hue="pink"] { --ink: var(--magenta-text); --solid: var(--accent-magenta); --on-solid: var(--on-magenta-text); }
