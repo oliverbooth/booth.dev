@@ -69,7 +69,7 @@
         <div class="stack-list section-list">
             @foreach (var book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
             {
-                <div>
+                <div data-hue="grape">
                     <div class="stack-icon"><i class="ti ti-book"></i></div>
                     <div class="stack-meta">
                         <p class="title">@book.Title</p>
@@ -94,7 +94,7 @@
         <div class="stack-list section-list">
             @foreach (var item in Model.CurrentlyWatching.OrderBy(w => w.Title))
             {
-                <div>
+                <div data-hue="grape">
                     <div class="stack-icon">
                         <i class="ti ti-@(item.Kind == WatchableKind.Movie ? "movie" : "device-tv")"></i>
                     </div>

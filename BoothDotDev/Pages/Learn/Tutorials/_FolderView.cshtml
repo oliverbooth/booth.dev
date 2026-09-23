@@ -82,7 +82,7 @@
     {
         <div class="section-head"><h2>Challenges</h2></div>
 
-        <a asp-page="/Learn/Challenges/Index" class="card card-single mb-section">
+        <a asp-page="/Learn/Challenges/Index" class="card card-single mb-section" data-hue="pink">
             <div class="card-icon">
                 <i class="ti ti-code"></i>
             </div>
@@ -106,8 +106,9 @@
             @foreach (var folder in folders)
             {
                 var articleCount = TutorialService.GetArticles(folder, Visibility.Published).Count;
+                var folderHue = PaletteHueExtensions.HashFrom(folder.Id);
 
-                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card">
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card" data-hue="@folderHue.ToDataHue()">
                     <div class="card-icon">
                         @if (folder.PreviewImageUrl is not null)
                         {
@@ -138,7 +139,7 @@
         <div class="stack-list">
             @foreach (var article in articles)
             {
-                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)">
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)" data-hue="@PaletteHueExtensions.HashFrom(Model!.Id).ToDataHue()">
                     <div class="stack-icon"><i class="ti ti-file-text"></i></div>
                     <div class="stack-meta">
                         <p class="title">@article.Title</p>

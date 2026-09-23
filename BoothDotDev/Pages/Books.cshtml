@@ -50,7 +50,7 @@
                         <div class="stack-list section-list">
                             @foreach (var book in books.OrderBy(b => b.Author).ThenBy(b => b.Title))
                             {
-                                <div>
+                                <div data-hue="grape">
                                     <div class="stack-icon">
                                         <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
                                     </div>

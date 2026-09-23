@@ -47,20 +47,30 @@
     }
   }
 
+  /* tilt varies by position regardless of hue, so a hued grid still reads as a wall of sticky notes */
   &:nth-child(4n + 2) {
     --tilt: 1deg;
-    --tint: var(--tint-coral);
-    --pin: var(--accent-teal);
   }
 
   &:nth-child(4n + 3) {
     --tilt: -0.5deg;
-    --tint: var(--tint-teal);
-    --pin: var(--accent-magenta);
   }
 
   &:nth-child(4n + 4) {
     --tilt: 1.5deg;
+  }
+
+  &:not([data-hue]):nth-child(4n + 2) {
+    --tint: var(--tint-coral);
+    --pin: var(--accent-teal);
+  }
+
+  &:not([data-hue]):nth-child(4n + 3) {
+    --tint: var(--tint-teal);
+    --pin: var(--accent-magenta);
+  }
+
+  &:not([data-hue]):nth-child(4n + 4) {
     --tint: var(--tint-magenta);
     --pin: var(--brand);
   }

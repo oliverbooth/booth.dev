@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BoothDotDev.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260923133559_FixDraftForeignKeyNames")]
+    partial class FixDraftForeignKeyNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +27,6 @@ namespace BoothDotDev.Data.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "book_state", new[] { "read", "reading", "plan_to_read" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "font_style", new[] { "sans_serif", "serif" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "palette_hue", new[] { "brand", "grape", "pink", "tangerine", "sun", "mint", "sky" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "project_status", new[] { "ongoing", "hiatus", "past", "retired" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "project_type", new[] { "app", "game", "library", "tool", "website" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "visibility", new[] { "none", "private", "unlisted", "published" });
@@ -168,10 +170,6 @@ namespace BoothDotDev.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    b.Property<PaletteHue?>("Color")
-                        .HasColumnType("public.palette_hue")
-                        .HasColumnName("color");
 
                     b.Property<FontStyle>("FontStyle")
                         .HasColumnType("public.font_style")

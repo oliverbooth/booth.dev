@@ -47,16 +47,16 @@
             {
                 var categoryResult = BlogPostService.GetParentCategory(post);
                 var category = categoryResult.IsSuccess ? categoryResult.Value : null;
+                var postHue = category?.EffectiveColor ?? PaletteHue.Brand;
 
-                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-state="@category?.Id">
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()" data-state="@category?.Id">
                     <div class="collapse-inner">
                         <div class="post-row-body">
                             <div class="post-row-text">
                                 <div class="post-row-head">
                                     @if (category is not null)
                                     {
-                                        <span
-                                            class="badge @(category.FontStyle == FontStyle.Serif ? "badge-magenta" : "")">@category.Name</span>
+                                        <span class="badge @category.EffectiveColor.ToBadgeClass()">@category.Name</span>
                                     }
                                     else
                                     {
@@ -77,12 +77,12 @@
 
             @foreach (var note in Model.Notes)
             {
-                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="post-row" data-kind="note" data-state="note">
+                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="post-row" data-hue="sun" data-kind="note" data-state="note">
                     <div class="collapse-inner">
                         <div class="post-row-body">
                             <div class="post-row-text">
                                 <div class="post-row-head">
-                                    <span class="badge badge-coral">note</span>
+                                    <span class="badge badge-sun">note</span>
                                     <span class="post-row-title">@note.Title</span>
                                 </div>
                                 <span class="post-row-sub">@MarkdownRenderingService.RenderPlainTextPreview(note.Content, 160)</span>

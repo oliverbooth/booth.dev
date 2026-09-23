@@ -31,18 +31,28 @@
     }
   }
 
+  /* tilt varies by position regardless of hue, so a hued list still reads as a wall of sticky notes */
   > :nth-child(4n + 2) {
     --tilt: 1deg;
-    --tint: var(--row-tint-coral);
   }
 
   > :nth-child(4n + 3) {
     --tilt: -0.5deg;
-    --tint: var(--row-tint-teal);
   }
 
   > :nth-child(4n + 4) {
     --tilt: 0.5deg;
+  }
+
+  > :not([data-hue]):nth-child(4n + 2) {
+    --tint: var(--row-tint-coral);
+  }
+
+  > :not([data-hue]):nth-child(4n + 3) {
+    --tint: var(--row-tint-teal);
+  }
+
+  > :not([data-hue]):nth-child(4n + 4) {
     --tint: var(--row-tint-magenta);
   }
 }
@@ -82,18 +92,28 @@
     }
   }
 
+  /* tilt varies by position regardless of hue, so a hued list still reads as a wall of sticky notes */
   &:nth-child(4n + 2) {
     --tilt: 1deg;
-    --tint: var(--row-tint-coral);
   }
 
   &:nth-child(4n + 3) {
     --tilt: -0.5deg;
-    --tint: var(--row-tint-teal);
   }
 
   &:nth-child(4n + 4) {
     --tilt: 0.5deg;
+  }
+
+  &:not([data-hue]):nth-child(4n + 2) {
+    --tint: var(--row-tint-coral);
+  }
+
+  &:not([data-hue]):nth-child(4n + 3) {
+    --tint: var(--row-tint-teal);
+  }
+
+  &:not([data-hue]):nth-child(4n + 4) {
     --tint: var(--row-tint-magenta);
   }
 }

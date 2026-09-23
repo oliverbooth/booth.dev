@@ -52,7 +52,7 @@
         {
             Title = post.Title,
             Badge = category.Name,
-            BadgeClass = category.FontStyle == FontStyle.Serif ? "badge-magenta" : "",
+            BadgeClass = category.EffectiveColor.ToBadgeClass(),
             Tags = post.Tags,
             AuthorName = author.DisplayName,
             AuthorAvatarUrl = author.AvatarUrl,

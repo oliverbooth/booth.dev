@@ -32,7 +32,7 @@
         {
             var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
 
-            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="card">
+            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="card" data-hue="pink">
                 <div class="card-icon">
                     <i class="ti ti-code"></i>
                     <span class="card-status-badge@(hasSolution ? "" : " done")">

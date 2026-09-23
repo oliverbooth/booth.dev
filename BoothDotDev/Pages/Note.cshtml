@@ -39,7 +39,7 @@
         {
             Title = note.Title,
             Badge = "note",
-            BadgeClass = "badge-coral",
+            BadgeClass = "badge-sun",
             Meta = [$"published {published.ToShortString()}"],
             SourceUrl = $"/note/{(ShortGuid)note.Id}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Notes/Edit", new { id = note.Id }) : null

@@ -103,7 +103,7 @@
         <div class="stack-list">
             @foreach (var entry in Model.RecentActivity)
             {
-                <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues">
+                <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" data-hue="@entry.ToHue().ToDataHue()">
                     <div class="stack-meta">
                         <p class="title">@entry.Title</p>
                         <p class="sub">

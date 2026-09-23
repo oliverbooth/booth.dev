@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using BoothDotDev.Extensions;
+
 namespace BoothDotDev.Data.Models;
 
 /// <summary>
@@ -5,6 +8,23 @@ namespace BoothDotDev.Data.Models;
 /// </summary>
 public sealed class BlogPostCategory
 {
+    /// <summary>
+    ///     Gets or sets the colour for the blog post category, or <see langword="null" /> to fall back to a hash of
+    ///     <see cref="Id" />.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" />.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
+    ///     Gets the colour this category renders with: <see cref="Color" /> if set, otherwise a hash of <see cref="Id" />.
+    /// </summary>
+    /// <value>The effective colour.</value>
+    [NotMapped]
+    public PaletteHue EffectiveColor
+    {
+        get => Color ?? PaletteHueExtensions.HashFrom(Id);
+    }
+
     /// <summary>
     ///     Gets or sets the font style for the blog post category.
     /// </summary>

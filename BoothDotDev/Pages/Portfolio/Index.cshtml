@@ -55,7 +55,7 @@
                                 _ => throw new InvalidOperationException($"Unknown project status {project.Status}.")
                             }}";
 
-                        <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
+                        <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card" data-hue="sky">
                             <div class="card-icon">
                                 <img loading="lazy" src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
                             </div>
@@ -104,7 +104,7 @@
                             var musicUrl = musicResolver.ResolveCdnUrl(item.FileName, MediaKind.Audio);
                             var duration = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
 
-                            <div class="stack-meta track-meta">
+                            <div class="stack-meta track-meta" data-hue="mint">
                                 <div>
                                     <p class="title">@item.Title@(item.IsWorkInProgress ? " (WIP)" : "")</p>
                                     @if (!string.IsNullOrWhiteSpace(item.Description))
