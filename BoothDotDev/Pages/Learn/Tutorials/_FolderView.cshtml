@@ -32,23 +32,32 @@
 <div class="page-grid">
 
     <div class="page-header-row">
-        <p class="crumb">
-            <a asp-page="/Index">Home</a> /
-            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-            @while (parents.Count > 0)
+
+        <span class="eyebrow">
+            @if (Model is null)
             {
-                var current = parents.Pop();
-                <text>
-                    / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+                <a asp-page="/Index">
+                    <i class="ti ti-arrow-narrow-left"></i> back home
+                </a>
             }
-            @if (Model is not null)
+            else if (parents.Count > 0)
             {
-                <text> / @Model.Title</text>
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(parents.Peek())">
+                    <i class="ti ti-arrow-narrow-left"></i> back to @parents.Peek().Title
+                </a>
             }
-        </p>
+            else
+            {
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">
+                    <i class="ti ti-arrow-narrow-left"></i> back to learn
+                </a>
+            }
+        </span>
+
         <div class="page-actions">
             @{ var feedPath = Model is null ? "/learn" : $"/learn/{TutorialService.GetFullSlug(Model)}"; }
-            <a href="@(feedPath).rss" class="icon-link" aria-label="Subscribe to this listing's RSS feed" title="RSS feed"><i
+            <a href="@(feedPath).rss" class="icon-link" aria-label="Subscribe to this listing's RSS feed" title="RSS feed">
+                <i
                     class="ti ti-rss"></i></a>
             @if (Model is not null && User.Identity?.IsAuthenticated == true)
             {
