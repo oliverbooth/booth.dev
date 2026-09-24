@@ -90,8 +90,9 @@
 
   /* the body is already indented to align with the title text, so a list's own hanging indent would double up */
   ul, ol {
-    padding-left: 1.1em;
+    padding-left: 0;
     list-style-position: inside;
+    margin: 0;
 
     ul, ol {
       padding-left: 1.4em;
