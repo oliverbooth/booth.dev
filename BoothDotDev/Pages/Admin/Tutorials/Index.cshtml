@@ -1,6 +1,7 @@
 @page "/admin/tutorials"
 @using System.Diagnostics
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using Humanizer
 @model Index
 
@@ -57,11 +58,19 @@
                                     _ => "unlisted"
                                 };
                                 var path = Model.GetPath(article);
+                                var hue = article.Color ?? group.Folder?.EffectiveColor;
 
                                 <li class="admin-row" data-search-item>
                                     <span class="row-meta">pt @(i + 1)</span>
                                     <div class="row-body">
-                                        <div class="row-title" data-search>@article.Title</div>
+                                        <div class="row-title" data-search>
+                                            @if (hue is { } articleHue)
+                                            {
+                                                <span class="hue-dot" data-hue="@articleHue.ToDataHue()"
+                                                      title="@articleHue.ToDataHue() (@(article.Color is null ? "from folder" : "set on article"))"></span>
+                                            }
+                                            @article.Title
+                                        </div>
                                     </div>
                                     <span class="badge badge-@badgeClass">
                                     @switch (article.Visibility)

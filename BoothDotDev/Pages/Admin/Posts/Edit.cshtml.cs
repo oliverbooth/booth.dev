@@ -136,6 +136,7 @@ public sealed class Edit : PageModel
             AuthorId = post.AuthorId,
             Body = draft.Body,
             EnableComments = post.EnableComments,
+            Color = post.Color,
             Slug = post.Slug,
             ShowTableOfContents = draft.ShowTableOfContents,
             TableOfContentsExpanded = draft.TableOfContentsExpanded,
@@ -405,7 +406,7 @@ public sealed class Edit : PageModel
             Input.ShowTableOfContents,
             Input.TableOfContentsExpanded);
 
-        return new BlogPostSaveRequest(Input.AuthorId, Input.Slug, Input.PublishedAt, Input.EnableComments, content);
+        return new BlogPostSaveRequest(Input.AuthorId, Input.Slug, Input.PublishedAt, Input.EnableComments, Input.Color, content);
     }
 
     /// <summary>
@@ -463,6 +464,12 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value><see langword="true" /> if comments are enabled; otherwise, <see langword="false" />.</value>
         public bool EnableComments { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the colour of the blog post.
+        /// </summary>
+        /// <value>The colour of the post, or <see langword="null" /> to fall back to its category's colour.</value>
+        public PaletteHue? Color { get; set; }
 
         /// <summary>
         ///     Gets or sets the excerpt of the blog post.

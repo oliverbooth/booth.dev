@@ -1,6 +1,7 @@
 @page "/admin/posts"
 @using System.Diagnostics
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @model Index
 @inject BlogPostService BlogPostService
@@ -46,7 +47,9 @@
                     Visibility.Private => "private",
                     _ => "unlisted"
                 };
-                var category = BlogPostService.GetCategory(post.CategoryId)?.Name;
+                var categoryEntity = BlogPostService.GetCategory(post.CategoryId);
+                var category = categoryEntity?.Name;
+                var hue = post.Color ?? categoryEntity?.EffectiveColor;
 
                 <li class="admin-row" data-search-item>
                     <span class="badge badge-@badgeClass">
@@ -69,7 +72,14 @@
                         }
                     </span>
                     <div class="row-body">
-                        <div class="row-title" data-search>@post.Title</div>
+                        <div class="row-title" data-search>
+                            @if (hue is { } postHue)
+                            {
+                                <span class="hue-dot" data-hue="@postHue.ToDataHue()"
+                                      title="@postHue.ToDataHue() (@(post.Color is null ? "from category" : "set on post"))"></span>
+                            }
+                            @post.Title
+                        </div>
                         <div class="row-sub" data-search>
                             <abbr
                                 title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.ToString("MMM yyyy")</abbr>@(category is null ? "" : $" · {category}")

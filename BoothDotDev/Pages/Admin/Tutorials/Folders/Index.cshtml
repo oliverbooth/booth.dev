@@ -1,6 +1,7 @@
 @page "/admin/tutorials/folders"
 @using System.Diagnostics
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @model Index
 
 @{
@@ -66,7 +67,11 @@
                         }
                     </span>
                     <div class="row-body">
-                        <div class="row-title" data-search>@folder.Title</div>
+                        <div class="row-title" data-search>
+                            <span class="hue-dot" data-hue="@folder.EffectiveColor.ToDataHue()"
+                                  title="@folder.EffectiveColor.ToDataHue() (@(folder.Color is null ? "auto" : "set on folder"))"></span>
+                            @folder.Title
+                        </div>
                         <div class="row-sub" data-search>@Model.GetPath(folder)</div>
                     </div>
                     <div class="row-actions">

@@ -48,12 +48,13 @@
     }
 
     @{
+        var hue = post.Color ?? category.EffectiveColor;
         var header = new ContentHeader
         {
             Title = post.Title,
             Badge = category.Name,
-            BadgeClass = category.EffectiveColor.ToBadgeClass(),
-            Hue = category.EffectiveColor.ToDataHue(),
+            BadgeClass = hue.ToBadgeClass(),
+            Hue = hue.ToDataHue(),
             Tags = post.Tags,
             AuthorName = author.DisplayName,
             AuthorAvatarUrl = author.AvatarUrl,
@@ -91,7 +92,7 @@
             @if (previousPost is not null)
             {
                 var previousCategory = BlogPostService.GetCategory(previousPost.CategoryId)!;
-                <a asp-page="/Blog/Article" asp-route-slug="@previousPost.Slug" class="post-nav-link" data-hue="@previousCategory.EffectiveColor.ToDataHue()">
+                <a asp-page="/Blog/Article" asp-route-slug="@previousPost.Slug" class="post-nav-link" data-hue="@((previousPost.Color ?? previousCategory.EffectiveColor).ToDataHue())">
                     <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
                     <span class="post-nav-title">@previousPost.Title</span>
                 </a>
@@ -104,7 +105,7 @@
             @if (nextPost is not null)
             {
                 var nextCategory = BlogPostService.GetCategory(nextPost.CategoryId)!;
-                <a asp-page="/Blog/Article" asp-route-slug="@nextPost.Slug" class="post-nav-link post-nav-link--next" data-hue="@nextCategory.EffectiveColor.ToDataHue()">
+                <a asp-page="/Blog/Article" asp-route-slug="@nextPost.Slug" class="post-nav-link post-nav-link--next" data-hue="@((nextPost.Color ?? nextCategory.EffectiveColor).ToDataHue())">
                     <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
                     <span class="post-nav-title">@nextPost.Title</span>
                 </a>

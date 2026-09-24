@@ -96,7 +96,8 @@ public sealed class Edit : PageModel
             PreviewImageUrl = folder.PreviewImageUrl?.ToString(),
             Visibility = folder.Visibility,
             Rank = folder.Rank,
-            Parent = folder.Parent
+            Parent = folder.Parent,
+            Color = folder.Color
         };
 
         return Page();
@@ -126,7 +127,8 @@ public sealed class Edit : PageModel
             previewImageUrl,
             Input.Visibility,
             Input.Rank,
-            Input.Parent);
+            Input.Parent,
+            Input.Color);
 
         var result = id is null ? _tutorialService.CreateFolder(request) : _tutorialService.UpdateFolder(id.Value, request);
         return RedirectOnSuccess(result);
@@ -160,7 +162,8 @@ public sealed class Edit : PageModel
                     PreviewImageUrl = folder.PreviewImageUrl?.ToString(),
                     Visibility = folder.Visibility,
                     Rank = folder.Rank,
-                    Parent = folder.Parent
+                    Parent = folder.Parent,
+                    Color = folder.Color
                 };
             }
 
@@ -264,5 +267,11 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The ID of the parent, or <see langword="null" /> if the folder is at the root.</value>
         public Guid? Parent { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the colour of the folder.
+        /// </summary>
+        /// <value>The colour of the folder, or <see langword="null" /> to derive it from the folder's ID.</value>
+        public PaletteHue? Color { get; set; }
     }
 }

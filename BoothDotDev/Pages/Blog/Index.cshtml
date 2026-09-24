@@ -48,7 +48,7 @@
                 var rootCategoryResult = BlogPostService.GetParentCategory(post);
                 var rootCategory = rootCategoryResult.IsSuccess ? rootCategoryResult.Value : null;
                 var displayCategory = BlogPostService.GetCategory(post.CategoryId) ?? rootCategory;
-                var postHue = displayCategory?.EffectiveColor ?? PaletteHue.Brand;
+                var postHue = post.Color ?? displayCategory?.EffectiveColor ?? PaletteHue.Brand;
 
                 <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()" data-state="@rootCategory?.Id">
                     <div class="collapse-inner">
@@ -57,7 +57,7 @@
                                 <div class="post-row-head">
                                     @if (displayCategory is not null)
                                     {
-                                        <span class="badge @displayCategory.EffectiveColor.ToBadgeClass()">@displayCategory.Name</span>
+                                        <span class="badge @postHue.ToBadgeClass()">@displayCategory.Name</span>
                                     }
                                     else
                                     {

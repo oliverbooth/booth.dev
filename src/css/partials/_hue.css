@@ -7,29 +7,31 @@
 [data-hue="sun"] { --ink: var(--sun-text); --solid: var(--accent-sun); --on-solid: var(--on-sun-text); --glow: var(--glow-sun); }
 [data-hue="sky"] { --ink: var(--sky-text); --solid: var(--accent-sky); --on-solid: var(--on-sky-text); --glow: var(--glow-sky); }
 
-/* icon chip inside a hued row (e.g. .stack-icon on a "currently reading" row) picks up the row's hue */
 [data-hue] .stack-icon {
   background: color-mix(in oklch, var(--ink) 16%, transparent);
   color: var(--ink);
 }
 
-/* the category/type pill itself: solid fill + on-solid text, matching the mockup (tint/muted colours are for
-   .status/.badge elsewhere that aren't tied to a content-type hue, so they're untouched) */
 [data-hue] .badge {
   background: var(--solid);
   color: var(--on-solid);
 }
 
-/* the title of a hued card/row picks up the hue as its own colour, same as the mockup's per-card "ink" */
+.series-box[data-hue] {
+  --series-ink: var(--ink);
+}
+
 [data-hue] .card-body .title,
 [data-hue] .stack-meta .title,
 [data-hue] .post-row-title,
 [data-hue] .post-nav-title,
-.post-title[data-hue] {
+.post-title[data-hue],
+h1[data-hue] {
   color: var(--ink);
 }
 
-.post-title[data-hue] {
+.post-title[data-hue],
+h1[data-hue] {
   text-shadow: var(--glow);
 }
 
@@ -43,31 +45,38 @@
 
 .stack-list > [data-hue="brand"],
 .post-row[data-hue="brand"],
-.post-nav-link[data-hue="brand"] { --tint: var(--row-tint-brand); }
+.post-nav-link[data-hue="brand"],
+.series-box[data-hue="brand"] { --tint: var(--row-tint-brand); }
 
 .stack-list > [data-hue="tangerine"],
 .post-row[data-hue="tangerine"],
-.post-nav-link[data-hue="tangerine"] { --tint: var(--row-tint-coral); }
+.post-nav-link[data-hue="tangerine"],
+.series-box[data-hue="tangerine"] { --tint: var(--row-tint-coral); }
 
 .stack-list > [data-hue="mint"],
 .post-row[data-hue="mint"],
-.post-nav-link[data-hue="mint"] { --tint: var(--row-tint-teal); }
+.post-nav-link[data-hue="mint"],
+.series-box[data-hue="mint"] { --tint: var(--row-tint-teal); }
 
 .stack-list > [data-hue="pink"],
 .post-row[data-hue="pink"],
-.post-nav-link[data-hue="pink"] { --tint: var(--row-tint-magenta); }
+.post-nav-link[data-hue="pink"],
+.series-box[data-hue="pink"] { --tint: var(--row-tint-magenta); }
 
 .stack-list > [data-hue="grape"],
 .post-row[data-hue="grape"],
-.post-nav-link[data-hue="grape"] { --tint: var(--row-tint-grape); }
+.post-nav-link[data-hue="grape"],
+.series-box[data-hue="grape"] { --tint: var(--row-tint-grape); }
 
 .stack-list > [data-hue="sun"],
 .post-row[data-hue="sun"],
-.post-nav-link[data-hue="sun"] { --tint: var(--row-tint-sun); }
+.post-nav-link[data-hue="sun"],
+.series-box[data-hue="sun"] { --tint: var(--row-tint-sun); }
 
 .stack-list > [data-hue="sky"],
 .post-row[data-hue="sky"],
-.post-nav-link[data-hue="sky"] { --tint: var(--row-tint-sky); }
+.post-nav-link[data-hue="sky"],
+.series-box[data-hue="sky"] { --tint: var(--row-tint-sky); }
 
 .badge-grape { --badge-bg: color-mix(in oklch, var(--accent-grape) 18%, transparent); --badge-text: var(--grape-text); }
 .badge-sun { --badge-bg: color-mix(in oklch, var(--accent-sun) 18%, transparent); --badge-text: var(--sun-text); }

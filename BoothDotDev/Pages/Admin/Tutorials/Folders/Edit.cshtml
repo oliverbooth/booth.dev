@@ -1,9 +1,16 @@
 @page "/admin/tutorials/folders/edit/{id:guid?}"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @model Edit
 
 @{
     Layout = "_AdminLayout";
+    var huePicker = new HuePicker
+    {
+        Name = "Input.Color",
+        Selected = Model.Input.Color,
+        AutoDescription = "derived from the folder's ID"
+    };
 }
 
 <div class="admin-page">
@@ -55,6 +62,11 @@
         <div class="field">
             <label for="preview-image">Preview image URL</label>
             <input type="url" id="preview-image" asp-for="Input.PreviewImageUrl" />
+        </div>
+
+        <div class="field">
+            <label>Colour</label>
+            <partial name="Partials/_HuePicker" model="huePicker" />
         </div>
 
         <div class="field">

@@ -186,7 +186,8 @@ public sealed class Edit : PageModel
             ShowTableOfContents = draft.ShowTableOfContents,
             TableOfContentsExpanded = draft.TableOfContentsExpanded,
             NextPart = article.NextPart,
-            PreviousPart = article.PreviousPart
+            PreviousPart = article.PreviousPart,
+            Color = article.Color
         };
 
         return Page();
@@ -452,6 +453,7 @@ public sealed class Edit : PageModel
             Input.NextPart,
             Input.PreviousPart,
             null,
+            Input.Color,
             content);
     }
 
@@ -569,6 +571,12 @@ public sealed class Edit : PageModel
         ///     <see langword="true" /> if comments are enabled for the article; otherwise, <see langword="false" />.
         /// </value>
         public bool EnableComments { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the colour of the article.
+        /// </summary>
+        /// <value>The colour of the article, or <see langword="null" /> to fall back to its folder's colour.</value>
+        public PaletteHue? Color { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether to show the table of contents for the article.

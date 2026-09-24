@@ -495,7 +495,8 @@ public sealed class TutorialService
             EnableComments = request.EnableComments,
             NextPart = request.NextPart,
             PreviousPart = request.PreviousPart,
-            RedirectFrom = request.RedirectFrom
+            RedirectFrom = request.RedirectFrom,
+            Color = request.Color
         };
 
         // two SaveChanges calls, not one: TutorialArticle -> TutorialArticleDraft (via TutorialArticleId) and
@@ -735,6 +736,7 @@ public sealed class TutorialService
         folder.Visibility = request.Visibility;
         folder.Rank = request.Rank;
         folder.Parent = request.Parent;
+        folder.Color = request.Color;
     }
 
     /// <summary>
@@ -750,6 +752,7 @@ public sealed class TutorialService
         article.NextPart = request.NextPart;
         article.PreviousPart = request.PreviousPart;
         article.RedirectFrom = request.RedirectFrom;
+        article.Color = request.Color;
     }
 
     /// <summary>

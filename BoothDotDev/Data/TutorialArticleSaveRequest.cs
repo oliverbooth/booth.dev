@@ -33,6 +33,7 @@ public sealed record TutorialArticleDraftContent(
 /// <param name="NextPart">The ID of the next article to this one, if this article is part of a series.</param>
 /// <param name="PreviousPart">The ID of the previous article to this one, if this article is part of a series.</param>
 /// <param name="RedirectFrom">The ID of the post that was redirected to this article, if any.</param>
+/// <param name="Color">The colour of the article, or <see langword="null" /> to fall back to its folder's colour.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
 public sealed record TutorialArticleSaveRequest(
     string Slug,
@@ -41,4 +42,5 @@ public sealed record TutorialArticleSaveRequest(
     Guid? NextPart,
     Guid? PreviousPart,
     Guid? RedirectFrom,
+    PaletteHue? Color,
     TutorialArticleDraftContent Content);

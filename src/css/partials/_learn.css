@@ -1,9 +1,13 @@
 .series-box {
+  --tint: var(--row-tint-brand);
+  --series-ink: var(--brand-text);
+
   margin: 0 0 2rem;
   padding: 18px 22px;
   border-radius: var(--radius-md);
-  background: var(--row-tint-brand);
+  background: var(--tint);
   box-shadow: var(--shadow-card-soft);
+  transform: rotate(calc(-0.5deg * var(--motion) * var(--tilt-on)));
 
   ol {
     display: flex;
@@ -28,7 +32,7 @@
     }
 
     &.current {
-      color: var(--brand-text);
+      color: var(--series-ink);
       font-weight: 700;
     }
   }
@@ -36,7 +40,7 @@
 
 .series-title {
   margin: 0 0 10px;
-  color: var(--text-muted);
+  color: var(--series-ink);
   font-family: var(--font-heading);
   font-size: 13px;
   font-weight: 700;

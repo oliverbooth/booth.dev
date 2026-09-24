@@ -29,10 +29,12 @@ public sealed record BlogPostDraftContent(
 /// <param name="Slug">The URL slug of the post.</param>
 /// <param name="PublishedAt">The publication date and time of the post.</param>
 /// <param name="EnableComments">A value indicating whether comments are enabled for the post.</param>
+/// <param name="Color">The colour of the post, or <see langword="null" /> to fall back to its category's colour.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
 public sealed record BlogPostSaveRequest(
     Guid AuthorId,
     string Slug,
     DateTimeOffset PublishedAt,
     bool EnableComments,
+    PaletteHue? Color,
     BlogPostDraftContent Content);

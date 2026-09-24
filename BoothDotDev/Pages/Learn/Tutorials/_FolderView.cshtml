@@ -76,7 +76,7 @@
         </div>
     }
 
-    <h1>@(Model?.Title ?? "Learn")</h1>
+    <h1 data-hue="@Model?.EffectiveColor.ToDataHue()">@(Model?.Title ?? "Learn")</h1>
 
     @if (Model is null)
     {
@@ -106,7 +106,7 @@
             @foreach (var folder in folders)
             {
                 var articleCount = TutorialService.GetArticles(folder, Visibility.Published).Count;
-                var folderHue = PaletteHueExtensions.HashFrom(folder.Id);
+                var folderHue = folder.EffectiveColor;
 
                 <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card" data-hue="@folderHue.ToDataHue()">
                     <div class="card-icon">
@@ -139,7 +139,7 @@
         <div class="stack-list">
             @foreach (var article in articles)
             {
-                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)" data-hue="@PaletteHueExtensions.HashFrom(Model!.Id).ToDataHue()">
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)" data-hue="@((article.Color ?? Model!.EffectiveColor).ToDataHue())">
                     <div class="stack-icon"><i class="ti ti-file-text"></i></div>
                     <div class="stack-meta">
                         <p class="title">@article.Title</p>

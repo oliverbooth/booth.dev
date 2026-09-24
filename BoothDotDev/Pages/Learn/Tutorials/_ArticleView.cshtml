@@ -52,6 +52,7 @@
 
     var partNumber = series.FindIndex(part => part.Id == article.Id) + 1;
     var seriesFolder = TutorialService.GetFolder(article.Folder);
+    var hue = article.Color ?? (seriesFolder.IsSuccess ? seriesFolder.Value.EffectiveColor : PaletteHue.Mint);
 
     var parents = new Stack<TutorialFolder>();
     Guid? parent = article.Folder;
@@ -111,7 +112,8 @@
         {
             Title = article.Title,
             Badge = "tutorial",
-            Hue = "mint",
+            BadgeClass = hue.ToBadgeClass(),
+            Hue = hue.ToDataHue(),
             Meta = meta,
             SourceUrl = $"/learn/{TutorialService.GetFullSlug(article)}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Tutorials/Edit", new { id = article.Id }) : null
@@ -122,7 +124,7 @@
 
     @if (series.Count > 1)
     {
-        <nav class="series-box" aria-label="Series">
+        <nav class="series-box" aria-label="Series" data-hue="@hue.ToDataHue()">
             <p class="series-title">series@(seriesFolder.IsSuccess ? $": {seriesFolder.Value.Title.ToLower()}" : "")</p>
             <ol>
                 @for (var index = 0; index < series.Count; index++)
@@ -179,7 +181,7 @@
                 @if (previousPart.HasValue)
                 {
                     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart.Value)"
-                       class="post-nav-link">
+                       class="post-nav-link" data-hue="@hue.ToDataHue()">
                         <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
                         <span class="post-nav-title">@previousPart.Value.Title</span>
                     </a>
@@ -192,7 +194,7 @@
                 @if (nextPart.HasValue)
                 {
                     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart.Value)"
-                       class="post-nav-link post-nav-link--next">
+                       class="post-nav-link post-nav-link--next" data-hue="@hue.ToDataHue()">
                         <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
                         <span class="post-nav-title">@nextPart.Value.Title</span>
                     </a>
