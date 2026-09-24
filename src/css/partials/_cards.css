@@ -134,16 +134,6 @@
     line-height: 1.55;
     margin: 0 0 10px;
   }
-
-  .branch {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-faint);
-    margin: 0 0 8px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
 }
 
 /* Now-page tiles: a small label, a big value, an optional footnote */
@@ -190,6 +180,7 @@ figcaption {
 
 .folder-card,
 .article-card,
+.challenge-card,
 .someday-entry,
 .prose blockquote {
   --tape-tilt: -3deg;
