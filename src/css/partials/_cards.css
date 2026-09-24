@@ -194,7 +194,8 @@ figcaption {
 
 .folder-card,
 .article-card,
-.someday-entry {
+.someday-entry,
+.prose blockquote {
   --tape-tilt: -3deg;
 
   position: relative;

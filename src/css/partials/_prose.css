@@ -108,15 +108,29 @@
   }
 
   blockquote {
+    --solid: var(--brand);
+    --tilt: -1deg;
+
     margin: 1.75rem 0;
-    padding: 20px 24px;
-    border-radius: var(--radius-md);
+    padding: 26px 24px 20px;
     background: var(--tint-brand);
     font-family: var(--font-heading);
     font-size: 19px;
     font-weight: 700;
     line-height: 1.4;
-    transform: rotate(calc(-1deg * var(--motion) * var(--tilt-on)));
+    transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+
+    &:nth-of-type(4n + 2) {
+      --tilt: 1deg;
+    }
+
+    &:nth-of-type(4n + 3) {
+      --tilt: -0.5deg;
+    }
+
+    &:nth-of-type(4n + 4) {
+      --tilt: 1.5deg;
+    }
 
     p {
       margin: 0;
