@@ -6,6 +6,12 @@ namespace BoothDotDev.Data.Models;
 public sealed class TutorialFolder : IEquatable<TutorialFolder>
 {
     /// <summary>
+    ///     Gets or sets the colour of the folder, or <see langword="null" /> to fall back to a hash of <see cref="Id" />.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" />.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
     ///     Gets or sets the description of this folder.
     /// </summary>
     /// <value>The description of this folder.</value>

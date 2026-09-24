@@ -25,6 +25,12 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     }
 
     /// <summary>
+    ///     Gets or sets the colour of the post, or <see langword="null" /> to fall back to the colour of its category.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" />.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
     ///     Gets the draft that is currently live for this post.
     /// </summary>
     /// <value>The currently-live draft.</value>
