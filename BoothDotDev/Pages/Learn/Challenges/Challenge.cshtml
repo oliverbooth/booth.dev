@@ -15,11 +15,9 @@
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Challenges/Index">Challenges</a> /
-        @challenge.Title
-    </p>
+    <span class="eyebrow">
+        <a asp-page="/Learn/Challenges/Index"><i class="ti ti-arrow-narrow-left"></i> back to challenges</a>
+    </span>
 
     @if (challenge.Visibility == Visibility.Private)
     {
