@@ -77,6 +77,7 @@ builder.Services.AddSingleton<DevChallengeService>();
 builder.Services.AddSingleton<MarkdownRenderingService>();
 builder.Services.AddSingleton<NoteService>();
 builder.Services.AddSingleton<OgImageService>();
+builder.Services.AddSingleton<PortfolioService>();
 builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<RawContentService>();
 builder.Services.AddSingleton<ReadingListService>();
@@ -217,7 +218,8 @@ app.MapGet("/create", () => Results.Redirect("/portfolio", true));
 app.MapGet("/projects", () => Results.Redirect("/portfolio", true));
 app.MapGet("/project/{slug}", (string slug) => Results.Redirect($"/portfolio/{slug}", true));
 app.MapGet("/project/{projectSlug}/devlog", (string slug) => Results.Redirect($"/portfolio/{slug}", true));
-app.MapGet("/project/{projectSlug}/devlog/{slug}", (string projectSlug, string slug) => Results.Redirect($"/portfolio/{projectSlug}/devlog/{slug}", true));
+app.MapGet("/project/{projectSlug}/devlog/{slug}",
+    (string projectSlug, string slug) => Results.Redirect($"/portfolio/{projectSlug}/devlog/{slug}", true));
 
 app.Run();
 return;

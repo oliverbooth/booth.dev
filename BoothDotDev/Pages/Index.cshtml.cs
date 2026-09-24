@@ -8,22 +8,23 @@ namespace BoothDotDev.Pages;
 internal sealed class Index : PageModel
 {
     private const int RecentActivityCount = 5;
-    private const int ProjectCount = 6;
+    private const int PortfolioCount = 6;
+    private const int FeaturedCreationCount = 2;
     private const int LatestPostCount = 3;
     private readonly ActivityService _activityService;
     private readonly BlogPostService _blogPostService;
-    private readonly ProjectService _projectService;
+    private readonly PortfolioService _portfolioService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Index" /> class.
     /// </summary>
     /// <param name="activityService">The activity service.</param>
-    /// <param name="projectService">The project service.</param>
+    /// <param name="portfolioService">The portfolio service.</param>
     /// <param name="blogPostService">The blog post service.</param>
-    public Index(ActivityService activityService, ProjectService projectService, BlogPostService blogPostService)
+    public Index(ActivityService activityService, PortfolioService portfolioService, BlogPostService blogPostService)
     {
         _activityService = activityService;
-        _projectService = projectService;
+        _portfolioService = portfolioService;
         _blogPostService = blogPostService;
     }
 
@@ -40,10 +41,10 @@ internal sealed class Index : PageModel
     public IReadOnlyList<ActivityEntry> RecentActivity { get; private set; } = [];
 
     /// <summary>
-    ///     Gets the latest projects.
+    ///     Gets the things I've made that are featured: the newest creations, then projects.
     /// </summary>
-    /// <returns>The latest projects.</returns>
-    public IReadOnlyList<Project> Projects { get; private set; } = [];
+    /// <returns>The featured items.</returns>
+    public IReadOnlyList<PortfolioItem> Featured { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request for the index page.
@@ -51,7 +52,7 @@ internal sealed class Index : PageModel
     public void OnGet()
     {
         RecentActivity = _activityService.GetRecentActivity(new ActivitySearchOptions(RecentActivityCount));
-        Projects = [.. _projectService.GetProjects().Concat(_projectService.GetProjects(ProjectStatus.Past)).Take(ProjectCount)];
+        Featured = _portfolioService.GetFeatured(PortfolioCount, FeaturedCreationCount);
         LatestPosts = _blogPostService.GetRecentBlogPosts(new ActivitySearchOptions(LatestPostCount));
     }
 }

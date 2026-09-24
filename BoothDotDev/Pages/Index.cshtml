@@ -4,7 +4,6 @@
 @using BoothDotDev.Services
 @model Index
 @inject BlogPostService BlogPostService
-@inject ProjectService ProjectService
 @inject MarkdownRenderingService MarkdownRenderingService
 
 @{
@@ -57,19 +56,57 @@
             <a asp-page="/Portfolio/Index">View all <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
         </div>
 
-        <div class="card-grid">
-            @foreach (var project in Model.Projects)
+        <div class="sticky-grid">
+            @foreach (var item in Model.Featured)
             {
-                <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
-                    <div class="card-icon">
-                        <img loading="lazy" src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
-                        <span class="card-status-badge">
-                            <span class="dot"></span>@project.Status.ToString().ToLower()
-                        </span>
+                <a asp-page="@item.PagePath" asp-all-route-data="@item.RouteValues" class="portfolio-card" data-hue="@item.Hue.ToDataHue()">
+                    <div class="portfolio-card-top">
+                        <span class="badge">@item.Label</span>
+                        @if (item.Status is { } status)
+                        {
+                            <span class="portfolio-card-status">
+                                <span class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
+                            </span>
+                        }
+                        else if (item.IsWorkInProgress)
+                        {
+                            <span class="portfolio-card-status">wip</span>
+                        }
                     </div>
-                    <div class="card-body">
-                        <p class="title">@project.Name</p>
-                    </div>
+
+                    @if (item.WaveformBars.Count > 0)
+                    {
+                        <div class="portfolio-card-wave" aria-hidden="true">
+                            @foreach (var height in item.WaveformBars)
+                            {
+                                <span style="height:@(height)px"></span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="portfolio-card-media">
+                            @if (item.ImageUrl is not null)
+                            {
+                                <img loading="lazy" src="@item.ImageUrl" alt="@item.Title">
+                            }
+                        </div>
+                    }
+
+                    <h3>@item.Title</h3>
+                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                    {
+                        <p class="portfolio-card-desc">@item.Description</p>
+                    }
+                    @if (item.Tags.Count > 0)
+                    {
+                        <div class="portfolio-card-tags">
+                            @foreach (var tag in item.Tags)
+                            {
+                                <span class="tag">@tag</span>
+                            }
+                        </div>
+                    }
                 </a>
             }
         </div>

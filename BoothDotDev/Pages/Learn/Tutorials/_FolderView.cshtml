@@ -109,7 +109,7 @@
 
     @if (Model is null || folders.Count > 0 || articles.Count > 0)
     {
-        <div class="learn-grid">
+        <div class="sticky-grid">
             @if (Model is null)
             {
                 <a asp-page="/Learn/Challenges/Index" class="folder-card" data-hue="pink">

@@ -1,0 +1,79 @@
+/* ---------- "stuff I made" cards: projects, art and music share one card ---------- */
+.portfolio-card {
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+
+  h3 {
+    color: var(--ink);
+    font-size: 18px;
+  }
+}
+
+.portfolio-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.portfolio-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* an image, or striped paper in the card's hue where there isn't one */
+.portfolio-card-media {
+  height: 150px;
+  overflow: hidden;
+  border-radius: 12px;
+  background-image: repeating-linear-gradient(
+    50deg,
+    color-mix(in oklch, var(--solid) 16%, transparent) 0 9px,
+    color-mix(in oklch, var(--solid) 8%, transparent) 9px 18px
+  );
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.portfolio-card-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 70px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--solid) 20%, transparent);
+
+  span {
+    width: 4px;
+    border-radius: 2px;
+    background: var(--solid);
+  }
+}
+
+.portfolio-card-desc {
+  display: -webkit-box;
+  flex: 1;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.portfolio-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
