@@ -11,6 +11,7 @@ namespace BoothDotDev.Data;
 /// <param name="Tags">The tags associated with the post.</param>
 /// <param name="ShowTableOfContents">A value indicating whether to show the table of contents for the post.</param>
 /// <param name="TableOfContentsExpanded">A value indicating whether the table of contents is expanded by default.</param>
+/// <param name="Color">The colour of the post, or <see langword="null" /> to fall back to its category's colour.</param>
 public sealed record BlogPostDraftContent(
     string Title,
     string Body,
@@ -19,7 +20,8 @@ public sealed record BlogPostDraftContent(
     Visibility Visibility,
     IReadOnlyList<string> Tags,
     bool ShowTableOfContents,
-    bool TableOfContentsExpanded);
+    bool TableOfContentsExpanded,
+    PaletteHue? Color);
 
 /// <summary>
 ///     Represents a request to create or save a blog post, bundling its parent-level fields with the content of the
@@ -29,12 +31,10 @@ public sealed record BlogPostDraftContent(
 /// <param name="Slug">The URL slug of the post.</param>
 /// <param name="PublishedAt">The publication date and time of the post.</param>
 /// <param name="EnableComments">A value indicating whether comments are enabled for the post.</param>
-/// <param name="Color">The colour of the post, or <see langword="null" /> to fall back to its category's colour.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
 public sealed record BlogPostSaveRequest(
     Guid AuthorId,
     string Slug,
     DateTimeOffset PublishedAt,
     bool EnableComments,
-    PaletteHue? Color,
     BlogPostDraftContent Content);

@@ -125,7 +125,7 @@ public sealed class Edit : PageModel
         ViewingDraftId = draft.Id;
         Input = new EditModel
         {
-            Title = draft.Title, Body = draft.Body, Slug = entry.Slug, Color = entry.Color, Visibility = draft.Visibility
+            Title = draft.Title, Body = draft.Body, Slug = entry.Slug, Color = draft.Color, Visibility = draft.Visibility
         };
 
         return Page();
@@ -367,8 +367,8 @@ public sealed class Edit : PageModel
             ? _somedayEntryService.GetEntryById(entryId, true).ValueOrDefault?.SortOrder ?? 0
             : _somedayEntryService.GetAllEntries().Count;
 
-        var content = new SomedayEntryDraftContent(Input.Title, Input.Body, Input.Visibility);
-        return new SomedayEntrySaveRequest(Input.Slug, sortOrder, Input.Color, content);
+        var content = new SomedayEntryDraftContent(Input.Title, Input.Body, Input.Visibility, Input.Color);
+        return new SomedayEntrySaveRequest(Input.Slug, sortOrder, content);
     }
 
     /// <summary>

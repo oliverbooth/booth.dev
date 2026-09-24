@@ -495,8 +495,7 @@ public sealed class TutorialService
             EnableComments = request.EnableComments,
             NextPart = request.NextPart,
             PreviousPart = request.PreviousPart,
-            RedirectFrom = request.RedirectFrom,
-            Color = request.Color
+            RedirectFrom = request.RedirectFrom
         };
 
         // two SaveChanges calls, not one: TutorialArticle -> TutorialArticleDraft (via TutorialArticleId) and
@@ -752,7 +751,6 @@ public sealed class TutorialService
         article.NextPart = request.NextPart;
         article.PreviousPart = request.PreviousPart;
         article.RedirectFrom = request.RedirectFrom;
-        article.Color = request.Color;
     }
 
     /// <summary>
@@ -773,7 +771,8 @@ public sealed class TutorialService
             PreviewImageUrl = content.PreviewImageUrl,
             ShowTableOfContents = content.ShowTableOfContents,
             TableOfContentsExpanded = content.TableOfContentsExpanded,
-            Visibility = content.Visibility
+            Visibility = content.Visibility,
+            Color = content.Color
         };
     }
 }

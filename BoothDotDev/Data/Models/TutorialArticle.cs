@@ -8,10 +8,14 @@ namespace BoothDotDev.Data.Models;
 public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExcerpt
 {
     /// <summary>
-    ///     Gets or sets the colour of the article, or <see langword="null" /> to fall back to the colour of its folder.
+    ///     Gets the colour of the article, as of its current draft.
     /// </summary>
-    /// <value>The explicitly-assigned colour, or <see langword="null" />.</value>
-    public PaletteHue? Color { get; set; }
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to the colour of its folder.</value>
+    [NotMapped]
+    public PaletteHue? Color
+    {
+        get => Draft.Color;
+    }
 
     /// <summary>
     ///     Gets the draft that is currently live for this article.

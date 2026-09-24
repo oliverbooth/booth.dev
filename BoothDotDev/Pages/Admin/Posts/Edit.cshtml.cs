@@ -136,7 +136,7 @@ public sealed class Edit : PageModel
             AuthorId = post.AuthorId,
             Body = draft.Body,
             EnableComments = post.EnableComments,
-            Color = post.Color,
+            Color = draft.Color,
             Slug = post.Slug,
             ShowTableOfContents = draft.ShowTableOfContents,
             TableOfContentsExpanded = draft.TableOfContentsExpanded,
@@ -404,9 +404,10 @@ public sealed class Edit : PageModel
             Input.Visibility,
             ParseTags(),
             Input.ShowTableOfContents,
-            Input.TableOfContentsExpanded);
+            Input.TableOfContentsExpanded,
+            Input.Color);
 
-        return new BlogPostSaveRequest(Input.AuthorId, Input.Slug, Input.PublishedAt, Input.EnableComments, Input.Color, content);
+        return new BlogPostSaveRequest(Input.AuthorId, Input.Slug, Input.PublishedAt, Input.EnableComments, content);
     }
 
     /// <summary>

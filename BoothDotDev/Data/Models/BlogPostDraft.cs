@@ -18,6 +18,12 @@ public sealed class BlogPostDraft : IEquatable<BlogPostDraft>, IMarkdownExcerpt
     public Guid CategoryId { get; set; }
 
     /// <summary>
+    ///     Gets or sets the colour of the post, as of this draft.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to its category's colour.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
     ///     Gets the date and time this draft was saved.
     /// </summary>
     /// <value>The date and time this draft was saved.</value>

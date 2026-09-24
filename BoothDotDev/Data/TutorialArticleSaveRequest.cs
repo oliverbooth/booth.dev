@@ -12,6 +12,7 @@ namespace BoothDotDev.Data;
 /// <param name="ShowTableOfContents">A value indicating whether the table of contents should be shown.</param>
 /// <param name="TableOfContentsExpanded">A value indicating whether the table of contents is expanded by default.</param>
 /// <param name="Visibility">The visibility of the article.</param>
+/// <param name="Color">The colour of the article, or <see langword="null" /> to fall back to its folder's colour.</param>
 public sealed record TutorialArticleDraftContent(
     string Title,
     string Body,
@@ -21,7 +22,8 @@ public sealed record TutorialArticleDraftContent(
     Uri? PreviewImageUrl,
     bool ShowTableOfContents,
     bool TableOfContentsExpanded,
-    Visibility Visibility);
+    Visibility Visibility,
+    PaletteHue? Color);
 
 /// <summary>
 ///     Represents a request to create or save a tutorial article, bundling its parent-level fields with the content
@@ -33,7 +35,6 @@ public sealed record TutorialArticleDraftContent(
 /// <param name="NextPart">The ID of the next article to this one, if this article is part of a series.</param>
 /// <param name="PreviousPart">The ID of the previous article to this one, if this article is part of a series.</param>
 /// <param name="RedirectFrom">The ID of the post that was redirected to this article, if any.</param>
-/// <param name="Color">The colour of the article, or <see langword="null" /> to fall back to its folder's colour.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
 public sealed record TutorialArticleSaveRequest(
     string Slug,
@@ -42,5 +43,4 @@ public sealed record TutorialArticleSaveRequest(
     Guid? NextPart,
     Guid? PreviousPart,
     Guid? RedirectFrom,
-    PaletteHue? Color,
     TutorialArticleDraftContent Content);

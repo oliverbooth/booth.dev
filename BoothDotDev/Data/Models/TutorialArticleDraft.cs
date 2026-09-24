@@ -6,6 +6,12 @@ namespace BoothDotDev.Data.Models;
 public sealed class TutorialArticleDraft : IEquatable<TutorialArticleDraft>
 {
     /// <summary>
+    ///     Gets or sets the colour of the article, as of this draft.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to its folder's colour.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
     ///     Gets the date and time this draft was saved.
     /// </summary>
     /// <value>The date and time this draft was saved.</value>

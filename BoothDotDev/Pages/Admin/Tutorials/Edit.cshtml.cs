@@ -187,7 +187,7 @@ public sealed class Edit : PageModel
             TableOfContentsExpanded = draft.TableOfContentsExpanded,
             NextPart = article.NextPart,
             PreviousPart = article.PreviousPart,
-            Color = article.Color
+            Color = draft.Color
         };
 
         return Page();
@@ -444,7 +444,8 @@ public sealed class Edit : PageModel
             previewImageUrl,
             Input.ShowTableOfContents,
             Input.TableOfContentsExpanded,
-            Input.Visibility);
+            Input.Visibility,
+            Input.Color);
 
         return new TutorialArticleSaveRequest(
             Input.Slug,
@@ -453,7 +454,6 @@ public sealed class Edit : PageModel
             Input.NextPart,
             Input.PreviousPart,
             null,
-            Input.Color,
             content);
     }
 

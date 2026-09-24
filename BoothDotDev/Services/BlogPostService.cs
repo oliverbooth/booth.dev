@@ -74,8 +74,7 @@ public sealed class BlogPostService : BackgroundService
             Slug = request.Slug,
             PublishedAt = request.PublishedAt.ToUniversalTime(),
             UpdatedAt = null,
-            EnableComments = request.EnableComments,
-            Color = request.Color
+            EnableComments = request.EnableComments
         };
 
         // two SaveChanges calls, not one: BlogPost -> BlogPostDraft (via BlogPostId) and BlogPostDraft ->
@@ -127,7 +126,6 @@ public sealed class BlogPostService : BackgroundService
         post.Slug = request.Slug;
         post.PublishedAt = request.PublishedAt.ToUniversalTime();
         post.EnableComments = request.EnableComments;
-        post.Color = request.Color;
 
         context.SaveChanges();
 
@@ -167,7 +165,6 @@ public sealed class BlogPostService : BackgroundService
         post.Slug = request.Slug;
         post.PublishedAt = request.PublishedAt.ToUniversalTime();
         post.EnableComments = request.EnableComments;
-        post.Color = request.Color;
         post.CurrentDraft = draft;
         post.UpdatedAt = DateTimeOffset.UtcNow;
 
@@ -798,6 +795,7 @@ public sealed class BlogPostService : BackgroundService
             Visibility = content.Visibility,
             ShowTableOfContents = content.ShowTableOfContents,
             TableOfContentsExpanded = content.TableOfContentsExpanded,
+            Color = content.Color,
             Tags = [.. content.Tags]
         };
     }
