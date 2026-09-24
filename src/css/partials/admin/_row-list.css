@@ -180,8 +180,9 @@
     }
   }
 
+  /* tangerine is the closest palette hue to red */
   &.danger {
-    color: var(--danger-text);
+    color: var(--coral-text);
 
     @media (hover: hover) {
       &:hover {
@@ -201,6 +202,11 @@
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--text);
+
+  /* beats the .icon-btn.danger colour above, which the base colour here would otherwise override */
+  &.danger {
+    color: var(--coral-text);
+  }
 
   @media (hover: hover) {
     &:hover {

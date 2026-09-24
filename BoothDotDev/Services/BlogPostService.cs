@@ -310,6 +310,152 @@ public sealed class BlogPostService : BackgroundService
     }
 
     /// <summary>
+    ///     Returns every blog post category as a flat list, without populating <see cref="BlogPostCategory.Children" />.
+    /// </summary>
+    /// <returns>A read-only list of all blog post categories, ordered by name.</returns>
+    public IReadOnlyList<BlogPostCategory> GetAllCategoriesFlat()
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        return [.. context.BlogPostCategories.AsNoTracking().OrderBy(category => category.Name)];
+    }
+
+    /// <summary>
+    ///     Creates a new blog post category.
+    /// </summary>
+    /// <param name="request">The category's fields.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the newly-created category, or an error if the request is invalid.</returns>
+    public Result<BlogPostCategory> CreateCategory(BlogPostCategorySaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+
+        var validation = ValidateCategory(context, null, request);
+        if (validation.IsFailed)
+        {
+            return validation.ToResult<BlogPostCategory>();
+        }
+
+        var category = new BlogPostCategory();
+        ApplyCategoryRequest(category, request);
+
+        context.BlogPostCategories.Add(category);
+        context.SaveChanges();
+
+        return category;
+    }
+
+    /// <summary>
+    ///     Updates an existing blog post category.
+    /// </summary>
+    /// <param name="id">The ID of the category to update.</param>
+    /// <param name="request">The category's new fields.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated category, or an error if no category with the specified
+    ///     <paramref name="id" /> exists or the request is invalid.
+    /// </returns>
+    public Result<BlogPostCategory> UpdateCategory(Guid id, BlogPostCategorySaveRequest request)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var category = context.BlogPostCategories.Find(id);
+
+        if (category is null)
+        {
+            return Result.Fail($"The category with ID {id} was not found");
+        }
+
+        var validation = ValidateCategory(context, id, request);
+        if (validation.IsFailed)
+        {
+            return validation.ToResult<BlogPostCategory>();
+        }
+
+        ApplyCategoryRequest(category, request);
+        context.SaveChanges();
+
+        return category;
+    }
+
+    /// <summary>
+    ///     Deletes a blog post category. The category must not have any child categories or posts, including trashed
+    ///     posts and earlier drafts.
+    /// </summary>
+    /// <param name="id">The ID of the category to delete.</param>
+    /// <returns>A <see cref="Result" /> indicating success, or a failure if the category was not found or is in use.</returns>
+    public Result DeleteCategory(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var category = context.BlogPostCategories.Find(id);
+
+        if (category is null)
+        {
+            return Result.Fail($"The category with ID {id} was not found");
+        }
+
+        if (context.BlogPostCategories.Any(c => c.ParentCategoryId == id))
+        {
+            return Result.Fail("This category has subcategories. Move or delete them first.");
+        }
+
+        // drafts, not just live posts: every draft in a post's history holds its own FK to the category
+        if (context.BlogPostDrafts.Any(d => d.CategoryId == id))
+        {
+            return Result.Fail("This category is used by posts (including trashed posts and earlier drafts). Move them first.");
+        }
+
+        context.BlogPostCategories.Remove(category);
+        context.SaveChanges();
+
+        return Result.Ok();
+    }
+
+    private static void ApplyCategoryRequest(BlogPostCategory category, BlogPostCategorySaveRequest request)
+    {
+        category.Name = request.Name.Trim();
+        category.Slug = request.Slug.Trim();
+        category.ParentCategoryId = request.ParentCategoryId;
+        category.Color = request.Color;
+        category.FontStyle = request.FontStyle;
+    }
+
+    private static Result ValidateCategory(AppDbContext context, Guid? id, BlogPostCategorySaveRequest request)
+    {
+        var slug = request.Slug.Trim();
+
+        if (string.IsNullOrWhiteSpace(request.Name) || slug.Length == 0)
+        {
+            return Result.Fail("A category needs both a name and a slug.");
+        }
+
+        if (context.BlogPostCategories.Any(c => c.Slug == slug && c.Id != id))
+        {
+            return Result.Fail($"Slug '{slug}' is already in use.");
+        }
+
+        if (request.ParentCategoryId is not { } parentId)
+        {
+            return Result.Ok();
+        }
+
+        // walk up from the proposed parent: reaching this category means the move would make it its own ancestor
+        for (Guid? current = parentId; current is { } currentId;)
+        {
+            if (currentId == id)
+            {
+                return Result.Fail("A category can't be moved beneath itself or one of its own subcategories.");
+            }
+
+            var parent = context.BlogPostCategories.Find(currentId);
+            if (parent is null)
+            {
+                return Result.Fail("The selected parent category does not exist.");
+            }
+
+            current = parent.ParentCategoryId;
+        }
+
+        return Result.Ok();
+    }
+
+    /// <summary>
     ///     Returns the total number of blog posts.
     /// </summary>
     /// <param name="visibility">The post visibility filter.</param>

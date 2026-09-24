@@ -72,19 +72,19 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save folder</button>
+            @if (!Model.CreatingNew)
+            {
+                <button type="submit" form="delete-folder" class="btn icon-btn danger" aria-label="Delete folder">
+                    <i class="ti ti-trash"></i> Delete folder
+                </button>
+            }
         </div>
 
     </form>
 
     @if (!Model.CreatingNew)
     {
-        <form method="post" asp-page-handler="Delete" data-confirm="Delete this folder? This can't be undone.">
-            <div class="form-actions">
-                <button type="submit" class="btn icon-btn danger" aria-label="Delete folder">
-                    <i class="ti ti-trash"></i> Delete folder
-                </button>
-            </div>
-        </form>
+        <form id="delete-folder" method="post" asp-page-handler="Delete" data-confirm="Delete this folder? This can't be undone."></form>
     }
 
 </div>
