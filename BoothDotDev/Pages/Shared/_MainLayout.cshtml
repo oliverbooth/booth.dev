@@ -73,7 +73,7 @@
             <a asp-page="/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
             <div class="topnav-links">
                 <a asp-page="/Index" page-match="/Index">Home</a>
-                <a asp-page="/Blog/Index" page-match="/Blog">Words</a>
+                <a asp-page="/Blog/Index" page-match="/Blog,/Note,/Someday">Words</a>
                 <a asp-page="/Portfolio/Index" page-match="/Portfolio,/Projects,/Create">Stuff I Made</a>
                 <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn">Learn</a>
             </div>
@@ -133,7 +133,7 @@
 
 <nav class="bottom-nav">
     <a asp-page="/Index" page-match="/Index"><i class="ti ti-home"></i>Home</a>
-    <a asp-page="/Blog/Index" page-match="/Blog"><i class="ti ti-pencil"></i>Words</a>
+    <a asp-page="/Blog/Index" page-match="/Blog,/Note,/Someday"><i class="ti ti-pencil"></i>Words</a>
     <a asp-page="/Portfolio/Index" page-match="/Portfolio,/Projects,/Create"><i class="ti ti-hammer"></i>Portfolio</a>
     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn"><i class="ti ti-school"></i>Learn</a>
     <a asp-page="/More" page-match="/More"><i class="ti ti-menu-2"></i>More</a>
