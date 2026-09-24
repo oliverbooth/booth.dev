@@ -56,3 +56,20 @@
     color: var(--accent-coral);
   }
 }
+
+.ansi-0 { color: var(--ansi-0); }
+.ansi-1 { color: var(--ansi-1); }
+.ansi-2 { color: var(--ansi-2); }
+.ansi-3 { color: var(--ansi-3); }
+.ansi-4 { color: var(--ansi-4); }
+.ansi-5 { color: var(--ansi-5); }
+.ansi-6 { color: var(--ansi-6); }
+.ansi-7 { color: var(--ansi-7); }
+.ansi-8 { color: var(--ansi-8); }
+.ansi-9 { color: var(--ansi-9); }
+.ansi-10 { color: var(--ansi-10); }
+.ansi-11 { color: var(--ansi-11); }
+.ansi-12 { color: var(--ansi-12); }
+.ansi-13 { color: var(--ansi-13); }
+.ansi-14 { color: var(--ansi-14); }
+.ansi-15 { color: var(--ansi-15); }
