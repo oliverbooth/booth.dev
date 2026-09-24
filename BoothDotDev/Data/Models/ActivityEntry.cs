@@ -35,6 +35,12 @@ public sealed record ActivityEntry
     public string? Tag { get; init; }
 
     /// <summary>
+    ///     Gets or initializes a plain-text excerpt of the entry's content.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if the entry's content type has none.</value>
+    public string? Excerpt { get; init; }
+
+    /// <summary>
     ///     Gets or initializes the path to the page for the activity entry.
     /// </summary>
     /// <value>The path to the page for the activity entry.</value>

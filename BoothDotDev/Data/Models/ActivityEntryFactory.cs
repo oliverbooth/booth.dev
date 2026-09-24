@@ -14,8 +14,10 @@ public static class ActivityEntryFactory
     ///     Creates an <see cref="ActivityEntry" /> from a <see cref="BlogPost" />.
     /// </summary>
     /// <param name="post">The <see cref="BlogPost" />.</param>
+    /// <param name="category">The post's category, if it has one.</param>
+    /// <param name="excerpt">A plain-text excerpt of the post.</param>
     /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="post" />.</returns>
-    public static ActivityEntry From(BlogPost post, BlogPostCategory? category)
+    public static ActivityEntry From(BlogPost post, BlogPostCategory? category, string? excerpt)
     {
         return new ActivityEntry
         {
@@ -27,6 +29,7 @@ public static class ActivityEntryFactory
             Category = "blog",
             Hue = post.Color ?? category?.EffectiveColor ?? PaletteHue.Brand,
             Tag = category?.Name,
+            Excerpt = excerpt,
             RouteValues = new Dictionary<string, string> { ["slug"] = post.Slug },
             ReadingMinutes = Option.Some(post.GetEstimatedReadingTime()),
             Visibility = post.Visibility
@@ -38,8 +41,9 @@ public static class ActivityEntryFactory
     /// </summary>
     /// <param name="article">The <see cref="TutorialArticle" />.</param>
     /// <param name="tutorialService">The <see cref="TutorialService" />.</param>
+    /// <param name="excerpt">A plain-text excerpt of the article.</param>
     /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="article" />.</returns>
-    public static ActivityEntry From(TutorialArticle article, TutorialService tutorialService)
+    public static ActivityEntry From(TutorialArticle article, TutorialService tutorialService, string? excerpt)
     {
         var folder = tutorialService.GetFolder(article.Folder);
 
@@ -52,6 +56,7 @@ public static class ActivityEntryFactory
             PagePath = "/Learn/Tutorials/Index",
             Category = "tutorial",
             Hue = article.Color ?? (folder.IsSuccess ? folder.Value.EffectiveColor : PaletteHue.Mint),
+            Excerpt = excerpt,
             RouteValues = new Dictionary<string, string> { ["slug"] = tutorialService.GetFullSlug(article) },
             ReadingMinutes = Option.Some(article.GetEstimatedReadingTime()),
             Visibility = article.Visibility
@@ -86,8 +91,9 @@ public static class ActivityEntryFactory
     ///     Creates an <see cref="ActivityEntry" /> from a <see cref="DevChallenge" />.
     /// </summary>
     /// <param name="challenge">The <see cref="DevChallenge" />.</param>
+    /// <param name="excerpt">A plain-text excerpt of the challenge.</param>
     /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="challenge" />.</returns>
-    public static ActivityEntry From(DevChallenge challenge)
+    public static ActivityEntry From(DevChallenge challenge, string? excerpt)
     {
         return new ActivityEntry
         {
@@ -98,6 +104,7 @@ public static class ActivityEntryFactory
             PagePath = "/Learn/Challenges/Challenge",
             Category = "challenge",
             Hue = PaletteHue.Pink,
+            Excerpt = excerpt,
             RouteValues = new Dictionary<string, string> { ["id"] = challenge.Id.ToString() },
             Visibility = challenge.Visibility
         };
