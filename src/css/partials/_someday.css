@@ -14,7 +14,6 @@
   scroll-margin-top: 96px;
   margin: 0 0 26px;
   padding: 26px 28px 28px;
-  border-radius: var(--radius-lg);
   background: var(--tint);
   box-shadow: var(--shadow-card-soft);
   transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
