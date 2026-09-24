@@ -1,0 +1,25 @@
+.note-card {
+  --tilt: -1deg;
+  --tint: var(--row-tint-sun);
+
+  margin: 1.5rem 0 2rem;
+  padding: 26px 28px 28px;
+  background: var(--tint);
+  box-shadow: var(--shadow-card-soft);
+  transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+
+  .byline {
+    margin: 12px 0 1.25rem;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .post-title {
+    margin-top: 12px;
+  }
+
+  .prose > :last-child {
+    margin-bottom: 0;
+  }
+}

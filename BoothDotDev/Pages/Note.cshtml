@@ -22,7 +22,9 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
+    <span class="eyebrow">
+        <a asp-page="/Blog/Index" asp-fragment="filter=notes"><i class="ti ti-arrow-narrow-left"></i> back to notes</a>
+    </span>
 
     @if (note.Visibility == Visibility.Private)
     {
@@ -48,9 +50,11 @@
         };
     }
 
-    <partial name="Partials/_ContentHeader" model="header" />
+    <article class="note-card" data-hue="sun">
+        <partial name="Partials/_ContentHeader" model="header" />
 
-    <div class="prose @note.FontStyle.ToProseClass()">
-        @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
-    </div>
+        <div class="prose @note.FontStyle.ToProseClass()">
+            @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
+        </div>
+    </article>
 </div>

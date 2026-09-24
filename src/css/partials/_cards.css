@@ -182,6 +182,7 @@ figcaption {
 .article-card,
 .challenge-card,
 .someday-entry,
+.note-card,
 .prose blockquote {
   --tape-tilt: -3deg;
 
