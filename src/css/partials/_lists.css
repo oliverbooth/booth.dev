@@ -207,6 +207,12 @@
     font-size: 14px;
     color: var(--text-muted);
     margin: 0;
+
+    .badge,
+    .tag {
+      margin-right: 8px;
+      text-transform: lowercase;
+    }
   }
 }
 

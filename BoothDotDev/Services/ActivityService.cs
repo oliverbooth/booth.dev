@@ -64,7 +64,7 @@ public sealed class ActivityService
     private IEnumerable<ActivityEntry> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
     {
         return _blogPostService.GetRecentBlogPosts(searchOptions)
-            .Select(ActivityEntryFactory.From);
+            .Select(post => ActivityEntryFactory.From(post, _blogPostService.GetCategory(post.CategoryId)));
     }
 
     private IEnumerable<ActivityEntry> GetRecentTutorialArticles(ActivitySearchOptions searchOptions)

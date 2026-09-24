@@ -20,6 +20,21 @@ public sealed record ActivityEntry
     public required string Category { get; init; }
 
     /// <summary>
+    ///     Gets or initializes the colour the entry is shown in.
+    /// </summary>
+    /// <value>
+    ///     The entry's own colour if it has one, otherwise its category's or folder's colour, otherwise the colour of its
+    ///     content type.
+    /// </value>
+    public required PaletteHue Hue { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the name of the blog post category the entry belongs to.
+    /// </summary>
+    /// <value>The category name, or <see langword="null" /> if the entry is not a categorised blog post.</value>
+    public string? Tag { get; init; }
+
+    /// <summary>
     ///     Gets or initializes the path to the page for the activity entry.
     /// </summary>
     /// <value>The path to the page for the activity entry.</value>

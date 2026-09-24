@@ -103,14 +103,18 @@
         <div class="stack-list">
             @foreach (var entry in Model.RecentActivity)
             {
-                <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" data-hue="@entry.ToHue().ToDataHue()">
+                <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" data-hue="@entry.Hue.ToDataHue()">
                     <div class="stack-meta">
                         <p class="title">@entry.Title</p>
                         <p class="sub">
-                            @entry.Category
+                            <span class="badge">@entry.Category</span>
+                            @if (entry.Tag is not null)
+                            {
+                                <span class="tag">@entry.Tag</span>
+                            }
                             @if (entry.ReadingMinutes.HasValue)
                             {
-                                <text>&middot; @entry.ReadingMinutes.ValueOr(0) min read</text>
+                                <text>@entry.ReadingMinutes.ValueOr(0) min read</text>
                             }
                         </p>
                     </div>

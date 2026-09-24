@@ -15,7 +15,7 @@ public static class ActivityEntryFactory
     /// </summary>
     /// <param name="post">The <see cref="BlogPost" />.</param>
     /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="post" />.</returns>
-    public static ActivityEntry From(BlogPost post)
+    public static ActivityEntry From(BlogPost post, BlogPostCategory? category)
     {
         return new ActivityEntry
         {
@@ -25,6 +25,8 @@ public static class ActivityEntryFactory
             CommitSha = post.Id.ToCommitSha(),
             PagePath = "/Blog/Article",
             Category = "blog",
+            Hue = post.Color ?? category?.EffectiveColor ?? PaletteHue.Brand,
+            Tag = category?.Name,
             RouteValues = new Dictionary<string, string> { ["slug"] = post.Slug },
             ReadingMinutes = Option.Some(post.GetEstimatedReadingTime()),
             Visibility = post.Visibility
@@ -39,6 +41,8 @@ public static class ActivityEntryFactory
     /// <returns>An <see cref="ActivityEntry" /> representing the <paramref name="article" />.</returns>
     public static ActivityEntry From(TutorialArticle article, TutorialService tutorialService)
     {
+        var folder = tutorialService.GetFolder(article.Folder);
+
         return new ActivityEntry
         {
             PublishedAt = article.PublishedAt,
@@ -47,6 +51,7 @@ public static class ActivityEntryFactory
             CommitSha = article.Id.ToCommitSha(),
             PagePath = "/Learn/Tutorials/Index",
             Category = "tutorial",
+            Hue = article.Color ?? (folder.IsSuccess ? folder.Value.EffectiveColor : PaletteHue.Mint),
             RouteValues = new Dictionary<string, string> { ["slug"] = tutorialService.GetFullSlug(article) },
             ReadingMinutes = Option.Some(article.GetEstimatedReadingTime()),
             Visibility = article.Visibility
@@ -70,6 +75,7 @@ public static class ActivityEntryFactory
             CommitSha = devlog.Id.ToCommitSha(),
             PagePath = "/Projects/Devlog",
             Category = "devlog",
+            Hue = PaletteHue.Sky,
             RouteValues = new Dictionary<string, string> { ["projectSlug"] = project.Slug, ["slug"] = devlog.Slug },
             ReadingMinutes = Option.Some(devlog.GetEstimatedReadingTime()),
             Visibility = devlog.Visibility
@@ -91,6 +97,7 @@ public static class ActivityEntryFactory
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",
             Category = "challenge",
+            Hue = PaletteHue.Pink,
             RouteValues = new Dictionary<string, string> { ["id"] = challenge.Id.ToString() },
             Visibility = challenge.Visibility
         };
@@ -111,6 +118,7 @@ public static class ActivityEntryFactory
             CommitSha = note.Id.ToCommitSha(),
             PagePath = "/Note",
             Category = "note",
+            Hue = PaletteHue.Sun,
             RouteValues = new Dictionary<string, string> { ["id"] = ((ShortGuid)note.Id).ToString() },
             Visibility = note.Visibility
         };
