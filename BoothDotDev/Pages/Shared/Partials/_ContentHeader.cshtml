@@ -31,7 +31,18 @@
         {
             <div class="byline-name">@Model.AuthorName</div>
         }
-        <div class="byline-meta">@string.Join(" \u00b7 ", Model.Meta)</div>
+        <div class="byline-meta">
+            @string.Join(" \u00b7 ", Model.Meta)
+            @if (Model.Flag is { } flag)
+            {
+                if (Model.Meta.Count > 0)
+                {
+                    <text> &middot; </text>
+                }
+
+                <span class="meta-flag" data-hue="@flag.Hue"><i class="ti @flag.Icon" aria-hidden="true"></i> @flag.Text</span>
+            }
+        </div>
     </div>
     @if (Model.ShowVoiceFontToggle)
     {

@@ -435,6 +435,16 @@
     font-size: 11.5px;
   }
 
+  .meta-flag {
+    color: var(--ink);
+    font-weight: 600;
+
+    .ti {
+      font-size: 1.1em;
+      vertical-align: -0.1em;
+    }
+  }
+
   .byline-link,
   .meta a {
     color: var(--brand-text);

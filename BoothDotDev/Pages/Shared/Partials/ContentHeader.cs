@@ -54,6 +54,12 @@ public sealed class ContentHeader
     public IReadOnlyList<string> Meta { get; init; } = [];
 
     /// <summary>
+    ///     Gets a highlighted piece of metadata shown after <see cref="Meta" />, such as a state worth drawing the eye to.
+    /// </summary>
+    /// <value>The highlighted metadata, or <see langword="null" /> to show none.</value>
+    public MetaFlag? Flag { get; init; }
+
+    /// <summary>
     ///     Gets the URL of the content's Markdown source.
     /// </summary>
     /// <value>The source URL, or <see langword="null" /> to show no link.</value>
@@ -72,3 +78,11 @@ public sealed class ContentHeader
     /// <value><see langword="true" /> to show the toggle; otherwise, <see langword="false" />.</value>
     public bool ShowVoiceFontToggle { get; init; }
 }
+
+/// <summary>
+///     Represents a piece of header metadata shown in a hue with an icon, in place of plain text.
+/// </summary>
+/// <param name="Text">The text to show.</param>
+/// <param name="Icon">The Tabler icon class shown before the text, such as <c>ti-check</c>.</param>
+/// <param name="Hue">The <c>data-hue</c> value the text and icon take their colour from.</param>
+public sealed record MetaFlag(string Text, string Icon, string Hue);

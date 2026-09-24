@@ -36,7 +36,10 @@
             Badge = "challenge",
             BadgeClass = "badge-magenta",
             Hue = "pink",
-            Meta = [$"published {challenge.PublishedAt.ToShortString()}", hasSolution ? "solution available" : "solution locked"],
+            Meta = hasSolution
+                ? [$"published {challenge.PublishedAt.ToShortString()}"]
+                : [$"published {challenge.PublishedAt.ToShortString()}", "solution locked"],
+            Flag = hasSolution ? new MetaFlag("solution unlocked", "ti-check", "mint") : null,
             SourceUrl = $"/challenge/{challenge.Id}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Challenges/Edit", new { id = challenge.Id }) : null
         };
