@@ -163,6 +163,13 @@
   font-size: 13.5px;
 }
 
+.folder-card-glyph {
+  height: 36px;
+  color: var(--solid);
+  font-size: 36px;
+  line-height: 36px;
+}
+
 .folder-icon {
   position: relative;
   display: block;

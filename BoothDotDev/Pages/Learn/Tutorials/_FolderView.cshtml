@@ -78,21 +78,6 @@
 
     <h1 data-hue="@(Model?.EffectiveColor.ToDataHue() ?? "brand")">@(Model?.Title ?? "Learn")</h1>
 
-    @if (Model is null)
-    {
-        <div class="section-head"><h2>Challenges</h2></div>
-
-        <a asp-page="/Learn/Challenges/Index" class="card card-single mb-section" data-hue="pink">
-            <div class="card-icon">
-                <i class="ti ti-code"></i>
-            </div>
-            <div class="card-body">
-                <p class="title">Dev Challenges</p>
-                <p class="desc">Codewars-style problems to test your skills.</p>
-            </div>
-        </a>
-    }
-
     @if (Model is not null && (!string.IsNullOrEmpty(Model.Description) || folders.Count > 0 || articles.Count > 0))
     {
         var counts = string.Join(", ", new[]
@@ -113,14 +98,18 @@
         </p>
     }
 
-    @if (folders.Count > 0 || articles.Count > 0)
+    @if (Model is null || folders.Count > 0 || articles.Count > 0)
     {
-        @if (Model is null)
-        {
-            <div class="section-head"><h2>Tutorials</h2></div>
-        }
-
         <div class="learn-grid">
+            @if (Model is null)
+            {
+                <a asp-page="/Learn/Challenges/Index" class="folder-card" data-hue="pink">
+                    <i class="ti ti-code folder-card-glyph" aria-hidden="true"></i>
+                    <h3>Dev Challenges</h3>
+                    <p class="folder-card-count">Codewars-style problems to test your skills.</p>
+                </a>
+            }
+
             @foreach (var folder in folders)
             {
                 var articleCount = TutorialService.GetArticles(folder, Visibility.Published).Count;
@@ -151,7 +140,7 @@
         </div>
     }
 
-    @if (folders.Count == 0 && articles.Count == 0)
+    @if (Model is not null && folders.Count == 0 && articles.Count == 0)
     {
         <p class="footnote">Nothing here yet.</p>
     }
