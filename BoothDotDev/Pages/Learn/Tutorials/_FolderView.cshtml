@@ -76,7 +76,7 @@
         </div>
     }
 
-    <h1 data-hue="@Model?.EffectiveColor.ToDataHue()">@(Model?.Title ?? "Learn")</h1>
+    <h1 data-hue="@(Model?.EffectiveColor.ToDataHue() ?? "brand")">@(Model?.Title ?? "Learn")</h1>
 
     @if (Model is null)
     {
@@ -93,64 +93,59 @@
         </a>
     }
 
-    @if (!string.IsNullOrEmpty(Model?.Description))
+    @if (Model is not null && (!string.IsNullOrEmpty(Model.Description) || folders.Count > 0 || articles.Count > 0))
     {
-        <p class="lede">@Html.Raw(Markdown.ToHtmlUnwrapped(Model.Description, MarkdownPipeline))</p>
+        var counts = string.Join(", ", new[]
+        {
+            folders.Count > 0 ? "subfolder".ToQuantity(folders.Count) : null,
+            articles.Count > 0 ? "article".ToQuantity(articles.Count) : null
+        }.OfType<string>());
+
+        <p class="lede">
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                @Html.Raw(Markdown.ToHtmlUnwrapped(Model.Description, MarkdownPipeline))
+            }
+            @if (counts.Length > 0)
+            {
+                <text> @(counts).</text>
+            }
+        </p>
     }
 
-    @if (folders.Count > 0)
+    @if (folders.Count > 0 || articles.Count > 0)
     {
-        <div class="section-head"><h2>Tutorials</h2></div>
+        @if (Model is null)
+        {
+            <div class="section-head"><h2>Tutorials</h2></div>
+        }
 
-        <div class="card-grid mb-section">
+        <div class="learn-grid">
             @foreach (var folder in folders)
             {
                 var articleCount = TutorialService.GetArticles(folder, Visibility.Published).Count;
-                var folderHue = folder.EffectiveColor;
 
-                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="card" data-hue="@folderHue.ToDataHue()">
-                    <div class="card-icon">
-                        @if (folder.PreviewImageUrl is not null)
-                        {
-                            <img loading="lazy" src="@folder.PreviewImageUrl" alt="@folder.Title">
-                        }
-                        else
-                        {
-                            <i class="ti ti-folder"></i>
-                        }
-                    </div>
-                    <div class="card-body">
-                        <p class="title">@folder.Title</p>
-                        @if (!string.IsNullOrEmpty(folder.Description))
-                        {
-                            <p class="desc">@Markdown.ToPlainText(folder.Description, MarkdownPipeline)</p>
-                        }
-                        <span class="tag">@("tutorial".ToQuantity(articleCount))</span>
-                    </div>
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(folder)" class="folder-card"
+                   data-hue="@folder.EffectiveColor.ToDataHue()">
+                    <span class="folder-icon" aria-hidden="true"></span>
+                    <h3>@folder.Title</h3>
+                    <p class="folder-card-count">@("tutorial".ToQuantity(articleCount))</p>
                 </a>
             }
-        </div>
-    }
 
-    @if (articles.Count > 0)
-    {
-        <div class="section-head"><h2>Articles</h2></div>
-
-        <div class="stack-list">
-            @foreach (var article in articles)
+            @for (var index = 0; index < articles.Count; index++)
             {
-                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)" data-hue="@((article.Color ?? Model!.EffectiveColor).ToDataHue())">
-                    <div class="stack-icon"><i class="ti ti-file-text"></i></div>
-                    <div class="stack-meta">
-                        <p class="title">@article.Title</p>
-                        <p class="sub">
-                            @article.GetEstimatedReadingTime() min read
-                            @if (article.HasOtherParts)
-                            {
-                                <text> &middot; part of a series</text>
-                            }
-                        </p>
-                    </div>
+                var article = articles[index];
+
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(article)" class="article-card"
+                   data-hue="@((article.Color ?? Model!.EffectiveColor).ToDataHue())">
+                    <span class="doc-icon" aria-hidden="true"></span>
+                    @if (article.HasOtherParts)
+                    {
+                        <span class="article-card-part">part @(index + 1)</span>
+                    }
+                    <h3>@article.Title</h3>
+                    <p class="article-card-time">@article.GetEstimatedReadingTime() min read</p>
                 </a>
             }
         </div>

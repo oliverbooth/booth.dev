@@ -36,12 +36,26 @@ h1[data-hue] {
 }
 
 .card[data-hue="brand"] { --tint: var(--tint-brand); --pin: var(--brand); }
+.folder-card[data-hue="brand"],
+.article-card[data-hue="brand"] { --tint: var(--tint-brand); }
 .card[data-hue="tangerine"] { --tint: var(--tint-coral); --pin: var(--accent-coral); }
+.folder-card[data-hue="tangerine"],
+.article-card[data-hue="tangerine"] { --tint: var(--tint-coral); }
 .card[data-hue="mint"] { --tint: var(--tint-teal); --pin: var(--accent-teal); }
+.folder-card[data-hue="mint"],
+.article-card[data-hue="mint"] { --tint: var(--tint-teal); }
 .card[data-hue="pink"] { --tint: var(--tint-magenta); --pin: var(--accent-magenta); }
+.folder-card[data-hue="pink"],
+.article-card[data-hue="pink"] { --tint: var(--tint-magenta); }
 .card[data-hue="grape"] { --tint: var(--tint-grape); --pin: var(--accent-grape); }
+.folder-card[data-hue="grape"],
+.article-card[data-hue="grape"] { --tint: var(--tint-grape); }
 .card[data-hue="sun"] { --tint: var(--tint-sun); --pin: var(--accent-sun); }
+.folder-card[data-hue="sun"],
+.article-card[data-hue="sun"] { --tint: var(--tint-sun); }
 .card[data-hue="sky"] { --tint: var(--tint-sky); --pin: var(--accent-sky); }
+.folder-card[data-hue="sky"],
+.article-card[data-hue="sky"] { --tint: var(--tint-sky); }
 
 .stack-list > [data-hue="brand"],
 .post-row[data-hue="brand"],

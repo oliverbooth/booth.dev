@@ -180,6 +180,7 @@
   --kbd-text: oklch(85% 0.02 275);
 
   --polaroid-bg: oklch(23% 0.02 275);
+  --doc-icon: oklch(30% 0.02 275);
   --tape: oklch(45% 0.06 95 / 0.9);
   --stripe-label: oklch(90% 0.01 275);
 
@@ -329,6 +330,7 @@
   --kbd-text: oklch(35% 0.02 275);
 
   --polaroid-bg: #fff;
+  --doc-icon: oklch(90% 0.02 275);
   --tape: oklch(88% 0.08 95 / 0.9);
   --stripe-label: oklch(35% 0.02 275);
 
