@@ -98,7 +98,10 @@
                         </div>
                         <p class="sub">@Html.Raw(MarkdownRenderingService.RenderPlainTextExcerpt(post, out _))</p>
                     </div>
-                    <span class="meta-value">@post.PublishedAt.ToShortString()</span>
+                    <div class="post-row-meta">
+                        <span class="meta-value">@post.PublishedAt.ToShortString()</span>
+                        <span class="meta-value">@post.GetEstimatedReadingTime() min read</span>
+                    </div>
                 </a>
             }
         </div>
