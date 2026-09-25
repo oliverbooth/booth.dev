@@ -81,19 +81,19 @@ public sealed class WeatherService(HttpClient httpClient, IMemoryCache cache, IO
         {
             0 => ("Clear sky", "sun"),
             1 => ("Mainly clear", "sun"),
-            2 => ("Partly cloudy", "cloud-sun"),
+            2 => ("Partly cloudy", "cloud"),
             3 => ("Overcast", "cloud"),
             45 or 48 => ("Fog", "cloud-fog"),
-            51 or 53 or 55 => ("Drizzle", "cloud-drizzle"),
-            56 or 57 => ("Freezing drizzle", "cloud-drizzle"),
+            51 or 53 or 55 => ("Drizzle", "cloud-rain"),
+            56 or 57 => ("Freezing drizzle", "cloud-rain"),
             61 or 63 or 65 => ("Rain", "cloud-rain"),
             66 or 67 => ("Freezing rain", "cloud-rain"),
             71 or 73 or 75 => ("Snow", "snowflake"),
             77 => ("Snow grains", "snowflake"),
             80 or 81 or 82 => ("Rain showers", "cloud-rain"),
             85 or 86 => ("Snow showers", "snowflake"),
-            95 => ("Thunderstorm", "cloud-lightning"),
-            96 or 99 => ("Thunderstorm with hail", "cloud-lightning"),
+            95 => ("Thunderstorm", "cloud-storm"),
+            96 or 99 => ("Thunderstorm with hail", "cloud-storm"),
             _ => ("Unknown", "cloud-question")
         };
     }
