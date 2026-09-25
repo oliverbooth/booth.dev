@@ -1,6 +1,7 @@
 @page "/someday"
 @inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @model Someday
 
@@ -13,6 +14,7 @@
 
     <span class="eyebrow">a little bucket list -</span>
     <h1>Someday</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage someday", "/Admin/Someday/Index") })"/>
 
     @if (Model.UpdatedAt is { } updatedAt)
     {
