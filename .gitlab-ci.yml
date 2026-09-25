@@ -1,11 +1,13 @@
 stages:
   - verify
   - build
+  - deploy
 
 .default-rules:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "staging"
 
 test-cs:
   extends: .default-rules
@@ -53,3 +55,18 @@ build:
   artifacts:
     paths:
       - "**/bin/**"
+
+deploy-staging:
+  stage: deploy
+  needs:
+    - job: test-cs
+      artifacts: false
+    - job: test-ts
+      artifacts: false
+    - job: build
+      artifacts: false
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "staging"
+  script:
+    - curl --fail --silent --show-error --request POST "$STAGING_WEBHOOK_URL"

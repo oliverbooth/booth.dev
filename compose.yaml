@@ -1,6 +1,6 @@
 services:
   boothdotdev:
-    container_name: booth.dev
+    container_name: ${APP_CONTAINER:-booth.dev}
     pull_policy: build
     build:
       context: .
@@ -12,12 +12,12 @@ services:
       - ${DATA_PATH}:/app/data
       - ${CDN_PATH}:/app/cdn
     ports:
-      - "2845:8080"
+      - "${HTTP_PORT:-2845}:8080"
     restart: unless-stopped
 
   boothdotdev-db:
-    container_name: booth.dev-db
-    image: postgres:latest
+    container_name: ${DB_CONTAINER:-booth.dev-db}
+    image: postgres:18
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
