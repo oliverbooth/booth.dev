@@ -5,16 +5,18 @@ namespace BoothDotDev.Data;
 /// </summary>
 /// <param name="Kind">The kind of creation.</param>
 /// <param name="Title">The title of the creation.</param>
+/// <param name="Slug">The slug of the creation. If blank, one is made from the title.</param>
 /// <param name="Description">The description of the creation, if it has one.</param>
 /// <param name="PublishedAt">The publication date and time of the creation.</param>
 /// <param name="Visibility">The visibility of the creation.</param>
 /// <param name="IsWorkInProgress">A value indicating whether the creation is a work in progress.</param>
-/// <param name="MadeWith">A string describing how the creation was made, if specified.</param>
+/// <param name="Tools">The tools the creation was made with, in the order they were used.</param>
 public sealed record CreationSaveRequest(
     CreationKind Kind,
     string Title,
+    string Slug,
     string? Description,
     DateTimeOffset PublishedAt,
     Visibility Visibility,
     bool IsWorkInProgress,
-    string? MadeWith);
+    List<string> Tools);

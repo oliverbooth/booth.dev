@@ -39,8 +39,7 @@
         <div class="sticky-grid">
             @foreach (var item in Model.Items)
             {
-                <partial name="Partials/_PortfolioCard" model="item"
-                         view-data="@(new ViewDataDictionary(ViewData) { ["Interactive"] = true })" />
+                <partial name="Partials/_PortfolioCard" model="item" />
             }
         </div>
     </div>

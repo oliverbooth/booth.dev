@@ -24,7 +24,7 @@
     <p class="crumb">
         <a asp-page="/Index">Home</a> /
         <a asp-page="/Made">Stuff I Made</a> /
-        <a asp-page="/Projects/Project" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
+        <a asp-page="/Portfolio/Item" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
         @devlog.Title
     </p>
 
@@ -86,7 +86,7 @@
         <div class="post-nav">
             @if (previousDevlog is not null)
             {
-                <a asp-page="/Projects/Devlog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@previousDevlog.Slug"
+                <a asp-page="/Portfolio/Devlog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@previousDevlog.Slug"
                    class="post-nav-link">
                     <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
                     <span class="post-nav-title">@previousDevlog.Title</span>
@@ -99,7 +99,7 @@
 
             @if (nextDevlog is not null)
             {
-                <a asp-page="/Projects/Devlog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@nextDevlog.Slug"
+                <a asp-page="/Portfolio/Devlog" asp-route-projectSlug="@Model.Project.Slug" asp-route-slug="@nextDevlog.Slug"
                    class="post-nav-link post-nav-link--next">
                     <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
                     <span class="post-nav-title">@nextDevlog.Title</span>

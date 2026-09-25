@@ -86,7 +86,7 @@ public static class MarkdownTocBuilder
         var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         foreach (var h in headings)
         {
-            var slug = Slugify(h.Text);
+            var slug = h.Text.ToSlug();
             if (string.IsNullOrWhiteSpace(slug))
             {
                 slug = "section";
@@ -101,43 +101,6 @@ public static class MarkdownTocBuilder
 
             h.Id = c == 1 ? slug : $"{slug}-{c}";
         }
-    }
-
-    private static string Slugify(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return "";
-        }
-
-        text = text.ToLowerInvariant().Trim();
-
-        var sb = new StringBuilder();
-        var lastWasDash = false;
-
-        foreach (var ch in text)
-        {
-            if (ch is >= 'a' and <= 'z' or >= '0' and <= '9')
-            {
-                sb.Append(ch);
-                lastWasDash = false;
-            }
-            else if (char.IsWhiteSpace(ch) || ch == '-' || ch == '_')
-            {
-                if (lastWasDash)
-                {
-                    continue;
-                }
-
-                sb.Append('-');
-                lastWasDash = true;
-            }
-            // ignore other punctuation
-        }
-
-        // trim leading/trailing dash
-        var result = sb.ToString().Trim('-');
-        return result;
     }
 
     private static List<TocItem> BuildTree(List<TocItem> flat)

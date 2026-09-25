@@ -78,7 +78,7 @@ public static class ActivityEntryFactory
             UpdatedAt = devlog.UpdatedAt,
             Title = devlog.Title,
             CommitSha = devlog.Id.ToCommitSha(),
-            PagePath = "/Projects/Devlog",
+            PagePath = "/Portfolio/Devlog",
             Category = "devlog",
             Hue = PaletteHue.Sky,
             RouteValues = new Dictionary<string, string> { ["projectSlug"] = project.Slug, ["slug"] = devlog.Slug },

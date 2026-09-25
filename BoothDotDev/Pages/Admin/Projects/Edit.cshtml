@@ -20,7 +20,7 @@
             <div style="display:flex;gap:8px">
                 @if (!Model.CreatingNew)
                 {
-                    <a asp-page="/Projects/Project" asp-route-slug="@Model.Input.Slug" target="_blank" class="btn">
+                    <a asp-page="/Portfolio/Item" asp-route-slug="@Model.Input.Slug" target="_blank" class="btn">
                         <i class="ti ti-eye"></i> View project
                     </a>
                 }

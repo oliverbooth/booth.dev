@@ -58,7 +58,7 @@
                         </div>
                         <div class="row-actions">
                             <a asp-page="/Admin/Projects/Edit" asp-route-id="@project.Id" class="icon-btn">edit</a>
-                            <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" target="_blank" class="icon-btn">view</a>
+                            <a asp-page="/Portfolio/Item" asp-route-slug="@project.Slug" target="_blank" class="icon-btn">view</a>
                             <form method="post" asp-page-handler="Delete" asp-route-id="@project.Id"
                                   data-confirm="Delete '@project.Name'? This can't be undone.">
                                 <button type="submit" class="icon-btn danger">delete</button>

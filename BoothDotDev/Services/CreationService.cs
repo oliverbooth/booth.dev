@@ -1,5 +1,6 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Extensions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,6 +77,18 @@ public sealed class CreationService
     }
 
     /// <summary>
+    ///     Retrieves a non-trashed creation by its slug.
+    /// </summary>
+    /// <param name="slug">The slug of the creation.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the creation if found; otherwise, an error result.</returns>
+    public Result<Creation> GetCreationBySlug(string slug)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var item = dbContext.Creations.FirstOrDefault(c => c.Slug == slug && c.TrashedAt == null);
+        return item is null ? Result.Fail($"The creation with slug '{slug}' was not found") : item;
+    }
+
+    /// <summary>
     ///     Gets every trashed creation, most recently trashed first.
     /// </summary>
     /// <returns>A read-only list of trashed <see cref="Creation" /> objects.</returns>
@@ -94,8 +107,14 @@ public sealed class CreationService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
+        var slugResult = ResolveSlug(dbContext, request, null);
+        if (slugResult.IsFailed)
+        {
+            return slugResult.ToResult<Creation>();
+        }
+
         var item = new Creation();
-        ApplyRequest(item, request);
+        ApplyRequest(item, request, slugResult.Value);
 
         dbContext.Creations.Add(item);
         dbContext.SaveChanges();
@@ -119,7 +138,13 @@ public sealed class CreationService
             return Result.Fail($"The creation with ID {id} was not found");
         }
 
-        ApplyRequest(item, request);
+        var slugResult = ResolveSlug(dbContext, request, id);
+        if (slugResult.IsFailed)
+        {
+            return slugResult.ToResult<Creation>();
+        }
+
+        ApplyRequest(item, request, slugResult.Value);
         dbContext.SaveChanges();
 
         return item;
@@ -195,14 +220,27 @@ public sealed class CreationService
         return Result.Ok();
     }
 
-    private static void ApplyRequest(Creation item, CreationSaveRequest request)
+    private static Result<string> ResolveSlug(AppDbContext dbContext, CreationSaveRequest request, Guid? id)
+    {
+        var slug = (string.IsNullOrWhiteSpace(request.Slug) ? request.Title : request.Slug).ToSlug();
+        if (slug.Length == 0)
+        {
+            return Result.Fail("A slug is required, and the title has no letters or digits to make one from.");
+        }
+
+        var taken = dbContext.Creations.Any(c => c.Slug == slug && c.Id != id) || dbContext.Projects.Any(p => p.Slug == slug);
+        return taken ? Result.Fail($"The slug '{slug}' is already used by another project or creation.") : slug;
+    }
+
+    private static void ApplyRequest(Creation item, CreationSaveRequest request, string slug)
     {
         item.Kind = request.Kind;
         item.Title = request.Title;
+        item.Slug = slug;
         item.Description = request.Description;
         item.PublishedAt = request.PublishedAt.ToUniversalTime();
         item.Visibility = request.Visibility;
         item.IsWorkInProgress = request.IsWorkInProgress;
-        item.MadeWith = request.MadeWith;
+        item.Tools = request.Tools;
     }
 }

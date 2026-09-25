@@ -309,6 +309,11 @@ public sealed class ProjectService
     {
         using var context = _dbContextFactory.CreateDbContext();
 
+        if (context.Creations.Any(c => c.Slug == request.Slug))
+        {
+            return Result.Fail($"The slug '{request.Slug}' is already used by a creation.");
+        }
+
         var project = new Project();
         ApplyProjectRequest(project, request);
 
@@ -335,6 +340,11 @@ public sealed class ProjectService
         if (project is null)
         {
             return Result.Fail($"The project with ID {id} was not found");
+        }
+
+        if (context.Creations.Any(c => c.Slug == request.Slug))
+        {
+            return Result.Fail($"The slug '{request.Slug}' is already used by a creation.");
         }
 
         ApplyProjectRequest(project, request);

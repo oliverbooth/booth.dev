@@ -160,8 +160,7 @@ public sealed class RssFeedService
     /// <returns>The serialized RSS feed.</returns>
     public string BuildCreationsFeed(Uri baseUrl)
     {
-        // Artwork/music items have no page of their own - every item links to the shared /create listing, but the
-        // guid stays unique per item so subscribers can still tell entries apart.
+        // the guid keeps the old shared-listing form from before creations had pages, so readers don't repost every entry
         var pageUrl = new Uri(baseUrl, "/create").ToString();
         var items = new List<RssItem>();
 
@@ -170,7 +169,7 @@ public sealed class RssFeedService
             items.Add(new RssItem
             {
                 Title = item.Title,
-                Link = pageUrl,
+                Link = new Uri(baseUrl, $"/portfolio/{item.Slug}").ToString(),
                 PubDate = item.PublishedAt.ToString("R"),
                 Guid = new RssItemGuid { Value = $"{pageUrl}#{item.Id:N}", IsPermaLink = false },
                 Description = string.IsNullOrWhiteSpace(item.Description)

@@ -37,7 +37,7 @@ public sealed class Index : PageModel
         Creations =
         [
             .. _creationService.GetAllCreations()
-                .Select(c => new CreationListItem(c.Id, c.Title, c.Kind, c.Visibility, c.PublishedAt))
+                .Select(c => new CreationListItem(c.Id, c.Title, c.Slug, c.Kind, c.Visibility, c.PublishedAt))
         ];
     }
 
@@ -57,12 +57,14 @@ public sealed class Index : PageModel
     /// </summary>
     /// <param name="Id">The ID of the creation.</param>
     /// <param name="Title">The title of the creation.</param>
+    /// <param name="Slug">The slug of the creation.</param>
     /// <param name="Kind">The kind of the creation.</param>
     /// <param name="Visibility">The visibility of the creation.</param>
     /// <param name="PublishedAt">The publication date and time of the creation.</param>
     public sealed record CreationListItem(
         Guid Id,
         string Title,
+        string Slug,
         CreationKind Kind,
         Visibility Visibility,
         DateTimeOffset PublishedAt);

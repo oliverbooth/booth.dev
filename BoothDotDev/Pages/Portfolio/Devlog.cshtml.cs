@@ -29,7 +29,7 @@ internal sealed class Devlog : PageModel
     ///     Gets the project associated with the selected devlog entry.
     /// </summary>
     /// <value>The project associated with the selected devlog entry.</value>
-    public Data.Models.Project Project { get; private set; } = null!;
+    public Project Project { get; private set; } = null!;
 
     /// <summary>
     ///     Handles GET requests for the DevLog page.

@@ -1,5 +1,6 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Extensions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,7 @@ public sealed class PortfolioService
 
     private const int WaveformBarCount = 18;
 
-    /// <summary>
-    ///     The page creations link to. There is no page for an individual creation yet, so they all lead to the portfolio.
-    /// </summary>
-    private const string CreationPagePath = "/Portfolio/Index";
+    private const string ItemPagePath = "/Portfolio/Item";
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MediaService _mediaService;
@@ -264,13 +262,7 @@ public sealed class PortfolioService
 
     private static (PortfolioItemKind Kind, PaletteHue Hue, string Label) Describe(Creation creation)
     {
-        return creation.Kind switch
-        {
-            CreationKind.Drawing => (PortfolioItemKind.Drawing, PaletteHue.Pink, "drawing"),
-            CreationKind.ThreeD => (PortfolioItemKind.ThreeD, PaletteHue.Grape, "3d"),
-            CreationKind.Music => (PortfolioItemKind.Music, PaletteHue.Mint, "music"),
-            _ => throw new InvalidOperationException($"Unknown creation kind {creation.Kind}.")
-        };
+        return (creation.Kind.ToItemKind(), creation.Kind.ToHue(), creation.Kind.ToLabel());
     }
 
     private PortfolioAdminItem ToAdminItem(PortfolioEntry entry)
@@ -321,7 +313,7 @@ public sealed class PortfolioService
             Description = Markdig.Markdown.ToPlainText(project.Description),
             ImageUrl = cover?.Url,
             ImageAlt = cover?.Alt,
-            PagePath = "/Portfolio/Project",
+            PagePath = ItemPagePath,
             RouteValues = new Dictionary<string, string> { ["slug"] = project.Slug },
             Hue = PaletteHue.Sky,
             Label = "code",
@@ -334,25 +326,20 @@ public sealed class PortfolioService
     {
         var (kind, hue, label) = Describe(creation);
 
-        var cover = creation.IsMusic ? null : files.FirstOrDefault(f => f.IsCover);
-        var track = creation.IsMusic ? files.FirstOrDefault(f => f.Kind == MediaKind.Audio) : null;
+        var cover = files.FirstOrDefault(f => f.IsCover);
 
         return new PortfolioItem
         {
             Kind = kind,
-            Id = creation.Id,
-            PublishedAt = creation.PublishedAt,
             Title = creation.Title,
             Description = PlainText(creation.Description),
-            DescriptionMarkdown = creation.Description,
             ImageUrl = cover?.Url,
             ImageAlt = cover?.Alt,
-            AudioUrl = track?.Url,
-            Duration = track?.Duration,
-            PagePath = CreationPagePath,
+            PagePath = ItemPagePath,
+            RouteValues = new Dictionary<string, string> { ["slug"] = creation.Slug },
             Hue = hue,
             Label = label,
-            Tags = TagsFor(creation),
+            Tags = creation.Tools,
             IsWorkInProgress = creation.IsWorkInProgress,
             WaveformBars = creation.IsMusic ? SeededBars(creation.Id) : []
         };
@@ -361,11 +348,6 @@ public sealed class PortfolioService
     private static string? PlainText(string? markdown)
     {
         return string.IsNullOrWhiteSpace(markdown) ? null : Markdig.Markdown.ToPlainText(markdown).Trim();
-    }
-
-    private static IReadOnlyList<string> TagsFor(Creation item)
-    {
-        return string.IsNullOrWhiteSpace(item.MadeWith) ? [] : [item.MadeWith];
     }
 
     /// <summary>

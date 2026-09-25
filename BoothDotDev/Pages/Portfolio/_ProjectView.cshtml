@@ -1,19 +1,55 @@
-@page "/portfolio/{slug}"
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @using Humanizer
 @using Markdig
-@model Project
+@model BoothDotDev.Data.Models.Project
 @inject MarkdownPipeline MarkdownPipeline
 @inject ProjectService ProjectService
 @inject MediaService MediaService
 
 @{
-    var project = Model.SelectedProject;
-    ViewData["Title"] = project.Name;
-    ViewData["Post"] = project;
+    var project = Model;
+    var statusClass = project.Status switch
+    {
+        ProjectStatus.Past => "done",
+        ProjectStatus.Retired => "retired",
+        ProjectStatus.Hiatus => "hiatus",
+        _ => ""
+    };
+
+    var statusText = project.Status switch
+    {
+        ProjectStatus.Ongoing => "in active development",
+        ProjectStatus.Past => "completed",
+        ProjectStatus.Retired => "retired",
+        ProjectStatus.Hiatus => "on hiatus",
+        _ => project.Status.ToString().ToLower()
+    };
+
+    var icon = project.RemoteTarget switch
+    {
+        "GitHub" => "brand-github",
+        "GitLab" => "brand-gitlab",
+        "Itch.io" => "building-store",
+        "PlayStore" => "brand-google-play",
+        _ => "world"
+    };
+
+    var linkText = project.RemoteTarget switch
+    {
+        "GitHub" => "Repository",
+        "GitLab" => "Repository",
+        "Itch.io" => "itch.io Page",
+        "PlayStore" => "Google Play Store Page",
+        _ => "External site"
+    };
+
+    var languages = project.Languages.Where(language => language != "various").ToList();
+    var files = MediaService.GetMedia(MediaOwner.For(project));
+    var cover = files.FirstOrDefault(f => f.IsCover);
+    var otherFiles = files.Where(f => !f.IsCover).ToList();
 }
 
 <div class="page">
@@ -28,45 +64,6 @@
             <a asp-page="/Admin/Projects/Edit" asp-route-id="@project.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
         }
     </div>
-
-    @{
-        var statusClass = project.Status switch
-        {
-            ProjectStatus.Past => "done",
-            ProjectStatus.Retired => "retired",
-            ProjectStatus.Hiatus => "hiatus",
-            _ => ""
-        };
-
-        var statusText = project.Status switch
-        {
-            ProjectStatus.Ongoing => "in active development",
-            ProjectStatus.Past => "completed",
-            ProjectStatus.Retired => "retired",
-            ProjectStatus.Hiatus => "on hiatus",
-            _ => project.Status.ToString().ToLower()
-        };
-
-        var icon = project.RemoteTarget switch
-        {
-            "GitHub" => "brand-github",
-            "GitLab" => "brand-gitlab",
-            "Itch.io" => "building-store",
-            "PlayStore" => "brand-google-play",
-            _ => "world"
-        };
-
-        var linkText = project.RemoteTarget switch
-        {
-            "GitHub" => "Repository",
-            "GitLab" => "Repository",
-            "Itch.io" => "itch.io Page",
-            "PlayStore" => "Google Play Store Page",
-            _ => "External site"
-        };
-
-        var languages = project.Languages.Where(language => language != "various").ToList();
-    }
 
     <span class="status @statusClass"><span class="dot"></span>@statusText</span>
     <h1 class="project-title">@project.Name</h1>
@@ -89,14 +86,11 @@
         </div>
     }
 
-    <div class="action-row">
-        <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon"></i> @linkText</a>
-    </div>
-
-    @{
-        var files = MediaService.GetMedia(MediaOwner.For(project));
-        var cover = files.FirstOrDefault(f => f.IsCover);
-        var otherFiles = files.Where(f => !f.IsCover).ToList();
+    @if (!string.IsNullOrEmpty(project.RemoteUrl))
+    {
+        <div class="action-row">
+            <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon"></i> @linkText</a>
+        </div>
     }
 
     <div class="project-frame" data-hue="sky">
@@ -110,30 +104,7 @@
         }
     </div>
 
-    @if (otherFiles.Count > 0)
-    {
-        <section class="media-gallery" aria-label="Media">
-            @foreach (var file in otherFiles)
-            {
-                <figure>
-                    @switch (file.Kind)
-                    {
-                        case MediaKind.Image:
-                            <img src="@file.Url" alt="@(file.Alt ?? "")" loading="lazy" data-lightbox data-lightbox-src="@file.Url">
-                            break;
-
-                        case MediaKind.Video:
-                            <video controls preload="metadata" src="@file.Url" aria-label="@file.Alt"></video>
-                            break;
-
-                        default:
-                            <audio controls preload="none" src="@file.Url" aria-label="@(file.Alt ?? file.FileName)"></audio>
-                            break;
-                    }
-                </figure>
-            }
-        </section>
-    }
+    <partial name="_MediaGallery" model="otherFiles" />
 
     <dl class="project-facts">
         <div>
@@ -179,7 +150,7 @@
             <div class="stack-list">
                 @foreach (var entry in devlogEntries.Take(3))
                 {
-                    <a asp-page="/Projects/DevLog" asp-route-projectSlug="@project.Slug" asp-route-slug="@entry.Slug">
+                    <a asp-page="/Portfolio/Devlog" asp-route-projectSlug="@project.Slug" asp-route-slug="@entry.Slug">
                         <div class="stack-meta">
                             <p class="title">@entry.Title</p>
                         </div>

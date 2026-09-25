@@ -42,6 +42,13 @@ public sealed class Creation
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
+    ///     Gets or sets the slug of the creation, which forms its address on the portfolio.
+    /// </summary>
+    /// <value>The slug.</value>
+    /// <remarks>Shares its address space with project slugs, so it can't match one.</remarks>
+    public string Slug { get; set; } = string.Empty;
+
+    /// <summary>
     ///     Gets or sets the description of the creation.
     /// </summary>
     /// <value>The description.</value>
@@ -74,9 +81,16 @@ public sealed class Creation
     public bool IsWorkInProgress { get; set; }
 
     /// <summary>
+    ///     Gets or sets the tools this creation was made with, in the order they were used.
+    /// </summary>
+    /// <value>The tools, or an empty list if none were specified.</value>
+    public List<string> Tools { get; set; } = [];
+
+    /// <summary>
     ///     Gets or sets a string that describes how this creation was made.
     /// </summary>
     /// <value>A string that describes how this creation was made.</value>
+    /// <remarks>Superseded by <see cref="Tools" />, which is the only thing read.</remarks>
     public string? MadeWith { get; set; }
 
     /// <summary>

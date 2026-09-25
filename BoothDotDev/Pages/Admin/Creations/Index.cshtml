@@ -73,6 +73,7 @@
                             title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></span>
                     <div class="row-actions">
                         <a asp-page="/Admin/Creations/Edit" asp-route-id="@creation.Id" class="icon-btn">edit</a>
+                        <a asp-page="/Portfolio/Item" asp-route-slug="@creation.Slug" target="_blank" class="icon-btn">view</a>
                         <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id">
                             <button type="submit" class="icon-btn danger">delete</button>
                         </form>

@@ -105,11 +105,12 @@ public sealed class Edit : PageModel
         var request = new CreationSaveRequest(
             Input.Kind,
             Input.Title,
+            Input.Slug,
             Input.Description,
             Input.PublishedAt,
             Input.Visibility,
             Input.IsWorkInProgress,
-            Input.MadeWith);
+            SplitTools(Input.Tools));
 
         var result = id is null
             ? _creationService.CreateCreation(request)
@@ -152,11 +153,12 @@ public sealed class Edit : PageModel
         {
             Kind = item.Kind,
             Title = item.Title,
+            Slug = item.Slug,
             Description = item.Description,
             PublishedAt = item.PublishedAt.ToLocalTime(),
             Visibility = item.Visibility,
             IsWorkInProgress = item.IsWorkInProgress,
-            MadeWith = item.MadeWith
+            Tools = string.Join(", ", item.Tools)
         };
 
         Media = new MediaManager
@@ -166,6 +168,15 @@ public sealed class Edit : PageModel
             ReturnUrl = Url.Page("/Admin/Creations/Edit", new { id = item.Id })!,
             Errors = TempData[MediaHandler.ErrorsKey] as string
         };
+    }
+
+    private static List<string> SplitTools(string tools)
+    {
+        return
+        [
+            .. tools.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+        ];
     }
 
     /// <summary>
@@ -203,6 +214,13 @@ public sealed class Edit : PageModel
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
+        ///     Gets or sets the slug of the creation.
+        /// </summary>
+        /// <value>The slug. If blank, one is made from the title.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Slug { get; set; } = string.Empty;
+
+        /// <summary>
         ///     Gets or sets the description of the creation.
         /// </summary>
         /// <value>The description, or <see langword="null" /> if the creation has no description.</value>
@@ -227,9 +245,10 @@ public sealed class Edit : PageModel
         public bool IsWorkInProgress { get; set; }
 
         /// <summary>
-        ///     Gets or sets a string describing how the creation was made.
+        ///     Gets or sets the tools the creation was made with, comma-separated in the order they were used.
         /// </summary>
-        /// <value>The "made with" string, or <see langword="null" /> if not specified.</value>
-        public string? MadeWith { get; set; }
+        /// <value>The tools.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Tools { get; set; } = string.Empty;
     }
 }

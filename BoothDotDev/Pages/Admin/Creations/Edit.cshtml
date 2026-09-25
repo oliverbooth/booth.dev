@@ -35,6 +35,12 @@
         </div>
 
         <div class="field">
+            <label for="slug">Slug</label>
+            <input type="text" id="slug" asp-for="Input.Slug" placeholder="made from the title if left blank" />
+            <p class="hint">The address on the portfolio, e.g. <code>/portfolio/lighthouse</code>. It can't match a project's slug.</p>
+        </div>
+
+        <div class="field">
             <label for="description">Description (markdown supported)</label>
             <textarea id="description" rows="5" asp-for="Input.Description" data-markdown></textarea>
         </div>
@@ -72,8 +78,9 @@
         </div>
 
         <div class="field">
-            <label for="made-with">Made with</label>
-            <input type="text" id="made-with" asp-for="Input.MadeWith" placeholder="e.g. Blender, Krita" />
+            <label for="tools">Tools</label>
+            <input type="text" id="tools" asp-for="Input.Tools" placeholder="e.g. Blender, 3ds Max" />
+            <p class="hint">Comma-separated, in the order you used them.</p>
         </div>
 
         <div class="field">
