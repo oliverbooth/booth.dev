@@ -1,12 +1,42 @@
 .note-card {
   --tilt: -1deg;
   --tint: var(--row-tint-sun);
+  --rule: color-mix(in oklch, var(--sun-text) 5%, transparent);
+  /* line pitch and rule offset (baseline + 2px, less half the ramp) per font; the offset comes from Nunito 17.5px and
+     Patrick Hand 21px's rounded ascent/descent, so a font or size change means re-measuring it */
+  --lh: 30px;
+  --rule-y: 21.5px;
 
   margin: 1.5rem 0 2rem;
-  padding: 26px 28px 28px;
-  background: var(--tint);
+  /* one line of paper below the text; anchoring the rules to the bottom edge keeps them in phase with the last line */
+  padding: 26px 28px var(--lh);
+  background-color: var(--tint);
+  /* gradient stops aren't anti-aliased, so a hard 1px rule steps visibly once the card is rotated; ramped edges blend instead */
+  background-image: linear-gradient(
+    transparent var(--rule-y),
+    var(--rule) calc(var(--rule-y) + 1px),
+    var(--rule) calc(var(--rule-y) + 2px),
+    transparent calc(var(--rule-y) + 3px)
+  );
+  background-position: 0 100%;
+  background-size: 100% var(--lh);
   box-shadow: var(--shadow-card-soft);
   transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+
+  /* the same step in luminance reads stronger against a dark ground, so the dark rule needs less mix */
+  :root[data-theme="dark"] & {
+    --rule: color-mix(in oklch, var(--sun-text) 2.5%, transparent);
+  }
+
+  &:has(.prose--serif) {
+    --lh: 39px;
+    --rule-y: 27.5px;
+  }
+
+  :root[data-voice-font="sans"] &:has(.prose--serif) {
+    --lh: 30px;
+    --rule-y: 21.5px;
+  }
 
   .byline {
     margin: 12px 0 1.25rem;
@@ -19,7 +49,22 @@
     margin-top: 12px;
   }
 
-  .prose > :last-child {
-    margin-bottom: 0;
+  .prose {
+    ul,
+    ol {
+      margin-bottom: var(--lh);
+    }
+
+    li {
+      margin-bottom: 0;
+    }
+
+    li > :is(ul, ol) {
+      margin-bottom: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
   }
 }

@@ -1,10 +1,11 @@
 .prose {
   font-size: 17.5px;
-  line-height: 1.75;
+  /* --lh lets a container (the note card's ruled paper) pin the line pitch */
+  line-height: var(--lh, 1.75);
   color: var(--text);
 
   p {
-    margin: 0 0 1.4rem;
+    margin: 0 0 var(--lh, 1.4rem);
   }
 
   a {
@@ -338,11 +339,11 @@
     /* Patrick Hand's x-height reads noticeably smaller than Lora's at the same pixel size, and its letterforms
        are narrow enough at normal tracking to feel cramped */
     font-size: 21px;
-    line-height: 1.85;
+    line-height: var(--lh, 1.85);
     letter-spacing: 0.3px;
 
     p {
-      margin-bottom: 1.5rem;
+      margin-bottom: var(--lh, 1.5rem);
     }
 
     .callout-body {
@@ -364,7 +365,7 @@
   :root[data-voice-font="sans"] &.prose--serif {
     font-family: var(--font-body);
     font-size: 17.5px;
-    line-height: 1.75;
+    line-height: var(--lh, 1.75);
     letter-spacing: normal;
 
     .callout-body {
