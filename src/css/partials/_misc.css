@@ -17,6 +17,7 @@
     font-size: 14px;
     color: var(--text-muted);
     text-decoration: none;
+    text-transform: lowercase;
 
     &:hover,
     &:focus-visible {
