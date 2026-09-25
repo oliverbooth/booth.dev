@@ -75,6 +75,7 @@ builder.Services.AddSingleton<PasskeyService>();
 builder.Services.AddSingleton<CodeSnippetService>();
 builder.Services.AddSingleton<CreationService>();
 builder.Services.AddSingleton<DevChallengeService>();
+builder.Services.AddSingleton<DiscordEmbedService>();
 builder.Services.AddSingleton<LinkService>();
 builder.Services.AddSingleton<MarkdownRenderingService>();
 builder.Services.AddSingleton<MediaService>();

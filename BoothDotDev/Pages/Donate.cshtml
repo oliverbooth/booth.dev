@@ -1,4 +1,5 @@
 @page "/donate"
+@using BoothDotDev.Data
 @using QRCoder
 @{
     ViewData["Title"] = "Donate";
@@ -44,7 +45,7 @@
     </div>
 
     <div class="support-grid">
-        <a href="https://www.buymeacoffee.com/oliverbooth" class="support-card support-card--bmac">
+        <a href="@DonationLinks.BuyMeACoffee" class="support-card support-card--bmac">
             <span class="support-icon support-icon--bmac">
                 <img src="~/img/bmc-logo.svg" alt="" asp-append-version="true" />
             </span>
@@ -53,7 +54,7 @@
                 <p class="support-sub">one-off or monthly</p>
             </span>
         </a>
-        <a href="https://ko-fi.com/oliverbooth" class="support-card support-card--kofi">
+        <a href="@DonationLinks.KoFi" class="support-card support-card--kofi">
             <span class="support-icon support-icon--ko-fi">
                 <img src="~/img/kofi_symbol.svg" alt="" asp-append-version="true" />
             </span>

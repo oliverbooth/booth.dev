@@ -44,6 +44,10 @@
     <title>@PageTitle</title>
 
     @Html.Raw(HtmlUtility.CreateMetaTagsForContent(ViewData["Post"], SiteBaseUrl, MarkdownRenderingService, PageTitle, Strings.Tagline))
+    @if (Context.Response.StatusCode == StatusCodes.Status200OK)
+    {
+        <script id="discord:component-embed" type="application/json">@Html.Raw(DiscordEmbedService.Build(ViewData["Post"], SiteBaseUrl, CurrentUrl, ViewData["Title"] as string ?? Strings.MyName, Strings.Tagline))</script>
+    }
     <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="shortcut icon" href="~/img/favicon-dark.png" asp-append-version="true" media="(prefers-color-scheme: light)">
     <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true" media="(prefers-color-scheme: dark)">

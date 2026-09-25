@@ -31,6 +31,13 @@ public abstract class MainLayout : RazorPage<object>
     public MarkdownRenderingService MarkdownRenderingService { get; set; } = null!;
 
     /// <summary>
+    ///     Gets or sets the service that builds the Discord component embed.
+    /// </summary>
+    /// <value>The Discord embed service.</value>
+    [RazorInject]
+    public DiscordEmbedService DiscordEmbedService { get; set; } = null!;
+
+    /// <summary>
     ///     Gets the page title to display in the browser tab.
     /// </summary>
     /// <value>The page title.</value>

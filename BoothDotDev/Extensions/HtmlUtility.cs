@@ -103,7 +103,7 @@ public static class HtmlUtility
         return CreateMetaTags(tags);
     }
 
-    private static string OgImageUrl(Uri siteBaseUrl, string type, Guid id)
+    internal static string OgImageUrl(Uri siteBaseUrl, string type, Guid id)
     {
         return new Uri(siteBaseUrl, $"/og/{type}/{id:N}.png").ToString();
     }
