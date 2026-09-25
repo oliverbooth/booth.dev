@@ -8,6 +8,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    @if (EnvironmentLabel is not null)
+    {
+        <meta name="robots" content="noindex, nofollow">
+    }
     <meta property="og:url" content="@CurrentUrl">
     <meta property="twitter:url" content="@CurrentUrl">
     <meta name="theme-color" content="#6161cd">
@@ -58,11 +62,21 @@
 </head>
 
 <body>
+@if (EnvironmentLabel is not null)
+{
+    <div class="env-bar" aria-hidden="true"></div>
+}
 <div class="noise-overlay" aria-hidden="true"></div>
 <div class="layout">
     <header class="site-header">
         <nav class="topnav">
-            <a asp-page="/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
+            <div class="topnav-identity">
+                <a asp-page="/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
+                @if (EnvironmentLabel is { } label)
+                {
+                    <span class="env-badge">@label</span>
+                }
+            </div>
             <div class="topnav-links">
                 <a asp-page="/Index" page-match="/Index">Home</a>
                 <a asp-page="/Blog/Index" page-match="/Blog,/Note,/Someday">Words</a>

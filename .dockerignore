@@ -1,6 +1,10 @@
 **/.dockerignore
 **/.env
 **/.git
+!.git/HEAD
+!.git/packed-refs
+!.git/refs
+!.git/refs/**
 **/.gitignore
 **/.project
 **/.settings

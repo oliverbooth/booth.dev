@@ -13,11 +13,30 @@
 #   STAGING_APP_CONTAINER  default booth.dev-staging
 #   PROD_SSH               user@host, when prod's containers are on another machine
 #   DUMP_DIR               where dumps are kept, default ~/booth.dev-dumps
+#
+# Any of these can also be set in the repository's .env (or the file named by ENV_FILE), as KEY=value lines. Variables
+# already in the environment win.
 set -euo pipefail
 
+# .env is read line by line rather than sourced: a value containing ; or $( would otherwise be run as a command
+env_file="${ENV_FILE:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.env}"
+if [ -f "$env_file" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+        case "$line" in
+            PROD_DB_USER=* | PROD_DB_NAME=* | STAGING_DB_USER=* | STAGING_DB_NAME=* | PROD_DB_CONTAINER=* | \
+                STAGING_DB_CONTAINER=* | STAGING_APP_CONTAINER=* | PROD_SSH=* | DUMP_DIR=*)
+                key="${line%%=*}"
+                value="${line#*=}"
+                value="${value#\"}"; value="${value%\"}"; value="${value#\'}"; value="${value%\'}"
+                if [ -z "${!key:-}" ]; then export "$key=$value"; fi
+                ;;
+        esac
+    done < "$env_file"
+fi
+
 prod_db="${PROD_DB_CONTAINER:-booth.dev-db}"
-staging_db="${STAGING_DB_CONTAINER:-booth.dev-staging-db}"
-staging_app="${STAGING_APP_CONTAINER:-booth.dev-staging}"
+staging_db="${STAGING_DB_CONTAINER:-staging.booth.dev-db}"
+staging_app="${STAGING_APP_CONTAINER:-staging.booth.dev}"
 dump_dir="${DUMP_DIR:-$HOME/booth.dev-dumps}"
 assume_yes=false
 start_app=true

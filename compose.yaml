@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: BoothDotDev/Dockerfile
+      args:
+        SOURCE_REVISION_ID: ${SOURCE_REVISION_ID:-}
+        GIT_REF: ${GIT_REF:-}
     environment:
       - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
