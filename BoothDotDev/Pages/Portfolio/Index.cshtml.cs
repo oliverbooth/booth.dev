@@ -21,7 +21,7 @@ public sealed class Made : PageModel
     }
 
     /// <summary>
-    ///     Gets everything I've made: creations first, then projects.
+    ///     Gets everything listed on the portfolio, in the order set in the admin.
     /// </summary>
     /// <value>The items.</value>
     public IReadOnlyList<PortfolioItem> Items { get; private set; } = [];

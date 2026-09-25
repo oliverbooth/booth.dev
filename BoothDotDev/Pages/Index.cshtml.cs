@@ -8,8 +8,6 @@ namespace BoothDotDev.Pages;
 internal sealed class Index : PageModel
 {
     private const int RecentActivityCount = 5;
-    private const int PortfolioCount = 6;
-    private const int FeaturedCreationCount = 2;
     private const int LatestPostCount = 3;
     private readonly ActivityService _activityService;
     private readonly BlogPostService _blogPostService;
@@ -41,7 +39,7 @@ internal sealed class Index : PageModel
     public IReadOnlyList<ActivityEntry> RecentActivity { get; private set; } = [];
 
     /// <summary>
-    ///     Gets the things I've made that are featured: the newest creations, then projects.
+    ///     Gets the things I've made that are featured, in the order I chose.
     /// </summary>
     /// <returns>The featured items.</returns>
     public IReadOnlyList<PortfolioItem> Featured { get; private set; } = [];
@@ -52,7 +50,7 @@ internal sealed class Index : PageModel
     public void OnGet()
     {
         RecentActivity = _activityService.GetRecentActivity(new ActivitySearchOptions(RecentActivityCount));
-        Featured = _portfolioService.GetFeatured(PortfolioCount, FeaturedCreationCount);
+        Featured = _portfolioService.GetFeatured();
         LatestPosts = _blogPostService.GetRecentBlogPosts(new ActivitySearchOptions(LatestPostCount));
     }
 }

@@ -1,0 +1,159 @@
+@page "/admin/portfolio"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Portfolio</h1>
+            <p>Choose what is listed on the portfolio page, in what order, and what the home page features</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a asp-page="/Portfolio/Index" class="btn"><i class="ti ti-eye" style="font-size:15px"></i>View portfolio</a>
+        </div>
+    </div>
+
+    <section data-reorder-scope>
+        <div class="admin-header">
+            <div>
+                <h2>Featured</h2>
+                <p>Shown on the home page. Only the first @Model.FeaturedLimit are shown.</p>
+            </div>
+        </div>
+
+        <form method="post" asp-page-handler="ReorderFeatured" id="reorder-featured-form"></form>
+
+        @if (Model.View.Featured.Count == 0)
+        {
+            <p class="table-empty-state">Nothing is featured, so the home page shows the start of the portfolio</p>
+        }
+        else
+        {
+            <ul class="reorder-list" data-reorder-list data-reorder-form="reorder-featured-form">
+                @foreach (var item in Model.View.Featured)
+                {
+                    <li class="reorder-item" data-reorder-item data-id="@item.EntryId" draggable="true" data-hue="@item.Hue.ToDataHue()">
+                        <i class="ti ti-grip-vertical reorder-handle" aria-hidden="true"></i>
+                        <div class="reorder-move">
+                            <button type="button" class="reorder-move-btn" data-move="up" aria-label="Move '@item.Title' up"><i
+                                    class="ti ti-chevron-up"></i></button>
+                            <button type="button" class="reorder-move-btn" data-move="down" aria-label="Move '@item.Title' down"><i
+                                    class="ti ti-chevron-down"></i></button>
+                        </div>
+                        <span class="badge">@item.Label</span>
+                        <div class="row-title">@item.Title</div>
+                        @if (item.HiddenReason is not null)
+                        {
+                            <span class="row-meta">not shown: @item.HiddenReason</span>
+                        }
+                        <div class="row-actions" draggable="false">
+                            <form method="post" asp-page-handler="Unfeature" asp-route-id="@item.EntryId">
+                                <button type="submit" class="icon-btn">unfeature</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div class="table-toolbar" data-reorder-save hidden>
+                <p class="hint">Order changed - it isn't saved yet.</p>
+                <button type="submit" form="reorder-featured-form" class="btn btn-primary"><i class="ti ti-device-floppy"></i>Save order</button>
+            </div>
+        }
+    </section>
+
+    <section data-reorder-scope style="margin-top:2rem">
+        <div class="admin-header">
+            <div>
+                <h2>Listed</h2>
+                <p>Everything on the portfolio page, in order</p>
+            </div>
+        </div>
+
+        <form method="post" asp-page-handler="Reorder" id="reorder-form"></form>
+
+        @if (Model.View.Listed.Count == 0)
+        {
+            <p class="table-empty-state">Nothing is listed yet</p>
+        }
+        else
+        {
+            <ul class="reorder-list" data-reorder-list data-reorder-form="reorder-form">
+                @foreach (var item in Model.View.Listed)
+                {
+                    <li class="reorder-item" data-reorder-item data-id="@item.EntryId" draggable="true" data-hue="@item.Hue.ToDataHue()">
+                        <i class="ti ti-grip-vertical reorder-handle" aria-hidden="true"></i>
+                        <div class="reorder-move">
+                            <button type="button" class="reorder-move-btn" data-move="up" aria-label="Move '@item.Title' up"><i
+                                    class="ti ti-chevron-up"></i></button>
+                            <button type="button" class="reorder-move-btn" data-move="down" aria-label="Move '@item.Title' down"><i
+                                    class="ti ti-chevron-down"></i></button>
+                        </div>
+                        <span class="badge">@item.Label</span>
+                        <div class="row-title">@item.Title</div>
+                        @if (item.HiddenReason is not null)
+                        {
+                            <span class="row-meta">not shown: @item.HiddenReason</span>
+                        }
+                        <div class="row-actions" draggable="false">
+                            @if (!item.IsFeatured)
+                            {
+                                <form method="post" asp-page-handler="Feature" asp-route-id="@item.EntryId">
+                                    <button type="submit" class="icon-btn">feature</button>
+                                </form>
+                            }
+                            <form method="post" asp-page-handler="Unlist" asp-route-id="@item.EntryId">
+                                <button type="submit" class="icon-btn danger">unlist</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div class="table-toolbar" data-reorder-save hidden>
+                <p class="hint">Order changed - it isn't saved yet.</p>
+                <button type="submit" form="reorder-form" class="btn btn-primary"><i class="ti ti-device-floppy"></i>Save order</button>
+            </div>
+        }
+    </section>
+
+    <section style="margin-top:2rem">
+        <div class="admin-header">
+            <div>
+                <h2>Not listed</h2>
+                <p>Projects and creations that aren't on the portfolio page. Projects are still reachable by their address.</p>
+            </div>
+        </div>
+
+        @if (Model.View.Unlisted.Count == 0)
+        {
+            <p class="table-empty-state">Everything is listed</p>
+        }
+        else
+        {
+            <ul class="admin-row-list">
+                @foreach (var item in Model.View.Unlisted)
+                {
+                    <li class="admin-row" data-hue="@item.Hue.ToDataHue()">
+                        <span class="badge">@item.Label</span>
+                        <div class="row-body">
+                            <div class="row-title">@item.Title</div>
+                        </div>
+                        <div class="row-actions">
+                            <form method="post" asp-page-handler="List" asp-route-id="@item.ItemId">
+                                <button type="submit" class="icon-btn">list</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+</div>

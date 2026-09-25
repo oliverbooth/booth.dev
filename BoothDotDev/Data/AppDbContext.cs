@@ -145,6 +145,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of portfolio entries in the database.
+    /// </summary>
+    /// <value>The collection of portfolio entries.</value>
+    public DbSet<PortfolioEntry> PortfolioEntries
+    {
+        get => Set<PortfolioEntry>();
+    }
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -252,6 +261,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
+        modelBuilder.ApplyConfiguration(new PortfolioEntryConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());

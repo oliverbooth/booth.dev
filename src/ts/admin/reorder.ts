@@ -1,18 +1,21 @@
 /**
- * Initializes reordering for the admin someday list, by dragging a row or by its move-up/move-down buttons (a
- * keyboard- and screen-reader-reachable equivalent to the drag, since HTML5 drag-and-drop has no keyboard path of
- * its own). Either one live-reorders the DOM and reveals a "Save order" bar that submits the new order as a plain
- * form post, so nothing is persisted until confirmed.
+ * Initializes reordering for every admin reorder list on the page, by dragging a row or by its move-up/move-down
+ * buttons (a keyboard- and screen-reader-reachable equivalent to the drag, since HTML5 drag-and-drop has no keyboard
+ * path of its own).
  */
-export function initSomedayReorder(): void {
-    const list = document.querySelector<HTMLElement>('[data-reorder-list]');
-    const saveBar = document.querySelector<HTMLElement>('[data-reorder-save]');
-    const form = list?.dataset.reorderForm ? document.getElementById(list.dataset.reorderForm) as HTMLFormElement | null : null;
+export function initReorder(): void {
+    for (const list of document.querySelectorAll<HTMLElement>('[data-reorder-list]')) {
+        const scope: ParentNode = list.closest('[data-reorder-scope]') ?? document;
+        const saveBar = scope.querySelector<HTMLElement>('[data-reorder-save]');
+        const form = list.dataset.reorderForm ? document.getElementById(list.dataset.reorderForm) as HTMLFormElement | null : null;
 
-    if (!list || !saveBar || !form) {
-        return;
+        if (saveBar && form) {
+            initList(list, saveBar, form);
+        }
     }
+}
 
+function initList(list: HTMLElement, saveBar: HTMLElement, form: HTMLFormElement): void {
     list.addEventListener('click', (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-move]');
         const item = button?.closest<HTMLElement>('[data-reorder-item]');
@@ -86,8 +89,7 @@ export function initSomedayReorder(): void {
 }
 
 /**
- * Replaces the reorder form's `ids` hidden inputs with one per row, in current DOM order. Any other hidden input
- * already in the form - namely the antiforgery token - is left untouched.
+ * Replaces the reorder form's `ids` hidden inputs with one per row, in current DOM order.
  */
 function syncHiddenInputs(list: HTMLElement, form: HTMLFormElement): void {
     form.querySelectorAll('input[name="ids"]').forEach(input => input.remove());
