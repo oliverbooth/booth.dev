@@ -41,7 +41,6 @@ export function initTheme(): void {
         }
     });
 
-    // keeps other open tabs in step
     window.addEventListener('storage', event => {
         if (event.key === STORAGE_KEY) {
             applyTheme(resolveTheme(event.newValue, systemPrefersLight()), false);

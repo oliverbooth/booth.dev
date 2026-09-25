@@ -1,9 +1,3 @@
-/* toggle shows the current theme's icon */
-:root[data-theme="light"] .theme-toggle .ti-moon,
-:root:not([data-theme="light"]) .theme-toggle .ti-sun {
-  display: none;
-}
-
 /* theme.ts cross-fades the whole page with a view transition */
 ::view-transition-group(root) {
   animation-duration: 0.4s;

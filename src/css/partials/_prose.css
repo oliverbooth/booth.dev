@@ -90,7 +90,6 @@
     margin: 1.75rem 0 0.5rem;
   }
 
-  /* headings inside authored content keep the case they were written in */
   h1,
   h2,
   h3 {
@@ -474,8 +473,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--accent-tint);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,7 +489,6 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow-card-soft);
-  /* policy copy sits a step quieter than article prose */
   color: var(--text-muted);
   font-size: 15.5px;
   line-height: 1.75;
@@ -507,7 +505,6 @@
     color: var(--text);
   }
 
-  /* sections: a coloured dot before each heading, and a soft divider between them */
   h2 {
     --dot: var(--accent-coral);
 
@@ -580,7 +577,7 @@
 
 abbr[title] {
   text-decoration: none;
-  border-bottom: 1px dotted var(--text-secondary);
+  border-bottom: 1px dotted var(--text-muted);
   cursor: pointer;
 }
 

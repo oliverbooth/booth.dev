@@ -1,4 +1,3 @@
-/* ---------- theme-independent ---------- */
 :root {
   --brand: #6161cd;
   --on-brand-solid: #ffffff;
@@ -14,6 +13,7 @@
   --font-heading: "Baloo 2 Variable", "Baloo 2", sans-serif;
   --font-body: "Nunito Variable", "Nunito", sans-serif;
   --font-mono: "JetBrains Mono Variable", "JetBrains Mono", "SF Mono", Consolas, monospace;
+  --font-voice: "Patrick Hand", cursive, sans-serif;
 
   --radius-sm: 10px;
   --radius-md: 16px;
@@ -47,7 +47,6 @@
   --ansi-15: oklch(97% 0.006 275);
 }
 
-/* ---------- dark ---------- */
 :root,
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -73,7 +72,6 @@
   --sun-text: oklch(89% 0.12 95);
   --sky-text: oklch(83% 0.1 235);
 
-  /* text/icon colour for content sitting on a solid accent fill (badges, pins) */
   --on-coral-text: oklch(18% 0.04 40);
   --on-teal-text: oklch(18% 0.04 165);
   --on-magenta-text: oklch(18% 0.04 340);
@@ -204,7 +202,6 @@
   --rail-bg: oklch(11% 0.015 280);
 }
 
-/* ---------- light ---------- */
 :root[data-theme="light"] {
   color-scheme: light;
 
@@ -352,47 +349,4 @@
   --stripe-label: oklch(35% 0.02 275);
 
   --rail-bg: oklch(98% 0.006 275);
-}
-
-/* ---------- syntax colours ---------- */
-:root {
-  --syntax-keyword: oklch(78% 0.15 340);
-  --syntax-string: oklch(78% 0.13 145);
-  --syntax-number: oklch(78% 0.15 60);
-  --syntax-type: oklch(80% 0.1 220);
-  --syntax-func: oklch(82% 0.1 275);
-}
-
-/* ---------- legacy names ---------- */
-/* TODO: repoint or delete as each partial is migrated */
-:root {
-  --accent: var(--brand);
-  --accent-hover: #7070d6;
-  --accent-tint: rgba(97, 97, 205, 0.12);
-  --accent-tint-strong: rgba(97, 97, 205, 0.2);
-
-  --surface-1: #151519;
-  --surface-2: #1a1a1f;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
-
-  --text-primary: var(--text);
-  --text-secondary: var(--text-muted);
-
-  --success-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
-  --success-text: var(--teal-text);
-
-  --warning-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
-  --warning-text: var(--coral-text);
-
-  --danger-bg: var(--dont-bg);
-  --danger-text: var(--dont-text);
-
-  --info-bg: var(--brand-chip);
-  --info-text: var(--brand-text);
-
-  --font-sans: var(--font-body);
-  --font-voice: "Patrick Hand", cursive, sans-serif;
-
-  --radius: var(--radius-sm);
 }

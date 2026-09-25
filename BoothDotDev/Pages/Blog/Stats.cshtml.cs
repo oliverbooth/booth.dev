@@ -144,7 +144,7 @@ internal sealed class Stats : PageModel
         var jan1 = new DateOnly(year, 1, 1);
         var dec31 = new DateOnly(year, 12, 31);
         var offset = ((int)jan1.DayOfWeek + 6) % 7; // DayOfWeek is Sunday-based; rebase so Monday is 0
-        var gridStart = jan1.AddDays(-offset); // preceding Monday, or Jan 1 itself if already one
+        var gridStart = jan1.AddDays(-offset);
         var columns = (dec31.DayNumber - gridStart.DayNumber + 7) / 7;
 
         var days = new List<PostDistributionDay>(columns * 7);

@@ -89,8 +89,6 @@ async function mountScene(codeElement: HTMLElement): Promise<void> {
     (codeToolbar ?? pre).replaceWith(wrapper);
 
     if (noSource) {
-        // `no-source`: just the scene, no tab chrome to switch to a Source view at all.
-        // so no fullscreen toggle either, since there'd be nowhere to put it
         wrapper.append(scenePanel);
     } else {
         const fullscreenToggle = createFullscreenToggle(wrapper);

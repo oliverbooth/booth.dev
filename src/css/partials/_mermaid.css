@@ -12,7 +12,6 @@
   overflow-x: auto;
 }
 
-/* no-source: a purely illustrative diagram with no tab chrome, rendered inline rather than as a framed card */
 .mermaid-scene--bare .mermaid-scene-panel:not([hidden]) {
   padding: 0;
   border-radius: 0;

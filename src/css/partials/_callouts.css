@@ -45,7 +45,7 @@
   }
 }
 
-/* icon + label sit inline; the icon is a real <i> emitted by the renderer, not a pseudo-element */
+/* the icon is a real <i> emitted by the renderer, not a pseudo-element */
 .callout-title {
   display: flex;
   align-items: center;
@@ -114,7 +114,6 @@
   }
 }
 
-/* details.callout: the foldable variant (table of contents, challenge solutions) */
 details.callout {
   padding: 0;
   overflow: hidden;

@@ -1,4 +1,4 @@
-/* a macOS-style window: dark in both themes, like code blocks */
+/* dark in both themes, like code blocks */
 .terminal {
   margin-bottom: 2.5rem;
   border-radius: var(--radius-md);

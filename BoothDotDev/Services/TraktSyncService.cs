@@ -150,7 +150,6 @@ public sealed class TraktSyncService(
             return Result.Ok(reference);
         }
 
-        // trakt.tv, www.trakt.tv, app.trakt.tv, ...
         if ((uri.Host is not "trakt.tv" && !uri.Host.EndsWith(".trakt.tv", StringComparison.OrdinalIgnoreCase)) ||
             uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries) is not
                 [("movies" or "shows") and var type, var slug, ..])

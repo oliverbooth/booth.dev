@@ -1,4 +1,3 @@
-/* ---------- semantic content-type hue ---------- */
 [data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-solid); --glow: var(--shadow-hero-text); }
 [data-hue="tangerine"] { --ink: var(--coral-text); --solid: var(--accent-coral); --on-solid: var(--on-coral-text); --glow: var(--glow-tangerine); }
 [data-hue="mint"] { --ink: var(--teal-text); --solid: var(--accent-teal); --on-solid: var(--on-teal-text); --glow: var(--glow-mint); }

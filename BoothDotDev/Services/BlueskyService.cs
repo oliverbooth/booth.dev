@@ -50,7 +50,6 @@ public sealed class BlueskyService(
         {
             var post = item.GetProperty("post");
 
-            // Skip reposts if configured to do so
             if (!opts.IncludeReposts && item.TryGetProperty("reason", out var reason))
             {
                 var reasonType = reason.GetProperty("$type").GetString();
@@ -63,8 +62,8 @@ public sealed class BlueskyService(
             var uri = post.GetProperty("uri").GetString()!;
             // AT-URI: at://did:plc:.../app.bsky.feed.post/{rkey}
             var rkey = uri.Split('/').Last();
-            var atUri = uri["at://".Length..]; // strips "at://" prefix
-            var postUrl = $"https://bsky.app/profile/{opts.Handle}/post/{rkey}"; // keep for linking
+            var atUri = uri["at://".Length..];
+            var postUrl = $"https://bsky.app/profile/{opts.Handle}/post/{rkey}";
 
             var result = new BlueskyPost(atUri, postUrl);
             cache.Set(CacheKey, result, TimeSpan.FromMinutes(opts.CacheDurationMinutes));

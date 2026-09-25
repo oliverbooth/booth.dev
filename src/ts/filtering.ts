@@ -41,7 +41,6 @@ export function initFiltering(): void {
             pill.addEventListener('click', () => applyFilter(pill, true));
         }
 
-        // on load: read the hash (if any) and select the matching pill, instead of always defaulting to .active
         const hashFilter = window.location.hash.replace('#filter=', '');
         const matchingPill = hashFilter
             ? Array.from(pills).find(p => (p.dataset.filterKind === 'note' && hashFilter === 'notes') || p.dataset.filter === hashFilter)

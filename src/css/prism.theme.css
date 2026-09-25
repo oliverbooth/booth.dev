@@ -9,13 +9,11 @@
   --prism-keyword: var(--syntax-keyword);
   --prism-preprocessor-property: var(--syntax-punct);
 
-  /* CSS */
   --prism-atrule: var(--syntax-keyword);
   --prism-css-foreground: var(--syntax-text);
   --prism-css-selector: var(--syntax-func);
   --prism-css-property: var(--syntax-type);
 
-  /* Markup (HTML, XML) */
   --prism-doctype: var(--syntax-type);
   --prism-markup-tag: var(--syntax-keyword);
   --prism-attr-name: var(--syntax-type);
@@ -122,7 +120,6 @@ pre[class*="language-"] {
   }
 }
 
-/* Markup */
 code[class*="language-markup"] {
   .token.punctuation {
     color: var(--prism-markup-punctuation);

@@ -59,7 +59,6 @@
   width: 64px;
   cursor: pointer;
 
-  /* the radio itself is visually hidden; the swatch stands in for it */
   input {
     position: absolute;
     opacity: 0;

@@ -49,7 +49,6 @@ async function mountEditor(textarea: HTMLTextAreaElement): Promise<void> {
     const rows: number = textarea.rows || 10;
     const maxHeight: string = `${rows * lineHeightPx}px`;
 
-    // the editor is styled to match the other form fields (see _forms.css); `dark` only picks CodeMirror's own defaults
     const buildTheme = (dark: boolean) => EditorView.theme({
         '&': {
             color: 'var(--text)',

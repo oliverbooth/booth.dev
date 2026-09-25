@@ -87,7 +87,6 @@ async function mountDiagram(codeElement: HTMLElement): Promise<void> {
     (codeToolbar ?? pre).replaceWith(wrapper);
 
     if (noSource) {
-        // `no-source`: just the diagram, no tab chrome and no card framing either
         wrapper.classList.add('mermaid-scene--bare');
         wrapper.append(diagramPanel);
     } else {

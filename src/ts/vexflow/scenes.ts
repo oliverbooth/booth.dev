@@ -56,8 +56,6 @@ async function mountNotation(codeElement: HTMLElement): Promise<void> {
     (codeToolbar ?? pre).replaceWith(wrapper);
 
     if (noSource) {
-        // `no-source`: just the notation, no tab chrome to switch to a Source view at all - so no theme toggle
-        // either, since there'd be nowhere to put it; the block stays on the light "paper" default
         wrapper.append(notationPanel);
     } else {
         const themeToggle = createThemeToggle(wrapper);

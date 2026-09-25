@@ -1,4 +1,3 @@
-/* the frame Prism's toolbar plugin wraps around <pre>: a permanent header bar above the code */
 div.code-toolbar {
   display: flex;
   flex-direction: column;
@@ -30,7 +29,7 @@ div.code-toolbar {
     > .toolbar-item {
       display: inline-flex;
 
-      /* language label: quiet text, not a chip; --syntax-punct because this bar is dark in both themes */
+      /* --syntax-punct because this bar is dark in both themes */
       > span {
         padding: 0;
         border: none;
@@ -44,7 +43,6 @@ div.code-toolbar {
         text-transform: lowercase;
       }
 
-      /* the copy button; the icon flips to a check when Prism reports success */
       > button {
         display: inline-flex;
         align-items: center;

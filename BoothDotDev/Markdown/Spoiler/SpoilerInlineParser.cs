@@ -29,8 +29,8 @@ internal sealed class SpoilerInlineParser : InlineParser
             return false;
         }
 
-        slice.SkipChar(); // first '|'
-        slice.SkipChar(); // second '|'
+        slice.SkipChar();
+        slice.SkipChar();
 
         // closed rather than left open: whether this marker turns out to be an "open" or a "close" isn't decided
         // here, only once its pair is found, so it shouldn't swallow subsequent content as its own children either way

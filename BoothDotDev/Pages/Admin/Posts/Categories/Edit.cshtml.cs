@@ -142,7 +142,6 @@ public sealed class Edit : PageModel
         var excluded = new HashSet<Guid> { id };
         var grew = true;
 
-        // a category is excluded if its parent is; repeat until a pass adds nothing
         while (grew)
         {
             grew = false;

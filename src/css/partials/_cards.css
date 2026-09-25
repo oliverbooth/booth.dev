@@ -136,7 +136,6 @@
   }
 }
 
-/* Now-page tiles: a small label, a big value, an optional footnote */
 .card-stat .card-body {
   padding: 20px 22px 22px;
 }
@@ -172,7 +171,7 @@
 
 figcaption {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.5;
   text-align: center;
   margin-top: 10px;

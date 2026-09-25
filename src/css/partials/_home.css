@@ -58,7 +58,6 @@
   box-shadow: var(--shadow-card);
   transform: rotate(calc(4deg * var(--motion) * var(--tilt-on)));
 
-  /* strip of tape */
   &::before {
     content: "";
     position: absolute;

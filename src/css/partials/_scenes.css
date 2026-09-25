@@ -40,7 +40,6 @@
   }
 }
 
-/* fullscreen (manim) / paper-ink (vexflow) toggle buttons sitting alongside the tab group */
 .manim-fullscreen-toggle,
 .vexflow-theme-toggle {
   display: inline-flex;

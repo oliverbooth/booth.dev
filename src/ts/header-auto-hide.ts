@@ -74,7 +74,6 @@ export function initHeaderAutoHide(): void {
         frame ||= requestAnimationFrame(update);
     }, {passive: true});
 
-    // tabbing back up into a hidden header should reveal it
     header.addEventListener('focusin', () => {
         state = {...state, hidden: false};
         header.removeAttribute('data-hidden');

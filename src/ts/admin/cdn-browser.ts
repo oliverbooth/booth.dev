@@ -177,7 +177,7 @@ function initTileDragMove(grid: HTMLElement, initialPath: string, onMove: (name:
         const sourceName = event.dataTransfer.getData(MOVE_MIME);
         const targetName = folderTile.dataset.name;
         if (!sourceName || !targetName || sourceName === targetName) {
-            return; // dropped on itself - no-op
+            return;
         }
 
         const destination = initialPath === '/' ? `/${targetName}` : `${initialPath}/${targetName}`;

@@ -25,7 +25,6 @@
   }
 }
 
-/* audio has no frame to speak of — just a tinted row around the native player */
 audio.figure-img {
   display: block;
   width: 100%;

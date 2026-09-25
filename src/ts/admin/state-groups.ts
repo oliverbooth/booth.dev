@@ -48,7 +48,7 @@ export function initStateGroups(): void {
                 const select = item?.querySelector<HTMLSelectElement>('[data-state-form] select');
                 const form = item?.querySelector<HTMLFormElement>('[data-state-form]');
                 if (!id || !targetState || !select || !form || select.value === targetState) {
-                    return; // dropped in its own group, or something's missing - no-op
+                    return;
                 }
 
                 select.value = targetState;

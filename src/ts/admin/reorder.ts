@@ -25,7 +25,7 @@ function initList(list: HTMLElement, saveBar: HTMLElement, form: HTMLFormElement
 
         const sibling = button.dataset.move === 'up' ? item.previousElementSibling : item.nextElementSibling;
         if (!sibling) {
-            return; // already at that end of the list
+            return;
         }
 
         if (button.dataset.move === 'up') {

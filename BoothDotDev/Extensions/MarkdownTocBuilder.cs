@@ -50,7 +50,6 @@ public static class MarkdownTocBuilder
                     sb.Append(lit.Content.ToString());
                     break;
                 case LinkInline link:
-                    // prefer link text if present, else link url
                     if (link.FirstChild != null)
                     {
                         sb.Append(ExtractInlineText(link));
@@ -68,7 +67,6 @@ public static class MarkdownTocBuilder
                     sb.Append(code.Content);
                     break;
                 default:
-                    // generic recursion for other ContainerInline types
                     if (child is ContainerInline c)
                     {
                         sb.Append(ExtractInlineText(c));
@@ -110,7 +108,6 @@ public static class MarkdownTocBuilder
 
         foreach (var item in flat)
         {
-            // if stack empty -> top-level
             while (stack.Count > 0 && item.Level <= stack.Peek().Level)
             {
                 stack.Pop();
@@ -146,7 +143,7 @@ public static class MarkdownTocBuilder
         {
             foreach (var item in nodes)
             {
-                builder.Append(' ', indent * 2); // two spaces per indent
+                builder.Append(' ', indent * 2);
                 builder.Append($"- [{EscapeMarkdown(item.Text)}](#{item.Id})\n");
                 if (item.Children.Count > 0)
                 {
@@ -174,7 +171,7 @@ public static class MarkdownTocBuilder
         {
             foreach (var n in nodes)
             {
-                builder.Append(' ', indent * 2); // two spaces per indent
+                builder.Append(' ', indent * 2);
                 builder.Append($"<li><a href=\"{request?.Path}#{n.Id}\">{HttpUtility.HtmlEncode(n.Text)}</a>");
                 if (n.Children.Count > 0)
                 {
@@ -194,7 +191,6 @@ public static class MarkdownTocBuilder
 
     private static string EscapeMarkdown(string text)
     {
-        // minimal escaping for square brackets used in links
         return text.Replace("[", "\\[").Replace("]", "\\]");
     }
 }

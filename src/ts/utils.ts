@@ -168,6 +168,6 @@ export function ansiToHtml(input: string): string {
 
             return index !== null ? `${prefix}<span class="ansi-${index}">` : '</span>';
         })
-        .concat('</span>') // close any open tags at the end
-        .replace(/<\/span>(?=<\/span>)/g, ''); // remove redundant closing tags
+        .concat('</span>')
+        .replace(/<\/span>(?=<\/span>)/g, '');
 }

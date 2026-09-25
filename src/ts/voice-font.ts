@@ -1,6 +1,4 @@
 const STORAGE_KEY = 'voiceFont';
-/*const SANS_LABEL = 'sans-serif';
-const SERIF_LABEL = 'sans-serif';*/
 
 /**
  * Wires up the voice-font toggle buttons (`[data-voice-font-toggle]`), letting a reader opt any `.prose--serif`
@@ -19,7 +17,6 @@ export function initVoiceFontToggle(): void {
         }
     });
 
-    // keeps other open tabs in step
     window.addEventListener('storage', event => {
         if (event.key === STORAGE_KEY) {
             applyOverride(event.newValue === 'sans');
@@ -44,11 +41,6 @@ function applyOverride(sans: boolean): void {
 function syncToggles(sans: boolean): void {
     for (const toggle of document.querySelectorAll('[data-voice-font-toggle]')) {
         toggle.setAttribute('aria-pressed', String(sans));
-
-        /*const label = toggle.querySelector('[data-voice-font-label]');
-        if (label) {
-            label.textContent = sans ? SERIF_LABEL : SANS_LABEL;
-        }*/
     }
 }
 

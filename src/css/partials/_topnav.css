@@ -1,0 +1,128 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  transition: transform 0.3s ease;
+
+  &[data-hidden] {
+    transform: translateY(-100%);
+  }
+}
+
+.topnav {
+  box-sizing: content-box;
+  max-width: var(--width-nav);
+  margin: 0 auto;
+  padding: 18px 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.topnav-brand,
+.topnav-links a,
+.topnav-secondary a {
+  position: relative;
+  isolation: isolate;
+  text-decoration: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: -4px;
+    right: -4px;
+    bottom: 1px;
+    height: 9px;
+    border-radius: 3px;
+    background: var(--marker-bg);
+    filter: brightness(var(--marker-bright, 1));
+    transform: rotate(calc(-1deg * var(--motion))) scaleX(var(--marker-scale, 0));
+    transform-origin: left center;
+    transition:
+      transform 0.3s ease,
+      filter 0.3s ease;
+  }
+}
+
+.topnav-brand {
+  --marker-scale: 1;
+  --marker-bright: 1;
+
+  flex-shrink: 0;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: lowercase;
+
+  &::before {
+    bottom: 2px;
+    height: 12px;
+    border-radius: 4px;
+  }
+
+  &:focus-visible {
+    --marker-scale: calc(1 + 0.06 * var(--motion));
+    --marker-bright: 1.35;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      --marker-scale: calc(1 + 0.06 * var(--motion));
+      --marker-bright: 1.35;
+    }
+  }
+}
+
+.topnav-links,
+.topnav-secondary {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: lowercase;
+
+  a {
+    --marker-scale: 0;
+
+    color: var(--text-muted);
+
+    &:focus-visible,
+    &.active {
+      --marker-scale: 1;
+
+      color: var(--text);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        --marker-scale: 1;
+
+        color: var(--text);
+      }
+    }
+  }
+}
+
+.topnav-secondary {
+  flex-shrink: 0;
+
+  .icon-link {
+    padding: 6px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text);
+    }
+  }
+}

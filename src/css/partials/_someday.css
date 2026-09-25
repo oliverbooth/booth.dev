@@ -6,7 +6,6 @@
   text-transform: lowercase;
 }
 
-/* each entry is a tinted, tilted card */
 .someday-entry {
   --tilt: -1deg;
   --tint: var(--row-tint-brand);
@@ -25,7 +24,6 @@
     }
   }
 
-  /* tilt cycles by position; tint follows the entry's hue */
   &:nth-of-type(4n + 2) {
     --tilt: 1deg;
   }

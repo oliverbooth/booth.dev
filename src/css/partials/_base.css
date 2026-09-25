@@ -43,7 +43,6 @@ img {
   display: block;
 }
 
-/* interface headings are lowercase; authored titles and article headings opt out below */
 h1,
 h2,
 h3 {
@@ -110,7 +109,7 @@ p {
 
 .body-copy {
   font-size: 15px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.75;
   margin: 0 0 2rem;
 
@@ -119,14 +118,14 @@ p {
   }
 
   a {
-    color: var(--accent);
+    color: var(--brand);
     font-weight: 500;
     text-decoration: none;
   }
 
   strong,
   .emphasis {
-    color: var(--text-primary);
+    color: var(--text);
     font-weight: 500;
   }
 }

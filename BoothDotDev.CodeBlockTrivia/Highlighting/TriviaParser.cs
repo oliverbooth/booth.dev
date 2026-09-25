@@ -206,7 +206,6 @@ public static class TriviaParser
         var startSpan = span[..dashIndex];
         var endSpan = span[(dashIndex + 1)..];
 
-        // the end side is written "L5", so drop its leading 'L' too
         if (endSpan.IsEmpty || endSpan[0] != 'L')
         {
             error = TriviaParseError.Malformed;

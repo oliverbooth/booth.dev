@@ -1,0 +1,39 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  text-transform: lowercase;
+  white-space: nowrap;
+
+  &:is(button, a) {
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    &:is(button, a):not(.active, .pill--solid, [aria-pressed="true"]):hover {
+      color: var(--text);
+    }
+  }
+
+  &.active,
+  &.pill--solid,
+  &[aria-pressed="true"] {
+    background: var(--brand-text);
+    color: var(--on-brand-text);
+  }
+
+  &[data-hue].active,
+  &[data-hue][aria-pressed="true"] {
+    background: var(--solid);
+    color: var(--on-solid);
+  }
+}
