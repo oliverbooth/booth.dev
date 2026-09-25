@@ -173,7 +173,7 @@ public sealed class DiscordEmbedService
         }
 
         return new DiscordContainer(
-            AccentOf(hue),
+            hue.ToRgb(),
             [
                 new DiscordTextDisplay(text),
                 new DiscordMediaGallery([new DiscordMediaGalleryItem(new DiscordMedia(imageUrl))]),
@@ -231,20 +231,5 @@ public sealed class DiscordEmbedService
         }
 
         return builder.ToString();
-    }
-
-    // Discord takes an sRGB integer, while the site's colours are oklch tokens in _tokens.css
-    private static int AccentOf(PaletteHue hue)
-    {
-        return hue switch
-        {
-            PaletteHue.Grape => 0xAB6AEA,
-            PaletteHue.Pink => 0xE867C3,
-            PaletteHue.Tangerine => 0xFF7041,
-            PaletteHue.Sun => 0xF2CF3B,
-            PaletteHue.Mint => 0x00CD94,
-            PaletteHue.Sky => 0x2EB1EF,
-            _ => 0x6161CD
-        };
     }
 }

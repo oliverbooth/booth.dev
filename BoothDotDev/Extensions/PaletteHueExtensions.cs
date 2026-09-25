@@ -48,6 +48,25 @@ public static class PaletteHueExtensions
     extension(PaletteHue hue)
     {
         /// <summary>
+        ///     Gets the solid colour of the <see cref="PaletteHue" />, for places that can't read the site's CSS tokens, such as
+        ///     generated images and Discord embeds.
+        /// </summary>
+        /// <returns>The colour as a 24-bit sRGB integer.</returns>
+        public int ToRgb()
+        {
+            return hue switch
+            {
+                PaletteHue.Grape => 0xAB6AEA,
+                PaletteHue.Pink => 0xE867C3,
+                PaletteHue.Tangerine => 0xFF7041,
+                PaletteHue.Sun => 0xF2CF3B,
+                PaletteHue.Mint => 0x00CD94,
+                PaletteHue.Sky => 0x2EB1EF,
+                _ => 0x6161CD
+            };
+        }
+
+        /// <summary>
         ///     Gets the <c>data-hue</c> attribute value corresponding to the <see cref="PaletteHue" />.
         /// </summary>
         /// <returns>The attribute value.</returns>
