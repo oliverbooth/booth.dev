@@ -110,6 +110,8 @@ builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
 builder.Services.Configure<CdnOptions>(
     builder.Configuration.GetSection(CdnOptions.SectionName));
+builder.Services.Configure<SiteOptions>(
+    builder.Configuration.GetSection(SiteOptions.SectionName));
 builder.Services.AddSingleton<IFido2>(services =>
 {
     var webAuthnOptions = services.GetRequiredService<IOptions<WebAuthnOptions>>().Value;
@@ -137,6 +139,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+{
+    var siteOptions = context.RequestServices.GetRequiredService<IOptionsMonitor<SiteOptions>>().CurrentValue;
+    if (!string.IsNullOrWhiteSpace(siteOptions.EnvironmentLabel))
+    {
+        context.Response.Headers["X-Robots-Tag"] = "noindex, nofollow";
+    }
+
+    await next(context);
+});
 app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 // every content listing is subscribable by appending .rss to its URL (/blog.rss, /learn/unity.rss, ...) - a single rule, not one

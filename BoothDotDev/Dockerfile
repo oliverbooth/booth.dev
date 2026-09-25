@@ -20,7 +20,9 @@ COPY . .
 WORKDIR "/src/BoothDotDev"
 
 FROM build AS publish
-RUN dotnet publish "BoothDotDev.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG SOURCE_REVISION_ID=
+RUN rev=$(SOURCE_REVISION_ID="$SOURCE_REVISION_ID" sh /src/scripts/source-revision.sh /src) && \
+    dotnet publish "BoothDotDev.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:SourceRevisionId="$rev"
 
 FROM base AS final
 WORKDIR /app
