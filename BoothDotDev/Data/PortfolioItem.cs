@@ -34,6 +34,18 @@ public sealed record PortfolioItem
     public required PortfolioItemKind Kind { get; init; }
 
     /// <summary>
+    ///     Gets or initializes the ID of the creation the item stands for.
+    /// </summary>
+    /// <value>The creation ID, or <see langword="null" /> if the item is a project.</value>
+    public Guid? Id { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the date the creation was published.
+    /// </summary>
+    /// <value>The publication date, or <see langword="null" /> if the item is a project.</value>
+    public DateTimeOffset? PublishedAt { get; init; }
+
+    /// <summary>
     ///     Gets or initializes the title of the item.
     /// </summary>
     /// <value>The title.</value>
@@ -46,10 +58,28 @@ public sealed record PortfolioItem
     public string? Description { get; init; }
 
     /// <summary>
+    ///     Gets or initializes the description of the item as Markdown, for showing it in full.
+    /// </summary>
+    /// <value>The Markdown description, or <see langword="null" /> if the item has none.</value>
+    public string? DescriptionMarkdown { get; init; }
+
+    /// <summary>
     ///     Gets or initializes the URL of the item's image.
     /// </summary>
     /// <value>The image URL, or <see langword="null" /> if the item has no image.</value>
     public string? ImageUrl { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the URL of the item's audio file.
+    /// </summary>
+    /// <value>The audio URL, or <see langword="null" /> if the item is not music.</value>
+    public string? AudioUrl { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the length of the item's audio.
+    /// </summary>
+    /// <value>The duration, or <see langword="null" /> if the item is not music.</value>
+    public TimeSpan? Duration { get; init; }
 
     /// <summary>
     ///     Gets or initializes the path of the page the item links to.

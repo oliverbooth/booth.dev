@@ -59,55 +59,7 @@
         <div class="sticky-grid">
             @foreach (var item in Model.Featured)
             {
-                <a asp-page="@item.PagePath" asp-all-route-data="@item.RouteValues" class="portfolio-card" data-hue="@item.Hue.ToDataHue()">
-                    <div class="portfolio-card-top">
-                        <span class="badge">@item.Label</span>
-                        @if (item.Status is { } status)
-                        {
-                            <span class="portfolio-card-status">
-                                <span class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
-                            </span>
-                        }
-                        else if (item.IsWorkInProgress)
-                        {
-                            <span class="portfolio-card-status">wip</span>
-                        }
-                    </div>
-
-                    @if (item.WaveformBars.Count > 0)
-                    {
-                        <div class="portfolio-card-wave" aria-hidden="true">
-                            @foreach (var height in item.WaveformBars)
-                            {
-                                <span style="height:@(height)px"></span>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="portfolio-card-media">
-                            @if (item.ImageUrl is not null)
-                            {
-                                <img loading="lazy" src="@item.ImageUrl" alt="@item.Title">
-                            }
-                        </div>
-                    }
-
-                    <h3>@item.Title</h3>
-                    @if (!string.IsNullOrWhiteSpace(item.Description))
-                    {
-                        <p class="portfolio-card-desc">@item.Description</p>
-                    }
-                    @if (item.Tags.Count > 0)
-                    {
-                        <div class="portfolio-card-tags">
-                            @foreach (var tag in item.Tags)
-                            {
-                                <span class="tag">@tag</span>
-                            }
-                        </div>
-                    }
-                </a>
+                <partial name="Partials/_PortfolioCard" model="item" />
             }
         </div>
     </section>

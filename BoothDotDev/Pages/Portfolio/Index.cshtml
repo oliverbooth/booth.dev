@@ -1,22 +1,17 @@
 @page "/portfolio"
-@using BoothDotDev.Data
-@using BoothDotDev.Markdown
-@using BoothDotDev.Markdown.Link
-@using BoothDotDev.Services
-@using Microsoft.Extensions.Options
 @model Made
-@inject ProjectService ProjectService
-@inject MarkdownRenderingService MarkdownRenderingService
-@inject IOptions<CdnOptions> CdnOptions
 @{
     ViewData["Title"] = "Stuff I Made";
     ViewData["Page"] = "Made";
 }
 
-<div class="page-wide">
+<div class="page-grid">
 
     <div class="page-header-row">
-        <p class="crumb"><a asp-page="/Index">Home</a> / Stuff I Made</p>
+        <span class="eyebrow">
+            <a asp-page="/Index"><i class="ti ti-arrow-narrow-left"></i> back home</a>
+        </span>
+
         <div class="page-actions">
             <a href="/projects.rss" class="icon-link" aria-label="Subscribe to the projects RSS feed" title="Projects RSS feed"><i
                     class="ti ti-rss"></i></a>
@@ -40,130 +35,12 @@
             <button type="button" class="pill" aria-pressed="false" data-filter="music">Music</button>
         </div>
 
-        <div data-state="code">
-            <div class="collapse-inner">
-                <div class="section-head"><h2>Projects</h2></div>
-                <div class="card-grid">
-                    @foreach (var project in Model.Projects)
-                    {
-                        var statusClass = $"{project.Status switch
-                            {
-                                ProjectStatus.Ongoing => "",
-                                ProjectStatus.Past => "done",
-                                ProjectStatus.Retired => "retired",
-                                ProjectStatus.Hiatus => "hiatus",
-                                _ => throw new InvalidOperationException($"Unknown project status {project.Status}.")
-                            }}";
-
-                        <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card" data-hue="sky">
-                            <div class="card-icon">
-                                <img loading="lazy" src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
-                            </div>
-                            <div class="card-body">
-                                <p class="title">@project.Name</p>
-                                <p class="desc">@Markdig.Markdown.ToPlainText(project.Description)</p>
-
-                                <span class="status @statusClass">
-                                    <span class="dot"></span>
-                                    @switch (project.Status.ToString())
-                                    {
-                                        case "Ongoing":
-                                            <text>in active development</text>
-                                            break;
-
-                                        case "Past":
-                                            <text>completed</text>
-                                            break;
-
-                                        case "Retired":
-                                            <text>retired</text>
-                                            break;
-
-                                        case "Hiatus":
-                                            <text>on hiatus</text>
-                                            break;
-                                    }
-                                </span>
-                            </div>
-                        </a>
-                    }
-                </div>
-            </div>
+        <div class="sticky-grid">
+            @foreach (var item in Model.Items)
+            {
+                <partial name="Partials/_PortfolioCard" model="item" view-data="@(new ViewDataDictionary(ViewData) { ["Interactive"] = true })" />
+            }
         </div>
-
-        @if (Model.MusicItems.Count > 0)
-        {
-            <div data-state="music">
-                <div class="collapse-inner">
-                    <div class="section-head"><h2>Music</h2></div>
-                    <div class="stack-list section-list">
-                        @foreach (var item in Model.MusicItems)
-                        {
-                            var musicContext = new MarkdownRenderContext(item.Id, item.PublishedAt);
-                            var musicResolver = new CdnMediaResolver(musicContext, null!, "content", CdnOptions.Value.BaseUrl);
-                            var musicUrl = musicResolver.ResolveCdnUrl(item.FileName, MediaKind.Audio);
-                            var duration = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
-
-                            <div class="stack-meta track-meta" data-hue="mint">
-                                <div>
-                                    <p class="title">@item.Title@(item.IsWorkInProgress ? " (WIP)" : "")</p>
-                                    @if (!string.IsNullOrWhiteSpace(item.Description))
-                                    {
-                                        <p class="sub">@item.Description</p>
-                                    }
-                                </div>
-                                <audio controls src="@musicUrl" class="track-audio"></audio>
-                                <span class="sub">@duration</span>
-                                @if (User.Identity?.IsAuthenticated == true)
-                                {
-                                    <a asp-page="/Admin/Creations/Music/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit"><i
-                                            class="ti ti-edit"></i></a>
-                                }
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
-        <div data-state="art">
-            <div class="collapse-inner">
-                <div class="section-head"><h2>Art</h2></div>
-                <div class="masonry">
-                    @for (var index = 0; index < Model.ArtworkItems.Count; index++)
-                    {
-                        const MediaKind mediaKind = MediaKind.Image;
-                        var first = index == 0;
-                        var item = Model.ArtworkItems[index];
-                        var context = new MarkdownRenderContext(item.Id, item.PublishedAt);
-                        var resolver = new CdnMediaResolver(context, null!, "content", CdnOptions.Value.BaseUrl);
-                        var cdnUrl = resolver.ResolveCdnUrl(item.FileName, mediaKind);
-
-                        <figure class="masonry-cell @(first ? "tall" : "short")">
-                            @if (User.Identity?.IsAuthenticated == true)
-                            {
-                                <a asp-page="/Admin/Creations/Artwork/Edit" asp-route-id="@item.Id" class="icon-btn"
-                                   aria-label="Edit">
-                                    <i class="ti ti-edit"></i>
-                                </a>
-                            }
-                            <img src="@cdnUrl"
-                                 title="@item.Title"
-                                 alt="@item.FileName"
-                                 data-lightbox
-                                 data-lightbox-src="@cdnUrl" />
-                            <template data-lightbox-caption-template>
-                                @Html.Raw(MarkdownRenderingService.Render(item.Description!, item.Id, item.PublishedAt, "content"))
-                                <p class="lightbox-caption-date">
-                                    Made with @item.MadeWith, @item.PublishedAt.ToString("MMMM yyyy").
-                                </p>
-                            </template>
-                        </figure>
-                    }
-                </div>
-            </div>
-        </div>
-
     </div>
 
 </div>

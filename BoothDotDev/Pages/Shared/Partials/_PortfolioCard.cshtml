@@ -1,0 +1,108 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using BoothDotDev.Services
+@model PortfolioItem
+@inject MarkdownRenderingService MarkdownRenderingService
+
+@{
+    var interactive = ViewData["Interactive"] is true;
+    var isLink = !interactive || Model.Kind == PortfolioItemKind.Project;
+    var isAdmin = interactive && User.Identity?.IsAuthenticated == true;
+
+    async Task CardContent()
+    {
+        <div class="portfolio-card-top">
+            <span class="badge">@Model.Label</span>
+            @if (Model.Status is { } status)
+            {
+                <span class="portfolio-card-status">
+                    <span class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
+                </span>
+            }
+            else if (Model.IsWorkInProgress || (interactive && Model.Duration is not null))
+            {
+                <span class="portfolio-card-status">
+                    @if (Model.IsWorkInProgress)
+                    {
+                        <text>wip</text>
+                    }
+                    @if (interactive && Model.Duration is { } duration)
+                    {
+                        <text>@duration.ToString(duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss")</text>
+                    }
+                </span>
+            }
+            @if (isAdmin && Model.Id is { } id)
+            {
+                <a asp-page="@(Model.Kind == PortfolioItemKind.Music ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit")" asp-route-id="@id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+            }
+        </div>
+
+        @if (Model.WaveformBars.Count > 0)
+        {
+            <div class="portfolio-card-wave" aria-hidden="true">
+                @foreach (var height in Model.WaveformBars)
+                {
+                    <span style="height:@(height)px"></span>
+                }
+            </div>
+            @if (interactive && Model.AudioUrl is not null)
+            {
+                <audio controls preload="none" src="@Model.AudioUrl" class="portfolio-card-audio"></audio>
+            }
+        }
+        else if (interactive && Model.Kind == PortfolioItemKind.Artwork && Model.ImageUrl is not null)
+        {
+            // the caption template is looked up from the enclosing <figure>
+            <figure class="portfolio-card-media">
+                <img loading="lazy" src="@Model.ImageUrl" alt="@Model.Title" title="@Model.Title" data-lightbox data-lightbox-src="@Model.ImageUrl">
+                <template data-lightbox-caption-template>
+                    @if (!string.IsNullOrWhiteSpace(Model.DescriptionMarkdown))
+                    {
+                        @Html.Raw(MarkdownRenderingService.Render(Model.DescriptionMarkdown, Model.Id!.Value, Model.PublishedAt!.Value, "content"))
+                    }
+                    <p class="lightbox-caption-date">
+                        @(Model.Tags.Count > 0 ? $"Made with {string.Join(", ", Model.Tags)}, " : "Made ")@Model.PublishedAt!.Value.ToString("MMMM yyyy").
+                    </p>
+                </template>
+            </figure>
+        }
+        else
+        {
+            <div class="portfolio-card-media">
+                @if (Model.ImageUrl is not null)
+                {
+                    <img loading="lazy" src="@Model.ImageUrl" alt="@Model.Title">
+                }
+            </div>
+        }
+
+        <h3>@Model.Title</h3>
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p class="portfolio-card-desc">@Model.Description</p>
+        }
+        @if (Model.Tags.Count > 0)
+        {
+            <div class="portfolio-card-tags">
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="tag">@tag</span>
+                }
+            </div>
+        }
+    }
+}
+
+@if (isLink)
+{
+    <a asp-page="@Model.PagePath" asp-all-route-data="@Model.RouteValues" class="portfolio-card" data-hue="@Model.Hue.ToDataHue()" data-state="@Model.Label">
+        @{ await CardContent(); }
+    </a>
+}
+else
+{
+    <div class="portfolio-card" data-hue="@Model.Hue.ToDataHue()" data-state="@Model.Label">
+        @{ await CardContent(); }
+    </div>
+}

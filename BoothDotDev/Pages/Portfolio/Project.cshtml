@@ -18,7 +18,10 @@
 <div class="page">
 
     <div class="page-header-row">
-        <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Made">Stuff I Made</a> / @project.Name</p>
+        <span class="eyebrow">
+            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+        </span>
+
         @if (User.Identity?.IsAuthenticated == true)
         {
             <a asp-page="/Admin/Projects/Edit" asp-route-id="@project.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>

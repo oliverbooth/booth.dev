@@ -12,8 +12,16 @@
 .portfolio-card-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
+
+  .portfolio-card-status,
+  .icon-btn {
+    margin-left: auto;
+  }
+
+  .portfolio-card-status + .icon-btn {
+    margin-left: 0;
+  }
 }
 
 .portfolio-card-status {
@@ -25,7 +33,6 @@
   font-size: 11px;
 }
 
-/* an image, or striped paper in the card's hue where there isn't one */
 .portfolio-card-media {
   height: 150px;
   overflow: hidden;
@@ -76,4 +83,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.portfolio-card-media {
+  margin: 0;
+
+  img[data-lightbox] {
+    cursor: pointer;
+  }
+}
+
+.portfolio-card-audio {
+  width: 100%;
+  height: 32px;
+}
+
+.portfolio-card[data-state] {
+  display: flex;
+  transition: transform 0.3s ease;
+
+  &.is-collapsed {
+    display: none;
+  }
 }

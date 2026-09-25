@@ -1,5 +1,4 @@
 using BoothDotDev.Data;
-using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,51 +9,28 @@ namespace BoothDotDev.Pages.Portfolio;
 /// </summary>
 public sealed class Made : PageModel
 {
-    private readonly CreationService _creationService;
-    private readonly ProjectService _projectService;
+    private readonly PortfolioService _portfolioService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Made" /> class.
     /// </summary>
-    /// <param name="projectService">The project service.</param>
-    /// <param name="creationService">The creation service.</param>
-    public Made(ProjectService projectService, CreationService creationService)
+    /// <param name="portfolioService">The portfolio service.</param>
+    public Made(PortfolioService portfolioService)
     {
-        _projectService = projectService;
-        _creationService = creationService;
+        _portfolioService = portfolioService;
     }
 
     /// <summary>
-    ///     Gets the artwork items.
+    ///     Gets everything I've made: creations first, then projects.
     /// </summary>
-    /// <value>The artwork items.</value>
-    public IReadOnlyList<ArtworkItem> ArtworkItems { get; private set; } = [];
-
-    /// <summary>
-    ///     Gets the music items.
-    /// </summary>
-    /// <value>The music items.</value>
-    public IReadOnlyList<MusicItem> MusicItems { get; private set; } = [];
-
-    /// <summary>
-    ///     Gets every project, across every status.
-    /// </summary>
-    /// <value>Every project.</value>
-    public IReadOnlyList<Data.Models.Project> Projects { get; private set; } = [];
+    /// <value>The items.</value>
+    public IReadOnlyList<PortfolioItem> Items { get; private set; } = [];
 
     /// <summary>
     ///     Handles the HTTP GET request.
     /// </summary>
     public void OnGet()
     {
-        Projects =
-        [
-            .._projectService.GetProjects(),
-            .._projectService.GetProjects(ProjectStatus.Past),
-            .._projectService.GetProjects(ProjectStatus.Retired),
-            .._projectService.GetProjects(ProjectStatus.Hiatus)
-        ];
-        ArtworkItems = _creationService.GetArtworkItems();
-        MusicItems = _creationService.GetMusicItems();
+        Items = _portfolioService.GetAll();
     }
 }

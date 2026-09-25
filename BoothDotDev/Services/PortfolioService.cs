@@ -57,6 +57,17 @@ public sealed class PortfolioService
         return [.. creations, .. projects];
     }
 
+    /// <summary>
+    ///     Gets every item: all creations, newest first, then all projects.
+    /// </summary>
+    /// <returns>
+    ///     Every creation, then projects by status (ongoing, past, hiatus, retired), then rank, then name.
+    /// </returns>
+    public IReadOnlyList<PortfolioItem> GetAll()
+    {
+        return [.. GetNewestCreations(int.MaxValue), .. GetProjects()];
+    }
+
     private IEnumerable<PortfolioItem> GetProjects()
     {
         // each status is already ordered by rank then name, so concatenating them in priority order is the whole sort
@@ -83,7 +94,7 @@ public sealed class PortfolioService
             Title = project.Name,
             Description = Markdig.Markdown.ToPlainText(project.Description),
             ImageUrl = _projectService.GetHeroUrl(project),
-            PagePath = "/Projects/Project",
+            PagePath = "/Portfolio/Project",
             RouteValues = new Dictionary<string, string> { ["slug"] = project.Slug },
             Hue = PaletteHue.Sky,
             Label = "code",
@@ -100,8 +111,11 @@ public sealed class PortfolioService
         return new PortfolioItem
         {
             Kind = PortfolioItemKind.Artwork,
+            Id = artwork.Id,
+            PublishedAt = artwork.PublishedAt,
             Title = artwork.Title,
-            Description = artwork.Description,
+            Description = PlainText(artwork.Description),
+            DescriptionMarkdown = artwork.Description,
             ImageUrl = resolver.ResolveCdnUrl(artwork.FileName, MediaKind.Image),
             PagePath = CreationPagePath,
             Hue = PaletteHue.Pink,
@@ -111,13 +125,21 @@ public sealed class PortfolioService
         };
     }
 
-    private static PortfolioItem ToItem(MusicItem music)
+    private PortfolioItem ToItem(MusicItem music)
     {
+        var resolver = new CdnMediaResolver(new MarkdownRenderContext(music.Id, music.PublishedAt), null!, "content",
+            _cdnBaseUrl);
+
         return new PortfolioItem
         {
             Kind = PortfolioItemKind.Music,
+            Id = music.Id,
+            PublishedAt = music.PublishedAt,
             Title = music.Title,
-            Description = music.Description,
+            Description = PlainText(music.Description),
+            DescriptionMarkdown = music.Description,
+            AudioUrl = resolver.ResolveCdnUrl(music.FileName, MediaKind.Audio),
+            Duration = music.Duration,
             PagePath = CreationPagePath,
             Hue = PaletteHue.Mint,
             Label = "music",
@@ -125,6 +147,11 @@ public sealed class PortfolioService
             IsWorkInProgress = music.IsWorkInProgress,
             WaveformBars = SeededBars(music.Id)
         };
+    }
+
+    private static string? PlainText(string? markdown)
+    {
+        return string.IsNullOrWhiteSpace(markdown) ? null : Markdig.Markdown.ToPlainText(markdown).Trim();
     }
 
     private static IReadOnlyList<string> TagsFor(CreativeItem item)
