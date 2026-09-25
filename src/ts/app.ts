@@ -1,6 +1,7 @@
 import {initCommandPalette} from './command-palette.ts';
 import {initCopyButtons, initCryptoCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
+import {initDetailsDeepLinks} from './details-deep-link.ts';
 import {initEasterEggs} from './easter-eggs.ts';
 import {initFiltering} from './filtering.ts';
 import {initGiscusTheme} from './giscus-theme.ts';
@@ -22,6 +23,7 @@ import {initVoiceFontToggle} from './voice-font.ts';
     initCopyButtons();
     initCryptoCopyButtons();
     initContentFeatures();
+    initDetailsDeepLinks();
     initEasterEggs();
     initFiltering();
     initGiscusTheme();

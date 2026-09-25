@@ -53,14 +53,19 @@
 
     @if (hasSolution)
     {
-        <div class="prose challenge-solution">
-            <details class="callout" data-callout="success">
-                <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
-                <div class="callout-body">
-                    @Html.Raw(MarkdownRenderingService.Render(challenge.Solution!, challenge.Id, challenge.PublishedAt, "challenge"))
-                </div>
-            </details>
-        </div>
+        <details class="solution-fold" id="solution">
+            <summary class="solution-fold-toggle">
+                <span class="solution-fold-label">
+                    <i class="ti ti-lock-open" aria-hidden="true"></i>
+                    <span class="solution-fold-closed">reveal solution</span>
+                    <span class="solution-fold-open">hide solution</span>
+                </span>
+                <i class="ti ti-chevron-down solution-fold-chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="prose solution-fold-body">
+                @Html.Raw(MarkdownRenderingService.Render(challenge.Solution!, challenge.Id, challenge.PublishedAt, "challenge"))
+            </div>
+        </details>
     }
     else
     {
