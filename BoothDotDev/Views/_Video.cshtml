@@ -29,11 +29,11 @@
         <template data-lightbox-caption-template>
             @if (hasTitle)
             {
-                @Html.Raw(Markdown.ToHtml(Model.Title!, MarkdownPipeline))
+                <div class="lightbox-caption-text">@Html.Raw(Markdown.ToHtml(Model.Title!, MarkdownPipeline))</div>
             }
             @if (hasAlt)
             {
-                <p class="lightbox-alt-text"><strong>Alt text:</strong> @Model.Alt</p>
+                <p class="lightbox-alt-text"><span class="lightbox-alt-label">alt</span> @Model.Alt</p>
             }
         </template>
     }
