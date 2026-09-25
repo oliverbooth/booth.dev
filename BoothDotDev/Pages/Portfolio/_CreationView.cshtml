@@ -56,7 +56,7 @@
         <div class="project-frame">
             @if (cover is not null)
             {
-                <img src="@cover.Url" alt="@(cover.Alt ?? creation.Title)">
+                <img src="@cover.Url" alt="@(cover.Alt ?? creation.Title)" data-lightbox data-lightbox-src="@cover.Url">
             }
             else
             {
