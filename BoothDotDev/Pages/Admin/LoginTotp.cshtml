@@ -1,5 +1,8 @@
 @page "/admin/login/2fa"
 @model LoginTotp
+@using BoothDotDev.Data
+@using Microsoft.Extensions.Options
+@inject IOptionsMonitor<SiteOptions> Site
 @{
     Layout = null;
     ViewData["Title"] = "Sign in";
@@ -25,13 +28,17 @@
             document.documentElement.dataset.theme = theme;
         })();
     </script>
-    <title>Sign in - @Strings.MyName Admin</title>
+    <title>@(Site.CurrentValue.EnvironmentLabel is { Length: > 0 } environmentLabel ? $"[{environmentLabel}] " : "")Sign in - @Strings.MyName Admin</title>
     <link rel="icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     <link rel="stylesheet" asp-vite="css/style.css" />
     <link rel="stylesheet" asp-vite="css/admin.css" />
 </head>
 <body>
+@if (!string.IsNullOrWhiteSpace(Site.CurrentValue.EnvironmentLabel))
+{
+    <div class="env-bar" aria-hidden="true"></div>
+}
 
 <div class="login-shell">
     <div class="login-stack">

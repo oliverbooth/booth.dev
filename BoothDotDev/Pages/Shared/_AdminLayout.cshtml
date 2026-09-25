@@ -6,6 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#6161cd">
+    @if (EnvironmentLabel is not null)
+    {
+        <meta name="robots" content="noindex, nofollow">
+    }
     <script>
         // runs before first paint to avoid a flash of the wrong theme; keep in step with resolveTheme() in theme.ts
         (() => {
@@ -32,12 +36,20 @@
 </head>
 
 <body>
+@if (EnvironmentLabel is not null)
+{
+    <div class="env-bar" aria-hidden="true"></div>
+}
 <div class="admin-shell">
 
     <nav class="admin-rail">
         <div class="admin-rail-brand">
             <a asp-page="/Admin/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
             <span class="admin-chip">admin</span>
+            @if (EnvironmentLabel is { } label)
+            {
+                <span class="env-badge">@label</span>
+            }
         </div>
 
         <div class="admin-nav-group">
