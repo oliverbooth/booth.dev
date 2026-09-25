@@ -635,6 +635,7 @@ public sealed class ProjectService
         project.Description = request.Description;
         project.Details = request.Details;
         project.Languages = request.Languages;
+        project.Tags = request.Tags;
         project.Rank = request.Rank;
         project.Status = request.Status;
         project.Type = request.Type;

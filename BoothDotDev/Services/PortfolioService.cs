@@ -352,7 +352,7 @@ public sealed class PortfolioService
             Hue = PaletteHue.Sky,
             Label = project.Type.Label,
             FilterKey = CodeFilterKey,
-            Tags = project.Languages,
+            Tags = project.Tags,
             Status = project.Status
         };
     }
@@ -375,7 +375,7 @@ public sealed class PortfolioService
             Hue = hue,
             Label = label,
             FilterKey = label,
-            Tags = creation.Tools,
+            Tags = creation.Tags,
             IsWorkInProgress = creation.IsWorkInProgress,
             WaveformBars = creation.IsMusic ? SeededBars(creation.Id) : []
         };

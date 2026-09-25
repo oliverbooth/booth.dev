@@ -23,6 +23,7 @@ internal sealed class CreationConfiguration : IEntityTypeConfiguration<Creation>
         builder.Property(e => e.IsWorkInProgress).IsRequired();
         builder.Property(e => e.MadeWith).IsRequired(false).HasMaxLength(255);
         builder.Property(e => e.Tools).IsRequired();
+        builder.Property(e => e.Tags).IsRequired();
         builder.Property(e => e.Resolution).IsRequired(false).HasConversion<SizeToResolutionConverter>();
         builder.Property(e => e.Duration).IsRequired(false);
         builder.Property(e => e.TrashedAt).IsRequired(false);

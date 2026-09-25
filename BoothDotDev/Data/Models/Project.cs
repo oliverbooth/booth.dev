@@ -44,6 +44,12 @@ public sealed class Project : IEquatable<Project>
     public List<string> Languages { get; set; } = [];
 
     /// <summary>
+    ///     Gets or sets the tags of this project.
+    /// </summary>
+    /// <value>The tags, or an empty list if it has none.</value>
+    public List<string> Tags { get; set; } = [];
+
+    /// <summary>
     ///     Gets or sets the name of the project.
     /// </summary>
     /// <value>The name of the project.</value>

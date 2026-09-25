@@ -248,5 +248,6 @@ public sealed class CreationService
         item.Visibility = request.Visibility;
         item.IsWorkInProgress = request.IsWorkInProgress;
         item.Tools = request.Tools;
+        item.Tags = request.Tags;
     }
 }

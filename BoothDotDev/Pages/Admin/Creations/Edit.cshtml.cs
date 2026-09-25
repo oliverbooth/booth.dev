@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Extensions;
 using BoothDotDev.Pages.Admin.Portfolio;
 using BoothDotDev.Pages.Shared.Partials;
 using BoothDotDev.Services;
@@ -119,7 +120,8 @@ public sealed class Edit : PageModel
             Input.PublishedAt,
             Input.Visibility,
             Input.IsWorkInProgress,
-            SplitTools(Input.Tools));
+            Input.Tools.SplitList(),
+            Input.Tags.SplitList());
 
         var result = id is null
             ? _creationService.CreateCreation(request)
@@ -167,7 +169,8 @@ public sealed class Edit : PageModel
             PublishedAt = item.PublishedAt.ToLocalTime(),
             Visibility = item.Visibility,
             IsWorkInProgress = item.IsWorkInProgress,
-            Tools = string.Join(", ", item.Tools)
+            Tools = string.Join(", ", item.Tools),
+            Tags = string.Join(", ", item.Tags)
         };
 
         Media = new MediaManager
@@ -185,15 +188,6 @@ public sealed class Edit : PageModel
             ReturnUrl = Url.Page("/Admin/Creations/Edit", new { id = item.Id })!,
             Errors = TempData[LinksHandler.LinkErrorsKey] as string
         };
-    }
-
-    private static List<string> SplitTools(string tools)
-    {
-        return
-        [
-            .. tools.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-        ];
     }
 
     /// <summary>
@@ -267,5 +261,12 @@ public sealed class Edit : PageModel
         /// <value>The tools.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Tools { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the tags, comma-separated.
+        /// </summary>
+        /// <value>The tags.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Tags { get; set; } = string.Empty;
     }
 }

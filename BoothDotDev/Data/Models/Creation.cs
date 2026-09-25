@@ -87,6 +87,12 @@ public sealed class Creation
     public List<string> Tools { get; set; } = [];
 
     /// <summary>
+    ///     Gets or sets the tags of this creation.
+    /// </summary>
+    /// <value>The tags, or an empty list if it has none.</value>
+    public List<string> Tags { get; set; } = [];
+
+    /// <summary>
     ///     Gets or sets a string that describes how this creation was made.
     /// </summary>
     /// <value>A string that describes how this creation was made.</value>

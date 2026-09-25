@@ -11,6 +11,7 @@ namespace BoothDotDev.Data;
 /// <param name="Visibility">The visibility of the creation.</param>
 /// <param name="IsWorkInProgress">A value indicating whether the creation is a work in progress.</param>
 /// <param name="Tools">The tools the creation was made with, in the order they were used.</param>
+/// <param name="Tags">The tags of the creation.</param>
 public sealed record CreationSaveRequest(
     CreationKind Kind,
     string Title,
@@ -19,4 +20,5 @@ public sealed record CreationSaveRequest(
     DateTimeOffset PublishedAt,
     Visibility Visibility,
     bool IsWorkInProgress,
-    List<string> Tools);
+    List<string> Tools,
+    List<string> Tags);

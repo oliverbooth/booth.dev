@@ -39,12 +39,12 @@
         </div>
     }
 
-    @if (creation.Tools.Count > 0)
+    @if (creation.Tags.Count > 0)
     {
         <div class="tag-row">
-            @foreach (var tool in creation.Tools)
+            @foreach (var tag in creation.Tags)
             {
-                <span class="tag">@tool</span>
+                <span class="tag">@tag</span>
             }
         </div>
     }

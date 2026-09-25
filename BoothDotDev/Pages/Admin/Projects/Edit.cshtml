@@ -84,9 +84,15 @@
         </div>
 
         <div class="field">
-            <label for="languages">Languages</label>
+            <label for="languages">Stack</label>
             <input type="text" id="languages" asp-for="Input.Languages" placeholder="e.g. csharp, python, various" />
             <p class="hint">Comma-separated. Matches the icon filenames under <code>img/lang/</code>.</p>
+        </div>
+
+        <div class="field">
+            <label for="tags">Tags</label>
+            <input type="text" id="tags" asp-for="Input.Tags" placeholder="e.g. discord, moderation" />
+            <p class="hint">Comma-separated. Optional.</p>
         </div>
 
         <div class="field">

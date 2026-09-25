@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Extensions;
 using BoothDotDev.Pages.Admin.Portfolio;
 using BoothDotDev.Pages.Shared.Partials;
 using BoothDotDev.Services;
@@ -166,6 +167,7 @@ public sealed class Edit : PageModel
             Description = project.Description,
             Details = project.Details,
             Languages = string.Join(", ", project.Languages),
+            Tags = string.Join(", ", project.Tags),
             Rank = project.Rank,
             Status = project.Status,
             Type = project.Type,
@@ -206,6 +208,7 @@ public sealed class Edit : PageModel
             Input.Description,
             Input.Details,
             languages,
+            Input.Tags.SplitList(),
             Input.Rank,
             Input.Status,
             Input.Type,
@@ -273,6 +276,13 @@ public sealed class Edit : PageModel
         /// <value>The languages.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Languages { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the tags, comma-separated.
+        /// </summary>
+        /// <value>The tags.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Tags { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the rank of the project.

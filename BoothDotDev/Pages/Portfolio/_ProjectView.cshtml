@@ -52,16 +52,12 @@
         @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
     </div>
 
-    @if (languages.Count > 0)
+    @if (project.Tags.Count > 0)
     {
         <div class="tag-row">
-            @foreach (var language in languages)
+            @foreach (var tag in project.Tags)
             {
-                <span class="tag">
-                    <img src="~/img/lang/@(language).svg" asp-append-version="true"
-                         alt="@ProgrammingLanguage.GetNameFromShorthand(language)">
-                    @ProgrammingLanguage.GetNameFromShorthand(language)
-                </span>
+                <span class="tag">@tag</span>
             }
         </div>
     }

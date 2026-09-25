@@ -30,6 +30,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.Property(e => e.Tagline);
         builder.Property(e => e.Type).IsRequired().HasDefaultValue(ProjectType.App).ValueGeneratedNever();
         builder.Property(e => e.Languages);
+        builder.Property(e => e.Tags).IsRequired();
 
         builder.HasIndex(e => e.Slug).IsUnique();
     }

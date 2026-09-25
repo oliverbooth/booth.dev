@@ -9,6 +9,7 @@ namespace BoothDotDev.Data;
 /// <param name="Description">The description of the project.</param>
 /// <param name="Details">The details of the project.</param>
 /// <param name="Languages">The set of languages used for this project.</param>
+/// <param name="Tags">The tags of the project.</param>
 /// <param name="Rank">The rank of the project.</param>
 /// <param name="Status">The status of the project.</param>
 /// <param name="Type">The type of the project.</param>
@@ -20,6 +21,7 @@ public sealed record ProjectSaveRequest(
     string Description,
     string Details,
     List<string> Languages,
+    List<string> Tags,
     int Rank,
     ProjectStatus Status,
     ProjectType Type,
