@@ -89,7 +89,6 @@ builder.Services.AddSingleton<SomedayEntryService>();
 builder.Services.AddSingleton<StatusService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
-builder.Services.AddSingleton<BlueskyService>();
 builder.Services.AddSingleton<BookLookupService>();
 builder.Services.AddSingleton<PhoneStatusService>();
 builder.Services.AddSingleton<WatchlistService>();
@@ -98,8 +97,6 @@ builder.Services.AddSingleton<TraktAuthService>();
 builder.Services.AddSingleton<TraktSyncService>();
 builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
-builder.Services.Configure<BlueskyOptions>(
-    builder.Configuration.GetSection(BlueskyOptions.SectionName));
 builder.Services.Configure<PhoneStatusOptions>(
     builder.Configuration.GetSection(PhoneStatusOptions.SectionName));
 builder.Services.Configure<TmdbOptions>(
