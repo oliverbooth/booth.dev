@@ -10,18 +10,10 @@
 @inject TutorialService TutorialService
 
 @{
-    var parents = new Stack<TutorialFolder>();
-    var parent = Model?.Parent;
-    while (parent is not null)
+    var parent = Model?.Parent is { } parentId ? TutorialService.GetFolder(parentId) : null;
+    if (parent is { IsFailed: true })
     {
-        var folderResult = TutorialService.GetFolder(parent.Value);
-        if (folderResult.IsFailed)
-        {
-            throw new InvalidOperationException($"Folder chain references missing parent {parent.Value}.");
-        }
-
-        parents.Push(folderResult.Value);
-        parent = folderResult.Value.Parent;
+        throw new InvalidOperationException($"Folder {Model!.Id} references missing parent {Model.Parent}.");
     }
 
     var folders = TutorialService.GetFolders(Model, Visibility.Published);
@@ -41,10 +33,10 @@
                     <i class="ti ti-arrow-narrow-left"></i> back home
                 </a>
             }
-            else if (parents.Count > 0)
+            else if (parent is not null)
             {
-                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(parents.Peek())">
-                    <i class="ti ti-arrow-narrow-left"></i> back to @parents.Peek().Title
+                <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(parent.Value)">
+                    <i class="ti ti-arrow-narrow-left"></i> back to @parent.Value.Title
                 </a>
             }
             else
