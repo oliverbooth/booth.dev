@@ -17,9 +17,11 @@
 
 <div class="page" data-hue="@creation.Kind.ToHue().ToDataHue()">
 
-    <span class="eyebrow">
-        <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
-    </span>
+    <div>
+        <span class="eyebrow">
+            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+        </span>
+    </div>
 
     <span class="badge">@creation.Kind.ToLabel()</span>
     @if (creation.IsWorkInProgress)

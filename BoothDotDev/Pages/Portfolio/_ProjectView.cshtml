@@ -38,9 +38,11 @@
 
 <div class="page">
 
-    <span class="eyebrow">
-        <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
-    </span>
+    <div>
+        <span class="eyebrow">
+            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+        </span>
+    </div>
 
     <span class="status @statusClass"><span class="dot"></span>@statusText</span>
     <h1 class="project-title">@project.Name</h1>
