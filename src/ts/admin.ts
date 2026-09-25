@@ -1,5 +1,4 @@
 import {initTheme} from './theme.ts';
-import {initFavicon} from './favicon.ts';
 import {initCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
 import {initPostAuthoring} from './admin/post-authoring.ts';
@@ -23,7 +22,6 @@ import {initStateGroups} from './admin/state-groups.ts';
 (() => {
     initTheme();
     initAltTextPopovers();
-    initFavicon();
     initCopyButtons();
     initContentFeatures();
     initPostAuthoring();

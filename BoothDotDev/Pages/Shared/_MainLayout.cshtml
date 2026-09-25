@@ -48,9 +48,7 @@
     {
         <script id="discord:component-embed" type="application/json">@Html.Raw(DiscordEmbedService.Build(ViewData["Post"], SiteBaseUrl, CurrentUrl, ViewData["Title"] as string ?? Strings.MyName, Strings.Tagline))</script>
     }
-    <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true">
-    <link rel="shortcut icon" href="~/img/favicon-dark.png" asp-append-version="true" media="(prefers-color-scheme: light)">
-    <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraph.min.css">
