@@ -1,37 +1,5 @@
 .manim-scene {
-  margin: 1.5rem 0;
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.manim-scene-tabs {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  background: var(--surface-1);
-  border-bottom: 0.5px solid var(--border);
-  padding: 4px;
-}
-
-.manim-tab {
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-.manim-tab:hover {
-  color: var(--text-primary);
-}
-
-.manim-tab.active {
-  color: var(--text-primary);
-  background: var(--accent-tint);
+  margin: 1.75rem 0;
 }
 
 .manim-scene-panel:not([hidden]) {
@@ -39,27 +7,11 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  aspect-ratio: 7 / 4;
-  background: black;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  background: var(--scene-bg);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
-}
-
-.manim-fullscreen-toggle:not([hidden]) {
-  display: inline-flex;
-  align-items: center;
-  margin-left: auto;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.manim-fullscreen-toggle:hover {
-  color: var(--text-primary);
-  background: var(--accent-tint);
 }
 
 .manim-scene:fullscreen {
@@ -67,19 +19,32 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background: black;
+  background: var(--scene-bg);
 }
 
 .manim-scene:fullscreen .manim-scene-panel:not([hidden]) {
   flex: 1;
   width: auto;
   aspect-ratio: unset;
+  border-radius: 0;
 }
 
-.manim-source-panel pre {
-  margin: 0;
-  border: none;
-  border-radius: 0;
+/* the code view keeps the same footprint as the scene, so switching tabs doesn't resize the card */
+.manim-source-panel:not([hidden]) {
+  display: flex;
+  aspect-ratio: 16 / 9;
+
+  .code-toolbar {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+
+    > pre {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+    }
+  }
 }
 
 .manim-draggable-value {
@@ -94,13 +59,11 @@
 
 .manim-draggable-value:hover,
 .manim-draggable-value.dragging {
-  /*background: rgba(255, 255, 255, 0.08);*/
-  /*text-shadow: 2px 2px 2px currentColor;*/
-  text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor, 2px 2px 2px rgba(206,89,55,0);
+  text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor, 2px 2px 2px rgba(206, 89, 55, 0);
 }
 
 .manim-draggable-value:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
 
@@ -144,7 +107,7 @@
 }
 
 .manim-toggle.on .manim-toggle-track {
-  background: var(--accent);
+  background: var(--brand);
 }
 
 .manim-toggle.on:hover .manim-toggle-track {
@@ -167,7 +130,7 @@
 }
 
 .manim-toggle:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
   border-radius: 999px;
 }

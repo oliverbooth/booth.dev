@@ -1,0 +1,83 @@
+@page "/admin/posts/categories/edit/{id:guid?}"
+@using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
+@model Edit
+
+@{
+    Layout = "_AdminLayout";
+    var huePicker = new HuePicker
+    {
+        Name = "Input.Color",
+        Selected = Model.Input.Color,
+        AutoDescription = "derived from the category's ID"
+    };
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Posts/Categories/Index">Categories</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New category" : Model.Input.Name)</h1></div>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save category</button>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="name">Name</label>
+                <input type="text" id="name" asp-for="Input.Name" />
+            </div>
+            <div class="field">
+                <label for="slug">Slug</label>
+                <input type="text" id="slug" asp-for="Input.Slug" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="parent">Parent category</label>
+            <select id="parent" asp-for="Input.ParentCategoryId">
+                <option value="">- top level -</option>
+                @foreach (var category in Model.ParentOptions)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Colour</label>
+            <partial name="Partials/_HuePicker" model="huePicker" />
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.FontStyle">Font style</label>
+            <select asp-for="Input.FontStyle">
+                <option value="@FontStyle.SansSerif">Sans-serif</option>
+                <option value="@FontStyle.Serif">Serif (handwritten voice)</option>
+            </select>
+            <p class="hint">How posts in this category are set. Readers can still switch a serif post back to sans-serif.</p>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save category</button>
+            @if (!Model.CreatingNew)
+            {
+                <button type="submit" form="delete-category" class="btn icon-btn danger" aria-label="Delete category">
+                    <i class="ti ti-trash"></i> Delete category
+                </button>
+            }
+        </div>
+
+    </form>
+
+    @if (!Model.CreatingNew)
+    {
+        <form id="delete-category" method="post" asp-page-handler="Delete"
+              data-confirm="Delete this category? This can't be undone."></form>
+    }
+
+</div>

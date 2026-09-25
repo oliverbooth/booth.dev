@@ -1,0 +1,41 @@
+.article-card {
+  gap: 10px;
+  box-shadow: var(--shadow-card-soft);
+
+  h3 {
+    color: var(--text);
+    font-size: 17px;
+  }
+}
+
+.article-card-part {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.article-card-time {
+  color: var(--text-faint);
+  font-size: 12.5px;
+}
+
+.doc-icon {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 48px;
+  border-radius: 5px;
+  background: var(--doc-icon);
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-style: solid;
+    border-width: 0 14px 14px 0;
+    border-color: transparent var(--tint) transparent transparent;
+  }
+}

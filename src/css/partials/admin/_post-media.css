@@ -1,8 +1,8 @@
 .admin-media {
   margin-top: 1rem;
   padding-top: 1.5rem;
-  border-top: 0.5px solid var(--border);
-  border-radius: 10px;
+  border-top: 1px solid color-mix(in oklch, var(--text) 8%, transparent);
+  border-radius: var(--radius-md);
   transition: background-color 0.12s ease, outline-color 0.12s ease;
   outline: 2px dashed transparent;
   outline-offset: 6px;
@@ -14,13 +14,13 @@
 
   p.hint {
     font-size: 12px;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin: 1em 0;
   }
 
   &.admin-media--dragover {
-    background: var(--accent-tint);
-    outline-color: var(--accent);
+    background: color-mix(in oklch, var(--brand) 8%, transparent);
+    outline-color: var(--brand-text);
   }
 }
 
@@ -28,42 +28,36 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .media-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 0.5px solid var(--border);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background: var(--surface-1);
-  }
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
 
   &.media-item--pending {
-    color: var(--text-muted);
+    color: var(--text-faint);
   }
 
   &.media-item--missing .media-item-icon {
-    color: var(--warning-text);
-    background: var(--warning-bg);
+    color: var(--coral-text);
+    background: color-mix(in oklch, var(--accent-coral) 18%, transparent);
   }
 }
 
 .media-item-icon {
   width: 32px;
   height: 32px;
-  border-radius: 7px;
-  background: var(--surface-1);
-  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--tag-bg);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,8 +71,8 @@
 
   .name {
     font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-weight: 700;
+    color: var(--text);
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -87,14 +81,19 @@
 
   .meta {
     font-size: 11px;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin: 2px 0 0;
   }
 }
 
+/* these row-actions hold icon-only buttons (view/rename/delete), unlike the text-link ones elsewhere in admin */
+.media-item .row-actions i {
+  font-size: 14px;
+}
+
 .media-item-progress {
   height: 3px;
-  background: var(--border);
+  background: var(--tag-bg);
   border-radius: 2px;
   margin-top: 6px;
   overflow: hidden;
@@ -103,11 +102,11 @@
     display: block;
     height: 100%;
     width: 0;
-    background: var(--accent);
+    background: var(--brand-text);
     transition: width 0.15s ease;
   }
 }
 
 #media-error {
-  color: var(--text-danger, #e24b4a);
+  color: var(--dont-text);
 }

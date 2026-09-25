@@ -19,7 +19,6 @@ public sealed class TimestampInlineParser : InlineParser
     /// <inheritdoc />
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
-        // Previous char must be a space
         if (!slice.PeekCharExtra(-1).IsWhiteSpaceOrZero())
         {
             return false;
@@ -84,7 +83,6 @@ public sealed class TimestampInlineParser : InlineParser
         }
         else
         {
-            // use specified format
             format = timestamp[^2];
             timestamp = timestamp[..^3];
         }

@@ -79,10 +79,7 @@ public sealed class Edit : PageModel
         Id = watchable.Id;
         Input = new EditModel
         {
-            Title = watchable.Title,
-            Kind = watchable.Kind,
-            State = watchable.State,
-            Trakt = watchable.TraktId?.ToString()
+            Title = watchable.Title, Kind = watchable.Kind, State = watchable.State, Trakt = watchable.TraktId?.ToString()
         };
 
         if (watchable.TraktId is { } traktId)

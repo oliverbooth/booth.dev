@@ -12,11 +12,10 @@ namespace BoothDotDev.Services;
 public sealed class RssFeedService
 {
     private readonly BlogPostService _blogPostService;
-    private readonly CreationService _creationService;
     private readonly DevChallengeService _devChallengeService;
     private readonly MarkdownRenderingService _markdownRenderingService;
     private readonly NoteService _noteService;
-    private readonly ProjectService _projectService;
+    private readonly PortfolioService _portfolioService;
     private readonly TutorialService _tutorialService;
 
     /// <summary>
@@ -25,24 +24,21 @@ public sealed class RssFeedService
     /// <param name="blogPostService">The <see cref="BlogPostService" />.</param>
     /// <param name="noteService">The <see cref="NoteService" />.</param>
     /// <param name="tutorialService">The <see cref="TutorialService" />.</param>
-    /// <param name="creationService">The <see cref="CreationService" />.</param>
-    /// <param name="projectService">The <see cref="ProjectService" />.</param>
+    /// <param name="portfolioService">The <see cref="PortfolioService" />.</param>
     /// <param name="devChallengeService">The <see cref="DevChallengeService" />.</param>
     /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" />.</param>
     public RssFeedService(
         BlogPostService blogPostService,
         NoteService noteService,
         TutorialService tutorialService,
-        CreationService creationService,
-        ProjectService projectService,
+        PortfolioService portfolioService,
         DevChallengeService devChallengeService,
         MarkdownRenderingService markdownRenderingService)
     {
         _blogPostService = blogPostService;
         _noteService = noteService;
         _tutorialService = tutorialService;
-        _creationService = creationService;
-        _projectService = projectService;
+        _portfolioService = portfolioService;
         _devChallengeService = devChallengeService;
         _markdownRenderingService = markdownRenderingService;
     }
@@ -154,63 +150,29 @@ public sealed class RssFeedService
     }
 
     /// <summary>
-    ///     Builds the RSS feed for creations (artwork and music).
+    ///     Builds the RSS feed for the portfolio: projects and creations together, in the order the portfolio lists them.
     /// </summary>
     /// <param name="baseUrl">The site's own base URL, used to build absolute links.</param>
     /// <returns>The serialized RSS feed.</returns>
-    public string BuildCreationsFeed(Uri baseUrl)
+    public string BuildPortfolioFeed(Uri baseUrl)
     {
-        // Artwork/music items have no page of their own - every item links to the shared /create listing, but the
-        // guid stays unique per item so subscribers can still tell entries apart.
-        var pageUrl = new Uri(baseUrl, "/create").ToString();
         var items = new List<RssItem>();
 
-        foreach (var item in _creationService.GetArtworkItems().Cast<CreativeItem>()
-                     .Concat(_creationService.GetMusicItems()))
+        foreach (var item in _portfolioService.GetFeedItems())
         {
             items.Add(new RssItem
             {
                 Title = item.Title,
-                Link = pageUrl,
-                PubDate = item.PublishedAt.ToString("R"),
-                Guid = new RssItemGuid { Value = $"{pageUrl}#{item.Id:N}", IsPermaLink = false },
+                Link = new Uri(baseUrl, $"/portfolio/{item.Slug}").ToString(),
+                PubDate = item.Date.ToString("R"),
+                Guid = GuidOf(baseUrl, item),
                 Description = string.IsNullOrWhiteSpace(item.Description)
                     ? string.Empty
                     : _markdownRenderingService.RenderHtmlPreview(item.Description)
             });
         }
 
-        return BuildGenericFeed(baseUrl, "/create", $"Creations by {Strings.MyName}", items);
-    }
-
-    /// <summary>
-    ///     Builds the RSS feed for projects.
-    /// </summary>
-    /// <param name="baseUrl">The site's own base URL, used to build absolute links.</param>
-    /// <returns>The serialized RSS feed.</returns>
-    public string BuildProjectsFeed(Uri baseUrl)
-    {
-        var items = new List<RssItem>();
-
-        var projects = _projectService.GetProjects()
-            .Concat(_projectService.GetProjects(ProjectStatus.Past))
-            .Concat(_projectService.GetProjects(ProjectStatus.Retired))
-            .Concat(_projectService.GetProjects(ProjectStatus.Hiatus));
-
-        foreach (var project in projects)
-        {
-            var url = new Uri(baseUrl, $"/project/{project.Slug}").ToString();
-            items.Add(new RssItem
-            {
-                Title = project.Name,
-                Link = url,
-                PubDate = project.CreatedAt.ToString("R"),
-                Guid = url,
-                Description = _markdownRenderingService.RenderHtmlPreview(project.Description)
-            });
-        }
-
-        return BuildGenericFeed(baseUrl, "/projects", $"Projects by {Strings.MyName}", items);
+        return BuildGenericFeed(baseUrl, "/portfolio", $"Portfolio by {Strings.MyName}", items);
     }
 
     /// <summary>
@@ -238,6 +200,14 @@ public sealed class RssFeedService
         }
 
         return BuildGenericFeed(baseUrl, "/challenges", $"Dev Challenges by {Strings.MyName}", items);
+    }
+
+    // each item keeps the guid it had in the separate projects and creations feeds, so readers don't repost every entry
+    private static RssItemGuid GuidOf(Uri baseUrl, PortfolioFeedItem item)
+    {
+        return item.IsProject
+            ? new Uri(baseUrl, $"/project/{item.Slug}").ToString()
+            : new RssItemGuid { Value = $"{new Uri(baseUrl, "/create")}#{item.Id:N}", IsPermaLink = false };
     }
 
     private static string BuildGenericFeed(Uri baseUrl, string path, string title, IReadOnlyList<RssItem> items)

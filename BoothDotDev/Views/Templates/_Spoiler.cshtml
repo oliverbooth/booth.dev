@@ -3,7 +3,7 @@
 @{
     static bool TryGetFirst(IReadOnlyDictionary<string, string> parameters, out string value, params string[] keys)
     {
-        foreach (string key in keys)
+        foreach (var key in keys)
         {
             if (parameters.TryGetValue(key, out var candidate) && !string.IsNullOrWhiteSpace(candidate))
             {

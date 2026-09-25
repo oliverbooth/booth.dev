@@ -5,12 +5,6 @@ namespace BoothDotDev.Data.Models;
 /// </summary>
 public sealed class NoteDraft : IEquatable<NoteDraft>, IMarkdownBody
 {
-    /// <inheritdoc />
-    string IMarkdownBody.Body
-    {
-        get => Content;
-    }
-
     /// <summary>
     ///     Gets or sets the content of the note, as of this draft.
     /// </summary>
@@ -33,7 +27,7 @@ public sealed class NoteDraft : IEquatable<NoteDraft>, IMarkdownBody
     ///     Gets the ID of this draft.
     /// </summary>
     /// <value>The ID of this draft.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets the ID of the note this draft belongs to.
@@ -52,6 +46,36 @@ public sealed class NoteDraft : IEquatable<NoteDraft>, IMarkdownBody
     /// </summary>
     /// <value>The visibility of the note.</value>
     public Visibility Visibility { get; set; }
+
+    /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="NoteDraft" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(NoteDraft? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <inheritdoc />
+    string IMarkdownBody.Body
+    {
+        get => Content;
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="NoteDraft" /> are equal.
@@ -82,30 +106,6 @@ public sealed class NoteDraft : IEquatable<NoteDraft>, IMarkdownBody
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="NoteDraft" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(NoteDraft? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -115,7 +115,7 @@ public sealed class NoteDraft : IEquatable<NoteDraft>, IMarkdownBody
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is NoteDraft other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is NoteDraft other && Equals(other));
     }
 
     /// <summary>

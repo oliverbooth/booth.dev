@@ -1,0 +1,142 @@
+@page "/admin/creations/edit/{id:guid?}"
+@using BoothDotDev.Data
+@model Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Creations/Index">Creations</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This item is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the public site. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
+        <div class="admin-header">
+            <div><h1>@(Model.CreatingNew ? "New creation" : Model.Input.Title)</h1></div>
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save changes</button>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title" />
+        </div>
+
+        <div class="field">
+            <label for="slug">Slug</label>
+            <input type="text" id="slug" asp-for="Input.Slug" placeholder="made from the title if left blank" />
+            <p class="hint">The address on the portfolio, e.g. <code>/portfolio/lighthouse</code>. It can't match a project's slug.</p>
+        </div>
+
+        <div class="field">
+            <label for="description">Description (markdown supported)</label>
+            <textarea id="description" rows="5" asp-for="Input.Description" data-markdown></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Input.Kind">Kind</label>
+                <select asp-for="Input.Kind">
+                    <option value="@CreationKind.Drawing">Drawing</option>
+                    <option value="@CreationKind.ThreeD">3D</option>
+                    <option value="@CreationKind.Music">Music</option>
+                </select>
+            </div>
+            <div class="field">
+                <label asp-for="Input.Visibility">Visibility</label>
+                <select asp-for="Input.Visibility">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="date">Published date</label>
+                <div class="input-with-button">
+                    <input type="datetime-local" id="date" step="0.001" asp-for="Input.PublishedAt">
+                    <button type="button" id="set-now" class="btn icon-btn" aria-label="Set to now">
+                        <i class="ti ti-clock"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="tools">Tools</label>
+            <input type="text" id="tools" asp-for="Input.Tools" placeholder="e.g. Blender, 3ds Max" />
+            <p class="hint">Comma-separated, in the order you used them.</p>
+        </div>
+
+        <div class="field">
+            <label for="tags">Tags</label>
+            <input type="text" id="tags" asp-for="Input.Tags" placeholder="e.g. tutorial, wip" />
+            <p class="hint">Comma-separated. Optional.</p>
+        </div>
+
+        <div class="field">
+            <label>Settings</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.IsWorkInProgress" />
+                    Work in progress
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save changes</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
+        </div>
+
+    </form>
+
+    @if (Model.Links is { } links)
+    {
+        <partial name="Partials/_LinkManager" model="links" />
+    }
+
+    @if (Model.Media is { } media)
+    {
+        <partial name="Partials/_MediaManager" model="media" />
+    }
+    else
+    {
+        <section class="admin-media" style="margin-top:2rem">
+            <div class="admin-header">
+                <div><h2>Media</h2></div>
+            </div>
+            <p class="hint">Save this creation before uploading media.</p>
+        </section>
+    }
+
+</div>

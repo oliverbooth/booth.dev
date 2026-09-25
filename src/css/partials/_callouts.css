@@ -1,125 +1,77 @@
-:root {
-  --callout-note: var(--info-text);
-  --callout-info: var(--info-text);
-  --callout-todo: var(--info-text);
-  --callout-update: var(--info-text);
-
-  --callout-abstract: var(--accent);
-  --callout-tip: var(--accent);
-  --callout-important: var(--accent);
-  --callout-example: var(--accent);
-
-  --callout-success: var(--success-text);
-
-  --callout-question: var(--warning-text);
-  --callout-warning: var(--warning-text);
-
-  --callout-cite: var(--text-muted);
-
-  --callout-failure: var(--danger-text);
-  --callout-danger: var(--danger-text);
-  --callout-bug: var(--danger-text);
-}
-
+/* one hue family per callout type, grouped by meaning rather than each of the 15 getting its own colour */
 .callout {
-  border: 0.5px solid var(--border);
-  border-left: 3px solid var(--callout-accent, var(--text-secondary));
-  border-radius: var(--radius);
-  padding: 1.1rem 1.35rem;
+  --callout-bg: var(--callout-note-bg);
+  --callout-text: var(--callout-note-text);
+
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--callout-bg);
   margin-bottom: 1rem;
-  background: var(--surface-1);
 
   &[data-callout="note"], &[data-callout="info"], &[data-callout="todo"], &[data-callout="update"] {
-    --callout-accent: var(--callout-note);
-
-    th { border-bottom-color: var(--callout-note); }
+    --callout-bg: var(--callout-note-bg);
+    --callout-text: var(--callout-note-text);
   }
-  &[data-callout="abstract"], &[data-callout="tip"], &[data-callout="important"], &[data-callout="example"] {
-    --callout-accent: var(--callout-abstract);
 
-    th { border-bottom-color: var(--callout-abstract); }
+  &[data-callout="abstract"], &[data-callout="tip"], &[data-callout="important"], &[data-callout="success"], &[data-callout="example"] {
+    --callout-bg: var(--callout-success-bg);
+    --callout-text: var(--callout-success-text);
   }
-  &[data-callout="success"] {
-    --callout-accent: var(--callout-success);
 
-    th { border-bottom-color: var(--callout-success); }
-  }
   &[data-callout="question"], &[data-callout="warning"] {
-    --callout-accent: var(--callout-warning);
-
-    th { border-bottom-color: var(--callout-warning); }
+    --callout-bg: var(--callout-warning-bg);
+    --callout-text: var(--callout-warning-text);
   }
+
   &[data-callout="failure"], &[data-callout="danger"], &[data-callout="bug"] {
-    --callout-accent: var(--callout-danger);
-
-    th { border-bottom-color: var(--callout-danger); }
+    --callout-bg: var(--callout-private-bg);
+    --callout-text: var(--magenta-text);
   }
+
   &[data-callout="cite"] {
-    --callout-accent: var(--callout-cite);
+    --callout-bg: var(--callout-unlisted-bg);
+    --callout-text: var(--callout-unlisted-text);
+  }
 
-    th { border-bottom-color: var(--callout-cite); }
+  /* not a markdown callout type — the visibility banners hand-author these directly */
+  &[data-callout="private"] {
+    --callout-bg: var(--callout-private-bg);
+    --callout-text: var(--callout-private-text);
+  }
+
+  &[data-callout="unlisted"] {
+    --callout-bg: var(--callout-unlisted-bg);
+    --callout-text: var(--callout-unlisted-text);
   }
 }
 
-details.callout {
-  transition: border-color 0.2s ease-in-out;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  interpolate-size: allow-keywords;
-
-  &::details-content {
-    transition: height 0.3s ease, content-visibility 0.3s ease allow-discrete;
-    height: 0;
-    overflow: hidden;
-  }
-
-  &[open]::details-content {
-    height: auto;
-  }
-
-  .callout-title {
-    cursor: pointer;
-
-    code {
-      padding: 0;
-      margin-top: 2px;
-    }
-  }
-
-  &[open] .callout-title::after {
-    font-family: "tabler-icons";
-    content: "\ea5f";
-  }
-
-  &:not([open]) .callout-title {
-    margin-bottom: 0;
-
-    &::after {
-      font-family: "tabler-icons";
-      content: "\ea61";
-    }
-  }
-
-  &[open] {
-    border-color: var(--callout-accent);
-  }
-}
-
+/* the icon is a real <i> emitted by the renderer, not a pseudo-element */
 .callout-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 500;
-  font-size: 15px;
-  margin: 0 0 8px;
-  color: var(--callout-accent, inherit);
+  margin: 0 0 3px;
+  color: var(--callout-text);
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: lowercase;
+
+  i {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  code {
+    text-transform: none;
+  }
 }
 
 .callout-body {
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text-secondary);
+  margin-left: 26px;
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.6;
 
   p {
     margin: 0 0 0.75rem;
@@ -130,75 +82,81 @@ details.callout {
   }
 
   hr {
-    border: none;
-    border-top: 0.5px solid var(--border);
+    height: 1px;
     margin: 0.9rem 0;
+    border: none;
+    background: color-mix(in oklch, var(--text) 12%, transparent);
+  }
+
+  /* the body is already indented to align with the title text, so a list's own hanging indent would double up */
+  ul, ol {
+    padding-left: 0;
+    list-style-position: inside;
+    margin: 0;
+
+    ul, ol {
+      padding-left: 1.4em;
+    }
   }
 
   code {
     font-family: var(--font-mono);
     font-size: 0.85em;
-    background: var(--surface-2);
+    background: var(--tag-bg);
+    color: var(--tag-text);
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
   a {
-    color: var(--callout-accent, var(--accent));
+    color: var(--callout-text);
+    text-underline-offset: 3px;
   }
 }
 
-.callout code {
-  font-family: var(--font-mono);
-  font-size: 0.85em;
-  background: var(--surface-1);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
+details.callout {
+  padding: 0;
+  overflow: hidden;
+  interpolate-size: allow-keywords;
 
-.callout pre {
-  background: var(--surface-1);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  overflow-x: auto;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.6;
-
-  .kw {
-    color: var(--accent);
+  &::details-content {
+    transition: height 0.3s ease, content-visibility 0.3s ease allow-discrete;
+    height: 0;
   }
 
-  .str {
-    color: var(--success-text);
+  &[open]::details-content {
+    height: auto;
   }
 
-  code {
-    padding: 0;
+  .callout-title {
+    padding: 16px 20px;
+    margin: 0;
+    cursor: pointer;
 
-    mark {
-      background: var(--warning-text);
-      padding: 2px 0;
-      border-radius: 2px;
-      color: var(--surface-1) !important;
-
-      * {
-        color: var(--surface-1) !important;
-      }
-    }
-
-    .tag {
-      font-size: inherit;
-      border: none;
-      padding: 0;
-      border-radius: 0;
-      text-decoration: none;
+    &::after {
+      margin-left: auto;
+      font-family: "tabler-icons";
+      font-size: 15px;
+      transition: transform 0.2s ease;
     }
   }
+
+  &:not([open]) .callout-title::after {
+    content: "\ea61";
+  }
+
+  &[open] .callout-title::after {
+    content: "\ea5f";
+  }
+
+  .callout-body {
+    margin-left: 0;
+    padding: 0 20px 20px 46px;
+  }
 }
 
-details:not(.callout) summary {
-  cursor: pointer;
+@media (prefers-reduced-motion: reduce) {
+  details.callout::details-content {
+    transition: none;
+  }
 }

@@ -1,0 +1,16 @@
+@page "/portfolio/{slug}"
+@model Item
+
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["Post"] = Model.Content;
+}
+
+@if (Model.Project is { } project)
+{
+    <partial name="_ProjectView" model="project" />
+}
+else
+{
+    <partial name="_CreationView" model="Model.Creation!" />
+}

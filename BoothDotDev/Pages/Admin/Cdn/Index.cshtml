@@ -52,68 +52,45 @@
             </div>
         </div>
 
-        <table class="data-table" id="cdn-table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Size</th>
-                <th>Modified</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="cdn-grid" id="cdn-grid">
             @foreach (var entry in Model.Entries)
             {
-                <tr draggable="true" data-kind="@(entry.IsDirectory ? "folder" : "file")" data-name="@entry.Name">
-                    <td>
-                        <div class="row-title" data-search>
-                            <i class="ti @Index.GetIcon(entry)"></i>
-                            @if (entry.IsDirectory)
-                            {
-                                <a asp-page="/Admin/Cdn/Index"
-                                   asp-route-path="@($"{Model.CurrentDisplayPath}/{entry.Name}".TrimStart('/'))">@entry.Name</a>
-                            }
-                            else
-                            {
-                                @entry.Name
-                            }
-                        </div>
-                    </td>
-                    <td>
-                        @if (entry.IsDirectory)
+                <li class="cdn-tile" draggable="true" data-kind="@(entry.IsDirectory ? "folder" : "file")" data-name="@entry.Name"
+                    data-search-item>
+                    <i class="ti @Index.GetIcon(entry) cdn-tile-icon"></i>
+                    @if (entry.IsDirectory)
+                    {
+                        <a asp-page="/Admin/Cdn/Index" class="cdn-tile-name" data-search
+                           asp-route-path="@($"{Model.CurrentDisplayPath}/{entry.Name}".TrimStart('/'))">@entry.Name</a>
+                    }
+                    else
+                    {
+                        <span class="cdn-tile-name" data-search>@entry.Name</span>
+                    }
+                    <span class="cdn-tile-meta">
+                        @(entry.IsDirectory ? "item".ToQuantity(entry.ItemCount ?? 0) : Index.FormatFileSize(entry.SizeBytes ?? 0))
+                        &middot;
+                        <abbr title="@entry.ModifiedAt.ToString("yyyy-MM-dd HH:mm:ss")">@entry.ModifiedAt.Humanize()</abbr>
+                    </span>
+                    <div class="cdn-tile-actions">
+                        @if (!entry.IsDirectory)
                         {
-                            @("item".ToQuantity(entry.ItemCount ?? 0))
+                            <a href="@entry.Url" target="_blank" rel="noopener" class="icon-btn" aria-label="View"><i
+                                    class="ti ti-external-link"></i></a>
                         }
-                        else
-                        {
-                            @Index.FormatFileSize(entry.SizeBytes ?? 0)
-                        }
-                    </td>
-                    <td><abbr title="@entry.ModifiedAt.ToString("yyyy-MM-dd HH:mm:ss")">@entry.ModifiedAt.Humanize()</abbr></td>
-                    <td>
-                        <div class="row-actions">
-                            @if (!entry.IsDirectory)
-                            {
-                                <a href="@entry.Url" target="_blank" rel="noopener" class="icon-btn" aria-label="View"><i
-                                        class="ti ti-external-link"></i></a>
-                            }
-                            <button type="button" class="icon-btn" data-action="rename" aria-label="Rename"><i class="ti ti-edit"></i>
-                            </button>
-                            <button type="button" class="icon-btn" data-action="move" aria-label="Move"><i class="ti ti-arrows-move"></i>
-                            </button>
-                            <button type="button" class="icon-btn danger" data-action="delete" aria-label="Delete"><i
-                                    class="ti ti-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
+                        <button type="button" class="icon-btn" data-action="rename" aria-label="Rename"><i class="ti ti-edit"></i>
+                        </button>
+                        <button type="button" class="icon-btn" data-action="move" aria-label="Move"><i class="ti ti-arrows-move"></i>
+                        </button>
+                        <button type="button" class="icon-btn danger" data-action="delete" aria-label="Delete"><i
+                                class="ti ti-trash"></i></button>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden="@(Model.Entries.Count != 0)">
-                <td colspan="4" class="table-empty-state">
-                    @(Model.Entries.Count == 0 ? "This folder is empty" : "No files or folders found")
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        </ul>
+        <p class="list-empty-state" data-search-empty hidden="@(Model.Entries.Count != 0)">
+            @(Model.Entries.Count == 0 ? "This folder is empty" : "No files or folders found")
+        </p>
     </div>
 
 </div>

@@ -75,17 +75,15 @@
         <Compile Update="Pages\Shared\MainLayout.cs">
             <DependentUpon>_MainLayout.cshtml</DependentUpon>
         </Compile>
-        <Compile Update="Pages\Shared\Partials\ActivityEntryCommit.cshtml.cs">
-          <DependentUpon>_ActivityEntryCommit.cshtml</DependentUpon>
-        </Compile>
         <Compile Update="Pages\Shared\AdminLayout.cs">
-          <DependentUpon>_AdminLayout.cshtml</DependentUpon>
+            <DependentUpon>_AdminLayout.cshtml</DependentUpon>
         </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="wwwroot\.vite\manifest.json" />
         <EmbeddedResource Include="Resources\Fonts\*.ttf" />
+        <EmbeddedResource Include="Resources\Fonts\*.woff" />
     </ItemGroup>
 
     <ItemGroup>
@@ -94,6 +92,11 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="BoothDotDev.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Pages\Admin\Creations\Artwork\Edit.cshtml" />
+        <_ContentIncludedByDefault Remove="Pages\Admin\Creations\Music\Edit.cshtml" />
     </ItemGroup>
 
 </Project>

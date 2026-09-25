@@ -31,26 +31,10 @@ public sealed class DevChallenge : IEquatable<DevChallenge>, IMarkdownExcerpt
     }
 
     /// <summary>
-    ///     Gets the excerpt of the challenge, as of its current draft.
-    /// </summary>
-    /// <value>The excerpt of the challenge, or <see langword="null" /> if none was set.</value>
-    [NotMapped]
-    public string? Excerpt
-    {
-        get => Draft.Excerpt;
-    }
-
-    /// <inheritdoc />
-    string IMarkdownBody.Body
-    {
-        get => Description;
-    }
-
-    /// <summary>
     ///     Gets the ID of the challenge.
     /// </summary>
     /// <value>The ID of the challenge.</value>
-    public ShortGuid Id { get; private set; } = ShortGuid.NewGuid();
+    public ShortGuid Id { get; } = ShortGuid.NewGuid();
 
     /// <summary>
     ///     Gets the old ID of the challenge.
@@ -133,6 +117,44 @@ public sealed class DevChallenge : IEquatable<DevChallenge>, IMarkdownExcerpt
     }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="DevChallenge" /> is equal to another instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise, <see langword="false" />.
+    /// </returns>
+    public bool Equals(DevChallenge? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
+    ///     Gets the excerpt of the challenge, as of its current draft.
+    /// </summary>
+    /// <value>The excerpt of the challenge, or <see langword="null" /> if none was set.</value>
+    [NotMapped]
+    public string? Excerpt
+    {
+        get => Draft.Excerpt;
+    }
+
+    /// <inheritdoc />
+    string IMarkdownBody.Body
+    {
+        get => Description;
+    }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="DevChallenge" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="DevChallenge" /> to compare.</param>
@@ -161,28 +183,6 @@ public sealed class DevChallenge : IEquatable<DevChallenge>, IMarkdownExcerpt
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="DevChallenge" /> is equal to another instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise, <see langword="false" />.
-    /// </returns>
-    public bool Equals(DevChallenge? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -192,7 +192,7 @@ public sealed class DevChallenge : IEquatable<DevChallenge>, IMarkdownExcerpt
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is DevChallenge other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is DevChallenge other && Equals(other));
     }
 
     /// <summary>

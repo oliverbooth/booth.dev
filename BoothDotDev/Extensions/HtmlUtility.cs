@@ -18,7 +18,7 @@ public static class HtmlUtility
     /// <param name="content">
     ///     The page's content, as set in <c>ViewData["Post"]</c> - a <see cref="BlogPost" />, <see cref="TutorialArticle" />,
     ///     <see cref="DevChallenge" />, <see cref="Note" />, <see cref="Project" />, <see cref="ProjectDevlog" />,
-    ///     <see cref="ArtworkItem" />, <see cref="MusicItem" />, or <see langword="null" /> for a non-content page.
+    ///     <see cref="Creation" />, or <see langword="null" /> for a non-content page.
     /// </param>
     /// <param name="siteBaseUrl">The site's own base URL, used to build an absolute Open Graph image URL.</param>
     /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" /> injected by the page.</param>
@@ -76,8 +76,8 @@ public static class HtmlUtility
                 ["author"] = Strings.MyName,
                 ["image"] = OgImageUrl(siteBaseUrl, "project", project.Id)
             }),
-            ArtworkItem artwork => CreateCreationMetaTags(artwork, siteBaseUrl, "artwork", markdownRenderingService),
-            MusicItem music => CreateCreationMetaTags(music, siteBaseUrl, "music", markdownRenderingService),
+            Creation creation => CreateCreationMetaTags(creation, siteBaseUrl, creation.IsMusic ? "music" : "artwork",
+                markdownRenderingService),
             _ => CreateMetaTags(new Dictionary<string, string>
             {
                 ["title"] = fallbackTitle,
@@ -88,7 +88,7 @@ public static class HtmlUtility
     }
 
     private static string CreateCreationMetaTags(
-        CreativeItem item, Uri siteBaseUrl, string type, MarkdownRenderingService markdownRenderingService)
+        Creation item, Uri siteBaseUrl, string type, MarkdownRenderingService markdownRenderingService)
     {
         var tags = new Dictionary<string, string>
         {
@@ -103,7 +103,7 @@ public static class HtmlUtility
         return CreateMetaTags(tags);
     }
 
-    private static string OgImageUrl(Uri siteBaseUrl, string type, Guid id)
+    internal static string OgImageUrl(Uri siteBaseUrl, string type, Guid id)
     {
         return new Uri(siteBaseUrl, $"/og/{type}/{id:N}.png").ToString();
     }

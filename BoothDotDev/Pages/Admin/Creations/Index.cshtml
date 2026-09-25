@@ -17,9 +17,7 @@
         </div>
         <div style="display:flex;gap:8px">
             <a asp-page="/Admin/Creations/Trash" class="btn icon-btn"><i class="ti ti-trash" style="font-size:15px"></i>Trash</a>
-            <a asp-page="/Admin/Creations/Artwork/Edit" class="btn"><i class="ti ti-photo" style="font-size:15px"></i>New artwork</a>
-            <a asp-page="/Admin/Creations/Music/Edit" class="btn btn-primary"><i class="ti ti-music" style="font-size:15px"></i>New
-                music</a>
+            <a asp-page="/Admin/Creations/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New creation</a>
         </div>
     </div>
 
@@ -31,17 +29,7 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Visibility</th>
-                <th>Published</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var creation in Model.Creations)
             {
                 var badgeClass = creation.Visibility switch
@@ -50,51 +38,50 @@
                     Visibility.Private => "private",
                     _ => "unlisted"
                 };
-                var isMusic = creation.Type == "Music";
-                var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
+                var kindLabel = creation.Kind switch
+                {
+                    CreationKind.Drawing => "Drawing",
+                    CreationKind.ThreeD => "3D",
+                    _ => "Music"
+                };
 
-                <tr>
-                    <td>
-                        <div class="row-title" data-search>@creation.Title</div>
-                    </td>
-                    <td><span data-search>@creation.Type</span></td>
-                    <td><span class="badge badge-@badgeClass">
+                <li class="admin-row" data-search-item>
+                    <span class="badge badge-@badgeClass">
                     @switch (creation.Visibility)
-                            {
-                                case Visibility.Published:
-                                    <text><span class="dot"></span> Published</text>
-                                    break;
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
 
-                                case Visibility.Private:
-                                    <text><i class="ti ti-lock"></i> Private</text>
-                                    break;
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
 
-                                case Visibility.Unlisted:
-                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                    break;
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
 
-                                default:
-                                    throw new UnreachableException();
-                            }
-                </span></td>
-                    <td><abbr title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn" aria-label="Edit"><i
-                                    class="ti ti-edit"></i></a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id" asp-route-type="@creation.Type">
-                                <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span>
+                    <div class="row-body">
+                        <div class="row-title" data-search>@creation.Title</div>
+                        <div class="row-sub" data-search>@kindLabel</div>
+                    </div>
+                    <span class="row-meta"><abbr
+                            title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></span>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Creations/Edit" asp-route-id="@creation.Id" class="icon-btn">edit</a>
+                        <a asp-page="/Portfolio/Item" asp-route-slug="@creation.Slug" target="_blank" class="icon-btn">view</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="5" class="table-empty-state">No creations found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No creations found</li>
+        </ul>
     </div>
 
 </div>

@@ -10,6 +10,7 @@ public sealed class ActivityService
 {
     private readonly BlogPostService _blogPostService;
     private readonly DevChallengeService _devChallengeService;
+    private readonly MarkdownRenderingService _markdownRenderingService;
     private readonly NoteService _noteService;
     private readonly ProjectService _projectService;
     private readonly TutorialService _tutorialService;
@@ -26,13 +27,15 @@ public sealed class ActivityService
         ProjectService projectService,
         TutorialService tutorialService,
         DevChallengeService devChallengeService,
-        NoteService noteService)
+        NoteService noteService,
+        MarkdownRenderingService markdownRenderingService)
     {
         _blogPostService = blogPostService;
         _projectService = projectService;
         _tutorialService = tutorialService;
         _devChallengeService = devChallengeService;
         _noteService = noteService;
+        _markdownRenderingService = markdownRenderingService;
     }
 
     /// <summary>
@@ -64,13 +67,16 @@ public sealed class ActivityService
     private IEnumerable<ActivityEntry> GetRecentBlogPosts(ActivitySearchOptions searchOptions)
     {
         return _blogPostService.GetRecentBlogPosts(searchOptions)
-            .Select(ActivityEntryFactory.From);
+            .Select(post => ActivityEntryFactory.From(
+                post, _blogPostService.GetCategory(post.CategoryId),
+                _markdownRenderingService.RenderPlainTextExcerpt(post, out _)));
     }
 
     private IEnumerable<ActivityEntry> GetRecentTutorialArticles(ActivitySearchOptions searchOptions)
     {
         return _tutorialService.GetRecentArticles(searchOptions)
-            .Select(a => ActivityEntryFactory.From(a, _tutorialService));
+            .Select(a => ActivityEntryFactory.From(a, _tutorialService,
+                _markdownRenderingService.RenderPlainTextExcerpt(a, out _)));
     }
 
     private IEnumerable<ActivityEntry> GetRecentDevlogs(ActivitySearchOptions searchOptions)
@@ -83,7 +89,8 @@ public sealed class ActivityService
 
     private IEnumerable<ActivityEntry> GetRecentChallenges(ActivitySearchOptions searchOptions)
     {
-        return _devChallengeService.GetRecentChallenges(searchOptions).Select(ActivityEntryFactory.From);
+        return _devChallengeService.GetRecentChallenges(searchOptions)
+            .Select(c => ActivityEntryFactory.From(c, _markdownRenderingService.RenderPlainTextExcerpt(c, out _)));
     }
 
     private IEnumerable<ActivityEntry> GetRecentNotes(ActivitySearchOptions searchOptions)

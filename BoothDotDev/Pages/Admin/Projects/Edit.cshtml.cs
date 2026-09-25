@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Extensions;
+using BoothDotDev.Pages.Admin.Portfolio;
+using BoothDotDev.Pages.Shared.Partials;
 using BoothDotDev.Services;
 using FluentResults;
 using Microsoft.AspNetCore.Authorization;
@@ -15,23 +18,23 @@ using Project = Project;
 ///     Represents the page model for editing a project in the admin section.
 /// </summary>
 [Authorize(Policy = "Admin")]
-[RequestSizeLimit(CdnUploadPolicy.MaxUploadSizeBytes)]
 public sealed class Edit : PageModel
 {
-    private const string Area = "projects";
-    private readonly CdnMediaService _cdnMediaService;
-
+    private readonly LinkService _linkService;
+    private readonly MediaService _mediaService;
     private readonly ProjectService _projectService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Edit" /> class.
     /// </summary>
     /// <param name="projectService">The project service.</param>
-    /// <param name="cdnMediaService">The CDN media service.</param>
-    public Edit(ProjectService projectService, CdnMediaService cdnMediaService)
+    /// <param name="mediaService">The <see cref="MediaService" />.</param>
+    /// <param name="linkService">The <see cref="LinkService" />.</param>
+    public Edit(ProjectService projectService, MediaService mediaService, LinkService linkService)
     {
         _projectService = projectService;
-        _cdnMediaService = cdnMediaService;
+        _mediaService = mediaService;
+        _linkService = linkService;
     }
 
     /// <summary>
@@ -54,10 +57,16 @@ public sealed class Edit : PageModel
     public Guid? ProjectId { get; private set; }
 
     /// <summary>
-    ///     Gets the CDN URL of the project's currently-uploaded hero image, if any.
+    ///     Gets what the media manager shows: the project's files.
     /// </summary>
-    /// <value>The hero image's CDN URL, or <see langword="null" /> if no hero image has been uploaded yet.</value>
-    public string? HeroUrl { get; private set; }
+    /// <value>The media manager, or <see langword="null" /> if a new project is being created.</value>
+    public MediaManager? Media { get; private set; }
+
+    /// <summary>
+    ///     Gets what the link manager shows: the project's links.
+    /// </summary>
+    /// <value>The link manager, or <see langword="null" /> if a new project is being created.</value>
+    public LinkManager? Links { get; private set; }
 
     /// <summary>
     ///     Gets the project's non-trashed devlog entries, newest-published first.
@@ -101,9 +110,7 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="id">The ID of the project being edited. If <see langword="null" />, a new project is being created.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    /// <remarks>
-    ///     The uploaded hero image (if any) is untouched. It's managed separately by <see cref="OnPostUploadFileAsync" />.
-    /// </remarks>
+    /// <remarks>The project's files are untouched. They're managed separately by the media manager.</remarks>
     public IActionResult OnPostSave(Guid? id)
     {
         CreatingNew = id is null;
@@ -114,91 +121,14 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        // The hero image (if any) is untouched here - managed separately by OnPostUploadFileAsync - so its
-        // existing filename is carried forward rather than cleared by this metadata-only save.
-        string heroUrl;
-        if (id is null)
-        {
-            heroUrl = string.Empty;
-        }
-        else
-        {
-            var existingResult = _projectService.GetProject(id.Value);
-            if (existingResult.IsFailed)
-            {
-                return NotFound();
-            }
-
-            heroUrl = existingResult.Value.HeroUrl;
-        }
-
-        var request = BuildSaveRequest(heroUrl);
+        var request = BuildSaveRequest();
         var result = id is null ? _projectService.CreateProject(request) : _projectService.UpdateProject(id.Value, request);
 
         return RedirectOnSuccess(result);
     }
 
     /// <summary>
-    ///     Handles the POST request for uploading (or replacing) the project's hero image. Every other field is
-    ///     left untouched.
-    /// </summary>
-    /// <param name="id">The ID of the project being edited.</param>
-    /// <param name="file">The uploaded image file.</param>
-    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
-    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    public async Task<IActionResult> OnPostUploadFileAsync(Guid id, IFormFile? file, CancellationToken cancellationToken)
-    {
-        if (file is null)
-        {
-            return BadRequest("No file was uploaded.");
-        }
-
-        var projectResult = _projectService.GetProject(id);
-        if (projectResult.IsFailed)
-        {
-            return NotFound();
-        }
-
-        var project = projectResult.Value;
-
-        if (!string.IsNullOrEmpty(project.HeroUrl))
-        {
-            _cdnMediaService.DeleteFile(id, project.CreatedAt, project.HeroUrl, Area);
-        }
-
-        var uploadResult = await _cdnMediaService.UploadAsync(id, project.CreatedAt, file, Area, cancellationToken);
-        if (uploadResult.IsFailed)
-        {
-            ModelState.AddModelError(string.Empty, string.Join(Environment.NewLine, uploadResult.Errors.Select(e => e.Message)));
-            ProjectId = project.Id;
-            Devlogs = _projectService.GetDevlogs(project);
-            PopulateFromProject(project);
-            return Page();
-        }
-
-        var request = new ProjectSaveRequest(
-            project.Name,
-            project.Slug,
-            project.Tagline,
-            project.Description,
-            project.Details,
-            uploadResult.Value.FileName,
-            project.Languages,
-            project.Rank,
-            project.RemoteUrl,
-            project.RemoteTarget,
-            project.Status,
-            project.Type,
-            project.CreatedAt);
-
-        _projectService.UpdateProject(id, request);
-
-        return RedirectToPage(new { id });
-    }
-
-    /// <summary>
-    ///     Handles the POST request for deleting the project. The project must not have any devlog entries,
-    ///     trashed or not.
+    ///     Handles the POST request for deleting the project.
     /// </summary>
     /// <param name="id">The ID of the project to delete.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
@@ -224,8 +154,9 @@ public sealed class Edit : PageModel
     }
 
     /// <summary>
-    ///     Populates <see cref="Input" />, <see cref="HeroUrl" />, and related display state from the given project.
+    ///     Populates <see cref="Input" /> and <see cref="Media" /> from the given project.
     /// </summary>
+    /// <param name="project">The project to populate from.</param>
     private void PopulateFromProject(Project project)
     {
         Input = new EditModel
@@ -236,21 +167,35 @@ public sealed class Edit : PageModel
             Description = project.Description,
             Details = project.Details,
             Languages = string.Join(", ", project.Languages),
+            Tags = string.Join(", ", project.Tags),
             Rank = project.Rank,
-            RemoteUrl = project.RemoteUrl,
-            RemoteTarget = project.RemoteTarget,
             Status = project.Status,
             Type = project.Type,
             CreatedAt = project.CreatedAt.ToLocalTime()
         };
-        HeroUrl = _projectService.GetHeroUrl(project);
+
+        Media = new MediaManager
+        {
+            OwnerId = project.Id,
+            Items = _mediaService.GetMedia(MediaOwner.For(project)),
+            ReturnUrl = Url.Page("/Admin/Projects/Edit", new { id = project.Id })!,
+            Errors = TempData[MediaHandler.MediaErrorsKey] as string
+        };
+
+        Links = new LinkManager
+        {
+            OwnerId = project.Id,
+            Items = _linkService.GetLinks(project.Id),
+            ReturnUrl = Url.Page("/Admin/Projects/Edit", new { id = project.Id })!,
+            Errors = TempData[LinksHandler.LinkErrorsKey] as string
+        };
     }
 
     /// <summary>
-    ///     Builds a save request from the current state of <see cref="Input" />.
+    ///     Builds a <see cref="ProjectSaveRequest" /> from <see cref="Input" />.
     /// </summary>
-    /// <param name="heroUrl">The bare filename of the project's hero image, carried forward from the existing entity.</param>
-    private ProjectSaveRequest BuildSaveRequest(string heroUrl)
+    /// <returns>The save request.</returns>
+    private ProjectSaveRequest BuildSaveRequest()
     {
         var languages = Input.Languages
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -262,11 +207,9 @@ public sealed class Edit : PageModel
             Input.Tagline,
             Input.Description,
             Input.Details,
-            heroUrl,
             languages,
+            Input.Tags.SplitList(),
             Input.Rank,
-            Input.RemoteUrl,
-            Input.RemoteTarget,
             Input.Status,
             Input.Type,
             Input.CreatedAt);
@@ -310,7 +253,7 @@ public sealed class Edit : PageModel
         /// <summary>
         ///     Gets or sets the tagline of the project.
         /// </summary>
-        /// <value>The tagline, or <see langword="null" /> if the project has no tagline.</value>
+        /// <value>The tagline, or <see langword="null" /> if it has none.</value>
         public string? Tagline { get; set; }
 
         /// <summary>
@@ -328,29 +271,24 @@ public sealed class Edit : PageModel
         public string Details { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Gets or sets the comma-separated list of languages used for this project.
+        ///     Gets or sets the languages used, comma-separated.
         /// </summary>
-        /// <value>The languages, as a comma-separated string.</value>
+        /// <value>The languages.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Languages { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the tags, comma-separated.
+        /// </summary>
+        /// <value>The tags.</value>
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Tags { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the rank of the project.
         /// </summary>
         /// <value>The rank.</value>
         public int Rank { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the URL of the project.
-        /// </summary>
-        /// <value>The URL, or <see langword="null" /> if the project has no URL.</value>
-        public string? RemoteUrl { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the host of the project.
-        /// </summary>
-        /// <value>The host, or <see langword="null" /> if the project has no remote host.</value>
-        public string? RemoteTarget { get; set; }
 
         /// <summary>
         ///     Gets or sets the status of the project.
@@ -367,7 +305,7 @@ public sealed class Edit : PageModel
         /// <summary>
         ///     Gets or sets the date and time the project was created.
         /// </summary>
-        /// <value>The date and time the project was created.</value>
+        /// <value>The creation date and time.</value>
         public DateTimeOffset CreatedAt { get; set; }
     }
 }

@@ -1,0 +1,41 @@
+.challenge-solution {
+  margin-top: 2rem;
+}
+
+.challenge-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2rem;
+  padding: 32px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--row-tint-magenta);
+  box-shadow: var(--shadow-card-soft);
+  text-align: center;
+}
+
+.challenge-locked-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
+  color: var(--magenta-text);
+  font-size: 22px;
+}
+
+.challenge-locked-title {
+  margin: 6px 0 0;
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.challenge-locked-desc {
+  max-width: 380px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}

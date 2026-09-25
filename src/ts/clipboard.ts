@@ -19,14 +19,43 @@ export function initCopyButtons() {
     }
 }
 
-function showCopyFeedback(icon: HTMLElement): void {
-    const originalClasses = icon.className;
-    icon.classList.remove('ti-copy');
-    icon.classList.add('ti-check');
-    icon.style.color = 'var(--success-text)';
+function showCopyFeedback(button: HTMLElement): void {
+    const glyph: HTMLElement = button.querySelector<HTMLElement>('i') ?? button;
+    const originalClasses = glyph.className;
+    glyph.classList.remove('ti-copy');
+    glyph.classList.add('ti-check');
+    button.style.color = 'var(--teal-text)';
 
     setTimeout(() => {
-        icon.className = originalClasses;
-        icon.style.color = '';
+        glyph.className = originalClasses;
+        button.style.color = '';
     }, 1200);
+}
+
+/**
+ * Adds copy-on-click to every `.crypto-copy` button (the Donate page's crypto address chips): clicking one copies its
+ * `data-address` and swaps its own label to "Copied!" briefly, rather than relying on a separate icon button.
+ */
+export function initCryptoCopyButtons(): void {
+    for (const button of document.querySelectorAll<HTMLButtonElement>('.crypto-copy')) {
+        const address = button.dataset.address;
+        if (!address) {
+            continue;
+        }
+
+        const originalText = button.textContent ?? address;
+
+        button.addEventListener('click', () => {
+            navigator.clipboard.writeText(address).then(() => {
+                button.textContent = 'copied!';
+                button.classList.add('is-copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('is-copied');
+                }, 1500);
+            }).catch(() => {
+                // clipboard API unavailable or permission denied — fail silently, button just won't confirm
+            });
+        });
+    }
 }

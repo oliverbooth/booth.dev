@@ -735,6 +735,7 @@ public sealed class TutorialService
         folder.Visibility = request.Visibility;
         folder.Rank = request.Rank;
         folder.Parent = request.Parent;
+        folder.Color = request.Color;
     }
 
     /// <summary>
@@ -770,7 +771,8 @@ public sealed class TutorialService
             PreviewImageUrl = content.PreviewImageUrl,
             ShowTableOfContents = content.ShowTableOfContents,
             TableOfContentsExpanded = content.TableOfContentsExpanded,
-            Visibility = content.Visibility
+            Visibility = content.Visibility,
+            Color = content.Color
         };
     }
 }

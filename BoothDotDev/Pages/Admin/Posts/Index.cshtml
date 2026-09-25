@@ -1,8 +1,8 @@
 @page "/admin/posts"
 @using System.Diagnostics
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using BoothDotDev.Services
-@using Humanizer
 @model Index
 @inject BlogPostService BlogPostService
 
@@ -18,6 +18,8 @@
             <p>Create, edit, and delete blog posts</p>
         </div>
         <div style="display:flex;gap:8px">
+            <a asp-page="/Admin/Posts/Categories/Index" class="btn icon-btn"><i class="ti ti-folder"
+                                                                                style="font-size:15px"></i>Categories</a>
             <a asp-page="/Admin/Posts/Trash" class="btn icon-btn"><i class="ti ti-trash" style="font-size:15px"></i>Trash</a>
             <a asp-page="/Admin/Posts/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New post</a>
         </div>
@@ -29,24 +31,9 @@
                 <i class="ti ti-search"></i>
                 <input type="text" id="search" placeholder="Search posts&hellip;">
             </div>
-            @*<div class="filter-row" style="margin:0">
-            <span class="pill active">All</span>
-            <span class="pill">Published</span>
-            <span class="pill">Drafts</span>
-        </div>*@
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Visibility</th>
-                <th>Updated</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var post in Model.BlogPosts)
             {
                 var timestamp = post.UpdatedAt ?? post.PublishedAt;
@@ -56,52 +43,55 @@
                     Visibility.Private => "private",
                     _ => "unlisted"
                 };
+                var categoryEntity = BlogPostService.GetCategory(post.CategoryId);
+                var category = categoryEntity?.Name;
+                var hue = post.Color ?? categoryEntity?.EffectiveColor;
 
-                <tr>
-                    <td>
-                        <div class="row-title" data-search>@post.Title</div>
-                        <div class="row-sub" data-search>/blog/@post.Slug</div>
-                    </td>
-                    <td>@BlogPostService.GetCategory(post.CategoryId)?.Name</td>
-                    <td><span class="badge badge-@badgeClass">
+                <li class="admin-row" data-search-item>
+                    <span class="badge badge-@badgeClass">
                     @switch (post.Visibility)
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
+
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
+
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
+
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span>
+                    <div class="row-body">
+                        <div class="row-title" data-search>
+                            @if (hue is { } postHue)
                             {
-                                case Visibility.Published:
-                                    <text><span class="dot"></span> Published</text>
-                                    break;
-
-                                case Visibility.Private:
-                                    <text><i class="ti ti-lock"></i> Private</text>
-                                    break;
-
-                                case Visibility.Unlisted:
-                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                    break;
-
-                                default:
-                                    throw new UnreachableException();
+                                <span class="hue-dot" data-hue="@postHue.ToDataHue()"
+                                      title="@postHue.ToDataHue() (@(post.Color is null ? "from category" : "set on post"))"></span>
                             }
-                </span></td>
-                    <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn" aria-label="Edit"><i
-                                    class="ti ti-edit"></i></a>
-                            <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="icon-btn" aria-label="View"><i
-                                    class="ti ti-eye"></i></a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@post.Id">
-                                <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
-                                </button>
-                            </form>
+                            @post.Title
                         </div>
-                    </td>
-                </tr>
+                        <div class="row-sub" data-search>
+                            <abbr
+                                title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.ToString("MMM yyyy")</abbr>@(category is null ? "" : $" · {category}")
+                        </div>
+                    </div>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id" class="icon-btn">edit</a>
+                        <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="icon-btn">view</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@post.Id">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="5" class="table-empty-state">No posts found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No posts found</li>
+        </ul>
     </div>
 
 </div>

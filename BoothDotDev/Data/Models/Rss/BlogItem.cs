@@ -47,7 +47,7 @@ public sealed class BlogItem
     /// </summary>
     /// <value>The GUID of the blog item.</value>
     [XmlElement("guid")]
-    public RssItemGuid Guid { get; set; } = default!;
+    public RssItemGuid Guid { get; set; }
 
     /// <summary>
     ///     Gets or sets the description of the blog item.

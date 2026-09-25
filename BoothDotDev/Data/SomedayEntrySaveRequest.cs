@@ -6,7 +6,8 @@ namespace BoothDotDev.Data;
 /// <param name="Title">The title of the entry - the completion of "Someday, ...", without that prefix.</param>
 /// <param name="Body">The body of the entry.</param>
 /// <param name="Visibility">The visibility of the entry.</param>
-public sealed record SomedayEntryDraftContent(string Title, string Body, Visibility Visibility);
+/// <param name="Color">The colour of the entry's card, or <see langword="null" /> to derive it from its position.</param>
+public sealed record SomedayEntryDraftContent(string Title, string Body, Visibility Visibility, PaletteHue? Color);
 
 /// <summary>
 ///     Represents a request to create or save a someday entry, bundling its parent-level fields with the content

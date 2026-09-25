@@ -46,7 +46,6 @@ async function mountNotation(codeElement: HTMLElement): Promise<void> {
 
     const noSource = 'noSource' in codeElement.dataset;
     const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
-    const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
     const wrapper = document.createElement('div');
     wrapper.className = 'vexflow-scene';
@@ -57,35 +56,24 @@ async function mountNotation(codeElement: HTMLElement): Promise<void> {
     (codeToolbar ?? pre).replaceWith(wrapper);
 
     if (noSource) {
-        // `no-source`: just the notation, no tab chrome to switch to a Source view at all - so no theme toggle
-        // either, since there'd be nowhere to put it; the block stays on the light "paper" default
         wrapper.append(notationPanel);
     } else {
         const themeToggle = createThemeToggle(wrapper);
         const {notationTab, sourceTab, sourcePanel, tabList} = buildTabs();
         tabList.append(themeToggle);
         wrapper.append(tabList, notationPanel, sourcePanel);
+        // the source panel just wraps the code block as-is (header bar, copy button and all - already styled by
+        // _prism-toolbar.css); `hidden` on the panel hides all of that along with it, so there's nothing further to
+        // wire up per tab switch
         sourcePanel.append(codeToolbar ?? pre);
-
-        if (toolbar) {
-            toolbar.classList.add('scene-toolbar');
-            toolbar.hidden = true; // Notation tab is active by default
-            tabList.append(toolbar);
-        }
 
         notationTab.addEventListener('click', () => {
             activateTab(notationTab, sourceTab, notationPanel, sourcePanel);
             themeToggle.hidden = false;
-            if (toolbar) {
-                toolbar.hidden = true;
-            }
         });
         sourceTab.addEventListener('click', () => {
             activateTab(sourceTab, notationTab, sourcePanel, notationPanel);
             themeToggle.hidden = true;
-            if (toolbar) {
-                toolbar.hidden = false;
-            }
         });
     }
 
@@ -136,11 +124,15 @@ function buildTabs(): {
 } {
     const tabList = document.createElement('div');
     tabList.className = 'vexflow-scene-tabs';
-    tabList.setAttribute('role', 'tablist');
+
+    const tabGroup = document.createElement('div');
+    tabGroup.className = 'scene-tab-group';
+    tabGroup.setAttribute('role', 'tablist');
 
     const notationTab = createTabButton('Notation', true);
     const sourceTab = createTabButton('Source', false);
-    tabList.append(notationTab, sourceTab);
+    tabGroup.append(notationTab, sourceTab);
+    tabList.append(tabGroup);
 
     const sourcePanel = document.createElement('div');
     sourcePanel.className = 'vexflow-source-panel';

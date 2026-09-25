@@ -1,20 +1,84 @@
 #cdn-browser.cdn-browser--dragover {
-  background: var(--accent-tint);
-  outline: 2px dashed var(--accent);
+  background: color-mix(in oklch, var(--brand) 8%, transparent);
+  outline: 2px dashed var(--brand-text);
   outline-offset: -6px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 }
 
-.cdn-row--drop-target {
-  background: var(--accent-tint);
-  outline: 1.5px dashed var(--accent);
-  outline-offset: -3px;
+.cdn-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
 }
 
-#cdn-table tr[draggable="true"] {
+.cdn-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
   cursor: grab;
 
   &:active {
     cursor: grabbing;
   }
+
+  &.cdn-tile--drop-target {
+    background: color-mix(in oklch, var(--brand) 10%, var(--surface));
+    outline: 1.5px dashed var(--brand-text);
+    outline-offset: -3px;
+  }
+}
+
+.cdn-tile-icon {
+  font-size: 26px;
+  color: var(--brand-text);
+}
+
+.cdn-tile-name {
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:is(a):hover {
+    color: var(--brand-text);
+  }
+}
+
+.cdn-tile-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+.cdn-tile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+
+  i {
+    font-size: 14px;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
+.cdn-tile:hover .cdn-tile-actions,
+.cdn-tile:focus-within .cdn-tile-actions {
+  opacity: 1;
 }

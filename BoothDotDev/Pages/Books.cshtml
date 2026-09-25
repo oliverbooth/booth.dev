@@ -1,5 +1,6 @@
 @page "/books"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @inject ReadingListService ReadingListService
@@ -9,8 +10,11 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / Reading list</p>
+    <span class="eyebrow">
+        <a asp-page="/Index"><i class="ti ti-arrow-narrow-left"></i> back home</a>
+    </span>
     <h1>Reading list</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage books", "/Admin/Books/Index") })"/>
 
     <div class="page-intro">
         <p>Books I've read, am reading, or plan to read. Not exhaustive. Updated whenever I remember to.</p>
@@ -19,10 +23,10 @@
 
     <div data-filter-scope>
         <div class="filter-row" id="reading-list-filters">
-            <span class="pill active" data-filter="all">All</span>
-            <span class="pill" data-filter="reading">Reading</span>
-            <span class="pill" data-filter="plan-to-read">Plan to read</span>
-            <span class="pill" data-filter="read">Read</span>
+            <button type="button" class="pill active" aria-pressed="true" data-filter="all">All</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="reading">Reading</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="plan-to-read">Plan to read</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="read">Read</button>
         </div>
 
         @{
@@ -50,7 +54,7 @@
                         <div class="stack-list section-list">
                             @foreach (var book in books.OrderBy(b => b.Author).ThenBy(b => b.Title))
                             {
-                                <div>
+                                <div data-hue="grape">
                                     <div class="stack-icon">
                                         <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
                                     </div>
@@ -62,7 +66,8 @@
                                         </p>
                                         <div style="text-align:right">
                                             <div class="meta-value">@book.Isbn</div>
-                                            <a href="https://www.goodreads.com/book/isbn/@book.Isbn" class="meta-link" target="_blank" rel="noopener">
+                                            <a href="https://www.goodreads.com/book/isbn/@book.Isbn" class="meta-link" target="_blank"
+                                               rel="noopener">
                                                 <i class="ti ti-external-link" style="font-size:14px"></i> View on Goodreads
                                             </a>
                                         </div>

@@ -6,6 +6,12 @@ namespace BoothDotDev.Data.Models;
 public sealed class SomedayEntryDraft : IEquatable<SomedayEntryDraft>, IMarkdownBody
 {
     /// <summary>
+    ///     Gets or sets the colour of the entry, as of this draft.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to its position on the page.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
     ///     Gets the date and time this draft was saved.
     /// </summary>
     /// <value>The date and time this draft was saved.</value>

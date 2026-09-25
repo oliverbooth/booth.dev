@@ -1,50 +1,51 @@
 @page "/challenges"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @model Index
 @inject DevChallengeService DevChallengeService
+@inject MarkdownRenderingService MarkdownRenderingService
 @{
     ViewData["Title"] = "Dev Challenges";
     ViewData["Page"] = "Challenges";
 }
 
-<div class="page-wide">
+<div class="page-grid">
 
-    <div class="page-header-row">
-        <p class="crumb"><a asp-page="/Index">Home</a> / Challenges</p>
-        <div class="page-actions">
-            <a href="/challenges.rss" class="icon-link" aria-label="Subscribe to the dev challenges RSS feed" title="RSS feed"><i
-                    class="ti ti-rss"></i></a>
-        </div>
-    </div>
+    <span class="eyebrow">
+        <a asp-page="/Learn/Tutorials/Index" asp-route-slug=""><i class="ti ti-arrow-narrow-left"></i> back to learn</a>
+    </span>
+
     <h1>Dev Challenges</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage challenges", "/Admin/Challenges/Index") })"/>
     <p class="lede">
         These are a collection of challenges I've written to help you improve your skills as a developer.
         They're designed to be fun, challenging, and educational. I hope you enjoy them!
     </p>
 
-    <div class="card-grid">
+    <div class="sticky-grid">
         @{
             var number = 1;
         }
         @foreach (var challenge in DevChallengeService.GetDevChallenges(Visibility.Published))
         {
             var hasSolution = challenge.ShowSolution && !string.IsNullOrWhiteSpace(challenge.Solution);
+            var solutionState = hasSolution ? "Solution unlocked" : "Solution locked";
+            var excerpt = MarkdownRenderingService.RenderPlainTextExcerpt(challenge, out _);
 
-            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="card">
-                <div class="card-icon">
-                    <i class="ti ti-code"></i>
-                    <span class="card-status-badge@(hasSolution ? "" : " done")">
-                        <i class="ti @(hasSolution ? "ti-check" : "ti-lock")" style="font-size:12px"></i>
-                        @(hasSolution ? "Solution unlocked" : "Solution locked")
-                    </span>
+            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="challenge-card" data-hue="pink">
+                <div class="challenge-card-top">
+                    <span class="challenge-card-num">#@number</span>
+                    <i class="ti @(hasSolution ? "ti-lock-open" : "ti-lock") challenge-card-lock@(hasSolution ? " challenge-card-lock--open" : "")"
+                       role="img" aria-label="@solutionState" title="@solutionState"></i>
                 </div>
-                <div class="card-body">
-                    <p class="branch">#@number</p>
-                    <p class="title">@challenge.Title</p>
-                    <p class="desc">Published @challenge.PublishedAt.Humanize()</p>
-                </div>
+                <h3>@challenge.Title</h3>
+                @if (!string.IsNullOrWhiteSpace(excerpt))
+                {
+                    <p class="challenge-card-desc">@excerpt</p>
+                }
+                <p class="challenge-card-published">published @challenge.PublishedAt.Humanize()</p>
             </a>
             number++;
         }

@@ -1,0 +1,22 @@
+.eyebrow {
+  display: inline-block;
+  color: var(--brand-text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  transform: rotate(calc(-1deg * var(--motion) * var(--tilt-on)));
+
+  a:link, a:visited {
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+.eyebrow + .eyebrow {
+  display: block;
+  width: fit-content;
+}

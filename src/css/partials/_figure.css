@@ -1,108 +1,107 @@
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 1.75rem 0;
+}
+
 .figure-img-wrap {
   position: relative;
-  display: inline-block;
+  width: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card-soft);
+  overflow: hidden;
 
-  img[data-lightbox] {
-    cursor: pointer;
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+
+    &[data-lightbox] {
+      cursor: pointer;
+    }
+  }
+}
+
+audio.figure-img {
+  display: block;
+  width: 100%;
+}
+
+.figure:has(audio) .figure-img-wrap {
+  padding: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+}
+
+.figure-caption {
+  max-width: 32rem;
+  margin: 0;
+  color: var(--text-faint);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* chips overlaid on arbitrary media, so they keep their own dark scrim in both themes rather than following the theme */
+.expand-badge,
+.alt-badge {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 24px);
+  padding: 6px 11px;
+  border: none;
+  border-radius: 8px;
+  background: var(--scrim-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--scrim-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: color-mix(in oklch, var(--scrim-bg), white 15%);
   }
 }
 
 .expand-badge {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 2;
-  width: 2rem;
-  height: 2rem;
-  display: grid;
-  place-items: center;
+  top: 10px;
+  right: 10px;
 
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-
-  &:hover,
-  &:focus-visible {
-    background: var(--accent, #6161cd);
-    border-color: var(--accent, #6161cd);
-  }
-
-  &:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
+  i {
+    font-size: 14px;
   }
 }
 
-.image-with-alt {
-  position: relative;
+.alt-badge {
+  bottom: 10px;
+  left: 10px;
+  overflow: hidden;
+  max-width: 52px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.25s ease, background-color 0.15s ease;
 
-  .alt-badge {
-    position: absolute;
-    bottom: 0.5rem;
-    left: 0.5rem;
-    z-index: 2;
-    height: 2rem;
-
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    padding: 0.2rem 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-
-    &:hover,
-    &:focus-visible {
-      background: var(--accent, #6161cd);
-      border-color: var(--accent, #6161cd);
-    }
-
-    &:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 2px;
-    }
-  }
-
-  .alt-popover {
-    cursor: pointer;
-    position: absolute;
-    bottom: 0.5rem;
-    left: 0.5rem;
-    max-width: min(90%, 22rem);
-    z-index: 3;
-
-    background: rgba(20, 20, 24, 0.92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 0.75rem 0.9rem;
-
-    color: #eaeaf0;
-    font-size: 0.85rem;
-    line-height: 1.4;
+  &.is-open {
+    max-width: calc(100% - 24px);
+    white-space: normal;
     text-align: left;
+  }
+}
 
-    opacity: 0;
-    transform: translateY(4px);
-    pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-
-    &.is-open {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .alt-badge {
+    transition: background-color 0.15s ease;
   }
 }

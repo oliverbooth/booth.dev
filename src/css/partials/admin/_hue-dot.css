@@ -1,0 +1,9 @@
+.hue-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--solid);
+  vertical-align: middle;
+}

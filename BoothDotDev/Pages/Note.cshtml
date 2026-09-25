@@ -2,6 +2,7 @@
 @inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using DEDrake
 @model Note
@@ -21,11 +22,13 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @note.Title</p>
+    <span class="eyebrow">
+        <a asp-page="/Blog/Index" asp-fragment="filter=notes"><i class="ti ti-arrow-narrow-left"></i> back to notes</a>
+    </span>
 
     @if (note.Visibility == Visibility.Private)
     {
-        <div class="callout" data-callout="warning">
+        <div class="callout" data-callout="private">
             <p class="callout-title"><i class="ti ti-lock"></i> This note is private</p>
             <div class="callout-body">
                 <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
@@ -33,20 +36,25 @@
         </div>
     }
 
-    <span class="eyebrow">Note</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@note.Title</h1>
+    @{
+        var header = new ContentHeader
+        {
+            Title = note.Title,
+            Badge = "note",
+            BadgeClass = "badge-sun",
+            Hue = "sun",
+            Meta = [$"published {published.ToShortString()}"],
+            SourceUrl = $"/note/{(ShortGuid)note.Id}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Notes/Edit", new { id = note.Id }) : null,
+            ShowVoiceFontToggle = note.FontStyle == FontStyle.Serif
+        };
+    }
 
-    <div class="byline">
-        <span class="meta">
-            @published.ToShortString() &middot; <a href="/note/@((ShortGuid)note.Id).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Notes/Edit" asp-route-id="@note.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+    <article class="note-card" data-hue="sun">
+        <partial name="Partials/_ContentHeader" model="header" />
 
-    <div class="prose @note.FontStyle.ToProseClass()" style="margin-top:2.5rem">
-        @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
-    </div>
+        <div class="prose @note.FontStyle.ToProseClass()">
+            @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
+        </div>
+    </article>
 </div>

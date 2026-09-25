@@ -5,6 +5,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @model Article
@@ -21,15 +22,19 @@
     var author = post.Author;
     var published = post.PublishedAt;
     var category = BlogPostService.GetCategory(post.CategoryId)!;
+    var rootCategory = BlogPostService.GetParentCategory(post);
+    var backFilter = rootCategory.IsSuccess ? $"filter={rootCategory.Value.Id}" : null;
 }
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
+    <span class="eyebrow">
+        <a asp-page="/Blog/Index" asp-fragment="@backFilter"><i class="ti ti-arrow-narrow-left"></i> back to posts</a>
+    </span>
 
     @if (post.Visibility == Visibility.Private)
     {
-        <div class="callout" data-callout="warning">
+        <div class="callout" data-callout="private">
             <p class="callout-title"><i class="ti ti-lock"></i> This post is private</p>
             <div class="callout-body">
                 <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
@@ -38,7 +43,7 @@
     }
     else if (post.Visibility == Visibility.Unlisted)
     {
-        <div class="callout" data-callout="note">
+        <div class="callout" data-callout="unlisted">
             <p class="callout-title"><i class="ti ti-eye-off"></i> This post is unlisted</p>
             <div class="callout-body">
                 <p>It doesn't appear in listings or search, but anyone with this link can view it.</p>
@@ -46,20 +51,25 @@
         </div>
     }
 
-    <span class="eyebrow">@category.Name</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@post.Title</h1>
+    @{
+        var hue = post.Color ?? category.EffectiveColor;
+        var header = new ContentHeader
+        {
+            Title = post.Title,
+            Badge = category.Name,
+            BadgeClass = hue.ToBadgeClass(),
+            Hue = hue.ToDataHue(),
+            Tags = post.Tags,
+            AuthorName = author.DisplayName,
+            AuthorAvatarUrl = author.AvatarUrl,
+            Meta = [$"published {published.ToShortString()}", $"{post.GetEstimatedReadingTime()} min read"],
+            SourceUrl = $"/blog/{post.Slug}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Posts/Edit", new { id = post.Id }) : null,
+            ShowVoiceFontToggle = category.FontStyle == FontStyle.Serif
+        };
+    }
 
-    <div class="byline">
-        <div class="avatar" data-initial="@author.DisplayName[0]"><img src="@author.AvatarUrl" alt="@author.DisplayName" /></div>
-        <span class="meta">
-            @author.DisplayName &middot; @published.ToShortString() &middot; @post.GetEstimatedReadingTime() min read
-            &middot; <a href="/blog/@(post.Slug).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Posts/Edit" asp-route-id="@post.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+    <partial name="Partials/_ContentHeader" model="header" />
 
     @if (post.ShowTableOfContents)
     {
@@ -71,19 +81,9 @@
         </details>
     }
 
-    <div class="prose @category.FontStyle.ToProseClass()" style="margin-top:2.5rem">
+    <div class="prose @category.FontStyle.ToProseClass()">
         @Html.Raw(MarkdownRenderingService.Render(post, post.Id, post.PublishedAt))
     </div>
-
-    @if (post.Tags.Count > 0)
-    {
-        <div style="border-top:0.5px solid var(--border);margin-top:2.5rem;padding-top:1.25rem;display:flex;gap:6px">
-            @foreach (var tag in post.Tags)
-            {
-                <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
-            }
-        </div>
-    }
 
     @{
         var previousPost = BlogPostService.GetPreviousPost(post);
@@ -95,7 +95,9 @@
         <div class="post-nav">
             @if (previousPost is not null)
             {
-                <a asp-page="/Blog/Article" asp-route-slug="@previousPost.Slug" class="post-nav-link">
+                var previousCategory = BlogPostService.GetCategory(previousPost.CategoryId)!;
+                <a asp-page="/Blog/Article" asp-route-slug="@previousPost.Slug" class="post-nav-link"
+                   data-hue="@((previousPost.Color ?? previousCategory.EffectiveColor).ToDataHue())">
                     <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
                     <span class="post-nav-title">@previousPost.Title</span>
                 </a>
@@ -107,7 +109,9 @@
 
             @if (nextPost is not null)
             {
-                <a asp-page="/Blog/Article" asp-route-slug="@nextPost.Slug" class="post-nav-link post-nav-link--next">
+                var nextCategory = BlogPostService.GetCategory(nextPost.CategoryId)!;
+                <a asp-page="/Blog/Article" asp-route-slug="@nextPost.Slug" class="post-nav-link post-nav-link--next"
+                   data-hue="@((nextPost.Color ?? nextCategory.EffectiveColor).ToDataHue())">
                     <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
                     <span class="post-nav-title">@nextPost.Title</span>
                 </a>
@@ -119,35 +123,7 @@
         </div>
     }
 
-    <a id="comments"></a>
-
-    @if (post.EnableComments)
-    {
-        <div class="giscus"></div>
-
-        @section Scripts
-        {
-            <script src="https://giscus.app/client.js"
-                    data-repo="oliverbooth/booth.dev"
-                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
-                    data-category="Comments"
-                    data-category-id="DIC_kwDODp0rOs4Ce_Nj"
-                    data-mapping="pathname"
-                    data-strict="0"
-                    data-reactions-enabled="1"
-                    data-emit-metadata="0"
-                    data-input-position="bottom"
-                    data-theme="dark"
-                    data-lang="en"
-                    crossorigin="anonymous"
-                    async>
-            </script>
-        }
-    }
-    else
-    {
-        <p class="no-comment">Comments are not enabled for this post.</p>
-    }
+    <partial name="Partials/_Comments" model="post.EnableComments" />
 
     @{
         var commentCount = CommentService.GetLegacyCommentCount(post);

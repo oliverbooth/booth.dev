@@ -1,0 +1,94 @@
+@page "/admin/statuses"
+@using BoothDotDev.Data.Models
+@using Humanizer
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+
+    var groups = new[]
+    {
+        (Label: "in rotation", Dot: "dot", Items: Model.Active),
+        (Label: "out of rotation", Dot: "dot dot-coral", Items: Model.Inactive)
+    };
+}
+
+<div class="admin-page status-manager">
+
+    <div class="admin-header">
+        <div>
+            <h1>Statuses</h1>
+            <p>What the thought bubble on the homepage says. One of the statuses in rotation is picked at random on each visit, and
+                the bubble is hidden while none is.</p>
+        </div>
+    </div>
+
+    @if (Model.Errors is not null)
+    {
+        <p class="hint form-error">@Model.Errors</p>
+    }
+
+    <form method="post" asp-page-handler="Add" class="status-add">
+        <div class="field">
+            <input type="text" name="text" required maxlength="@Status.MaxTextLength" placeholder="Add a status&hellip;"
+                   aria-label="New status">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="ti ti-plus"></i> Add status</button>
+    </form>
+
+    @if (Model.Active.Count == 0)
+    {
+        <p class="hint">Nothing is in rotation, so the homepage shows no thought bubble.</p>
+    }
+
+    <div class="row-groups">
+        @foreach (var group in groups)
+        {
+            <div class="row-group">
+                <div class="row-group-header">
+                    <span class="@group.Dot"></span>
+                    <span class="row-group-title">@group.Label</span>
+                    <span class="row-group-count">@("status".ToQuantity(group.Items.Count, ShowQuantityAs.Numeric))</span>
+                </div>
+                <ul class="admin-row-list">
+                    @foreach (var status in group.Items)
+                    {
+                        <li class="admin-row status-row">
+                            <form method="post" asp-page-handler="Save" class="status-edit">
+                                <input type="hidden" name="id" value="@status.Id">
+                                <div class="field">
+                                    <input type="text" name="text" value="@status.Text" required maxlength="@Status.MaxTextLength"
+                                           aria-label="Status text">
+                                </div>
+                                <button type="submit" class="icon-btn">save</button>
+                            </form>
+
+                            <span class="row-meta">added @status.CreatedAt.Humanize()</span>
+
+                            <div class="row-actions">
+                                <form method="post" asp-page-handler="SetActive">
+                                    <input type="hidden" name="id" value="@status.Id">
+                                    <input type="hidden" name="isActive" value="@((!status.IsActive).ToString().ToLowerInvariant())">
+                                    <button type="submit" class="icon-btn">@(status.IsActive ? "take out" : "put in rotation")</button>
+                                </form>
+                                @if (!(status.IsActive && Model.Active.Count == 1))
+                                {
+                                    <form method="post" asp-page-handler="SetOnlyActive">
+                                        <input type="hidden" name="id" value="@status.Id">
+                                        <button type="submit" class="icon-btn">only this</button>
+                                    </form>
+                                }
+                                <form method="post" asp-page-handler="Delete"
+                                      data-confirm="Delete this status for good? This can't be undone.">
+                                    <input type="hidden" name="id" value="@status.Id">
+                                    <button type="submit" class="icon-btn danger">delete</button>
+                                </form>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+</div>

@@ -195,9 +195,3 @@ function wrapAbsoluteRange(root: HTMLElement, range: AbsoluteRange): void {
         // malformed/unexpected DOM shape for this range - degrade gracefully, skip this one mark
     }
 }
-
-export function applyAllCodeBlockHighlights(): void {
-    document.querySelectorAll<HTMLElement>('code[data-highlight]').forEach(codeElement => {
-        applyCodeBlockHighlights(codeElement);
-    });
-}

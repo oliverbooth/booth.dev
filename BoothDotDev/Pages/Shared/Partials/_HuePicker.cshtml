@@ -1,0 +1,19 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model HuePicker
+
+<div class="hue-picker" role="radiogroup">
+    <label class="hue-option hue-option--auto" title="Auto: @Model.AutoDescription">
+        <input type="radio" name="@Model.Name" value="" checked="@(Model.Selected is null)">
+        <span class="hue-swatch"></span>
+        <span class="hue-name">auto</span>
+    </label>
+    @foreach (var hue in Enum.GetValues<PaletteHue>())
+    {
+        <label class="hue-option" data-hue="@hue.ToDataHue()">
+            <input type="radio" name="@Model.Name" value="@hue" checked="@(Model.Selected == hue)">
+            <span class="hue-swatch"></span>
+            <span class="hue-name">@hue.ToDataHue()</span>
+        </label>
+    }
+</div>

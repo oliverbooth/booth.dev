@@ -1,0 +1,28 @@
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: none;
+  border-radius: 14px;
+  background: var(--toggle-bg);
+  box-shadow: var(--shadow-toggle);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  transform: rotate(calc(-4deg * var(--motion)));
+  transition: transform 0.25s ease;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: rotate(0deg) scale(calc(1 + 0.12 * var(--motion)));
+    }
+  }
+}
+
+:root[data-theme="light"] .theme-toggle .ti-moon,
+:root:not([data-theme="light"]) .theme-toggle .ti-sun {
+  display: none;
+}

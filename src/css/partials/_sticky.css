@@ -1,0 +1,86 @@
+.sticky-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 20px;
+  padding-top: 10px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.folder-card,
+.article-card,
+.challenge-card,
+.portfolio-card {
+  --tilt: -2.2deg;
+  --tint: var(--tint-brand);
+
+  display: flex;
+  flex-direction: column;
+  padding: 26px 20px 20px;
+  background: var(--tint);
+  color: inherit;
+  text-decoration: none;
+  transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+  transition: transform 0.3s ease;
+
+  &:focus-visible {
+    transform: rotate(0deg) scale(calc(1 + 0.04 * var(--motion)));
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: rotate(0deg) scale(calc(1 + 0.04 * var(--motion)));
+    }
+  }
+
+  &:nth-child(7n + 2) { --tilt: 1.6deg; }
+  &:nth-child(7n + 3) { --tilt: -1.2deg; }
+  &:nth-child(7n + 4) { --tilt: 2.4deg; }
+  &:nth-child(7n + 5) { --tilt: -1.8deg; }
+  &:nth-child(7n + 6) { --tilt: 1.1deg; }
+  &:nth-child(7n + 7) { --tilt: -2.6deg; }
+
+  h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: none;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.folder-card,
+.article-card,
+.challenge-card,
+.portfolio-card,
+.someday-entry,
+.note-card,
+.prose blockquote {
+  --tape-tilt: -3deg;
+
+  position: relative;
+  border-radius: 6px 18px 16px 16px;
+
+  &:nth-of-type(even) {
+    --tape-tilt: 4deg;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 78px;
+    height: 22px;
+    margin-left: -39px;
+    border-radius: 3px;
+    background: var(--solid);
+    opacity: 0.85;
+    transform: rotate(calc(var(--tape-tilt) * var(--motion) * var(--tilt-on)));
+  }
+}

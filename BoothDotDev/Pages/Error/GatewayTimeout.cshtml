@@ -1,27 +1,17 @@
 @page "/error/504"
-<div class="error-page">
-    <div class="error-card">
+@using BoothDotDev.Pages.Shared.Partials
 
-        <div class="terminal" style="margin-bottom:1.75rem">
-            <div class="terminal-bar">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> curl --max-time 30 booth.dev</div>
-                <div class="out" style="margin-top:6px">curl: (28) Operation timed out after 30000 milliseconds</div>
-            </div>
-        </div>
+@{
+    var hero = new ErrorHero
+    {
+        Code = 504,
+        Title = "that took too long",
+        Body = "The server was waiting on something upstream that never answered in time. Could be a blip - worth trying again.",
+        Tag = "gateway timeout",
+        Icon = "ti-hourglass",
+        Tint = "warn",
+        ShowRetry = true
+    };
+}
 
-        <p class="error-code">Error 504</p>
-        <h1 class="error-title">Gateway Timeout</h1>
-        <p class="error-desc">The upstream took too long to respond. Could be a slow connection, could be the server &mdash; try again.</p>
-
-        <div class="error-actions">
-            <a asp-page="/Index" class="btn btn-primary">Back home</a>
-            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
-        </div>
-
-    </div>
-</div>
+<partial name="Partials/_ErrorHero" model="hero" />

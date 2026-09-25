@@ -1,55 +1,88 @@
 @page "/donate"
+@using BoothDotDev.Data
+@using QRCoder
 @{
     ViewData["Title"] = "Donate";
     ViewData["Page"] = "Donate";
+
+    const string btcAddress = "1LmXvavJr1omscfkXjp7A4VyNf3XhKP9JK";
+    const string ethAddress = "0x972C6641e36e2736823A6B1e6BA4D2A814b69fD2";
+
+    var btcPayload = new PayloadGenerator.BitcoinLikeCryptoCurrencyAddress(
+        PayloadGenerator.BitcoinLikeCryptoCurrencyAddress.BitcoinLikeCryptoCurrencyType.Bitcoin, btcAddress, null);
+
+    string GenerateQrSvg(string payload)
+    {
+        using var generator = new QRCodeGenerator();
+        using var data = generator.CreateQrCode(payload, QRCodeGenerator.ECCLevel.Q);
+        var svgQrCode = new SvgQRCode(data);
+
+        // fixed black-on-white regardless of site theme - same reasoning as the admin TOTP QR code: scanners rely
+        // on real contrast, and a dark-mode inversion here would just make it unreliable to scan for no benefit.
+        return svgQrCode.GetGraphic(4, "#000000", "#ffffff");
+    }
+
+    var btcQrSvg = GenerateQrSvg(btcPayload.ToString());
+    var ethQrSvg = GenerateQrSvg(ethAddress);
 }
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / Donate</p>
-    <h1>Donate</h1>
+    <span class="eyebrow">no pressure, but -</span>
+    <h1>Buy Me a Coffee</h1>
 
-    <p class="body-copy">
-        I believe in free and open exchange of information, and I want to keep my educational content free for
-        everyone to access. I will never put ads on my site, and I don't want to put behind a paywall resources that
-        should be available to everybody, regardless of their financial situation.
-    </p>
+    <div class="page-intro">
+        <p>
+            I believe in free and open exchange of information, and I want to keep my educational content free for
+            everyone to access. I will never put ads on my site, and I don't want to put behind a paywall resources that
+            should be available to everybody, regardless of their financial situation.
+        </p>
+        <p>
+            That said, tutorials take time and hosting costs money. If something I made saved you time (or just made
+            your day slightly better), you can chip in for the coffee that made it possible. Totally optional, always
+            appreciated.
+        </p>
+    </div>
 
-    <p class="body-copy">
-        That said, tutorials take time and hosting costs money. If you find what I make useful, and are both willing and able to donate to
-        fund all of this, you can do so using the links below. Thank you for your support!
-    </p>
-
-    <div class="link-list">
-        <a href="https://ko-fi.com/oliverbooth" class="tile tile--padded">
-            <div class="tile-icon-box tile-icon-box--ko-fi"><i class="ti ti-coffee"></i></div>
-            <div class="label">
-                <p style="font-weight:500;font-size:14px;margin:0">Ko-fi</p>
-                <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0">One-off support</p>
-            </div>
-            <i class="ti ti-external-link tile-external-icon"></i>
+    <div class="support-grid">
+        <a href="@DonationLinks.BuyMeACoffee" class="support-card support-card--bmac">
+            <span class="support-icon support-icon--bmac">
+                <img src="~/img/bmc-logo.svg" alt="" asp-append-version="true" />
+            </span>
+            <span>
+                <p class="support-title">Buy Me a Coffee</p>
+                <p class="support-sub">one-off or monthly</p>
+            </span>
         </a>
-        <a href="https://www.buymeacoffee.com/oliverbooth" class="tile tile--padded">
-            <div class="tile-icon-box tile-icon-box--bmac"><i class="ti ti-cup"></i></div>
-            <div class="label">
-                <p style="font-weight:500;font-size:14px;margin:0">Buy Me a Coffee</p>
-                <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0">One-off support</p>
-            </div>
-            <i class="ti ti-external-link tile-external-icon"></i>
+        <a href="@DonationLinks.KoFi" class="support-card support-card--kofi">
+            <span class="support-icon support-icon--ko-fi">
+                <img src="~/img/kofi_symbol.svg" alt="" asp-append-version="true" />
+            </span>
+            <span>
+                <p class="support-title">Ko-fi</p>
+                <p class="support-sub">no fees, one-time</p>
+            </span>
         </a>
     </div>
 
-    <h2>Crypto</h2>
-    <div class="stack-list">
-        <div class="crypto-row">
-            <span class="crypto-symbol"><i class="ti ti-coin-bitcoin-filled"></i> BTC</span>
-            <span class="crypto-address">1LmXvavJr1omscfkXjp7A4VyNf3XhKP9JK</span>
-            <i class="ti ti-copy copy-icon"></i>
+    <h2>Or, Crypto</h2>
+
+    <div class="crypto-grid">
+        <div class="crypto-card">
+            <div class="crypto-card-head">
+                <span class="crypto-icon crypto-icon--btc"><i class="ti ti-coin-bitcoin-filled"></i></span>
+                <span class="crypto-name">Bitcoin</span>
+            </div>
+            <div class="crypto-qr">@Html.Raw(btcQrSvg)</div>
+            <button type="button" class="crypto-copy" data-address="@btcAddress" aria-label="Copy Bitcoin address">@btcAddress</button>
         </div>
-        <div class="crypto-row">
-            <span class="crypto-symbol"><i class="ti ti-currency-ethereum"></i>ETH</span>
-            <span class="crypto-address">0x972C6641e36e2736823A6B1e6BA4D2A814b69fD2</span>
-            <i class="ti ti-copy copy-icon"></i>
+        <div class="crypto-card">
+            <div class="crypto-card-head">
+                <span class="crypto-icon crypto-icon--eth"><i class="ti ti-currency-ethereum"></i></span>
+                <span class="crypto-name">Ethereum</span>
+            </div>
+            <div class="crypto-qr">@Html.Raw(ethQrSvg)</div>
+            <button type="button" class="crypto-copy" data-address="@ethAddress" aria-label="Copy Ethereum address">@ethAddress</button>
         </div>
     </div>
 

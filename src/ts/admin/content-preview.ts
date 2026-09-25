@@ -1,7 +1,7 @@
 import {initContentFeatures} from '../content-rendering.ts';
 import {disposeManimScenes} from '../manim/scenes.ts';
 
-declare const MathJax: {typesetPromise(elements?: HTMLElement[]): Promise<void>} | undefined;
+declare const MathJax: { typesetPromise(elements?: HTMLElement[]): Promise<void> } | undefined;
 
 const DEBOUNCE_MS = 400;
 

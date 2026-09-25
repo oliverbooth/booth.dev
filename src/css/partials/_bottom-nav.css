@@ -1,0 +1,87 @@
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  left: 14px;
+  right: 14px;
+  z-index: 50;
+  padding: 8px 6px;
+  border-radius: 20px;
+  background: var(--surface-nav);
+  box-shadow: var(--shadow-nav);
+  justify-content: space-around;
+  align-items: center;
+
+  a,
+  button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 14px;
+    background: none;
+    color: var(--text-nav);
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: lowercase;
+    cursor: pointer;
+
+    i {
+      font-size: 22px;
+    }
+
+    &.active {
+      background: color-mix(in oklch, var(--brand) 22%, transparent);
+      color: var(--text);
+    }
+  }
+
+  > :nth-child(6n + 1) i {
+    color: var(--brand-text);
+  }
+
+  > :nth-child(6n + 2) i {
+    color: var(--accent-coral);
+  }
+
+  > :nth-child(6n + 3) i {
+    color: var(--accent-teal);
+  }
+
+  > :nth-child(6n + 4) i {
+    color: var(--accent-magenta);
+  }
+
+  > :nth-child(6n + 5) i {
+    color: var(--brand-text);
+  }
+
+  > :nth-child(6n) i {
+    color: var(--accent-coral);
+  }
+
+  .theme-toggle {
+    width: auto;
+    height: auto;
+    box-shadow: none;
+    transform: none;
+    background: none;
+    color: var(--text-nav);
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 760px) {
+  .topnav {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+}

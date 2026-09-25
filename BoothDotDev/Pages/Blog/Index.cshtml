@@ -1,15 +1,21 @@
 @page "/blog"
+@using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using DEDrake
 @model Index
 @inject BlogPostService BlogPostService
+@inject MarkdownRenderingService MarkdownRenderingService
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / Write</p>
+    <span class="eyebrow">
+        <a asp-page="/Index"><i class="ti ti-arrow-narrow-left"></i> back home</a>
+    </span>
+
     <div class="page-header-row">
-        <h1>Write</h1>
+        <h1>words</h1>
         <div class="page-actions">
             <a asp-page="/Blog/Stats" class="icon-link" aria-label="View blog stats" title="Blog stats"><i class="ti ti-chart-bar"></i></a>
             <a href="/blog.rss" class="icon-link" aria-label="Subscribe to the blog RSS feed" title="Blog RSS feed"><i
@@ -18,6 +24,12 @@
                     class="ti ti-notes"></i></a>
         </div>
     </div>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[]
+    {
+        new("manage posts", "/Admin/Posts/Index"),
+        new("manage notes", "/Admin/Notes/Index"),
+        new("manage categories", "/Admin/Posts/Categories/Index")
+    })"/>
     @if (Model.Tag is { } tag)
     {
         <p class="lede">
@@ -26,55 +38,72 @@
     }
     else
     {
-        <p class="lede">I write for me, not for you. Unless it's tech-related. Then I write for you. But also me.</p>
+        <p class="lede">look mom, i know how to english gooder. are you proud of me?</p>
     }
 
     <div data-filter-scope>
         <div class="filter-row">
-            <span class="pill active">All</span>
+            <button type="button" class="pill active" aria-pressed="true" data-hue="brand">All</button>
             @foreach (var category in Model.BlogPostCategories)
             {
-                <span class="pill" data-filter="@category.Id">@category.Name</span>
+                <button type="button" class="pill" aria-pressed="false" data-filter="@category.Id"
+                        data-hue="@category.EffectiveColor.ToDataHue()">@category.Name</button>
             }
-            <span class="pill" data-filter-kind="note">Notes</span>
+            <button type="button" class="pill" aria-pressed="false" data-filter-kind="note" data-hue="sun">Notes</button>
             <a class="pill" asp-page="/Someday">Someday</a>
         </div>
 
-        <div class="commit-log" style="margin-bottom:3rem">
-            @for (var index = 0; index < Model.BlogPosts.Count; index++)
+        <div class="post-list">
+            @foreach (var post in Model.BlogPosts)
             {
-                var post = Model.BlogPosts[index];
-                var first = index == 0;
-                var categoryResult = BlogPostService.GetParentCategory(post);
-                var category = categoryResult.IsSuccess ? categoryResult.Value : null;
+                var rootCategoryResult = BlogPostService.GetParentCategory(post);
+                var rootCategory = rootCategoryResult.IsSuccess ? rootCategoryResult.Value : null;
+                var displayCategory = BlogPostService.GetCategory(post.CategoryId) ?? rootCategory;
+                var postHue = post.Color ?? displayCategory?.EffectiveColor ?? PaletteHue.Brand;
 
-                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug"
-                   class="commit"
-                   data-state="@category?.Id">
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()"
+                   data-state="@rootCategory?.Id">
                     <div class="collapse-inner">
-                        <div class="commit-dot@(first ? "" : " muted")"></div>
-                        <div class="commit-meta">
-                            <span class="commit-hash">@post.Id.ToCommitSha()</span><span class="commit-tag">blog</span>
+                        <div class="post-row-body">
+                            <div class="post-row-text">
+                                <div class="post-row-head">
+                                    @if (displayCategory is not null)
+                                    {
+                                        <span class="badge @postHue.ToBadgeClass()">@displayCategory.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-brand">post</span>
+                                    }
+                                    <span class="post-row-title">@post.Title</span>
+                                </div>
+                                <span class="post-row-sub">@MarkdownRenderingService.RenderPlainTextExcerpt(post, out _)</span>
+                            </div>
+                            <div class="post-row-meta">
+                                <span class="meta-value">@post.PublishedAt.ToShortString()</span>
+                                <span class="meta-value">@post.GetEstimatedReadingTime() min read</span>
+                            </div>
                         </div>
-                        <p class="commit-title">@post.Title</p>
-                        <p class="commit-sub">@post.GetEstimatedReadingTime() min read &middot; @post.PublishedAt.ToShortString()</p>
                     </div>
                 </a>
             }
 
-            @for (var index = 0; index < Model.Notes.Count; index++)
+            @foreach (var note in Model.Notes)
             {
-                var note = Model.Notes[index];
-                var first = index == 0;
-
-                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="commit" data-kind="note" data-state="note">
+                <a asp-page="/Note" asp-route-id="@((ShortGuid)note.Id)" class="post-row" data-hue="sun" data-kind="note" data-state="note">
                     <div class="collapse-inner">
-                        <div class="commit-dot@(first ? "" : " muted")"></div>
-                        <div class="commit-meta">
-                            <span class="commit-hash">@note.Id.ToCommitSha()</span><span class="commit-tag">note</span>
+                        <div class="post-row-body">
+                            <div class="post-row-text">
+                                <div class="post-row-head">
+                                    <span class="badge badge-sun">note</span>
+                                    <span class="post-row-title">@note.Title</span>
+                                </div>
+                                <span class="post-row-sub">@MarkdownRenderingService.RenderPlainTextPreview(note.Content, 160)</span>
+                            </div>
+                            <div class="post-row-meta">
+                                <span class="meta-value">@note.PublishedAt.ToShortString()</span>
+                            </div>
                         </div>
-                        <p class="commit-title">@note.Title</p>
-                        <p class="commit-sub">@note.PublishedAt.ToShortString()</p>
                     </div>
                 </a>
             }

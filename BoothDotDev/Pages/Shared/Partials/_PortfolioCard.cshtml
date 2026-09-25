@@ -1,0 +1,56 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model BoothDotDev.Data.PortfolioItem
+
+<a asp-page="@Model.PagePath" asp-all-route-data="@Model.RouteValues" class="portfolio-card" data-hue="@Model.Hue.ToDataHue()"
+   data-state="@Model.FilterKey">
+    <div class="portfolio-card-top">
+        <span class="badge">@Model.Label</span>
+        @if (Model.Status is { } status)
+        {
+            <span class="portfolio-card-status">
+                <span
+                    class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
+            </span>
+        }
+        else if (Model.IsWorkInProgress)
+        {
+            <span class="portfolio-card-status">wip</span>
+        }
+    </div>
+
+    @if (Model.WaveformBars.Count > 0)
+    {
+        <div class="portfolio-card-wave" aria-hidden="true">
+            @foreach (var height in Model.WaveformBars)
+            {
+                <span style="height:@(height)px"></span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="portfolio-card-media">
+            @if (Model.ImageUrl is not null)
+            {
+                <img loading="lazy" src="@Model.ImageUrl" alt="@(Model.ImageAlt ?? Model.Title)">
+            }
+        </div>
+    }
+
+    <h3>@Model.Title</h3>
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p class="portfolio-card-desc">@Model.Description</p>
+    }
+
+    @if (Model.Tags.Count > 0)
+    {
+        <div class="portfolio-card-tags">
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="tag" title="@tag">@tag</span>
+            }
+        </div>
+    }
+</a>

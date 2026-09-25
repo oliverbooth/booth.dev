@@ -16,6 +16,7 @@ internal sealed class BlogPostCategoryConfiguration : IEntityTypeConfiguration<B
         builder.Property(entry => entry.Name).IsRequired();
         builder.Property(entry => entry.Slug).IsRequired();
         builder.Property(entry => entry.FontStyle).IsRequired();
+        builder.Property(entry => entry.Color).IsRequired(false);
         builder.Property(entry => entry.ParentCategoryId).IsRequired(false);
 
         builder.HasOne(entry => entry.ParentCategory)

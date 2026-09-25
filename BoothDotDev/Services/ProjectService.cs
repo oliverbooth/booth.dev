@@ -1,10 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using BoothDotDev.Markdown.Link;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Optional;
 
 namespace BoothDotDev.Services;
@@ -16,7 +14,6 @@ public sealed class ProjectService
 {
     private const string ProjectArea = "projects";
     private const string DevlogArea = "devlog";
-    private readonly string _cdnBaseUrl;
     private readonly CdnMediaService _cdnMediaService;
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
@@ -28,17 +25,14 @@ public sealed class ProjectService
     /// <param name="dbContextFactory">The database context factory.</param>
     /// <param name="markdownRenderingService">The Markdown rendering service.</param>
     /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
-    /// <param name="cdnOptions">The CDN options.</param>
     public ProjectService(
         IDbContextFactory<AppDbContext> dbContextFactory,
         MarkdownRenderingService markdownRenderingService,
-        CdnMediaService cdnMediaService,
-        IOptions<CdnOptions> cdnOptions)
+        CdnMediaService cdnMediaService)
     {
         _dbContextFactory = dbContextFactory;
         _markdownRenderingService = markdownRenderingService;
         _cdnMediaService = cdnMediaService;
-        _cdnBaseUrl = cdnOptions.Value.BaseUrl;
     }
 
     /// <summary>
@@ -61,22 +55,6 @@ public sealed class ProjectService
     public string GetDetails(Project project)
     {
         return _markdownRenderingService.Render(project.Details, project.Id, project.CreatedAt, ProjectArea);
-    }
-
-    /// <summary>
-    ///     Gets the CDN URL of the specified project's hero image.
-    /// </summary>
-    /// <param name="project">The project whose hero image URL to get.</param>
-    /// <returns>The hero image's CDN URL, or <see langword="null" /> if the project has no hero image.</returns>
-    public string? GetHeroUrl(Project project)
-    {
-        if (string.IsNullOrEmpty(project.HeroUrl))
-        {
-            return null;
-        }
-
-        var kind = CdnMediaResolver.ResolveMediaKind(project.HeroUrl);
-        return CdnMediaResolver.BuildCdnUrl(_cdnBaseUrl, ProjectArea, kind, project.CreatedAt, project.Id, project.HeroUrl);
     }
 
     /// <summary>
@@ -331,6 +309,11 @@ public sealed class ProjectService
     {
         using var context = _dbContextFactory.CreateDbContext();
 
+        if (context.Creations.Any(c => c.Slug == request.Slug))
+        {
+            return Result.Fail($"The slug '{request.Slug}' is already used by a creation.");
+        }
+
         var project = new Project();
         ApplyProjectRequest(project, request);
 
@@ -357,6 +340,17 @@ public sealed class ProjectService
         if (project is null)
         {
             return Result.Fail($"The project with ID {id} was not found");
+        }
+
+        if (context.Creations.Any(c => c.Slug == request.Slug))
+        {
+            return Result.Fail($"The slug '{request.Slug}' is already used by a creation.");
+        }
+
+        var moveResult = _cdnMediaService.MoveDate(id, project.CreatedAt, request.CreatedAt.ToUniversalTime(), ProjectArea);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<Project>();
         }
 
         ApplyProjectRequest(project, request);
@@ -394,10 +388,8 @@ public sealed class ProjectService
             return Result.Fail("This project has devlog entries. Permanently delete them first.");
         }
 
-        if (!string.IsNullOrEmpty(project.HeroUrl))
-        {
-            _cdnMediaService.DeleteAllMedia(id, project.CreatedAt, ProjectArea);
-        }
+        // the cascade removes the media rows, but not the files on the CDN
+        _cdnMediaService.DeleteAllMedia(id, project.CreatedAt, ProjectArea);
 
         context.Projects.Remove(project);
         context.SaveChanges();
@@ -642,11 +634,9 @@ public sealed class ProjectService
         project.Tagline = request.Tagline;
         project.Description = request.Description;
         project.Details = request.Details;
-        project.HeroUrl = request.HeroUrl;
         project.Languages = request.Languages;
+        project.Tags = request.Tags;
         project.Rank = request.Rank;
-        project.RemoteUrl = request.RemoteUrl;
-        project.RemoteTarget = request.RemoteTarget;
         project.Status = request.Status;
         project.Type = request.Type;
         project.CreatedAt = request.CreatedAt.ToUniversalTime();

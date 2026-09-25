@@ -2,6 +2,7 @@
 @inject MarkdownRenderingService MarkdownRenderingService
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @model Challenge
 @{
@@ -14,15 +15,13 @@
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Challenges/Index">Challenges</a> /
-        @challenge.Title
-    </p>
+    <span class="eyebrow">
+        <a asp-page="/Learn/Challenges/Index"><i class="ti ti-arrow-narrow-left"></i> back to challenges</a>
+    </span>
 
     @if (challenge.Visibility == Visibility.Private)
     {
-        <div class="callout" data-callout="warning">
+        <div class="callout" data-callout="private">
             <p class="callout-title"><i class="ti ti-lock"></i> This challenge is private</p>
             <div class="callout-body">
                 <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
@@ -30,36 +29,31 @@
         </div>
     }
 
-    <span class="eyebrow">Challenge</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@challenge.Title</h1>
+    @{
+        var header = new ContentHeader
+        {
+            Title = challenge.Title,
+            Badge = "challenge",
+            BadgeClass = "badge-magenta",
+            Hue = "pink",
+            Meta = hasSolution
+                ? [$"published {challenge.PublishedAt.ToShortString()}"]
+                : [$"published {challenge.PublishedAt.ToShortString()}", "solution locked"],
+            Flag = hasSolution ? new MetaFlag("solution unlocked", "ti-check", "mint") : null,
+            SourceUrl = $"/challenge/{challenge.Id}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Challenges/Edit", new { id = challenge.Id }) : null
+        };
+    }
 
-    <div class="byline">
-        <span class="meta">
-            Published @challenge.PublishedAt.ToShortString()
-            &middot;
-            @if (hasSolution)
-            {
-                <span style="color:var(--success-text)"><i class="ti ti-check" style="font-size:13px;vertical-align:-1px"></i> Solution available</span>
-            }
-            else
-            {
-                <span style="color:var(--text-muted)"><i class="ti ti-lock" style="font-size:13px;vertical-align:-1px"></i> Solution locked</span>
-            }
-            &middot; <a href="/challenge/@(challenge.Id).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+    <partial name="Partials/_ContentHeader" model="header" />
 
-    <div class="prose" style="margin-top:2rem">
+    <div class="prose">
         @Html.Raw(MarkdownRenderingService.Render(challenge.Description, challenge.Id, challenge.PublishedAt, "challenge"))
     </div>
 
     @if (hasSolution)
     {
-        <div class="prose" style="margin-top:2rem">
+        <div class="prose challenge-solution">
             <details class="callout" data-callout="success">
                 <summary class="callout-title"><i class="ti ti-bulb"></i> Solution</summary>
                 <div class="callout-body">
@@ -70,8 +64,8 @@
     }
     else
     {
-        <div class="challenge-locked" style="margin-top:2rem">
-            <i class="ti ti-lock" style="font-size:22px"></i>
+        <div class="challenge-locked">
+            <span class="challenge-locked-icon"><i class="ti ti-lock" aria-hidden="true"></i></span>
             <p class="challenge-locked-title">Solution not released yet</p>
             <p class="challenge-locked-desc">Give it a real attempt first. Check back later for the official solution.</p>
         </div>

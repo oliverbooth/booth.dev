@@ -1,0 +1,27 @@
+/* theme.ts cross-fades the whole page with a view transition */
+::view-transition-group(root) {
+  animation-duration: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}
+
+/* fallback for browsers without view transitions: theme.ts sets data-theme-fading for the length of a switch */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-theme-fading] *,
+  :root[data-theme-fading] *::before,
+  :root[data-theme-fading] *::after {
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease,
+      fill 0.4s ease,
+      stroke 0.4s ease !important;
+  }
+}

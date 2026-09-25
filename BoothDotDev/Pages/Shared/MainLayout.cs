@@ -2,7 +2,6 @@ using System.Reflection;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Razor.Internal;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages.Shared;
 
@@ -32,6 +31,13 @@ public abstract class MainLayout : RazorPage<object>
     public MarkdownRenderingService MarkdownRenderingService { get; set; } = null!;
 
     /// <summary>
+    ///     Gets or sets the service that builds the Discord component embed.
+    /// </summary>
+    /// <value>The Discord embed service.</value>
+    [RazorInject]
+    public DiscordEmbedService DiscordEmbedService { get; set; } = null!;
+
+    /// <summary>
     ///     Gets the page title to display in the browser tab.
     /// </summary>
     /// <value>The page title.</value>
@@ -39,12 +45,6 @@ public abstract class MainLayout : RazorPage<object>
     {
         get => ViewData["Title"] is null ? Strings.MyName : $"{ViewData["Title"]} - {Strings.MyName}";
     }
-
-    /// <summary>
-    ///     Gets the source code of the current page for display in the Quine section.
-    /// </summary>
-    /// <value>The source code of the current page.</value>
-    public string? QuineSource { get; private set; }
 
     /// <summary>
     ///     Gets the website's version string.
@@ -55,26 +55,14 @@ public abstract class MainLayout : RazorPage<object>
     /// <summary>
     ///     Initializes the layout.
     /// </summary>
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         var request = Context.Request;
         CurrentUrl = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
         SiteBaseUrl = new Uri($"{request.Scheme}://{request.Host}");
 
-        var env = Context.RequestServices.GetRequiredService<IWebHostEnvironment>();
-        var descriptor = ViewContext.ActionDescriptor as CompiledPageActionDescriptor;
-
-        if (descriptor?.RelativePath is { } relativePath)
-        {
-            var file = env.ContentRootFileProvider.GetFileInfo(relativePath);
-            if (file.Exists)
-            {
-                using var reader = new StreamReader(file.CreateReadStream());
-                QuineSource = await reader.ReadToEndAsync();
-            }
-        }
-
         var attribute = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
         Version = attribute?.InformationalVersion ?? "<unknown>";
+        return Task.CompletedTask;
     }
 }

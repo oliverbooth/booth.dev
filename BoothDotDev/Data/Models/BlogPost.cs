@@ -15,16 +15,6 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public User Author { get; internal set; } = null!;
 
     /// <summary>
-    ///     Gets the body of the post, as of its current draft.
-    /// </summary>
-    /// <value>The body of the post.</value>
-    [NotMapped]
-    public string Body
-    {
-        get => Draft.Body;
-    }
-
-    /// <summary>
     ///     Gets the category ID of the post, as of its current draft.
     /// </summary>
     /// <value>The category ID of the post.</value>
@@ -32,6 +22,16 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public Guid CategoryId
     {
         get => Draft.CategoryId;
+    }
+
+    /// <summary>
+    ///     Gets the colour of the post, as of its current draft.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to the colour of its category.</value>
+    [NotMapped]
+    public PaletteHue? Color
+    {
+        get => Draft.Color;
     }
 
     /// <summary>
@@ -55,20 +55,10 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     public bool EnableComments { get; set; }
 
     /// <summary>
-    ///     Gets the excerpt of this post, as of its current draft, if it has one.
-    /// </summary>
-    /// <value>The excerpt, or <see langword="null" /> if this post has no excerpt.</value>
-    [NotMapped]
-    public string? Excerpt
-    {
-        get => Draft.Excerpt;
-    }
-
-    /// <summary>
     ///     Gets the ID of the post.
     /// </summary>
     /// <value>The ID of the post.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets a value indicating whether the post redirects to another URL.
@@ -196,6 +186,50 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="BlogPost" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(BlogPost? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
+    ///     Gets the body of the post, as of its current draft.
+    /// </summary>
+    /// <value>The body of the post.</value>
+    [NotMapped]
+    public string Body
+    {
+        get => Draft.Body;
+    }
+
+    /// <summary>
+    ///     Gets the excerpt of this post, as of its current draft, if it has one.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if this post has no excerpt.</value>
+    [NotMapped]
+    public string? Excerpt
+    {
+        get => Draft.Excerpt;
+    }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="BlogPost" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="BlogPost" /> to compare.</param>
@@ -224,30 +258,6 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="BlogPost" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(BlogPost? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -257,7 +267,7 @@ public sealed class BlogPost : IEquatable<BlogPost>, IMarkdownExcerpt
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is BlogPost other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is BlogPost other && Equals(other));
     }
 
     /// <summary>

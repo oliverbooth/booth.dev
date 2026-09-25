@@ -5,15 +5,15 @@ mermaid.initialize({
     theme: 'base',
     themeVariables: {
         darkMode: true,
-        background: cssVar('--surface-1'),
-        primaryColor: cssVar('--surface-2'),
-        primaryTextColor: cssVar('--text-primary'),
-        primaryBorderColor: cssVar('--accent'),
-        secondaryColor: cssVar('--surface-2'),
-        tertiaryColor: cssVar('--surface-2'),
-        lineColor: cssVar('--text-secondary'),
-        textColor: cssVar('--text-primary'),
-        edgeLabelBackground: cssVar('--surface-1'),
+        background: cssColor('--surface-1'),
+        primaryColor: cssColor('--surface-2'),
+        primaryTextColor: cssColor('--code-text'),
+        primaryBorderColor: cssColor('--accent'),
+        secondaryColor: cssColor('--surface-2'),
+        tertiaryColor: cssColor('--surface-2'),
+        lineColor: cssColor('--syntax-punct'),
+        textColor: cssColor('--code-text'),
+        edgeLabelBackground: cssColor('--surface-1'),
         fontFamily: cssVar('--font-sans'),
     },
 });
@@ -24,6 +24,24 @@ mermaid.initialize({
  */
 function cssVar(name: string): string {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/**
+ * Reads a CSS custom property holding a color and converts it to sRGB hex. Mermaid's color parser doesn't understand
+ * modern color spaces like `oklch()`, which is what the theme tokens resolve to, so the browser does the conversion.
+ * @param name The custom property's name, e.g. `--code-text`.
+ */
+function cssColor(name: string): string {
+    const context = document.createElement('canvas').getContext('2d');
+    if (!context) {
+        return cssVar(name);
+    }
+
+    context.fillStyle = cssVar(name);
+    context.fillRect(0, 0, 1, 1);
+    const [red, green, blue, alpha] = context.getImageData(0, 0, 1, 1).data;
+    const channels = alpha === 255 ? [red, green, blue] : [red, green, blue, alpha];
+    return '#' + channels.map(channel => channel.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -58,7 +76,6 @@ async function mountDiagram(codeElement: HTMLElement): Promise<void> {
     const source = codeElement.textContent ?? '';
     const noSource = 'noSource' in codeElement.dataset;
     const codeToolbar = pre.parentElement.classList.contains('code-toolbar') ? pre.parentElement : null;
-    const toolbar = codeToolbar?.querySelector<HTMLElement>(':scope > .toolbar') ?? null;
 
     const wrapper = document.createElement('div');
     wrapper.className = 'mermaid-scene';
@@ -70,32 +87,18 @@ async function mountDiagram(codeElement: HTMLElement): Promise<void> {
     (codeToolbar ?? pre).replaceWith(wrapper);
 
     if (noSource) {
-        // `no-source`: just the diagram, no tab chrome and no card framing either
         wrapper.classList.add('mermaid-scene--bare');
         wrapper.append(diagramPanel);
     } else {
         const {diagramTab, sourceTab, sourcePanel, tabList} = buildTabs();
         wrapper.append(tabList, diagramPanel, sourcePanel);
+        // the source panel just wraps the code block as-is (header bar, copy button and all - already styled by
+        // _prism-toolbar.css); `hidden` on the panel hides all of that along with it, so there's nothing further to
+        // wire up per tab switch
         sourcePanel.append(codeToolbar ?? pre);
 
-        if (toolbar) {
-            toolbar.classList.add('scene-toolbar');
-            toolbar.hidden = true; // Diagram tab is active by default
-            tabList.append(toolbar);
-        }
-
-        diagramTab.addEventListener('click', () => {
-            activateTab(diagramTab, sourceTab, diagramPanel, sourcePanel);
-            if (toolbar) {
-                toolbar.hidden = true;
-            }
-        });
-        sourceTab.addEventListener('click', () => {
-            activateTab(sourceTab, diagramTab, sourcePanel, diagramPanel);
-            if (toolbar) {
-                toolbar.hidden = false;
-            }
-        });
+        diagramTab.addEventListener('click', () => activateTab(diagramTab, sourceTab, diagramPanel, sourcePanel));
+        sourceTab.addEventListener('click', () => activateTab(sourceTab, diagramTab, sourcePanel, diagramPanel));
     }
 
     try {
@@ -117,11 +120,15 @@ function buildTabs(): {
 } {
     const tabList = document.createElement('div');
     tabList.className = 'mermaid-scene-tabs';
-    tabList.setAttribute('role', 'tablist');
+
+    const tabGroup = document.createElement('div');
+    tabGroup.className = 'scene-tab-group';
+    tabGroup.setAttribute('role', 'tablist');
 
     const diagramTab = createTabButton('Diagram', true);
     const sourceTab = createTabButton('Source', false);
-    tabList.append(diagramTab, sourceTab);
+    tabGroup.append(diagramTab, sourceTab);
+    tabList.append(tabGroup);
 
     const sourcePanel = document.createElement('div');
     sourcePanel.className = 'mermaid-source-panel';

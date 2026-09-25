@@ -1,6 +1,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using FluentResults
 @using Humanizer
@@ -20,37 +21,60 @@
 @{
     var published = article.PublishedAt;
 
-    var parents = new Stack<TutorialFolder>();
-    Guid? parent = article.Folder;
-    while (parent is not null)
+    var series = new List<TutorialArticle>();
+    if (article.HasOtherParts)
     {
-        var folderResult = TutorialService.GetFolder(parent.Value);
-        if (folderResult.IsFailed)
+        // walk back to the first part, then forward through the rest; the sets guard against a malformed cycle
+        var first = article;
+        var visited = new HashSet<Guid> { article.Id };
+        while (first.PreviousPart is { } previousId
+               && TutorialService.GetArticle(previousId) is { IsSuccess: true } previous
+               && visited.Add(previous.Value.Id))
         {
-            throw new InvalidOperationException($"TutorialArticle {article.Id} references a folder chain with a missing parent {parent.Value}.");
+            first = previous.Value;
         }
 
-        parents.Push(folderResult.Value);
-        parent = folderResult.Value.Parent;
+        series.Add(first);
+        visited = [first.Id];
+        var cursor = first;
+        while (cursor.NextPart is { } nextId
+               && TutorialService.GetArticle(nextId) is { IsSuccess: true } next
+               && visited.Add(next.Value.Id))
+        {
+            series.Add(next.Value);
+            cursor = next.Value;
+        }
+
+        // unpublished parts are only listed for the site owner, or when it's the article being read
+        var isOwner = User.Identity?.IsAuthenticated == true;
+        series = [.. series.Where(part => part.Id == article.Id || part.Visibility == Visibility.Published || isOwner)];
     }
+
+    var partNumber = series.FindIndex(part => part.Id == article.Id) + 1;
+    var seriesFolder = TutorialService.GetFolder(article.Folder);
+    var hue = article.Color ?? (seriesFolder.IsSuccess ? seriesFolder.Value.EffectiveColor : PaletteHue.Mint);
 }
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-        @while (parents.Count > 0)
+    <span class="eyebrow">
+        @if (seriesFolder.IsSuccess)
         {
-            var current = parents.Pop();
-            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(seriesFolder.Value)">
+                <i class="ti ti-arrow-narrow-left"></i> back to @seriesFolder.Value.Title
+            </a>
         }
-        / @article.Title
-    </p>
+        else
+        {
+            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">
+                <i class="ti ti-arrow-narrow-left"></i> back to learn
+            </a>
+        }
+    </span>
 
     @if (article.Visibility == Visibility.Private)
     {
-        <div class="callout" data-callout="warning">
+        <div class="callout" data-callout="private">
             <p class="callout-title"><i class="ti ti-lock"></i> This article is private</p>
             <div class="callout-body">
                 <p>It isn't publicly accessible and can only be viewed while signed in as the site owner.</p>
@@ -59,7 +83,7 @@
     }
     else if (article.Visibility == Visibility.Unlisted)
     {
-        <div class="callout" data-callout="note">
+        <div class="callout" data-callout="unlisted">
             <p class="callout-title"><i class="ti ti-eye-off"></i> This article is unlisted</p>
             <div class="callout-body">
                 <p>It doesn't appear in listings or search, but anyone with this link can view it.</p>
@@ -67,19 +91,48 @@
         </div>
     }
 
-    <span class="eyebrow">Tutorial</span>
-    <h1 style="margin:8px 0 12px;font-size:30px">@article.Title</h1>
+    @{
+        var meta = new List<string> { $"published {published.ToShortString()}", $"{article.GetEstimatedReadingTime()} min read" };
+        if (series.Count > 1)
+        {
+            meta.Insert(0, $"part {partNumber} of {series.Count}");
+        }
 
-    <div class="byline">
-        <span class="meta">
-            @published.ToShortString() &middot; @article.GetEstimatedReadingTime() min read
-            &middot; <a href="/learn/@(TutorialService.GetFullSlug(article)).md">View source</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <text> &middot; <a asp-page="/Admin/Tutorials/Edit" asp-route-id="@article.Id">Edit</a></text>
-            }
-        </span>
-    </div>
+        var header = new ContentHeader
+        {
+            Title = article.Title,
+            Badge = "tutorial",
+            BadgeClass = hue.ToBadgeClass(),
+            Hue = hue.ToDataHue(),
+            Meta = meta,
+            SourceUrl = $"/learn/{TutorialService.GetFullSlug(article)}.md",
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Tutorials/Edit", new { id = article.Id }) : null
+        };
+    }
+
+    <partial name="Partials/_ContentHeader" model="header" />
+
+    @if (series.Count > 1)
+    {
+        <nav class="series-box" aria-label="Series" data-hue="@hue.ToDataHue()">
+            <p class="series-title">series@(seriesFolder.IsSuccess ? $": {seriesFolder.Value.Title.ToLower()}" : "")</p>
+            <ol>
+                @for (var index = 0; index < series.Count; index++)
+                {
+                    var part = series[index];
+                    var isCurrent = part.Id == article.Id;
+
+                    <li>
+                        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(part)"
+                           aria-current="@(isCurrent ? "page" : null)" class="@(isCurrent ? "current" : "")">
+                            <span class="series-num">@((index + 1).ToString("00"))</span>
+                            <span>@part.Title</span>
+                        </a>
+                    </li>
+                }
+            </ol>
+        </nav>
+    }
 
     @if (article.ShowTableOfContents)
     {
@@ -91,7 +144,7 @@
         </details>
     }
 
-    <div class="prose" style="margin-top:2.5rem">
+    <div class="prose">
         @Html.Raw(MarkdownRenderingService.Render(article, article.Id, article.PublishedAt))
     </div>
 
@@ -118,7 +171,7 @@
                 @if (previousPart.HasValue)
                 {
                     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(previousPart.Value)"
-                       class="post-nav-link">
+                       class="post-nav-link" data-hue="@hue.ToDataHue()">
                         <span class="post-nav-label"><i class="ti ti-chevron-left"></i> Previous</span>
                         <span class="post-nav-title">@previousPart.Value.Title</span>
                     </a>
@@ -131,7 +184,7 @@
                 @if (nextPart.HasValue)
                 {
                     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(nextPart.Value)"
-                       class="post-nav-link post-nav-link--next">
+                       class="post-nav-link post-nav-link--next" data-hue="@hue.ToDataHue()">
                         <span class="post-nav-label">Next <i class="ti ti-chevron-right"></i></span>
                         <span class="post-nav-title">@nextPart.Value.Title</span>
                     </a>
@@ -144,31 +197,7 @@
         }
     }
 
-    <a id="comments"></a>
-
-    @if (article.EnableComments)
-    {
-        <div class="giscus"></div>
-        <script src="https://giscus.app/client.js"
-                data-repo="oliverbooth/booth.dev"
-                data-repo-id="MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI="
-                data-category="Comments"
-                data-category-id="DIC_kwDODp0rOs4Ce_Nj"
-                data-mapping="pathname"
-                data-strict="0"
-                data-reactions-enabled="1"
-                data-emit-metadata="0"
-                data-input-position="bottom"
-                data-theme="dark"
-                data-lang="en"
-                crossorigin="anonymous"
-                async>
-        </script>
-    }
-    else
-    {
-        <p class="no-comment">Comments are not enabled for this post.</p>
-    }
+    <partial name="Partials/_Comments" model="article.EnableComments" />
 
     @{
         var commentCount = CommentService.GetLegacyCommentCount(article);

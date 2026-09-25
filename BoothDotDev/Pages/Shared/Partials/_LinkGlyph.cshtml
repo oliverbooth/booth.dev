@@ -1,0 +1,11 @@
+@using BoothDotDev.Extensions
+@model BoothDotDev.Data.LinkKind
+
+@if (Model.BrandGlyph is { } glyph)
+{
+    <span class="link-glyph" style="--glyph: url('/img/brand/@glyph')" aria-hidden="true"></span>
+}
+else
+{
+    <i class="ti ti-@Model.Icon" aria-hidden="true"></i>
+}

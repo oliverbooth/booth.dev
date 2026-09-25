@@ -1,11 +1,18 @@
 @page "/admin/tutorials/edit/{id:guid?}"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @using Humanizer
 @model Edit
 
 @{
     Layout = "_AdminLayout";
     var articleModel = Model.Input;
+    var huePicker = new HuePicker
+    {
+        Name = "Input.Color",
+        Selected = articleModel.Color,
+        AutoDescription = "the colour of the article's folder"
+    };
 }
 
 <div class="admin-page admin-page--split">
@@ -70,6 +77,11 @@
                 <input type="number" id="rank" asp-for="Input.Rank" />
                 <p class="hint">Lower numbers show first.</p>
             </div>
+        </div>
+
+        <div class="field">
+            <label>Colour</label>
+            <partial name="Partials/_HuePicker" model="huePicker" />
         </div>
 
         <div class="field-row">

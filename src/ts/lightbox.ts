@@ -80,10 +80,17 @@ function open(trigger: HTMLElement): void {
         refs.caption.appendChild(captionTemplate.content.cloneNode(true));
     }
     refs.caption.hidden = !captionTemplate;
+    refs.dialog.classList.toggle('lightbox--voice', usesVoiceFont(trigger));
 
     lastFocusedTrigger = trigger;
     refs.dialog.showModal();
     refs.closeButton.focus();
+}
+
+function usesVoiceFont(trigger: HTMLElement): boolean {
+    const voice: string = getComputedStyle(document.documentElement).getPropertyValue('--font-voice').split(',')[0].trim();
+    const context: HTMLElement = trigger.closest<HTMLElement>('.prose') ?? trigger;
+    return voice !== '' && getComputedStyle(context).fontFamily.includes(voice.replace(/["']/g, ''));
 }
 
 function openImage(trigger: HTMLElement): void {
@@ -127,7 +134,7 @@ function close(): void {
             refs?.dialog.classList.remove('is-closing');
             refs?.dialog.close();
         },
-        { once: true }
+        {once: true}
     );
 }
 

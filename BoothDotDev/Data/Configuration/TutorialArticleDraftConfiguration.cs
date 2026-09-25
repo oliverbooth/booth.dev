@@ -26,8 +26,10 @@ internal sealed class TutorialArticleDraftConfiguration : IEntityTypeConfigurati
         builder.Property(e => e.Folder).IsRequired();
         builder.Property(e => e.Rank).IsRequired();
         builder.Property(e => e.PreviewImageUrl).HasConversion<UriToStringConverter>();
-        builder.Property(e => e.ShowTableOfContents).HasColumnName("show_toc").IsRequired().HasDefaultValue(true).ValueGeneratedNever();
-        builder.Property(e => e.TableOfContentsExpanded).HasColumnName("toc_open").IsRequired().HasDefaultValue(true).ValueGeneratedNever();
+        builder.Property(e => e.ShowTableOfContents).HasColumnName("show_toc").IsRequired().HasDefaultValue(true)
+            .ValueGeneratedNever();
+        builder.Property(e => e.TableOfContentsExpanded).HasColumnName("toc_open").IsRequired().HasDefaultValue(true)
+            .ValueGeneratedNever();
         builder.Property(e => e.Visibility).IsRequired();
 
         builder.HasOne<TutorialArticle>().WithMany().HasForeignKey(e => e.TutorialArticleId).OnDelete(DeleteBehavior.Cascade);

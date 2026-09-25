@@ -15,18 +15,15 @@ public enum Visibility
     /// <summary>
     ///     The post is private and only visible to the author.
     /// </summary>
-    [PgName("private")]
-    Private,
+    [PgName("private")] Private,
 
     /// <summary>
     ///     The post is unlisted and only visible to those with the link.
     /// </summary>
-    [PgName("unlisted")]
-    Unlisted,
+    [PgName("unlisted")] Unlisted,
 
     /// <summary>
     ///     The post is published and visible to everyone.
     /// </summary>
-    [PgName("published")]
-    Published
+    [PgName("published")] Published
 }

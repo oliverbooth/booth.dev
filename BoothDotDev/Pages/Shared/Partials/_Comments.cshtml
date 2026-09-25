@@ -1,0 +1,46 @@
+@model bool
+
+<a id="comments"></a>
+
+@if (Model)
+{
+    <div class="giscus-card">
+        <p class="giscus-card-label">comments</p>
+        <div class="giscus"></div>
+    </div>
+    <script>
+        // see https://giscus.app/ ("Advanced usage" - updating the theme after the widget has loaded).
+        (() => {
+            let theme = null;
+            try {
+                theme = localStorage.getItem('theme');
+            } catch {
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.crossOrigin = 'anonymous';
+            script.async = true;
+            script.dataset.repo = 'oliverbooth/booth.dev';
+            script.dataset.repoId = 'MDEwOlJlcG9zaXRvcnkyNDUxODEyNDI=';
+            script.dataset.category = 'Comments';
+            script.dataset.categoryId = 'DIC_kwDODp0rOs4Ce_Nj';
+            script.dataset.mapping = 'pathname';
+            script.dataset.strict = '0';
+            script.dataset.reactionsEnabled = '1';
+            script.dataset.emitMetadata = '0';
+            script.dataset.inputPosition = 'bottom';
+            script.dataset.theme = theme;
+            script.dataset.lang = 'en';
+            document.currentScript.after(script);
+        })();
+    </script>
+}
+else
+{
+    <p class="no-comment">Comments are not enabled for this post.</p>
+}

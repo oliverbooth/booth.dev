@@ -40,7 +40,7 @@ public sealed class RssItem
     /// </summary>
     /// <value>The GUID of the item.</value>
     [XmlElement("guid")]
-    public RssItemGuid Guid { get; set; } = default!;
+    public RssItemGuid Guid { get; set; }
 
     /// <summary>
     ///     Gets or sets the description of the item.

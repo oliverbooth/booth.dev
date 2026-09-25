@@ -29,16 +29,7 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Visibility</th>
-                <th>Updated</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+        <ul class="admin-row-list">
             @foreach (var challenge in Model.Challenges)
             {
                 var timestamp = challenge.UpdatedAt ?? challenge.PublishedAt;
@@ -49,49 +40,41 @@
                     _ => "unlisted"
                 };
 
-                <tr>
-                    <td>
-                        <div class="row-title" data-search>@challenge.Title</div>
-                    </td>
-                    <td><span class="badge badge-@badgeClass">
+                <li class="admin-row" data-search-item>
+                    <span class="badge badge-@badgeClass">
                     @switch (challenge.Visibility)
-                            {
-                                case Visibility.Published:
-                                    <text><span class="dot"></span> Published</text>
-                                    break;
+                        {
+                            case Visibility.Published:
+                                <text><span class="dot"></span> Published</text>
+                                break;
 
-                                case Visibility.Private:
-                                    <text><i class="ti ti-lock"></i> Private</text>
-                                    break;
+                            case Visibility.Private:
+                                <text><i class="ti ti-lock"></i> Private</text>
+                                break;
 
-                                case Visibility.Unlisted:
-                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                    break;
+                            case Visibility.Unlisted:
+                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
+                                break;
 
-                                default:
-                                    throw new UnreachableException();
-                            }
-                </span></td>
-                    <td><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn" aria-label="Edit"><i
-                                    class="ti ti-edit"></i></a>
-                            <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="icon-btn" aria-label="View"><i
-                                    class="ti ti-eye"></i></a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@challenge.Id">
-                                <button type="submit" class="icon-btn danger" aria-label="Move to trash"><i class="ti ti-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                            default:
+                                throw new UnreachableException();
+                        }
+                    </span>
+                    <div class="row-body">
+                        <div class="row-title" data-search>@challenge.Title</div>
+                    </div>
+                    <span class="row-meta"><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></span>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn">edit</a>
+                        <a asp-page="/Learn/Challenges/Challenge" asp-route-id="@challenge.Id" class="icon-btn">view</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@challenge.Id">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
             }
-            <tr data-search-empty hidden>
-                <td colspan="4" class="table-empty-state">No challenges found</td>
-            </tr>
-            </tbody>
-        </table>
+            <li class="list-empty-state" data-search-empty hidden>No challenges found</li>
+        </ul>
     </div>
 
 </div>

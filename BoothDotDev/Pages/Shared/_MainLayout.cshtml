@@ -11,45 +11,63 @@
     <meta property="og:url" content="@CurrentUrl">
     <meta property="twitter:url" content="@CurrentUrl">
     <meta name="theme-color" content="#6161cd">
+    <script>
+        // runs before first paint to avoid a flash of the wrong theme; keep in step with resolveTheme() in theme.ts
+        (() => {
+            let theme = null;
+            try {
+                theme = localStorage.getItem('theme');
+            } catch {
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+
+            document.documentElement.dataset.theme = theme;
+        })();
+
+        // runs before first paint to avoid a flash of the serif voice font on pages the reader opted out of;
+        // keep in step with voice-font.ts
+        (() => {
+            let voiceFont = null;
+            try {
+                voiceFont = localStorage.getItem('voiceFont');
+            } catch {
+            }
+
+            if (voiceFont === 'sans') {
+                document.documentElement.dataset.voiceFont = 'sans';
+            }
+        })();
+    </script>
     <title>@PageTitle</title>
 
     @Html.Raw(HtmlUtility.CreateMetaTagsForContent(ViewData["Post"], SiteBaseUrl, MarkdownRenderingService, PageTitle, Strings.Tagline))
-    <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true">
-    <link rel="shortcut icon" href="~/img/favicon-dark.png" asp-append-version="true" media="(prefers-color-scheme: light)">
-    <link rel="shortcut icon" href="~/img/favicon.png" asp-append-version="true" media="(prefers-color-scheme: dark)">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;500&display=swap">
+    @if (Context.Response.StatusCode == StatusCodes.Status200OK)
+    {
+        <script id="discord:component-embed" type="application/json">@Html.Raw(DiscordEmbedService.Build(ViewData["Post"], SiteBaseUrl, CurrentUrl, ViewData["Title"] as string ?? Strings.MyName, Strings.Tagline))</script>
+    }
+    <link rel="icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraph.min.css">
     <link rel="stylesheet" href="~/css/prism.css" asp-append-version="true">
     <link rel="stylesheet" asp-vite="css/style.css" />
-    <link rel="stylesheet" asp-vite="css/prism.vs.css" />
-    <noscript>
-        <style>
-            [data-reveal],
-            [data-command],
-            [data-prompt] {
-                opacity: 1 !important;
-                transition: none !important;
-            }
-        </style>
-    </noscript>
+    <link rel="stylesheet" asp-vite="css/prism.theme.css" />
 </head>
 
 <body>
+<div class="noise-overlay" aria-hidden="true"></div>
 <div class="layout">
-    <header>
+    <header class="site-header">
         <nav class="topnav">
-            <a asp-page="/Index" class="topnav-brand">
-                <img src="~/img/OB.svg" asp-append-version="true" alt="@Strings.MyName" title="@Strings.MyName (Alt + H)" accesskey="h" />
-                <span>@Strings.MyName</span>
-            </a>
+            <a asp-page="/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
             <div class="topnav-links">
                 <a asp-page="/Index" page-match="/Index">Home</a>
-                <a asp-page="/Blog/Index" page-match="/Blog">Write</a>
-                <a asp-page="/Projects/Index" page-match="/Projects">Build</a>
+                <a asp-page="/Blog/Index" page-match="/Blog,/Note,/Someday">Words</a>
+                <a asp-page="/Portfolio/Index" page-match="/Portfolio,/Projects,/Create">Stuff I Made</a>
                 <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn">Learn</a>
-                <a asp-page="/Create/Index" page-match="/Create">Create</a>
             </div>
             <div class="topnav-secondary">
                 <a asp-page="/About" page-match="/About">About</a>
@@ -57,36 +75,31 @@
                 <button type="button" class="icon-link" data-palette-trigger aria-label="Search (Ctrl+K)" title="Search (Ctrl+K)">
                     <i class="ti ti-search"></i>
                 </button>
+                <button type="button" class="theme-toggle" data-theme-toggle aria-label="Dark mode" title="Toggle dark mode">
+                    <i class="ti ti-sun" aria-hidden="true"></i>
+                    <i class="ti ti-moon" aria-hidden="true"></i>
+                </button>
             </div>
         </nav>
     </header>
-
-    @if (QuineSource is not null)
-    {
-        <div class="code-bg" aria-hidden="true">
-            @for (var index = 0; index < 4; index++)
-            {
-                @QuineSource
-                @Environment.NewLine
-                @Environment.NewLine
-            }
-        </div>
-    }
 
     <main class="main">
         @RenderBody()
     </main>
 
     <footer class="site-footer">
+        @{
+            // the informational version carries the full commit hash after a '+'; show a short one
+            var hashIndex = Version.IndexOf('+');
+            var shortVersion = hashIndex >= 0 ? Version[..Math.Min(Version.Length, hashIndex + 8)] : Version;
+        }
+        <p>&copy; @DateTime.Now.Year &middot; Made with <i class="ti ti-heart-filled"></i> by @Strings.MyName &middot; <span
+                title="@Version">Version @shortVersion</span></p>
         <ul class="site-footer-links">
-            <li>&copy; @DateTime.Now.Year</li>
-            <li>Made with <i class="ti ti-heart-filled"></i> by @Strings.MyName</li>
             <li><a href="https://git.booth.dev/oliver/booth.dev">Source</a></li>
             <li><a asp-page="/Privacy/Index">Privacy</a></li>
             <li><a asp-page="/Admin/Index">Admin</a></li>
         </ul>
-
-        <p class="align-center">Version @Version</p>
     </footer>
 </div>
 
@@ -112,10 +125,15 @@
 
 <nav class="bottom-nav">
     <a asp-page="/Index" page-match="/Index"><i class="ti ti-home"></i>Home</a>
-    <a asp-page="/Blog/Index" page-match="/Blog"><i class="ti ti-pencil"></i>Write</a>
-    <a asp-page="/Projects/Index" page-match="/Projects"><i class="ti ti-code"></i>Build</a>
+    <a asp-page="/Blog/Index" page-match="/Blog,/Note,/Someday"><i class="ti ti-pencil"></i>Words</a>
+    <a asp-page="/Portfolio/Index" page-match="/Portfolio,/Projects,/Create"><i class="ti ti-hammer"></i>Portfolio</a>
     <a asp-page="/Learn/Tutorials/Index" asp-route-slug="" page-match="/Learn"><i class="ti ti-school"></i>Learn</a>
     <a asp-page="/More" page-match="/More"><i class="ti ti-menu-2"></i>More</a>
+    <button type="button" class="theme-toggle" data-theme-toggle>
+        <i class="ti ti-sun" aria-hidden="true"></i>
+        <i class="ti ti-moon" aria-hidden="true"></i>
+        Theme
+    </button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script>

@@ -1,0 +1,127 @@
+:root {
+  --prism-background: var(--syntax-bg);
+  --prism-foreground: var(--syntax-text);
+
+  --prism-comment: var(--syntax-comment);
+  --prism-string: var(--syntax-string);
+  --prism-function: var(--syntax-func);
+  --prism-class-name: var(--syntax-type);
+  --prism-keyword: var(--syntax-keyword);
+  --prism-preprocessor-property: var(--syntax-punct);
+
+  --prism-atrule: var(--syntax-keyword);
+  --prism-css-foreground: var(--syntax-text);
+  --prism-css-selector: var(--syntax-func);
+  --prism-css-property: var(--syntax-type);
+
+  --prism-doctype: var(--syntax-type);
+  --prism-markup-tag: var(--syntax-keyword);
+  --prism-attr-name: var(--syntax-type);
+  --prism-markup-punctuation: var(--syntax-punct);
+  --prism-markup-attr-value: var(--syntax-string);
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: var(--font-mono);
+  background: none;
+  color: var(--prism-foreground);
+  text-shadow: none;
+}
+
+.token {
+  &.punctuation,
+  &.operator {
+    color: var(--syntax-punct);
+  }
+
+  &.comment,
+  &.block-comment,
+  &.cdata {
+    color: var(--prism-comment);
+  }
+
+  &.string,
+  &.char,
+  &.regex,
+  &.inserted {
+    color: var(--prism-string);
+  }
+
+  &.number,
+  &.boolean,
+  &.constant,
+  &.symbol {
+    color: var(--syntax-number);
+  }
+
+  &.function,
+  &.function-name {
+    color: var(--prism-function);
+  }
+
+  &.class-name,
+  &.builtin,
+  &.namespace,
+  &.entity {
+    color: var(--prism-class-name);
+  }
+
+  &.doctype,
+  &.prolog {
+    color: var(--prism-doctype);
+  }
+
+  &.keyword,
+  &.important {
+    color: var(--prism-keyword);
+  }
+
+  &.preprocessor.property {
+    color: var(--prism-preprocessor-property);
+
+    .keyword {
+      color: var(--prism-preprocessor-property);
+    }
+  }
+
+  &.selector {
+    color: var(--prism-css-selector);
+  }
+
+  &.atrule {
+    color: var(--prism-atrule);
+  }
+
+  &.property,
+  &.attr-name {
+    color: var(--prism-attr-name);
+  }
+
+  &.tag {
+    color: var(--prism-markup-tag);
+  }
+
+  &.attr-value {
+    color: var(--prism-markup-attr-value);
+  }
+
+  &.deleted {
+    color: var(--accent-coral);
+  }
+
+  &.important,
+  &.bold {
+    font-weight: 700;
+  }
+
+  &.italic {
+    font-style: italic;
+  }
+}
+
+code[class*="language-markup"] {
+  .token.punctuation {
+    color: var(--prism-markup-punctuation);
+  }
+}

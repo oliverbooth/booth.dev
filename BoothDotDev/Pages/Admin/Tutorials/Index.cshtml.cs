@@ -24,17 +24,27 @@ public sealed class Index : PageModel
     }
 
     /// <summary>
-    ///     Gets the list of articles.
+    ///     Gets the articles, grouped by their containing folder, in folder rank order.
     /// </summary>
-    /// <value>The list of articles.</value>
-    public IReadOnlyList<TutorialArticle> Articles { get; private set; } = [];
+    /// <value>The folder groups.</value>
+    public IReadOnlyList<FolderGroup> FolderGroups { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request.
     /// </summary>
     public void OnGet()
     {
-        Articles = _tutorialService.GetAllArticles();
+        var folders = _tutorialService.GetAllFolders().ToDictionary(f => f.Id);
+        var articles = _tutorialService.GetAllArticles();
+
+        FolderGroups = articles
+            .GroupBy(a => a.Folder)
+            .Select(g => new FolderGroup(
+                folders.GetValueOrDefault(g.Key),
+                g.OrderBy(a => a.Rank).ToArray()))
+            .OrderBy(g => g.Folder?.Rank ?? int.MaxValue)
+            .ThenBy(g => g.Folder?.Title)
+            .ToArray();
     }
 
     /// <summary>
@@ -57,4 +67,11 @@ public sealed class Index : PageModel
     {
         return _tutorialService.GetFullSlug(article);
     }
+
+    /// <summary>
+    ///     Represents a folder and the articles it directly contains, for display in the admin listing.
+    /// </summary>
+    /// <param name="Folder">The folder, or <see langword="null" /> if the articles' folder no longer exists.</param>
+    /// <param name="Articles">The articles, in rank order.</param>
+    public sealed record FolderGroup(TutorialFolder? Folder, IReadOnlyList<TutorialArticle> Articles);
 }

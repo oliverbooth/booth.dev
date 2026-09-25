@@ -1,0 +1,49 @@
+@page "/portfolio"
+@using BoothDotDev.Pages.Shared.Partials
+@model Made
+@{
+    ViewData["Title"] = "Stuff I Made";
+    ViewData["Page"] = "Made";
+}
+
+<div class="page-grid">
+
+    <div class="page-header-row">
+        <span class="eyebrow">
+            <a asp-page="/Index"><i class="ti ti-arrow-narrow-left"></i> back home</a>
+        </span>
+
+        <div class="page-actions">
+            <a href="/portfolio.rss" class="icon-link" aria-label="Subscribe to the portfolio RSS feed" title="Portfolio RSS feed"><i
+                    class="ti ti-rss"></i></a>
+        </div>
+    </div>
+    <h1>Stuff I Made</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[]
+    {
+        new("manage portfolio", "/Admin/Portfolio/Index"),
+        new("manage projects", "/Admin/Projects/Index"),
+        new("manage creations", "/Admin/Creations/Index")
+    })"/>
+    <p class="lede">Code, drawings, 3D renders, and music.</p>
+
+    <div data-filter-scope data-filter-flip>
+        <div class="filter-row">
+            <button type="button" class="pill active" aria-pressed="true">All</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="code">Code</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="drawing">Drawing</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="3d">3D</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="music">Music</button>
+        </div>
+
+        <div class="sticky-grid">
+            @foreach (var item in Model.Items)
+            {
+                <partial name="Partials/_PortfolioCard" model="item" />
+            }
+        </div>
+
+        <p class="filter-empty" data-filter-empty hidden>Nothing here yet.</p>
+    </div>
+
+</div>

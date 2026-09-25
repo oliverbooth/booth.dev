@@ -8,13 +8,13 @@ namespace BoothDotDev.Data.Models;
 public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExcerpt
 {
     /// <summary>
-    ///     Gets the body of this article, as of its current draft.
+    ///     Gets the colour of the article, as of its current draft.
     /// </summary>
-    /// <value>The body.</value>
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to the colour of its folder.</value>
     [NotMapped]
-    public string Body
+    public PaletteHue? Color
     {
-        get => Draft.Body;
+        get => Draft.Color;
     }
 
     /// <summary>
@@ -36,16 +36,6 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     ///     <see langword="true" /> if comments are enabled for the article; otherwise, <see langword="false" />.
     /// </value>
     public bool EnableComments { get; set; }
-
-    /// <summary>
-    ///     Gets the excerpt of this article, as of its current draft, if it has one.
-    /// </summary>
-    /// <value>The excerpt, or <see langword="null" /> if this article has no excerpt.</value>
-    [NotMapped]
-    public string? Excerpt
-    {
-        get => Draft.Excerpt;
-    }
 
     /// <summary>
     ///     Gets the ID of the folder this article is contained within, as of its current draft.
@@ -71,7 +61,7 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     ///     Gets the ID of this article.
     /// </summary>
     /// <value>The ID.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the ID of the next article to this one.
@@ -195,6 +185,50 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="TutorialArticle" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(TutorialArticle? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
+    ///     Gets the body of this article, as of its current draft.
+    /// </summary>
+    /// <value>The body.</value>
+    [NotMapped]
+    public string Body
+    {
+        get => Draft.Body;
+    }
+
+    /// <summary>
+    ///     Gets the excerpt of this article, as of its current draft, if it has one.
+    /// </summary>
+    /// <value>The excerpt, or <see langword="null" /> if this article has no excerpt.</value>
+    [NotMapped]
+    public string? Excerpt
+    {
+        get => Draft.Excerpt;
+    }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="TutorialArticle" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="TutorialArticle" /> to compare.</param>
@@ -223,30 +257,6 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="TutorialArticle" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(TutorialArticle? other)
-    {
-        if (ReferenceEquals(null, other))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -256,7 +266,7 @@ public sealed class TutorialArticle : IEquatable<TutorialArticle>, IMarkdownExce
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is TutorialArticle other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is TutorialArticle other && Equals(other));
     }
 
     /// <summary>
