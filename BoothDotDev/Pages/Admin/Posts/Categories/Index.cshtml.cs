@@ -71,7 +71,8 @@ public sealed class Index : PageModel
     public string GetPath(BlogPostCategory category)
     {
         var names = new Stack<string>();
-        for (var current = category; current is not null;
+        for (var current = category;
+             current is not null;
              current = current.ParentCategoryId is { } parentId ? _byId.GetValueOrDefault(parentId) : null)
         {
             names.Push(current.Name);

@@ -39,7 +39,8 @@
             <button type="button" class="pill active" aria-pressed="true" data-hue="brand">All</button>
             @foreach (var category in Model.BlogPostCategories)
             {
-                <button type="button" class="pill" aria-pressed="false" data-filter="@category.Id" data-hue="@category.EffectiveColor.ToDataHue()">@category.Name</button>
+                <button type="button" class="pill" aria-pressed="false" data-filter="@category.Id"
+                        data-hue="@category.EffectiveColor.ToDataHue()">@category.Name</button>
             }
             <button type="button" class="pill" aria-pressed="false" data-filter-kind="note" data-hue="sun">Notes</button>
             <a class="pill" asp-page="/Someday">Someday</a>
@@ -53,7 +54,8 @@
                 var displayCategory = BlogPostService.GetCategory(post.CategoryId) ?? rootCategory;
                 var postHue = post.Color ?? displayCategory?.EffectiveColor ?? PaletteHue.Brand;
 
-                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()" data-state="@rootCategory?.Id">
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" class="post-row" data-hue="@postHue.ToDataHue()"
+                   data-state="@rootCategory?.Id">
                     <div class="collapse-inner">
                         <div class="post-row-body">
                             <div class="post-row-text">

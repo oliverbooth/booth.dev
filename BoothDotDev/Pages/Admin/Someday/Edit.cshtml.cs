@@ -125,7 +125,11 @@ public sealed class Edit : PageModel
         ViewingDraftId = draft.Id;
         Input = new EditModel
         {
-            Title = draft.Title, Body = draft.Body, Slug = entry.Slug, Color = draft.Color, Visibility = draft.Visibility
+            Title = draft.Title,
+            Body = draft.Body,
+            Slug = entry.Slug,
+            Color = draft.Color,
+            Visibility = draft.Visibility
         };
 
         return Page();

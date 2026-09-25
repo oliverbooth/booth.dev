@@ -68,13 +68,15 @@ public sealed class ActivityService
     {
         return _blogPostService.GetRecentBlogPosts(searchOptions)
             .Select(post => ActivityEntryFactory.From(
-                post, _blogPostService.GetCategory(post.CategoryId), _markdownRenderingService.RenderPlainTextExcerpt(post, out _)));
+                post, _blogPostService.GetCategory(post.CategoryId),
+                _markdownRenderingService.RenderPlainTextExcerpt(post, out _)));
     }
 
     private IEnumerable<ActivityEntry> GetRecentTutorialArticles(ActivitySearchOptions searchOptions)
     {
         return _tutorialService.GetRecentArticles(searchOptions)
-            .Select(a => ActivityEntryFactory.From(a, _tutorialService, _markdownRenderingService.RenderPlainTextExcerpt(a, out _)));
+            .Select(a => ActivityEntryFactory.From(a, _tutorialService,
+                _markdownRenderingService.RenderPlainTextExcerpt(a, out _)));
     }
 
     private IEnumerable<ActivityEntry> GetRecentDevlogs(ActivitySearchOptions searchOptions)
