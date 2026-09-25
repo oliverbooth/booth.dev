@@ -18,11 +18,6 @@ public union BlogPostKey(Guid, int, string);
 /// </summary>
 public sealed class BlogPostService : BackgroundService
 {
-    /// <summary>
-    ///     The default page size for blog post pagination.
-    /// </summary>
-    public const int DefaultPageSize = 5;
-
     private const string Area = "blog";
 
     private static readonly Timer CacheInvalidationTimer = new(TimeSpan.FromMinutes(10));
@@ -563,21 +558,6 @@ public sealed class BlogPostService : BackgroundService
             .Where(p => p.CurrentDraft!.Visibility == Visibility.Published && !p.IsRedirect && p.TrashedAt == null)
             .OrderBy(post => post.PublishedAt)
             .FirstOrDefault(post => post.PublishedAt > blogPost.PublishedAt);
-    }
-
-    /// <summary>
-    ///     Returns the number of pages needed to render all blog posts, using the specified <paramref name="pageSize" /> as an
-    ///     indicator of how many posts are allowed per page.
-    /// </summary>
-    /// <param name="pageSize">The page size. Defaults to 10.</param>
-    /// <param name="visibility">The post visibility filter.</param>
-    /// <param name="tags">The tags of the posts to return.</param>
-    /// <returns>The page count.</returns>
-    public int GetPageCount(int pageSize = DefaultPageSize, Visibility visibility = Visibility.None,
-        string[]? tags = null)
-    {
-        float postCount = GetBlogPostCount(visibility, tags);
-        return (int)MathF.Ceiling(postCount / pageSize);
     }
 
     /// <summary>
