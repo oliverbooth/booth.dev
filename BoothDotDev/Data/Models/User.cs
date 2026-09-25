@@ -68,7 +68,10 @@ public sealed class User
     ///     Gets the URL of the author's avatar.
     /// </summary>
     /// <param name="size">The size of the avatar.</param>
-    /// <returns>The URL of the author's avatar. 404s if no custom Gravatar is configured, rather than falling back to Gravatar's default silhouette.</returns>
+    /// <returns>
+    ///     The URL of the author's avatar. 404s if no custom Gravatar is configured, rather than falling back to Gravatar's default
+    ///     silhouette.
+    /// </returns>
     public Uri GetAvatarUrl(int size)
     {
         if (string.IsNullOrWhiteSpace(EmailAddress))
@@ -76,7 +79,7 @@ public sealed class User
             return new Uri($"https://www.gravatar.com/avatar/0?size={size}&d=404");
         }
 
-        ReadOnlySpan<char> span = EmailAddress.AsSpan();
+        var span = EmailAddress.AsSpan();
         var byteCount = Encoding.UTF8.GetByteCount(span);
         Span<byte> bytes = stackalloc byte[byteCount];
         Encoding.UTF8.GetBytes(span, bytes);
@@ -84,7 +87,7 @@ public sealed class User
         Span<byte> hash = stackalloc byte[16];
         MD5.TryHashData(bytes, hash, out _);
 
-        using Utf8ValueStringBuilder builder = ZString.CreateUtf8StringBuilder();
+        using var builder = ZString.CreateUtf8StringBuilder();
         Span<char> hex = stackalloc char[2];
         for (var index = 0; index < hash.Length; index++)
         {

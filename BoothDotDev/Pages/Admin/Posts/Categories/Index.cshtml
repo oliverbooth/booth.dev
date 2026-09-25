@@ -1,0 +1,63 @@
+@page "/admin/posts/categories"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Posts/Index">Posts</a> / Categories</p>
+
+    <div class="admin-header">
+        <div>
+            <h1>Categories</h1>
+            <p>Group blog posts, and choose the colour they're shown in</p>
+        </div>
+        <a asp-page="/Admin/Posts/Categories/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New category</a>
+    </div>
+
+    @if (Model.DeleteError is { } error)
+    {
+        <div class="callout" data-callout="danger">
+            <p class="callout-title"><i class="ti ti-alert-triangle"></i> Couldn't delete category</p>
+            <div class="callout-body"><p>@error</p></div>
+        </div>
+    }
+
+    <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search categories&hellip;">
+            </div>
+        </div>
+
+        <ul class="admin-row-list">
+            @foreach (var category in Model.Categories)
+            {
+                <li class="admin-row" data-search-item data-hue="@category.EffectiveColor.ToDataHue()">
+                    <span class="badge">@category.EffectiveColor.ToDataHue()</span>
+                    <div class="row-body">
+                        <div class="row-title" data-search>@Model.GetPath(category)</div>
+                        <div class="row-sub" data-search>
+                            @category.Slug &middot; @(category.Color is null ? "auto colour" : "set colour") &middot;
+                            @(category.FontStyle == FontStyle.Serif ? "serif" : "sans-serif")
+                        </div>
+                    </div>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Posts/Categories/Edit" asp-route-id="@category.Id" class="icon-btn">edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@category.Id"
+                              data-confirm="Delete this category? This can't be undone.">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
+            }
+            <li class="list-empty-state" data-search-empty hidden>No categories found</li>
+        </ul>
+    </div>
+
+</div>

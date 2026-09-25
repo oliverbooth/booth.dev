@@ -7,13 +7,6 @@ namespace BoothDotDev.Data.Models;
 /// </summary>
 public sealed class ProjectDevlog : IEquatable<ProjectDevlog>, IMarkdownBody
 {
-    /// <inheritdoc />
-    [NotMapped]
-    string IMarkdownBody.Body
-    {
-        get => Draft.Body;
-    }
-
     /// <summary>
     ///     Gets the body of this devlog entry, as of its current draft.
     /// </summary>
@@ -114,6 +107,37 @@ public sealed class ProjectDevlog : IEquatable<ProjectDevlog>, IMarkdownBody
     }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="ProjectDevlog" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(ProjectDevlog? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <inheritdoc />
+    [NotMapped]
+    string IMarkdownBody.Body
+    {
+        get => Draft.Body;
+    }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="ProjectDevlog" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="ProjectDevlog" /> to compare.</param>
@@ -142,30 +166,6 @@ public sealed class ProjectDevlog : IEquatable<ProjectDevlog>, IMarkdownBody
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="ProjectDevlog" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(ProjectDevlog? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -175,7 +175,7 @@ public sealed class ProjectDevlog : IEquatable<ProjectDevlog>, IMarkdownBody
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is ProjectDevlog other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is ProjectDevlog other && Equals(other));
     }
 
     /// <summary>

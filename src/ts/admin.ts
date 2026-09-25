@@ -1,4 +1,4 @@
-import {initFavicon} from './favicon.ts';
+import {initTheme} from './theme.ts';
 import {initCopyButtons} from './clipboard.ts';
 import {initContentFeatures} from './content-rendering.ts';
 import {initPostAuthoring} from './admin/post-authoring.ts';
@@ -13,14 +13,15 @@ import {initUserAuthoring} from './admin/user-authoring.ts';
 import {initPasskeyRegistration} from './admin/passkey-registration.ts';
 import {initPasskeyLogin} from './admin/passkey-login.ts';
 import {initCdnBrowser} from './admin/cdn-browser.ts';
-import {initSomedayReorder} from './admin/someday-reorder.ts';
+import {initReorder} from './admin/reorder.ts';
 import {initSomedayEditorPreview} from './admin/someday-editor.ts';
 import {initBookLookup} from './admin/book-lookup.ts';
 import {initWatchableLookup} from './admin/watchable-lookup.ts';
+import {initStateGroups} from './admin/state-groups.ts';
 
 (() => {
+    initTheme();
     initAltTextPopovers();
-    initFavicon();
     initCopyButtons();
     initContentFeatures();
     initPostAuthoring();
@@ -34,8 +35,9 @@ import {initWatchableLookup} from './admin/watchable-lookup.ts';
     initPasskeyRegistration();
     initPasskeyLogin();
     initCdnBrowser();
-    initSomedayReorder();
+    initReorder();
     initSomedayEditorPreview();
     initBookLookup();
     initWatchableLookup();
+    initStateGroups();
 })();

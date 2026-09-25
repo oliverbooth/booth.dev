@@ -10,6 +10,7 @@ namespace BoothDotDev.Data;
 /// <param name="Visibility">The visibility of the folder.</param>
 /// <param name="Rank">The rank of the folder within its parent.</param>
 /// <param name="Parent">The ID of the folder's parent, or <see langword="null" /> if the folder is at the root.</param>
+/// <param name="Color">The colour of the folder, or <see langword="null" /> to derive it from the folder's ID.</param>
 public sealed record TutorialFolderSaveRequest(
     string Title,
     string Slug,
@@ -17,4 +18,5 @@ public sealed record TutorialFolderSaveRequest(
     Uri? PreviewImageUrl,
     Visibility Visibility,
     int Rank,
-    Guid? Parent);
+    Guid? Parent,
+    PaletteHue? Color);

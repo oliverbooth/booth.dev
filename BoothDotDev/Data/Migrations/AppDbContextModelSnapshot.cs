@@ -23,7 +23,10 @@ namespace BoothDotDev.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "book_state", new[] { "read", "reading", "plan_to_read" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "creation_kind", new[] { "drawing", "three_d", "music" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "font_style", new[] { "sans_serif", "serif" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "link_kind", new[] { "github", "gitlab", "itch", "play_store", "steam", "youtube", "discord", "deviantart", "behance", "soundcloud", "documentation", "website", "other", "gamejolt" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "palette_hue", new[] { "brand", "grape", "pink", "tangerine", "sun", "mint", "sky" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "project_status", new[] { "ongoing", "hiatus", "past", "retired" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "project_type", new[] { "app", "game", "library", "tool", "website" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "visibility", new[] { "none", "private", "unlisted", "published" });
@@ -31,67 +34,6 @@ namespace BoothDotDev.Data.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "watchable_source", new[] { "manual", "trakt" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "watchable_state", new[] { "watched", "watching", "plan_to_watch" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("BoothDotDev.Data.Models.ArtworkItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(10000)
-                        .HasColumnType("character varying(10000)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("file_name");
-
-                    b.Property<bool>("IsWorkInProgress")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_work_in_progress");
-
-                    b.Property<string>("MadeWith")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("made_with");
-
-                    b.Property<DateTimeOffset>("PublishedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("published_at");
-
-                    b.Property<string>("Resolution")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("resolution");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("title");
-
-                    b.Property<DateTimeOffset?>("TrashedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("trashed_at");
-
-                    b.Property<Visibility>("Visibility")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("public.visibility")
-                        .HasDefaultValue(Visibility.Published)
-                        .HasColumnName("visibility");
-
-                    b.HasKey("Id")
-                        .HasName("pk_artwork_item");
-
-                    b.HasIndex("TrashedAt")
-                        .HasDatabaseName("ix_artwork_item_trashed_at");
-
-                    b.ToTable("artwork_item", "public");
-                });
 
             modelBuilder.Entity("BoothDotDev.Data.Models.BlogPost", b =>
                 {
@@ -169,6 +111,10 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<PaletteHue?>("Color")
+                        .HasColumnType("public.palette_hue")
+                        .HasColumnName("color");
+
                     b.Property<FontStyle>("FontStyle")
                         .HasColumnType("public.font_style")
                         .HasColumnName("font_style");
@@ -220,6 +166,10 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("category_id");
 
+                    b.Property<PaletteHue?>("Color")
+                        .HasColumnType("public.palette_hue")
+                        .HasColumnName("color");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -230,13 +180,11 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnName("excerpt");
 
                     b.Property<bool>("ShowTableOfContents")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("show_toc");
 
                     b.Property<bool>("TableOfContentsExpanded")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("toc_open");
@@ -319,6 +267,93 @@ namespace BoothDotDev.Data.Migrations
                         .HasName("pk_code_snippet");
 
                     b.ToTable("code_snippet", "public");
+                });
+
+            modelBuilder.Entity("BoothDotDev.Data.Models.Creation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)")
+                        .HasColumnName("description");
+
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("interval")
+                        .HasColumnName("duration");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("file_name");
+
+                    b.Property<bool>("IsWorkInProgress")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_work_in_progress");
+
+                    b.Property<CreationKind>("Kind")
+                        .HasColumnType("public.creation_kind")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("MadeWith")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("made_with");
+
+                    b.Property<DateTimeOffset>("PublishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at");
+
+                    b.Property<string>("Resolution")
+                        .HasColumnType("text")
+                        .HasColumnName("resolution");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("slug");
+
+                    b.PrimitiveCollection<List<string>>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("tags");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("title");
+
+                    b.PrimitiveCollection<List<string>>("Tools")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("tools");
+
+                    b.Property<DateTimeOffset?>("TrashedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("trashed_at");
+
+                    b.Property<Visibility>("Visibility")
+                        .HasColumnType("public.visibility")
+                        .HasDefaultValue(Visibility.Published)
+                        .HasColumnName("visibility");
+
+                    b.HasKey("Id")
+                        .HasName("pk_creation");
+
+                    b.HasIndex("Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_creation_slug");
+
+                    b.HasIndex("TrashedAt")
+                        .HasDatabaseName("ix_creation_trashed_at");
+
+                    b.ToTable("creation", "public");
                 });
 
             modelBuilder.Entity("BoothDotDev.Data.Models.DevChallenge", b =>
@@ -455,19 +490,80 @@ namespace BoothDotDev.Data.Migrations
                     b.ToTable("legacy_comment", "public");
                 });
 
-            modelBuilder.Entity("BoothDotDev.Data.Models.MusicItem", b =>
+            modelBuilder.Entity("BoothDotDev.Data.Models.Link", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(10000)
-                        .HasColumnType("character varying(10000)")
-                        .HasColumnName("description");
+                    b.Property<Guid?>("CreationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creation_id");
 
-                    b.Property<TimeSpan>("Duration")
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_primary");
+
+                    b.Property<LinkKind>("Kind")
+                        .HasColumnType("public.link_kind")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("label");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id")
+                        .HasName("pk_link");
+
+                    b.HasIndex("CreationId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_link_creation_primary")
+                        .HasFilter("is_primary");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_link_project_primary")
+                        .HasFilter("is_primary");
+
+                    b.ToTable("link", "public", t =>
+                        {
+                            t.HasCheckConstraint("ck_link_one_owner", "(project_id IS NULL) <> (creation_id IS NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("BoothDotDev.Data.Models.Media", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Alt")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("alt");
+
+                    b.Property<Guid?>("CreationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creation_id");
+
+                    b.Property<TimeSpan?>("Duration")
                         .HasColumnType("interval")
                         .HasColumnName("duration");
 
@@ -477,42 +573,51 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("file_name");
 
-                    b.Property<bool>("IsWorkInProgress")
+                    b.Property<int?>("Height")
+                        .HasColumnType("integer")
+                        .HasColumnName("height");
+
+                    b.Property<bool>("IsCover")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_work_in_progress");
+                        .HasColumnName("is_cover");
 
-                    b.Property<string>("MadeWith")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("made_with");
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
 
-                    b.Property<DateTimeOffset>("PublishedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("published_at");
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("title");
-
-                    b.Property<DateTimeOffset?>("TrashedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("trashed_at");
-
-                    b.Property<Visibility>("Visibility")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("public.visibility")
-                        .HasDefaultValue(Visibility.Private)
-                        .HasColumnName("visibility");
+                    b.Property<int?>("Width")
+                        .HasColumnType("integer")
+                        .HasColumnName("width");
 
                     b.HasKey("Id")
-                        .HasName("pk_music_item");
+                        .HasName("pk_media");
 
-                    b.HasIndex("TrashedAt")
-                        .HasDatabaseName("ix_music_item_trashed_at");
+                    b.HasIndex("CreationId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_media_creation_cover")
+                        .HasFilter("is_cover");
 
-                    b.ToTable("music_item", "public");
+                    b.HasIndex("ProjectId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_media_project_cover")
+                        .HasFilter("is_cover");
+
+                    b.HasIndex("CreationId", "FileName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_creation_id_file_name");
+
+                    b.HasIndex("ProjectId", "FileName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_project_id_file_name");
+
+                    b.ToTable("media", "public", t =>
+                        {
+                            t.HasCheckConstraint("ck_media_one_owner", "(project_id IS NULL) <> (creation_id IS NULL)");
+                        });
                 });
 
             modelBuilder.Entity("BoothDotDev.Data.Models.Note", b =>
@@ -568,7 +673,6 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<FontStyle>("FontStyle")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("public.font_style")
                         .HasDefaultValue(FontStyle.Serif)
                         .HasColumnName("font_style");
@@ -658,6 +762,46 @@ namespace BoothDotDev.Data.Migrations
                     b.ToTable("passkey_credential", "public");
                 });
 
+            modelBuilder.Entity("BoothDotDev.Data.Models.PortfolioEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("CreationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creation_id");
+
+                    b.Property<int?>("FeaturedPosition")
+                        .HasColumnType("integer")
+                        .HasColumnName("featured_position");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_portfolio_entry");
+
+                    b.HasIndex("CreationId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_portfolio_entry_creation_id");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_portfolio_entry_project_id");
+
+                    b.ToTable("portfolio_entry", "public", t =>
+                        {
+                            t.HasCheckConstraint("ck_portfolio_entry_one_target", "(project_id IS NULL) <> (creation_id IS NULL)");
+                        });
+                });
+
             modelBuilder.Entity("BoothDotDev.Data.Models.Project", b =>
                 {
                     b.Property<Guid>("Id")
@@ -719,8 +863,12 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("tagline");
 
+                    b.PrimitiveCollection<List<string>>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("tags");
+
                     b.Property<ProjectType>("Type")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("public.project_type")
                         .HasDefaultValue(ProjectType.App)
                         .HasColumnName("type");
@@ -894,6 +1042,10 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("character varying(10000)")
                         .HasColumnName("body");
 
+                    b.Property<PaletteHue?>("Color")
+                        .HasColumnType("public.palette_hue")
+                        .HasColumnName("color");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -922,6 +1074,33 @@ namespace BoothDotDev.Data.Migrations
                         .HasDatabaseName("ix_someday_entry_draft_someday_entry_id");
 
                     b.ToTable("someday_entry_draft", "public");
+                });
+
+            modelBuilder.Entity("BoothDotDev.Data.Models.Status", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("text");
+
+                    b.HasKey("Id")
+                        .HasName("pk_status");
+
+                    b.ToTable("status", "public");
                 });
 
             modelBuilder.Entity("BoothDotDev.Data.Models.TraktCredential", b =>
@@ -1018,6 +1197,10 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body");
 
+                    b.Property<PaletteHue?>("Color")
+                        .HasColumnType("public.palette_hue")
+                        .HasColumnName("color");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -1040,13 +1223,11 @@ namespace BoothDotDev.Data.Migrations
                         .HasColumnName("rank");
 
                     b.Property<bool>("ShowTableOfContents")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("show_toc");
 
                     b.Property<bool>("TableOfContentsExpanded")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("toc_open");
@@ -1085,6 +1266,10 @@ namespace BoothDotDev.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<PaletteHue?>("Color")
+                        .HasColumnType("public.palette_hue")
+                        .HasColumnName("color");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
@@ -1226,7 +1411,7 @@ namespace BoothDotDev.Data.Migrations
                     b.HasOne("BoothDotDev.Data.Models.BlogPostDraft", "CurrentDraft")
                         .WithMany()
                         .HasForeignKey("CurrentDraftId")
-                        .HasConstraintName("fk_blog_post_blog_post_drafts_current_draft_id");
+                        .HasConstraintName("fk_blog_post_blog_post_draft_current_draft_id");
 
                     b.Navigation("CurrentDraft");
                 });
@@ -1264,7 +1449,7 @@ namespace BoothDotDev.Data.Migrations
                     b.HasOne("BoothDotDev.Data.Models.DevChallengeDraft", "CurrentDraft")
                         .WithMany()
                         .HasForeignKey("CurrentDraftId")
-                        .HasConstraintName("fk_dev_challenge_dev_challenge_drafts_current_draft_id");
+                        .HasConstraintName("fk_dev_challenge_dev_challenge_draft_current_draft_id");
 
                     b.Navigation("CurrentDraft");
                 });
@@ -1279,12 +1464,42 @@ namespace BoothDotDev.Data.Migrations
                         .HasConstraintName("fk_dev_challenge_draft_dev_challenge_dev_challenge_id");
                 });
 
+            modelBuilder.Entity("BoothDotDev.Data.Models.Link", b =>
+                {
+                    b.HasOne("BoothDotDev.Data.Models.Creation", null)
+                        .WithMany()
+                        .HasForeignKey("CreationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_link_creation_creation_id");
+
+                    b.HasOne("BoothDotDev.Data.Models.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_link_project_project_id");
+                });
+
+            modelBuilder.Entity("BoothDotDev.Data.Models.Media", b =>
+                {
+                    b.HasOne("BoothDotDev.Data.Models.Creation", null)
+                        .WithMany()
+                        .HasForeignKey("CreationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_media_creation_creation_id");
+
+                    b.HasOne("BoothDotDev.Data.Models.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_media_project_project_id");
+                });
+
             modelBuilder.Entity("BoothDotDev.Data.Models.Note", b =>
                 {
                     b.HasOne("BoothDotDev.Data.Models.NoteDraft", "CurrentDraft")
                         .WithMany()
                         .HasForeignKey("CurrentDraftId")
-                        .HasConstraintName("fk_note_note_drafts_current_draft_id");
+                        .HasConstraintName("fk_note_note_draft_current_draft_id");
 
                     b.Navigation("CurrentDraft");
                 });
@@ -1299,12 +1514,31 @@ namespace BoothDotDev.Data.Migrations
                         .HasConstraintName("fk_note_draft_note_note_id");
                 });
 
+            modelBuilder.Entity("BoothDotDev.Data.Models.PortfolioEntry", b =>
+                {
+                    b.HasOne("BoothDotDev.Data.Models.Creation", "Creation")
+                        .WithMany()
+                        .HasForeignKey("CreationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_portfolio_entry_creation_creation_id");
+
+                    b.HasOne("BoothDotDev.Data.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_portfolio_entry_project_project_id");
+
+                    b.Navigation("Creation");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("BoothDotDev.Data.Models.ProjectDevlog", b =>
                 {
                     b.HasOne("BoothDotDev.Data.Models.ProjectDevlogDraft", "CurrentDraft")
                         .WithMany()
                         .HasForeignKey("CurrentDraftId")
-                        .HasConstraintName("fk_devlog_project_devlog_drafts_current_draft_id");
+                        .HasConstraintName("fk_devlog_devlog_draft_current_draft_id");
 
                     b.HasOne("BoothDotDev.Data.Models.Project", null)
                         .WithMany()
@@ -1351,7 +1585,7 @@ namespace BoothDotDev.Data.Migrations
                     b.HasOne("BoothDotDev.Data.Models.TutorialArticleDraft", "CurrentDraft")
                         .WithMany()
                         .HasForeignKey("CurrentDraftId")
-                        .HasConstraintName("fk_tutorial_article_tutorial_article_drafts_current_draft_id");
+                        .HasConstraintName("fk_tutorial_article_tutorial_article_draft_current_draft_id");
 
                     b.Navigation("CurrentDraft");
                 });
@@ -1363,7 +1597,7 @@ namespace BoothDotDev.Data.Migrations
                         .HasForeignKey("Folder")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_tutorial_article_draft_tutorial_folders_folder");
+                        .HasConstraintName("fk_tutorial_article_draft_tutorial_folder_folder");
 
                     b.HasOne("BoothDotDev.Data.Models.TutorialArticle", null)
                         .WithMany()

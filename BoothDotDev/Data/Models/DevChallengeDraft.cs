@@ -38,7 +38,7 @@ public sealed class DevChallengeDraft : IEquatable<DevChallengeDraft>
     ///     Gets the ID of this draft.
     /// </summary>
     /// <value>The ID of this draft.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets a value indicating whether the solution should be shown, as of this draft.
@@ -63,6 +63,30 @@ public sealed class DevChallengeDraft : IEquatable<DevChallengeDraft>
     /// </summary>
     /// <value>The visibility of the challenge.</value>
     public Visibility Visibility { get; set; }
+
+    /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="DevChallengeDraft" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(DevChallengeDraft? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
 
     /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="DevChallengeDraft" /> are equal.
@@ -93,30 +117,6 @@ public sealed class DevChallengeDraft : IEquatable<DevChallengeDraft>
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="DevChallengeDraft" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(DevChallengeDraft? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -126,7 +126,7 @@ public sealed class DevChallengeDraft : IEquatable<DevChallengeDraft>
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is DevChallengeDraft other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is DevChallengeDraft other && Equals(other));
     }
 
     /// <summary>

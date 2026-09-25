@@ -22,9 +22,6 @@ internal sealed class CalloutInlineParser : InlineParser
     /// <inheritdoc />
     public override bool Match(InlineProcessor processor, ref StringSlice slice)
     {
-        // We expect the alert to be the first child of a quote block. Example:
-        // > [!NOTE]
-        // > This is a note
         if (processor.Block is not ParagraphBlock { Parent: QuoteBlock quoteBlock } paragraphBlock ||
             paragraphBlock.Inline?.FirstChild != null)
         {
@@ -117,7 +114,7 @@ internal sealed class CalloutInlineParser : InlineParser
         switch (current)
         {
             case '\r':
-                current = slice.NextChar(); // skip \r
+                current = slice.NextChar();
 
                 if (current is not ('\0' or '\n'))
                 {
@@ -127,13 +124,13 @@ internal sealed class CalloutInlineParser : InlineParser
                 end = slice.Start;
                 if (current == '\n')
                 {
-                    slice.NextChar(); // skip \n
+                    slice.NextChar();
                 }
 
                 break;
 
             case '\n':
-                slice.NextChar(); // skip \n
+                slice.NextChar();
                 break;
         }
 

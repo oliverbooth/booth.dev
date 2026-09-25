@@ -1,0 +1,43 @@
+.env-bar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 300;
+  height: 8px;
+  background: repeating-linear-gradient(-45deg, var(--accent-sun) 0 10px, oklch(20% 0.03 95) 10px 20px);
+}
+
+.env-badge {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-sun);
+  color: oklch(22% 0.04 95);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.topnav-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body:has(.env-bar) {
+  padding-top: 8px;
+}
+
+body:has(.env-bar) :is(.layout, .admin-shell, .login-shell) {
+  min-height: calc(100vh - 8px);
+}
+
+body:has(.env-bar) .site-header {
+  top: 8px;
+}
+
+body:has(.env-bar) .admin-rail {
+  top: 8px;
+  height: calc(100vh - 8px);
+}

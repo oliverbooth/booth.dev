@@ -1,0 +1,50 @@
+.folder-card {
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+
+  h3 {
+    color: var(--ink);
+    font-size: 19px;
+  }
+}
+
+.folder-card-count {
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+.folder-card-glyph {
+  height: 36px;
+  color: var(--solid);
+  font-size: 36px;
+  line-height: 36px;
+}
+
+.folder-icon {
+  position: relative;
+  display: block;
+  width: 46px;
+  height: 36px;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    background: var(--solid);
+  }
+
+  &::before {
+    top: 0;
+    width: 22px;
+    height: 9px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  &::after {
+    top: 7px;
+    width: 46px;
+    height: 29px;
+    border-radius: 5px;
+  }
+}

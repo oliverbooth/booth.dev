@@ -85,7 +85,7 @@ public sealed class WatchlistService
         };
 
         using var context = _dbContextFactory.CreateDbContext();
-        if (FindTraktConflict(context, traktId, kind, exceptId: null) is { } conflict)
+        if (FindTraktConflict(context, traktId, kind, null) is { } conflict)
         {
             return Result.Fail(conflict);
         }
@@ -116,7 +116,7 @@ public sealed class WatchlistService
             return Result.Fail($"No watchlist item with ID '{id}' was found.");
         }
 
-        if (FindTraktConflict(context, traktId, kind, exceptId: id) is { } conflict)
+        if (FindTraktConflict(context, traktId, kind, id) is { } conflict)
         {
             return Result.Fail(conflict);
         }

@@ -1,14 +1,15 @@
 /**
- * Implements client-side search/filtering of table rows, scoped to any container marked `data-search-scope`. Rows opt individual fields
- * into the search by marking them `data-search` - this lets a single column (e.g. a title + slug stacked in one cell) mark only some of its
- * content as searchable, rather than searching whole columns. An optional element marked `data-search-empty` inside the scope is shown when
- * a query matches zero rows.
+ * Implements client-side search/filtering of a list of items, scoped to any container marked `data-search-scope`. Items opt in
+ * by being marked `data-search-item` - this works regardless of the underlying markup (table row, card, grid tile, ...). Items opt
+ * individual fields into the search by marking them `data-search` - this lets one item (e.g. a title + slug stacked together)
+ * mark only some of its content as searchable, rather than searching everything inside it. An optional element marked
+ * `data-search-empty` inside the scope is shown when a query matches zero items.
  */
 export function initSearch(): void {
     const scopes: NodeListOf<HTMLElement> = document.querySelectorAll<HTMLElement>('[data-search-scope]');
     for (const scope of scopes) {
         const input: HTMLInputElement | null = scope.querySelector<HTMLInputElement>('#search');
-        const rows: NodeListOf<HTMLElement> = scope.querySelectorAll<HTMLElement>('tbody tr:not([data-search-empty])');
+        const rows: NodeListOf<HTMLElement> = scope.querySelectorAll<HTMLElement>('[data-search-item]');
         const emptyState: HTMLElement | null = scope.querySelector<HTMLElement>('[data-search-empty]');
         if (!input || rows.length === 0) {
             continue;

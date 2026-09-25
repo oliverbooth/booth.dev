@@ -1,0 +1,22 @@
+@model ErrorHero
+
+<div class="error-page">
+    <div class="error-card">
+
+        <div class="error-icon error-icon--@Model.Tint"><i class="ti @Model.Icon" aria-hidden="true"></i></div>
+        <p class="error-code">error @Model.Code</p>
+        <h1 class="error-title">@Model.Title</h1>
+        <p class="error-desc">@Model.Body</p>
+
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">take me home</a>
+            @if (Model.ShowRetry)
+            {
+                <button type="button" class="btn" data-retry>try again</button>
+            }
+        </div>
+
+        <p class="error-tag">@Model.Tag</p>
+
+    </div>
+</div>

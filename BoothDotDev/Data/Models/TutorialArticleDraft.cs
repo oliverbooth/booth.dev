@@ -6,6 +6,12 @@ namespace BoothDotDev.Data.Models;
 public sealed class TutorialArticleDraft : IEquatable<TutorialArticleDraft>
 {
     /// <summary>
+    ///     Gets or sets the colour of the article, as of this draft.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to its folder's colour.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
     ///     Gets the date and time this draft was saved.
     /// </summary>
     /// <value>The date and time this draft was saved.</value>
@@ -33,7 +39,7 @@ public sealed class TutorialArticleDraft : IEquatable<TutorialArticleDraft>
     ///     Gets the ID of this draft.
     /// </summary>
     /// <value>The ID of this draft.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the URL of the article's preview image, as of this draft.
@@ -82,6 +88,28 @@ public sealed class TutorialArticleDraft : IEquatable<TutorialArticleDraft>
     public Visibility Visibility { get; set; }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="TutorialArticleDraft" /> is equal to another instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise, <see langword="false" />.
+    /// </returns>
+    public bool Equals(TutorialArticleDraft? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="TutorialArticleDraft" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="TutorialArticleDraft" /> to compare.</param>
@@ -110,28 +138,6 @@ public sealed class TutorialArticleDraft : IEquatable<TutorialArticleDraft>
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="TutorialArticleDraft" /> is equal to another instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise, <see langword="false" />.
-    /// </returns>
-    public bool Equals(TutorialArticleDraft? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -141,7 +147,7 @@ public sealed class TutorialArticleDraft : IEquatable<TutorialArticleDraft>
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is TutorialArticleDraft other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is TutorialArticleDraft other && Equals(other));
     }
 
     /// <summary>

@@ -1,0 +1,84 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
+@using BoothDotDev.Services
+@model BoothDotDev.Data.Models.Creation
+@inject LinkService LinkService
+@inject MarkdownRenderingService MarkdownRenderingService
+@inject MediaService MediaService
+
+@{
+    var creation = Model;
+    var files = MediaService.GetMedia(MediaOwner.For(creation));
+    var cover = files.FirstOrDefault(f => f.IsCover);
+    var otherFiles = files.Where(f => !f.IsCover).ToList();
+    var showHero = !creation.IsMusic || cover is not null;
+}
+
+<div class="page" data-hue="@creation.Kind.ToHue().ToDataHue()">
+
+    <div>
+        <span class="eyebrow">
+            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+        </span>
+    </div>
+
+    <span class="badge">@creation.Kind.ToLabel()</span>
+    @if (creation.IsWorkInProgress)
+    {
+        <span class="status hiatus"><span class="dot"></span>work in progress</span>
+    }
+
+    <h1 class="project-title">@creation.Title</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Creations/Edit", new { id = creation.Id }) })"/>
+
+    @if (!string.IsNullOrWhiteSpace(creation.Description))
+    {
+        <div class="project-desc">
+            @Html.Raw(MarkdownRenderingService.Render(creation.Description, creation.Id, creation.PublishedAt, MediaOwner.CreationArea))
+        </div>
+    }
+
+    @if (creation.Tags.Count > 0)
+    {
+        <div class="tag-row">
+            @foreach (var tag in creation.Tags)
+            {
+                <span class="tag">@tag</span>
+            }
+        </div>
+    }
+
+    <partial name="_LinkButtons" model="LinkService.GetLinks(creation.Id)" />
+
+    @if (showHero)
+    {
+        <div class="project-frame">
+            @if (cover is not null)
+            {
+                <img src="@cover.Url" alt="@(cover.Alt ?? creation.Title)" data-lightbox data-lightbox-src="@cover.Url">
+            }
+            else
+            {
+                <div class="media-placeholder" aria-hidden="true"></div>
+            }
+        </div>
+    }
+
+    <partial name="_MediaGallery" model="otherFiles" />
+
+    <dl class="project-facts">
+        <div>
+            <dt>made</dt>
+            <dd>@creation.PublishedAt.ToString("MMM yyyy").ToLower()</dd>
+        </div>
+        @if (creation.Tools.Count > 0)
+        {
+            <div>
+                <dt>tools</dt>
+                <dd>@string.Join(", ", creation.Tools)</dd>
+            </div>
+        }
+    </dl>
+
+</div>

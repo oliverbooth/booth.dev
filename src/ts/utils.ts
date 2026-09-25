@@ -125,24 +125,30 @@ export function bufferToBase64Url(buffer: ArrayBuffer): string {
 }
 
 /**
- * Converts ANSI color codes in a string to HTML span elements with inline styles.
+ * Maps an SGR foreground colour code to the index of its entry in the 16-colour terminal palette.
+ * @param code The SGR code: 30-37 for the normal colours, 90-97 for the bright ones.
+ * @returns The palette index (0-15), or `null` if the code is not a foreground colour.
+ */
+function ansiPaletteIndex(code: string): number | null {
+    const value: number = Number(code);
+    if (value >= 30 && value <= 37) {
+        return value - 30;
+    }
+
+    if (value >= 90 && value <= 97) {
+        return value - 90 + 8;
+    }
+
+    return null;
+}
+
+/**
+ * Converts ANSI color codes in a string to HTML span elements carrying an `ansi-N` class, which the stylesheet
+ * resolves against the theme's 16-colour terminal palette.
  * @param input The input string containing ANSI color codes.
  * @returns The input string with ANSI color codes replaced by HTML span elements.
  */
 export function ansiToHtml(input: string): string {
-    const ansiColorMap: { [key: string]: string } = {
-        '0': 'unset',
-        '30': '#0c0c0c',
-        '31': '#c50f1f',
-        '32': '#13a10e',
-        '33': '#c19c00',
-        '34': '#0037da',
-        '35': '#881798',
-        '36': '#3a96dd',
-        '37': '#cccccc',
-        '90': '#767676'
-    };
-
     let wasOpen: boolean = false;
     return input
         .replace(/\x1b\[(\d+?)m/g, (_, code) => {
@@ -150,18 +156,18 @@ export function ansiToHtml(input: string): string {
                 return '</span>';
             }
 
-            const color: string = ansiColorMap[code];
+            const index: number | null = ansiPaletteIndex(code);
             const prefix: string = wasOpen ? '</span>' : '';
 
             if (wasOpen) {
                 wasOpen = false;
             }
-            if (color) {
+            if (index !== null) {
                 wasOpen = true;
             }
 
-            return color ? `${prefix}<span style="color:${color};">` : '</span>';
+            return index !== null ? `${prefix}<span class="ansi-${index}">` : '</span>';
         })
-        .concat('</span>') // close any open tags at the end
-        .replace(/<\/span>(?=<\/span>)/g, ''); // remove redundant closing tags
+        .concat('</span>')
+        .replace(/<\/span>(?=<\/span>)/g, '');
 }

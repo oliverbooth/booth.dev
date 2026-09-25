@@ -11,7 +11,9 @@ namespace BoothDotDev.Markdown.CodeBlock;
 ///     <c>manim-2d</c>/<c>manim-3d</c> blocks for client-side rendering as a manim-web scene, <c>vexflow</c> blocks for
 ///     client-side rendering as music notation, and <c>mermaid</c> blocks for client-side rendering as a diagram. All
 ///     three render tabbed alongside their own source by default; <c>no-source</c> renders just the result with no
-///     source tab, and <c>no-render</c> skips rendering entirely, leaving a plain highlighted codeblock.
+///     source tab, and <c>no-render</c> skips rendering entirely, leaving a plain highlighted codeblock. Any block can
+///     also carry <c>terminal</c>, which is surfaced as <c>data-terminal</c> for a macOS-style window chrome (the three
+///     dots) in place of the usual language/copy header.
 /// </summary>
 public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
 {
@@ -39,6 +41,11 @@ public sealed class HighlightCodeBlockRenderer : CodeBlockRenderer
             if (arguments.Contains("wrap"))
             {
                 obj.GetAttributes().AddPropertyIfNotExist("data-wrap", string.Empty);
+            }
+
+            if (arguments.Contains("terminal"))
+            {
+                obj.GetAttributes().AddPropertyIfNotExist("data-terminal", string.Empty);
             }
 
             if (!arguments.Contains("no-render"))

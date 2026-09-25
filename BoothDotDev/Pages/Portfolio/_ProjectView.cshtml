@@ -1,0 +1,139 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Data.Models
+@using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
+@using BoothDotDev.Services
+@using Humanizer
+@using Markdig
+@model BoothDotDev.Data.Models.Project
+@inject MarkdownPipeline MarkdownPipeline
+@inject LinkService LinkService
+@inject MediaService MediaService
+@inject ProjectService ProjectService
+
+@{
+    var project = Model;
+    var statusClass = project.Status switch
+    {
+        ProjectStatus.Past => "done",
+        ProjectStatus.Retired => "retired",
+        ProjectStatus.Hiatus => "hiatus",
+        _ => ""
+    };
+
+    var statusText = project.Status switch
+    {
+        ProjectStatus.Ongoing => "in active development",
+        ProjectStatus.Past => "completed",
+        ProjectStatus.Retired => "retired",
+        ProjectStatus.Hiatus => "on hiatus",
+        _ => project.Status.ToString().ToLower()
+    };
+
+    var languages = project.Languages.Where(language => language != "various").ToList();
+    var files = MediaService.GetMedia(MediaOwner.For(project));
+    var cover = files.FirstOrDefault(f => f.IsCover);
+    var otherFiles = files.Where(f => !f.IsCover).ToList();
+}
+
+<div class="page">
+
+    <div>
+        <span class="eyebrow">
+            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+        </span>
+    </div>
+
+    <span class="status @statusClass"><span class="dot"></span>@statusText</span>
+    <h1 class="project-title">@project.Name</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Projects/Edit", new { id = project.Id }) })"/>
+
+    <div class="project-desc">
+        @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
+    </div>
+
+    @if (project.Tags.Count > 0)
+    {
+        <div class="tag-row">
+            @foreach (var tag in project.Tags)
+            {
+                <span class="tag">@tag</span>
+            }
+        </div>
+    }
+
+    <partial name="_LinkButtons" model="LinkService.GetLinks(project.Id)" />
+
+    <div class="project-frame" data-hue="sky">
+        @if (cover is not null)
+        {
+            <img src="@cover.Url" alt="@(cover.Alt ?? project.Name)" data-lightbox data-lightbox-src="@cover.Url">
+        }
+        else
+        {
+            <div class="media-placeholder" aria-hidden="true"></div>
+        }
+    </div>
+
+    <partial name="_MediaGallery" model="otherFiles" />
+
+    <dl class="project-facts">
+        <div>
+            <dt>type</dt>
+            <dd>@project.Type.Label</dd>
+        </div>
+        <div>
+            <dt>started</dt>
+            <dd>@project.CreatedAt.ToString("MMM yyyy").ToLower()</dd>
+        </div>
+        <div>
+            <dt>status</dt>
+            <dd>@statusText</dd>
+        </div>
+        @if (languages.Count > 0)
+        {
+            <div>
+                <dt>stack</dt>
+                <dd>@string.Join(", ", languages.Select(language => ProgrammingLanguage.GetNameFromShorthand(language)))</dd>
+            </div>
+        }
+    </dl>
+
+    @if (!string.IsNullOrWhiteSpace(project.Details))
+    {
+        <div class="prose project-details">
+            @Html.Raw(ProjectService.GetDetails(project))
+        </div>
+    }
+
+    @{
+        var devlogVisibility = User.Identity?.IsAuthenticated == true ? Visibility.None : Visibility.Published;
+        var devlogEntries = ProjectService.GetDevlogs(project, devlogVisibility);
+    }
+
+    <section class="project-devlog" aria-labelledby="devlog-heading">
+        <div class="section-head">
+            <h2 id="devlog-heading">Recent devlogs</h2>
+        </div>
+
+        @if (devlogEntries.Count == 0)
+        {
+            <p class="lede">No devlog entries available.</p>
+        }
+        else
+        {
+            <div class="stack-list">
+                @foreach (var entry in devlogEntries.Take(3))
+                {
+                    <a asp-page="/Portfolio/Devlog" asp-route-projectSlug="@project.Slug" asp-route-slug="@entry.Slug">
+                        <div class="stack-meta">
+                            <p class="title">@entry.Title</p>
+                        </div>
+                        <span class="meta-value">@entry.PublishedAt.Humanize()</span>
+                    </a>
+                }
+            </div>
+        }
+    </section>
+
+</div>

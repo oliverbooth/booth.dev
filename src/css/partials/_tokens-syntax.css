@@ -1,0 +1,7 @@
+:root {
+  --syntax-keyword: oklch(78% 0.15 340);
+  --syntax-string: oklch(78% 0.13 145);
+  --syntax-number: oklch(78% 0.15 60);
+  --syntax-type: oklch(80% 0.1 220);
+  --syntax-func: oklch(82% 0.1 275);
+}

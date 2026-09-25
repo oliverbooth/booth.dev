@@ -13,6 +13,16 @@ namespace BoothDotDev.Pages.Admin.Watchlist;
 [Authorize(Policy = "Admin")]
 public sealed class Index : PageModel
 {
+    /// <summary>
+    ///     The display order, label, and dot colour for each state's group.
+    /// </summary>
+    private static readonly (WatchableState State, string Label, string DotClass)[] StateOrder =
+    [
+        (WatchableState.Watching, "watching", "dot"),
+        (WatchableState.PlanToWatch, "plan to watch", "dot dot-coral"),
+        (WatchableState.Watched, "watched", "dot dot-magenta")
+    ];
+
     private readonly TraktAuthService _traktAuthService;
     private readonly TraktSyncService _traktSyncService;
     private readonly WatchlistService _watchlistService;
@@ -57,17 +67,20 @@ public sealed class Index : PageModel
     public string? TraktMessage { get; set; }
 
     /// <summary>
-    ///     Gets every item on the watchlist.
+    ///     Gets the watchlist items, grouped by state, in <see cref="StateOrder" />.
     /// </summary>
-    /// <value>Every item on the watchlist.</value>
-    public IReadOnlyCollection<Watchable> Watchables { get; private set; } = [];
+    /// <value>The state groups.</value>
+    public IReadOnlyList<StateGroup> StateGroups { get; private set; } = [];
 
     /// <summary>
     ///     Handles the GET request.
     /// </summary>
     public void OnGet()
     {
-        Watchables = _watchlistService.GetAllWatchables();
+        var watchables = _watchlistService.GetAllWatchables();
+        StateGroups = StateOrder
+            .Select(s => new StateGroup(s.State, s.Label, s.DotClass, watchables.Where(w => w.State == s.State).ToArray()))
+            .ToArray();
         IsTraktConnected = _traktAuthService.IsConnected();
         PendingChallenge = _traktAuthService.GetPendingChallenge();
     }
@@ -146,9 +159,19 @@ public sealed class Index : PageModel
         else
         {
             var summary = result.Value;
-            TraktMessage = $"Pulled from Trakt: {summary.Added} added, {summary.Promoted} promoted, {summary.Adopted} linked to existing entries.";
+            TraktMessage =
+                $"Pulled from Trakt: {summary.Added} added, {summary.Promoted} promoted, {summary.Adopted} linked to existing entries.";
         }
 
         return RedirectToPage();
     }
+
+    /// <summary>
+    ///     Represents a group of watchlist items sharing a state, for display in the admin listing.
+    /// </summary>
+    /// <param name="State">The state shared by every item in the group.</param>
+    /// <param name="Label">The lowercase display label for the state.</param>
+    /// <param name="DotClass">The CSS class for this state's indicator dot.</param>
+    /// <param name="Watchables">The items in this state.</param>
+    public sealed record StateGroup(WatchableState State, string Label, string DotClass, IReadOnlyList<Watchable> Watchables);
 }

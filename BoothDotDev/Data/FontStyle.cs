@@ -15,5 +15,5 @@ public enum FontStyle
     /// <summary>
     ///     Serif font style.
     /// </summary>
-    [PgName("serif")] Serif,
+    [PgName("serif")] Serif
 }

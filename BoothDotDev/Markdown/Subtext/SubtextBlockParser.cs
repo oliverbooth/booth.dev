@@ -34,11 +34,11 @@ internal sealed class SubtextBlockParser : BlockParser
         var column = processor.Column;
         var start = processor.Start;
 
-        processor.NextChar(); // skip '-'
-        processor.NextChar(); // skip '#'
+        processor.NextChar();
+        processor.NextChar();
         if (processor.CurrentChar is ' ' or '\t')
         {
-            processor.NextChar(); // skip the single space separating the marker from the content
+            processor.NextChar();
         }
 
         var block = new SubtextBlock(this) { Column = column, Span = new SourceSpan(start, processor.Line.End) };

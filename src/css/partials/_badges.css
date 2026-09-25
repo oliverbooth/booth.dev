@@ -1,84 +1,60 @@
-.pill {
-  font-size: 13px;
-  color: var(--text-secondary);
-  padding: 5px 12px;
-  border-radius: 20px;
-  text-decoration: none;
-  white-space: nowrap;
+.badge,
+.status {
+  --badge-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
+  --badge-text: var(--teal-text);
 
-  &.active {
-    color: var(--accent);
-    background: var(--accent-tint);
-    font-weight: 500;
-  }
-}
-
-.tag {
   display: inline-flex;
   align-items: center;
-  font-size: 12px;
-  color: var(--text-secondary);
-  border: 0.5px solid var(--border-strong);
-  padding: 3px 10px;
-  border-radius: 20px;
-  text-decoration: none;
-  
-  img {
-    height: 12px;
-    width: auto;
-    flex-shrink: 0;
-    margin-right: 5px;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: lowercase;
+
+  .dot {
+    background: currentColor;
   }
 }
 
-.status {
-  font-size: 11px;
-  padding: 2px 9px;
-  border-radius: 20px;
-  color: var(--success-text);
-  background: var(--success-bg);
+.badge-coral,
+.status.hiatus {
+  --badge-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
+  --badge-text: var(--coral-text);
+}
 
-  &.done {
-    color: var(--text-secondary);
-    background: var(--surface-1);
-  }
+.badge-magenta,
+.status.retired {
+  --badge-bg: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
+  --badge-text: var(--magenta-text);
+}
 
-  &.hiatus {
-    color: var(--warning-text);
-    background: var(--warning-bg);
-    .dot {
-      background: var(--warning-text);
-    }
-  }
-
-  &.retired {
-    color: var(--danger-text);
-    background: var(--danger-bg);
-    .dot {
-      background: var(--danger-text);
-    }
-  }
+.badge-brand,
+.status.done {
+  --badge-bg: var(--brand-chip);
+  --badge-text: var(--brand-text);
 }
 
 .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #3fb950;
+  background: var(--accent-teal);
   display: inline-block;
   flex-shrink: 0;
 
   &.done {
-    background: var(--text-muted);
+    background: var(--text-faint);
   }
 }
 
-.eyebrow {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent);
+.dot-coral {
+  background: var(--accent-coral);
 }
 
-.filter-row .pill {
-  cursor: pointer;
+.dot-magenta {
+  background: var(--accent-magenta);
 }

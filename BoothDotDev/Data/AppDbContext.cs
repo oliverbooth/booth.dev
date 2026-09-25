@@ -19,12 +19,12 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
-    ///     Gets the collection of artwork items in the database.
+    ///     Gets the collection of creations in the database.
     /// </summary>
-    /// <value>The collection of artwork items.</value>
-    public DbSet<ArtworkItem> ArtworkItems
+    /// <value>The collection of creations.</value>
+    public DbSet<Creation> Creations
     {
-        get => Set<ArtworkItem>();
+        get => Set<Creation>();
     }
 
     /// <summary>
@@ -109,21 +109,30 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
-    ///     Gets the collection of music items in the database.
-    /// </summary>
-    /// <value>The collection of music items.</value>
-    public DbSet<MusicItem> MusicItems
-    {
-        get => Set<MusicItem>();
-    }
-
-    /// <summary>
     ///     Gets the collection of note drafts in the database.
     /// </summary>
     /// <value>The collection of note drafts.</value>
     public DbSet<NoteDraft> NoteDrafts
     {
         get => Set<NoteDraft>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of links belonging to projects and creations in the database.
+    /// </summary>
+    /// <value>The collection of links.</value>
+    public DbSet<Link> Links
+    {
+        get => Set<Link>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of files belonging to projects and creations in the database.
+    /// </summary>
+    /// <value>The collection of media.</value>
+    public DbSet<Media> Media
+    {
+        get => Set<Media>();
     }
 
     /// <summary>
@@ -154,6 +163,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of portfolio entries in the database.
+    /// </summary>
+    /// <value>The collection of portfolio entries.</value>
+    public DbSet<PortfolioEntry> PortfolioEntries
+    {
+        get => Set<PortfolioEntry>();
+    }
+
+    /// <summary>
     ///     Gets the collection of projects in the database.
     /// </summary>
     /// <value>The collection of projects.</value>
@@ -178,6 +196,15 @@ public sealed class AppDbContext : DbContext
     public DbSet<SomedayEntryDraft> SomedayEntryDrafts
     {
         get => Set<SomedayEntryDraft>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of homepage statuses in the database.
+    /// </summary>
+    /// <value>The collection of statuses.</value>
+    public DbSet<Status> Statuses
+    {
+        get => Set<Status>();
     }
 
     /// <summary>
@@ -239,7 +266,10 @@ public sealed class AppDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema("public");
         modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<CreationKind>("public", "creation_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<LinkKind>("public", "link_kind", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<PaletteHue>("public", "palette_hue", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
@@ -247,24 +277,27 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<WatchableSource>("public", "watchable_source", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<WatchableState>("public", "watchable_state", new NpgsqlSnakeCaseNameTranslator());
 
-        modelBuilder.ApplyConfiguration(new ArtworkItemConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostDraftConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
+        modelBuilder.ApplyConfiguration(new CreationConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeDraftConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
-        modelBuilder.ApplyConfiguration(new MusicItemConfiguration());
+        modelBuilder.ApplyConfiguration(new LinkConfiguration());
+        modelBuilder.ApplyConfiguration(new MediaConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
+        modelBuilder.ApplyConfiguration(new PortfolioEntryConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryDraftConfiguration());
+        modelBuilder.ApplyConfiguration(new StatusConfiguration());
         modelBuilder.ApplyConfiguration(new TraktCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());

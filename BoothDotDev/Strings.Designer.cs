@@ -51,6 +51,18 @@ namespace BoothDotDev {
             }
         }
         
+        internal static string MyFirstName {
+            get {
+                return ResourceManager.GetString("MyFirstName", resourceCulture);
+            }
+        }
+        
+        internal static string MySurname {
+            get {
+                return ResourceManager.GetString("MySurname", resourceCulture);
+            }
+        }
+        
         internal static string Tagline {
             get {
                 return ResourceManager.GetString("Tagline", resourceCulture);

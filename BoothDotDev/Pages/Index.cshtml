@@ -1,109 +1,134 @@
 @page "/"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @model Index
-@inject ProjectService ProjectService
+@inject BlogPostService BlogPostService
+@inject MarkdownRenderingService MarkdownRenderingService
 
-<div class="page-wide">
+<div class="page-grid home">
 
-    <div class="terminal">
-        <div class="terminal-bar">
-            <div class="terminal-dot"></div>
-            <div class="terminal-dot"></div>
-            <div class="terminal-dot"></div>
-        </div>
-        <div class="terminal-body" id="hero-terminal" data-username="@Strings.TerminalUsername" data-terminal-typewriter>
-            <div class="terminal-line" data-command="whoami">
-                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> whoami
-            </div>
+    <section class="home-hero">
+        <div class="home-hero-text">
+            <span class="eyebrow">hi, i'm -</span>
+            <h1>@Strings.MyName</h1>
+            <p class="home-tagline">
+                Coffee enthusiast with a love for all things tech. Tech enthusiast with a love for all things coffee.
+            </p>
+            <partial name="Partials/_AdminLinks" model="@(new AdminLink[]
+            {
+                new("manage statuses", "/Admin/Statuses/Index"),
+                new("manage portfolio", "/Admin/Portfolio/Index")
+            })"/>
 
-            <div class="terminal-block terminal-name-block" data-reveal>
-                <h1 class="terminal-name">@Strings.MyName</h1>
-                <p class="terminal-tagline">
-                    Coffee enthusiast with a love for all things tech. Tech enthusiast with a love for all things coffee.
-                </p>
-            </div>
-
-            <div class="terminal-line" data-command="cat status.txt">
-                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> cat status.txt
-            </div>
-
-            <div class="out terminal-block" data-reveal>
-                @{
-                    string[] statuses =
-                    [
-                        "injecting copious amounts of java into my veins",
-                        "literally screaming at the pain of web dev",
-                        "seeing sharp",
-                        "rust? i think you mean CORROSION",
-                        "help i'm stuck in a terminal",
-                        "compiling my will to live",
-                        "currently in a git conflict with reality",
-                        "42% coffee by volume",
-                        "sudo make me a sandwich (permission denied)",
-                        "yes, i test in production, how could you tell",
-                        "it's not a bug, it's an undocumented feature",
-                        "staring at a stack trace like it owes me money",
-                        "if this breaks, i'm blaming docker",
-                        "segmentation fault (core dumped my sanity)",
-                        "async and confused",
-                        "definitely not procrastinating my degree right now",
-                        "there are 10 types of people, and i'm both of them",
-                        "01101000 01100101 01101100 01110000",
-                        "npm install more-motivation"
-                    ];
-                    @statuses[Random.Shared.Next(statuses.Length)]
-                }
-            </div>
-
-            <div class="terminal-line" data-prompt>
-                <span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span>
-            </div>
-
-            <div class="terminal-actions" data-reveal>
-                <a asp-page="/Projects/Index" class="btn btn-primary">View projects</a>
-                <a asp-page="/Blog/Index" class="btn">Read the blog</a>
+            <div class="home-hero-actions">
+                <a asp-page="/Portfolio/Index" class="btn btn-primary">see my stuff <i class="ti ti-arrow-right"></i></a>
+                <a asp-page="/Blog/Index" class="btn">read a thing</a>
             </div>
         </div>
-    </div>
 
-    <div class="section-head">
-        <h2>Latest activity</h2>
-        <a asp-page="/Blog/Index"><span class="command-link">git log --all</span> &rarr;</a>
-    </div>
+        <div class="polaroid">
+            <img src="~/img/headshot_512x512_2023.jpg" asp-append-version="true" alt="Photo of @Strings.MyName">
 
-    <div class="commit-log" style="margin-bottom:3rem">
-        @for (var index = 0; index < Model.RecentActivity.Count; index++)
-        {
-            var entry = Model.RecentActivity[index];
-            var first = index == 0;
+            @if (Model.StatusText is not null)
+            {
+                <span class="status-dot status-dot--small" aria-hidden="true"></span>
+                <span class="status-dot status-dot--large" aria-hidden="true"></span>
+                @* focusable so a tap or keypress expands it the way hover does *@
+                <p class="status-bubble" tabindex="0">@Model.StatusText</p>
+            }
+        </div>
+    </section>
 
-            <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" class="commit">
-                <partial name="Partials/_ActivityEntryCommit" model="new ActivityEntryCommit { Entry = entry, IsFirst = first }" />
-            </a>
-        }
-    </div>
+    <section class="home-section" aria-labelledby="home-projects">
+        <div class="section-head">
+            <h2 id="home-projects">Stuff I've Made</h2>
+            <a asp-page="/Portfolio/Index">View all <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
 
-    <div class="section-head">
-        <h2>Projects</h2>
-        <a asp-page="/Projects/Index">View all <i class="ti ti-arrow-right" style="font-size:12px"></i></a>
-    </div>
+        <div class="sticky-grid">
+            @foreach (var item in Model.Featured)
+            {
+                <partial name="Partials/_PortfolioCard" model="item" />
+            }
+        </div>
+    </section>
 
-    <div class="card-grid">
-        @foreach (var project in Model.Projects)
-        {
-            <a asp-page="/Projects/Project" asp-route-slug="@project.Slug" class="card">
-                <div class="card-icon">
-                    <img loading="lazy" src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
-                    <span class="card-status-badge">
-                        <span class="dot" style="margin-right:5px"></span>@project.Status.ToString().ToLower()
-                    </span>
-                </div>
-                <div class="card-body">
-                    <p class="title">@project.Name</p>
-                </div>
-            </a>
-        }
-    </div>
+    <section class="home-section" aria-labelledby="home-writing">
+        <div class="section-head">
+            <h2 id="home-writing">Things I've Written</h2>
+            <a asp-page="/Blog/Index">View all <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <div class="stack-list">
+            @foreach (var post in Model.LatestPosts)
+            {
+                var category = BlogPostService.GetCategory(post.CategoryId);
+                var hue = post.Color ?? category?.EffectiveColor ?? PaletteHue.Brand;
+
+                <a asp-page="/Blog/Article" asp-route-slug="@post.Slug" data-hue="@hue.ToDataHue()">
+                    <div class="stack-meta">
+                        <div class="post-row-head">
+                            @if (category is not null)
+                            {
+                                <span class="badge">@category.Name</span>
+                            }
+                            <span class="post-row-title">@post.Title</span>
+                        </div>
+                        <p class="sub">@Html.Raw(MarkdownRenderingService.RenderPlainTextExcerpt(post, out _))</p>
+                    </div>
+                    <div class="post-row-meta">
+                        <span class="meta-value">@post.PublishedAt.ToShortString()</span>
+                        <span class="meta-value">@post.GetEstimatedReadingTime() min read</span>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="home-activity">
+        <div class="section-head">
+            <h2 id="home-activity">Latest activity</h2>
+            <a asp-page="/Blog/Index">View all <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <div class="stack-list">
+            @foreach (var entry in Model.RecentActivity)
+            {
+                <a asp-page="@entry.PagePath" asp-all-route-data="@entry.RouteValues" data-hue="@entry.Hue.ToDataHue()">
+                    <div class="stack-meta">
+                        <div class="post-row-head">
+                            <span class="badge">@entry.Category</span>
+                            @if (entry.Tag is not null)
+                            {
+                                <span class="tag">@entry.Tag</span>
+                            }
+                            <span class="post-row-title">@entry.Title</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(entry.Excerpt))
+                        {
+                            <p class="sub">@Html.Raw(entry.Excerpt)</p>
+                        }
+                    </div>
+                    <div class="post-row-meta">
+                        <span class="meta-value">@entry.PublishedAt.ToShortString()</span>
+                        @if (entry.ReadingMinutes.HasValue)
+                        {
+                            <span class="meta-value">@entry.ReadingMinutes.ValueOr(0) min read</span>
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="home-elsewhere">
+        <div class="section-head">
+            <h2 id="home-elsewhere">Elsewhere</h2>
+        </div>
+
+        <partial name="Partials/_Socials" />
+    </section>
 
 </div>

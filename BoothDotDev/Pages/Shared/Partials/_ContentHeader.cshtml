@@ -1,0 +1,61 @@
+@model ContentHeader
+
+@if (Model.Badge is not null || Model.Tags.Count > 0)
+{
+    <div class="post-tags" data-hue="@Model.Hue">
+        @if (Model.Badge is not null)
+        {
+            <span class="badge @Model.BadgeClass">@Model.Badge</span>
+        }
+        @foreach (var tag in Model.Tags)
+        {
+            <a asp-page="/Blog/Index" asp-route-tag="@tag" class="tag">@tag.Replace('-', ' ')</a>
+        }
+    </div>
+}
+
+<h1 class="post-title" data-hue="@Model.Hue">@Model.Title</h1>
+
+<div class="byline">
+    @if (Model.AuthorName is { } authorName)
+    {
+        <div class="avatar" data-initial="@authorName[0]">
+            @if (Model.AuthorAvatarUrl is { } avatarUrl)
+            {
+                <img src="@avatarUrl" alt="" />
+            }
+        </div>
+    }
+    <div class="byline-text">
+        @if (Model.AuthorName is not null)
+        {
+            <div class="byline-name">@Model.AuthorName</div>
+        }
+        <div class="byline-meta">
+            @string.Join(" \u00b7 ", Model.Meta)
+            @if (Model.Flag is { } flag)
+            {
+                if (Model.Meta.Count > 0)
+                {
+                    <text> &middot; </text>
+                }
+
+                <span class="meta-flag" data-hue="@flag.Hue"><i class="ti @flag.Icon" aria-hidden="true"></i> @flag.Text</span>
+            }
+        </div>
+    </div>
+    @if (Model.ShowVoiceFontToggle)
+    {
+        <button type="button" class="byline-link" data-voice-font-toggle aria-pressed="false">
+            <i class="ti ti-letter-case" aria-hidden="true"></i> <span data-voice-font-label>sans-serif</span>
+        </button>
+    }
+    @if (Model.SourceUrl is { } sourceUrl)
+    {
+        <a href="@sourceUrl" class="byline-link">view source</a>
+    }
+    @if (Model.EditUrl is { } editUrl)
+    {
+        <a href="@editUrl" class="byline-link">edit</a>
+    }
+</div>

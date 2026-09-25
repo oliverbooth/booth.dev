@@ -356,7 +356,11 @@ public sealed class SomedayEntryService
     {
         return new SomedayEntryDraft
         {
-            SomedayEntryId = entryId, Title = content.Title, Body = content.Body, Visibility = content.Visibility
+            SomedayEntryId = entryId,
+            Title = content.Title,
+            Body = content.Body,
+            Visibility = content.Visibility,
+            Color = content.Color
         };
     }
 

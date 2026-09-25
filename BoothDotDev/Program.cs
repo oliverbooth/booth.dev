@@ -6,6 +6,7 @@ using Fido2NetLib;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -74,17 +75,21 @@ builder.Services.AddSingleton<PasskeyService>();
 builder.Services.AddSingleton<CodeSnippetService>();
 builder.Services.AddSingleton<CreationService>();
 builder.Services.AddSingleton<DevChallengeService>();
+builder.Services.AddSingleton<DiscordEmbedService>();
+builder.Services.AddSingleton<LinkService>();
 builder.Services.AddSingleton<MarkdownRenderingService>();
+builder.Services.AddSingleton<MediaService>();
 builder.Services.AddSingleton<NoteService>();
 builder.Services.AddSingleton<OgImageService>();
+builder.Services.AddSingleton<PortfolioService>();
 builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<RawContentService>();
 builder.Services.AddSingleton<ReadingListService>();
 builder.Services.AddSingleton<RssFeedService>();
 builder.Services.AddSingleton<SomedayEntryService>();
+builder.Services.AddSingleton<StatusService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
-builder.Services.AddSingleton<BlueskyService>();
 builder.Services.AddSingleton<BookLookupService>();
 builder.Services.AddSingleton<PhoneStatusService>();
 builder.Services.AddSingleton<WatchlistService>();
@@ -93,8 +98,6 @@ builder.Services.AddSingleton<TraktAuthService>();
 builder.Services.AddSingleton<TraktSyncService>();
 builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
-builder.Services.Configure<BlueskyOptions>(
-    builder.Configuration.GetSection(BlueskyOptions.SectionName));
 builder.Services.Configure<PhoneStatusOptions>(
     builder.Configuration.GetSection(PhoneStatusOptions.SectionName));
 builder.Services.Configure<TmdbOptions>(
@@ -107,6 +110,8 @@ builder.Services.Configure<WebAuthnOptions>(
     builder.Configuration.GetSection(WebAuthnOptions.SectionName));
 builder.Services.Configure<CdnOptions>(
     builder.Configuration.GetSection(CdnOptions.SectionName));
+builder.Services.Configure<SiteOptions>(
+    builder.Configuration.GetSection(SiteOptions.SectionName));
 builder.Services.AddSingleton<IFido2>(services =>
 {
     var webAuthnOptions = services.GetRequiredService<IOptions<WebAuthnOptions>>().Value;
@@ -119,6 +124,8 @@ builder.Services.AddSingleton<IFido2>(services =>
 });
 builder.Services.AddMemoryCache();
 
+// [RequestSizeLimit] lifts Kestrel's body cap on the upload pages, but parsing a multipart form has its own 128 MB cap
+builder.Services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = CdnUploadPolicy.MaxUploadSizeBytes);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
@@ -128,11 +135,21 @@ await ConfigureMigrationsAsync<AppDbContext>(app.Services);
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error/500");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+{
+    var siteOptions = context.RequestServices.GetRequiredService<IOptionsMonitor<SiteOptions>>().CurrentValue;
+    if (!string.IsNullOrWhiteSpace(siteOptions.EnvironmentLabel))
+    {
+        context.Response.Headers["X-Robots-Tag"] = "noindex, nofollow";
+    }
+
+    await next(context);
+});
 app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 // every content listing is subscribable by appending .rss to its URL (/blog.rss, /learn/unity.rss, ...) - a single rule, not one
@@ -169,13 +186,12 @@ app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {
-    // `vite`/HMR mode only serves the public dir from its own dev-server port - it copies public/ into wwwroot only on an actual
-    // `vite build`. plain (non-asp-vite) static reference, like Prism's autoloader fetching a language file, otherwise 404s in
-    // dev until a build has happened at least once
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "..", "public"))
     });
+
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(cdnDir), RequestPath = "/cdn" });
 }
 
 app.UseRouting();
@@ -213,6 +229,12 @@ app.MapGet("/blog/{slug}/raw", (string slug) => Results.Redirect($"/blog/{slug}.
 app.MapGet("/tutorials", () => Results.Redirect("/learn", true));
 app.MapGet("/tutorials/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", true));
 app.MapGet("/tutorial/{**slug}", (string slug) => Results.Redirect($"/learn/{slug}", true));
+app.MapGet("/create", () => Results.Redirect("/portfolio", true));
+app.MapGet("/projects", () => Results.Redirect("/portfolio", true));
+app.MapGet("/project/{slug}", (string slug) => Results.Redirect($"/portfolio/{slug}", true));
+app.MapGet("/project/{projectSlug}/devlog", (string slug) => Results.Redirect($"/portfolio/{slug}", true));
+app.MapGet("/project/{projectSlug}/devlog/{slug}",
+    (string projectSlug, string slug) => Results.Redirect($"/portfolio/{projectSlug}/devlog/{slug}", true));
 
 app.Run();
 return;
@@ -223,12 +245,17 @@ async Task HandleRssFeedAsync(HttpContext context, string path)
     var rssFeedService = context.RequestServices.GetRequiredService<RssFeedService>();
     var segments = path.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
 
+    if (segments is ["create"] or ["projects"])
+    {
+        context.Response.Redirect("/portfolio.rss", true);
+        return;
+    }
+
     var xml = segments.Length switch
     {
         1 when segments[0] == "blog" => rssFeedService.BuildBlogFeed(baseUrl),
         1 when segments[0] == "notes" => rssFeedService.BuildNotesFeed(baseUrl),
-        1 when segments[0] == "create" => rssFeedService.BuildCreationsFeed(baseUrl),
-        1 when segments[0] == "projects" => rssFeedService.BuildProjectsFeed(baseUrl),
+        1 when segments[0] == "portfolio" => rssFeedService.BuildPortfolioFeed(baseUrl),
         1 when segments[0] == "challenges" => rssFeedService.BuildChallengesFeed(baseUrl),
         1 when segments[0] == "learn" => rssFeedService.BuildTutorialFeed(baseUrl, null),
         > 1 when segments[0] == "learn" => BuildScopedTutorialFeed(context, rssFeedService, baseUrl, segments[1..]),

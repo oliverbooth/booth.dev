@@ -1,43 +1,352 @@
 :root {
-  --accent: #6161cd;
-  --accent-hover: #7070d6;
-  --accent-tint: rgba(97, 97, 205, 0.12);
-  --accent-tint-strong: rgba(97, 97, 205, 0.2);
+  --brand: #6161cd;
+  --on-brand-solid: #ffffff;
+  --accent-coral: oklch(72% 0.19 38);
+  --accent-teal: oklch(75% 0.16 165);
+  --accent-magenta: oklch(70% 0.19 340);
+  --accent-grape: oklch(65% 0.19 305);
+  --accent-sun: oklch(86% 0.16 95);
+  --accent-sky: oklch(72% 0.14 235);
 
-  --ko-fi-tint: #192025;
-  --buy-me-a-coffee-tint: #f9dd00;
+  --toggle-bg: linear-gradient(135deg, var(--brand), var(--accent-magenta));
 
-  --bg: #0d0d10;
-  --surface-1: #151519;
-  --surface-2: #1a1a1f;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --font-heading: "Baloo 2 Variable", "Baloo 2", sans-serif;
+  --font-body: "Nunito Variable", "Nunito", sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", "SF Mono", Consolas, monospace;
+  --font-voice: "Patrick Hand", cursive, sans-serif;
 
-  --text-primary: #f2f2f4;
-  --text-secondary: #9a9aa5;
-  --text-muted: #6b6b75;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
 
-  --success-bg: rgba(63, 185, 80, 0.14);
-  --success-text: #5fd576;
-
-  --warning-bg: rgba(224, 166, 52, 0.14);
-  --warning-text: #e0a634;
-
-  --danger-bg: rgba(226, 75, 74, 0.14);
-  --danger-text: #f0716f;
-
-  --info-bg: rgba(97, 97, 205, 0.14);
-  --info-text: #8a8ae0;
-
-  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-  --font-voice: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
-
-  --radius: 10px;
-  --radius-lg: 14px;
-  --content-width: 640px;
+  --width-narrow: 700px;
+  --width-mid: 760px;
+  --width-wide: 1040px;
+  --width-nav: 960px;
 
   --terminal-dot-1: #ff5f57;
   --terminal-dot-2: #febc2e;
   --terminal-dot-3: #28c840;
+
+  --ansi-0: oklch(24% 0.015 275);
+  --ansi-1: oklch(60% 0.18 25);
+  --ansi-2: oklch(58% 0.12 145);
+  --ansi-3: oklch(62% 0.13 90);
+  --ansi-4: oklch(58% 0.13 235);
+  --ansi-5: oklch(58% 0.16 320);
+  --ansi-6: oklch(60% 0.1 195);
+  --ansi-7: oklch(80% 0.02 275);
+  --ansi-8: oklch(48% 0.02 275);
+  --ansi-9: oklch(72% 0.18 25);
+  --ansi-10: oklch(78% 0.13 145);
+  --ansi-11: oklch(80% 0.14 90);
+  --ansi-12: oklch(74% 0.13 235);
+  --ansi-13: oklch(74% 0.15 320);
+  --ansi-14: oklch(78% 0.11 195);
+  --ansi-15: oklch(97% 0.006 275);
+}
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: oklch(13% 0.015 280);
+  --surface: oklch(23% 0.025 275);
+  --surface-nav: oklch(24% 0.03 275);
+  --text: oklch(96% 0.006 275);
+  --text-muted: oklch(74% 0.02 275);
+  --text-faint: oklch(64% 0.02 275);
+  --text-nav: oklch(78% 0.02 275);
+
+  --brand-text: oklch(80% 0.1 275);
+  --on-brand-text: oklch(16% 0.02 275);
+  --brand-chip: oklch(28% 0.05 275);
+  --marker-bg: oklch(35% 0.08 95);
+
+  /* text-safe accents: same hues as the fills, adjusted to clear AA on the backgrounds they sit on */
+  --coral-text: var(--accent-coral);
+  --teal-text: var(--accent-teal);
+  --magenta-text: oklch(74% 0.19 340);
+  --grape-text: oklch(82% 0.11 305);
+  --sun-text: oklch(89% 0.12 95);
+  --sky-text: oklch(83% 0.1 235);
+
+  --on-coral-text: oklch(18% 0.04 40);
+  --on-teal-text: oklch(18% 0.04 165);
+  --on-magenta-text: oklch(18% 0.04 340);
+  --on-grape-text: oklch(18% 0.04 305);
+  --on-sun-text: oklch(22% 0.05 85);
+  --on-sky-text: oklch(18% 0.04 235);
+
+  --shadow-card: 0 16px 32px -12px oklch(5% 0.02 275 / 0.7);
+  --shadow-card-soft: 0 8px 18px -8px oklch(5% 0.02 275 / 0.55);
+  --shadow-nav: 0 10px 30px -6px oklch(10% 0.02 275 / 0.6);
+  --shadow-toggle: 0 6px 16px -4px oklch(10% 0.02 275 / 0.7);
+  --shadow-hero-text: 0 4px 24px oklch(50% 0.2 280 / 0.4);
+
+  --glow-tangerine: 0 4px 24px oklch(50% 0.2 38 / 0.4);
+  --glow-mint: 0 4px 24px oklch(50% 0.2 165 / 0.4);
+  --glow-pink: 0 4px 24px oklch(50% 0.2 340 / 0.4);
+  --glow-grape: 0 4px 24px oklch(50% 0.2 305 / 0.4);
+  --glow-sun: 0 4px 24px oklch(50% 0.2 95 / 0.4);
+  --glow-sky: 0 4px 24px oklch(50% 0.2 235 / 0.4);
+
+  --cta-bg: linear-gradient(135deg, var(--brand), oklch(57% 0.2 300));
+  --shadow-cta: 0 14px 26px -8px oklch(50% 0.2 280 / 0.55);
+
+  --tag-bg: oklch(30% 0.04 275);
+  --tag-text: oklch(85% 0.04 275);
+
+  --bmc-bg: oklch(28% 0.05 55);
+  --bmc-icon-bg: oklch(35% 0.08 55);
+  --bmc-text: oklch(88% 0.05 55);
+  --bmc-text-muted: oklch(65% 0.04 55);
+  --kofi-bg: oklch(28% 0.05 20);
+  --kofi-icon-bg: oklch(35% 0.09 20);
+  --kofi-text: oklch(88% 0.06 20);
+  --kofi-text-muted: oklch(65% 0.05 20);
+
+  --github-bg: oklch(23% 0.01 275);
+  --github-icon-bg: oklch(96% 0 0);
+  --github-glyph: #181717;
+  --bluesky-bg: oklch(24% 0.035 240);
+  --bluesky-icon-bg: #0085ff;
+  --bluesky-glyph: #ffffff;
+  --itch-bg: oklch(24% 0.035 20);
+  --itch-icon-bg: #fa5c5c;
+  --itch-glyph: #ffffff;
+  --gamejolt-bg: oklch(23% 0.03 125);
+  --gamejolt-icon-bg: #191919;
+  --gamejolt-glyph: #ccff00;
+  --linkedin-bg: oklch(24% 0.035 265);
+  --linkedin-icon-bg: #0a66c2;
+  --linkedin-glyph: #ffffff;
+
+  /* dark tints keep their lightness low but carry real chroma, and the teal leans blue.
+     low-chroma warm hues at this lightness read as brown/olive/maroon */
+  --tint-brand: oklch(26% 0.06 275);
+  --tint-coral: oklch(27% 0.08 32);
+  --tint-teal: oklch(25% 0.062 195);
+  --tint-magenta: oklch(27% 0.085 335);
+  --tint-grape: oklch(25% 0.045 305);
+  --tint-sun: oklch(26% 0.04 95);
+  --tint-sky: oklch(25% 0.045 235);
+
+  /* rows come in long stacks, so they stay quieter than the pinned cards above */
+  --row-tint-brand: oklch(23.5% 0.032 275);
+  --row-tint-coral: oklch(24% 0.036 36);
+  --row-tint-teal: oklch(23% 0.03 180);
+  --row-tint-magenta: oklch(24% 0.038 338);
+  --row-tint-grape: oklch(22% 0.02 305);
+  --row-tint-sun: oklch(23% 0.03 95);
+  --row-tint-sky: oklch(22% 0.02 235);
+
+  --input-focus-bg: oklch(26% 0.03 275);
+
+  --table-head-bg: oklch(27% 0.035 275);
+  --table-stripe: oklch(20% 0.02 275);
+  --track-bg: oklch(22% 0.02 275);
+  --warn-tile-bg: oklch(27% 0.055 70);
+  --warn-tile-text: oklch(80% 0.13 65);
+
+  --do-bg: oklch(28% 0.05 165);
+  --do-text: oklch(85% 0.08 165);
+  --dont-bg: oklch(28% 0.06 25);
+  --dont-text: oklch(85% 0.08 25);
+
+  --callout-note-bg: oklch(27% 0.045 275);
+  --callout-note-text: oklch(82% 0.09 275);
+  --callout-warning-bg: oklch(28% 0.05 70);
+  --callout-warning-text: oklch(82% 0.1 70);
+  --callout-private-bg: oklch(27% 0.05 340);
+  --callout-private-text: var(--magenta-text);
+  --callout-unlisted-bg: oklch(23% 0.015 275);
+  --callout-unlisted-text: oklch(65% 0.015 275);
+  --callout-success-bg: oklch(26% 0.04 195);
+  --callout-success-text: var(--teal-text);
+
+  --syntax-bg: oklch(16% 0.02 275);
+  --syntax-text: oklch(88% 0.02 275);
+  --syntax-comment: oklch(59% 0.02 275);
+  --syntax-punct: oklch(68% 0.02 275);
+  --code-header-bg: oklch(13% 0.02 275);
+  --scrim-bg: oklch(10% 0.02 275 / 0.85);
+  --scrim-text: oklch(96% 0.006 275);
+  --scene-bg: oklch(20% 0.02 275);
+
+  /* markdown editor highlighting: the editor sits on a field surface, not a code surface, so it needs its own set */
+  --md-keyword: var(--syntax-keyword);
+  --md-string: var(--syntax-string);
+  --md-number: var(--syntax-number);
+  --md-type: var(--syntax-type);
+  --md-func: var(--syntax-func);
+  --md-comment: oklch(66% 0.02 275);
+  --md-punct: var(--syntax-punct);
+
+  --archived-bg: oklch(20% 0.015 275);
+  --archived-text: oklch(61% 0.015 275);
+
+  --palette-overlay: oklch(5% 0.02 275 / 0.6);
+  --palette-bg: oklch(19% 0.02 275);
+  --palette-hover: oklch(25% 0.03 275);
+  --shadow-palette: 0 30px 60px -20px oklch(2% 0.02 275 / 0.7);
+  --kbd-bg: oklch(28% 0.02 275);
+  --kbd-text: oklch(85% 0.02 275);
+
+  --polaroid-bg: oklch(23% 0.02 275);
+  --doc-icon: oklch(30% 0.02 275);
+  --tape: oklch(45% 0.06 95 / 0.9);
+  --stripe-label: oklch(90% 0.01 275);
+
+  --rail-bg: oklch(11% 0.015 280);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: oklch(93% 0.014 85);
+  --surface: oklch(96% 0.02 275);
+  --surface-nav: oklch(97% 0.012 275);
+  --text: oklch(23% 0.02 275);
+  --text-muted: oklch(45% 0.02 275);
+  --text-faint: oklch(50% 0.015 275);
+  --text-nav: oklch(40% 0.02 275);
+
+  --brand-text: oklch(50% 0.17 275);
+  --on-brand-text: #fff;
+  --brand-chip: oklch(92% 0.03 275);
+  --marker-bg: oklch(85% 0.1 95);
+
+  --coral-text: oklch(48% 0.16 38);
+  --teal-text: oklch(45% 0.136 165);
+  --magenta-text: oklch(48% 0.16 340);
+  --grape-text: oklch(46% 0.17 305);
+  --sun-text: oklch(50% 0.11 80);
+  --sky-text: oklch(47% 0.12 240);
+
+  --on-coral-text: oklch(20% 0.04 38);
+  --on-teal-text: oklch(20% 0.04 165);
+  --on-magenta-text: oklch(20% 0.04 340);
+  --on-grape-text: #ffffff;
+  --on-sun-text: oklch(24% 0.05 85);
+  --on-sky-text: oklch(20% 0.04 235);
+
+  --shadow-card: 0 14px 30px -12px oklch(45% 0.06 275 / 0.32);
+  --shadow-card-soft: 0 8px 18px -8px oklch(45% 0.06 275 / 0.24);
+  --shadow-nav: 0 10px 30px -8px oklch(55% 0.19 275 / 0.28);
+  --shadow-toggle: 0 6px 16px -4px oklch(55% 0.19 275 / 0.45);
+  --shadow-hero-text: 0 4px 18px oklch(55% 0.19 275 / 0.2);
+
+  --glow-tangerine: 0 4px 18px oklch(55% 0.19 38 / 0.2);
+  --glow-mint: 0 4px 18px oklch(55% 0.19 165 / 0.2);
+  --glow-pink: 0 4px 18px oklch(55% 0.19 340 / 0.2);
+  --glow-grape: 0 4px 18px oklch(55% 0.19 305 / 0.2);
+  --glow-sun: 0 4px 18px oklch(55% 0.19 95 / 0.2);
+  --glow-sky: 0 4px 18px oklch(55% 0.19 235 / 0.2);
+
+  --cta-bg: linear-gradient(135deg, var(--brand), oklch(52% 0.2 300));
+  --shadow-cta: 0 12px 24px -8px oklch(50% 0.2 280 / 0.45);
+
+  --tag-bg: oklch(93% 0.025 275);
+  --tag-text: oklch(38% 0.05 275);
+
+  --bmc-bg: oklch(94% 0.035 55);
+  --bmc-icon-bg: oklch(88% 0.08 55);
+  --bmc-text: oklch(32% 0.06 55);
+  --bmc-text-muted: oklch(48% 0.04 55);
+  --kofi-bg: oklch(94% 0.035 20);
+  --kofi-icon-bg: oklch(87% 0.09 20);
+  --kofi-text: oklch(35% 0.08 20);
+  --kofi-text-muted: oklch(50% 0.05 20);
+
+  --github-bg: oklch(96% 0.006 275);
+  --github-icon-bg: #181717;
+  --github-glyph: #ffffff;
+  --bluesky-bg: oklch(96% 0.025 240);
+  --bluesky-icon-bg: #0085ff;
+  --bluesky-glyph: #ffffff;
+  --itch-bg: oklch(96% 0.025 20);
+  --itch-icon-bg: #fa5c5c;
+  --itch-glyph: #ffffff;
+  --gamejolt-bg: oklch(96% 0.04 125);
+  --gamejolt-icon-bg: #191919;
+  --gamejolt-glyph: #ccff00;
+  --linkedin-bg: oklch(96% 0.025 265);
+  --linkedin-icon-bg: #0a66c2;
+  --linkedin-glyph: #ffffff;
+
+  --tint-brand: oklch(95% 0.03 275);
+  --tint-coral: oklch(95% 0.035 40);
+  --tint-teal: oklch(95% 0.03 165);
+  --tint-magenta: oklch(95% 0.035 340);
+  --tint-grape: oklch(95% 0.03 305);
+  --tint-sun: oklch(95% 0.05 95);
+  --tint-sky: oklch(95% 0.03 235);
+
+  --row-tint-brand: oklch(96% 0.02 275);
+  --row-tint-coral: oklch(96% 0.025 40);
+  --row-tint-teal: oklch(96% 0.02 165);
+  --row-tint-magenta: oklch(96% 0.025 340);
+  --row-tint-grape: oklch(96% 0.02 305);
+  --row-tint-sun: oklch(96% 0.04 95);
+  --row-tint-sky: oklch(96% 0.02 235);
+
+  --input-focus-bg: oklch(91% 0.02 275);
+
+  --table-head-bg: oklch(92% 0.025 275);
+  --table-stripe: oklch(96% 0.015 275);
+  --track-bg: oklch(89% 0.015 275);
+  --warn-tile-bg: oklch(93% 0.05 75);
+  --warn-tile-text: oklch(42% 0.12 65);
+
+  --do-bg: oklch(94% 0.03 165);
+  --do-text: oklch(35% 0.09 165);
+  --dont-bg: oklch(94% 0.04 25);
+  --dont-text: oklch(45% 0.11 25);
+
+  --callout-note-bg: oklch(94% 0.03 275);
+  --callout-note-text: var(--brand-text);
+  --callout-warning-bg: oklch(93% 0.05 75);
+  --callout-warning-text: oklch(45% 0.11 60);
+  --callout-private-bg: oklch(93% 0.03 340);
+  --callout-private-text: var(--magenta-text);
+  --callout-unlisted-bg: oklch(90% 0.008 275);
+  --callout-unlisted-text: oklch(45% 0.015 275);
+  --callout-success-bg: oklch(93% 0.035 195);
+  --callout-success-text: var(--teal-text);
+
+  --syntax-bg: oklch(20% 0.02 275);
+  --syntax-text: oklch(88% 0.02 275);
+  --syntax-comment: oklch(61% 0.02 275);
+  --syntax-punct: oklch(68% 0.02 275);
+  --code-header-bg: oklch(24% 0.02 275);
+  --scrim-bg: oklch(20% 0.02 275 / 0.85);
+  --scrim-text: oklch(96% 0.006 275);
+  --scene-bg: oklch(96% 0.015 275);
+
+  --md-keyword: oklch(46% 0.17 340);
+  --md-string: oklch(42% 0.11 150);
+  --md-number: oklch(45% 0.12 50);
+  --md-type: oklch(44% 0.1 225);
+  --md-func: oklch(46% 0.14 275);
+  --md-comment: oklch(50% 0.02 275);
+  --md-punct: oklch(42% 0.02 275);
+
+  --archived-bg: oklch(90% 0.012 275);
+  --archived-text: oklch(47% 0.015 275);
+
+  --palette-overlay: oklch(15% 0.02 275 / 0.45);
+  --palette-bg: oklch(98% 0.008 275);
+  --palette-hover: oklch(93% 0.025 275);
+  --shadow-palette: 0 30px 60px -20px oklch(15% 0.05 275 / 0.45);
+  --kbd-bg: oklch(88% 0.015 275);
+  --kbd-text: oklch(35% 0.02 275);
+
+  --polaroid-bg: #fff;
+  --doc-icon: oklch(90% 0.02 275);
+  --tape: oklch(88% 0.08 95 / 0.9);
+  --stripe-label: oklch(35% 0.02 275);
+
+  --rail-bg: oklch(98% 0.006 275);
 }

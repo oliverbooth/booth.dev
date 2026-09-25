@@ -1,27 +1,17 @@
 @page "/error/503"
-<div class="error-page">
-    <div class="error-card">
+@using BoothDotDev.Pages.Shared.Partials
 
-        <div class="terminal" style="margin-bottom:1.75rem">
-            <div class="terminal-bar">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="prompt">@Strings.TerminalUsername</span><span class="path">:~$</span> systemctl status boothdotdev</div>
-                <div class="out" style="margin-top:6px">boothdotdev.service: activating (auto-restart)</div>
-            </div>
-        </div>
+@{
+    var hero = new ErrorHero
+    {
+        Code = 503,
+        Title = "back in a moment",
+        Body = "The server's temporarily unavailable - likely a deploy, maintenance, or just too much load right now. This should clear up shortly.",
+        Tag = "service unavailable",
+        Icon = "ti-tool",
+        Tint = "warn",
+        ShowRetry = true
+    };
+}
 
-        <p class="error-code">Error 503</p>
-        <h1 class="error-title">Service Unavailable</h1>
-        <p class="error-desc">The site is temporarily down &mdash; probably a deploy or restart in progress. Try again in a moment.</p>
-
-        <div class="error-actions">
-            <a asp-page="/Index" class="btn btn-primary">Back home</a>
-            <a asp-page="/Blog/Index" class="btn">Read the blog</a>
-        </div>
-
-    </div>
-</div>
+<partial name="Partials/_ErrorHero" model="hero" />

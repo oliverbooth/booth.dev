@@ -1,5 +1,6 @@
 @page "/watchlist"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @inject WatchlistService WatchlistService
@@ -9,8 +10,11 @@
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / Watchlist</p>
+    <span class="eyebrow">
+        <a asp-page="/Index"><i class="ti ti-arrow-narrow-left"></i> back home</a>
+    </span>
     <h1>Watchlist</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage watchlist", "/Admin/Watchlist/Index") })"/>
 
     <div class="page-intro">
         <p>Movies and shows I've watched, am watching, or plan to watch. Not exhaustive. Updated whenever I remember to.</p>
@@ -18,10 +22,10 @@
 
     <div data-filter-scope>
         <div class="filter-row" id="watchlist-filters">
-            <span class="pill active" data-filter="all">All</span>
-            <span class="pill" data-filter="watching">Watching</span>
-            <span class="pill" data-filter="plan-to-watch">Plan to watch</span>
-            <span class="pill" data-filter="watched">Watched</span>
+            <button type="button" class="pill active" aria-pressed="true" data-filter="all">All</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="watching">Watching</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="plan-to-watch">Plan to watch</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="watched">Watched</button>
         </div>
 
         @{
@@ -49,7 +53,7 @@
                         <div class="stack-list section-list">
                             @foreach (var item in items.OrderBy(w => w.Title))
                             {
-                                <div>
+                                <div data-hue="grape">
                                     <div class="stack-icon">
                                         <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
                                     </div>

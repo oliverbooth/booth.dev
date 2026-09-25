@@ -10,7 +10,7 @@ let mathJsPromise: Promise<void> | null = null;
  */
 export function ensureMathJsLoaded(): Promise<void> {
     mathJsPromise ??= import('mathjs').then(math => {
-        (window as unknown as {math: typeof math}).math = math;
+        (window as unknown as { math: typeof math }).math = math;
     });
 
     return mathJsPromise;

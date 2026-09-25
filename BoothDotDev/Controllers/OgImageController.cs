@@ -1,6 +1,7 @@
+using System.Globalization;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using BoothDotDev.Markdown.Link;
+using BoothDotDev.Extensions;
 using BoothDotDev.Services;
 using DEDrake;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,10 @@ namespace BoothDotDev.Controllers;
 ///     Represents the controller responsible for rendering and caching Open Graph preview images.
 /// </summary>
 /// <remarks>
-///     Every image is rendered once and then cached to disk under the CDN mount, keyed by content ID rather than
+///     Every image is rendered once and then cached to disk under the CDN mount, keyed by content ID and hue rather than
 ///     slug so the URL stays stable across route/slug changes and content edits. For content types that expose an
 ///     <c>UpdatedAt</c>, the cached file is regenerated once it's older than the content itself; for types that
-///     don't (<see cref="Project" />, <see cref="ArtworkItem" />, <see cref="MusicItem" />), the cache is
+///     don't (<see cref="Project" />, <see cref="Creation" />), the cache is
 ///     effectively permanent until the file is deleted by hand.
 /// </remarks>
 [ApiController]
@@ -59,8 +60,8 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("site.png")]
     public IActionResult GetSiteCard()
     {
-        return ServeCached("site", "site", null,
-            () => _ogImageService.RenderFlatCard("BOOTH.DEV", Strings.MyName, Strings.Tagline));
+        return ServeCached("site", "site", PaletteHue.Brand, null,
+            () => _ogImageService.RenderCard(PaletteHue.Brand, "BOOTH.DEV", Strings.MyName, Strings.Tagline));
     }
 
     /// <summary>
@@ -76,9 +77,10 @@ public sealed class OgImageController : ControllerBase
         }
 
         var post = result.Value;
+        var hue = post.Color ?? _blogPostService.GetCategory(post.CategoryId)?.EffectiveColor ?? PaletteHue.Brand;
         var description = _markdownRenderingService.RenderPlainTextExcerpt(post, out _);
-        return ServeCached("blog", id.ToString("N"), post.UpdatedAt ?? post.PublishedAt,
-            () => _ogImageService.RenderFlatCard("BLOG POST", post.Title, description));
+        return ServeCached("blog", id.ToString("N"), hue, post.UpdatedAt ?? post.PublishedAt,
+            () => _ogImageService.RenderCard(hue, "POST", post.Title, description));
     }
 
     /// <summary>
@@ -94,9 +96,13 @@ public sealed class OgImageController : ControllerBase
         }
 
         var article = result.Value;
-        var description = _markdownRenderingService.RenderPlainTextExcerpt(article, out _);
-        return ServeCached("tutorial", id.ToString("N"), article.UpdatedAt ?? article.PublishedAt,
-            () => _ogImageService.RenderFlatCard("TUTORIAL", article.Title, description));
+        var folder = _tutorialService.GetFolder(article.Folder);
+        var hue = article.Color ?? (folder.IsSuccess ? folder.Value.EffectiveColor : PaletteHue.Mint);
+        var subtitle = folder.IsSuccess
+            ? SeriesLabel(article, folder.Value)
+            : _markdownRenderingService.RenderPlainTextExcerpt(article, out _);
+        return ServeCached("tutorial", id.ToString("N"), hue, article.UpdatedAt ?? article.PublishedAt,
+            () => _ogImageService.RenderCard(hue, "TUTORIAL", article.Title, subtitle));
     }
 
     /// <summary>
@@ -123,8 +129,9 @@ public sealed class OgImageController : ControllerBase
 
         var challenge = result.Value;
         var description = _markdownRenderingService.RenderPlainTextExcerpt(challenge, out _);
-        return ServeCached("challenge", ((Guid)challenge.Id).ToString("N"), challenge.UpdatedAt ?? challenge.PublishedAt,
-            () => _ogImageService.RenderFlatCard("CHALLENGE", challenge.Title, description));
+        return ServeCached("challenge", ((Guid)challenge.Id).ToString("N"), PaletteHue.Pink,
+            challenge.UpdatedAt ?? challenge.PublishedAt,
+            () => _ogImageService.RenderCard(PaletteHue.Pink, "CHALLENGE", challenge.Title, description));
     }
 
     /// <summary>
@@ -140,9 +147,9 @@ public sealed class OgImageController : ControllerBase
         }
 
         var note = result.Value;
-        var description = _markdownRenderingService.RenderPlainTextPreview(note.Content);
-        return ServeCached("note", id.ToString("N"), note.UpdatedAt ?? note.PublishedAt,
-            () => _ogImageService.RenderFlatCard("NOTE", note.Title, description));
+        var subtitle = $"a quick note · {note.PublishedAt.ToString("MMM yyyy", CultureInfo.InvariantCulture)}";
+        return ServeCached("note", id.ToString("N"), PaletteHue.Sun, note.UpdatedAt ?? note.PublishedAt,
+            () => _ogImageService.RenderCard(PaletteHue.Sun, "NOTE", note.Title, subtitle));
     }
 
     /// <summary>
@@ -158,13 +165,15 @@ public sealed class OgImageController : ControllerBase
         }
 
         var devlog = result.Value;
-        var description = _markdownRenderingService.RenderPlainTextPreview(devlog.Body);
-        return ServeCached("devlog", id.ToString("N"), devlog.UpdatedAt ?? devlog.PublishedAt,
-            () => _ogImageService.RenderFlatCard("DEVLOG", devlog.Title, description));
+        var project = _projectService.GetProject(devlog.ProjectId);
+        var date = devlog.PublishedAt.ToString("MMM yyyy", CultureInfo.InvariantCulture);
+        var subtitle = project.IsSuccess ? $"{project.Value.Name} · devlog · {date}" : $"devlog · {date}";
+        return ServeCached("devlog", id.ToString("N"), PaletteHue.Sky, devlog.UpdatedAt ?? devlog.PublishedAt,
+            () => _ogImageService.RenderCard(PaletteHue.Sky, "DEVLOG", devlog.Title, subtitle));
     }
 
     /// <summary>
-    ///     Gets the card for a project, using its hero image as a backdrop when it has one.
+    ///     Gets the card for a project.
     /// </summary>
     [HttpGet("project/{id:guid}.png")]
     public IActionResult GetProjectCard(Guid id)
@@ -177,75 +186,79 @@ public sealed class OgImageController : ControllerBase
 
         var project = result.Value;
         var description = _markdownRenderingService.RenderPlainTextPreview(project.Description);
-
-        return ServeCached("project", id.ToString("N"), null, () =>
-        {
-            var backdropPath = ResolveImagePath("projects", project.HeroUrl, project.CreatedAt, project.Id);
-            return backdropPath is null
-                ? _ogImageService.RenderFlatCard("PROJECT", project.Name, description)
-                : _ogImageService.RenderPhotoCard("PROJECT", project.Name, description, backdropPath);
-        });
+        return ServeCached("project", id.ToString("N"), PaletteHue.Sky, null,
+            () => _ogImageService.RenderCard(PaletteHue.Sky, project.Type.Label, project.Name, description));
     }
 
     /// <summary>
-    ///     Gets the card for an artwork item, using its file as a backdrop.
+    ///     Gets the card for an artwork item.
     /// </summary>
     [HttpGet("artwork/{id:guid}.png")]
     public IActionResult GetArtworkCard(Guid id)
     {
-        var result = _creationService.GetArtworkItem(id, true);
-        return GetCreationCard(result.IsFailed ? null : result.Value, "artwork");
+        var result = _creationService.GetCreation(id, true);
+        return GetCreationCard(result.IsFailed ? null : result.Value);
     }
 
     /// <summary>
-    ///     Gets the card for a music item. Music files are never images, so this always renders the flat card.
+    ///     Gets the card for a music item.
     /// </summary>
     [HttpGet("music/{id:guid}.png")]
     public IActionResult GetMusicCard(Guid id)
     {
-        var result = _creationService.GetMusicItem(id, true);
-        return GetCreationCard(result.IsFailed ? null : result.Value, "music");
+        var result = _creationService.GetCreation(id, true);
+        return GetCreationCard(result.IsFailed ? null : result.Value);
     }
 
-    private IActionResult GetCreationCard(CreativeItem? item, string type)
+    private IActionResult GetCreationCard(Creation? item)
     {
         if (item is null)
         {
             return NotFound();
         }
 
+        var hue = item.Kind.ToHue();
         var description = string.IsNullOrWhiteSpace(item.Description)
             ? null
             : _markdownRenderingService.RenderPlainTextPreview(item.Description);
-
-        return ServeCached(type, item.Id.ToString("N"), null, () =>
-        {
-            var backdropPath = ResolveImagePath("content", item.FileName, item.PublishedAt, item.Id);
-            return backdropPath is null
-                ? _ogImageService.RenderFlatCard(type.ToUpperInvariant(), item.Title, description)
-                : _ogImageService.RenderPhotoCard(type.ToUpperInvariant(), item.Title, description, backdropPath);
-        });
+        return ServeCached(item.IsMusic ? "music" : "artwork", item.Id.ToString("N"), hue, null,
+            () => _ogImageService.RenderCard(hue, item.Kind.ToLabel(), item.Title, description));
     }
 
     /// <summary>
-    ///     Resolves the physical path of a media file, but only if it actually resolves to an image - a photo card
-    ///     backdrop is meaningless for e.g. an MP3.
+    ///     Builds the line under a tutorial's title: its folder, and where it falls in its series when it has one.
     /// </summary>
-    private static string? ResolveImagePath(string area, string? filename, DateTimeOffset published, Guid id)
+    private string SeriesLabel(TutorialArticle article, TutorialFolder folder)
     {
-        if (string.IsNullOrEmpty(filename))
+        if (!article.HasOtherParts)
         {
-            return null;
+            return folder.Title;
         }
 
-        var kind = CdnMediaResolver.ResolveMediaKind(filename);
-        if (kind != MediaKind.Image)
+        // walk back to the first part, then forward through the rest; the set guards against a malformed cycle
+        var first = article;
+        var visited = new HashSet<Guid> { article.Id };
+        while (first.PreviousPart is { } previousId
+               && _tutorialService.GetArticle(previousId) is { IsSuccess: true } previous
+               && visited.Add(previous.Value.Id))
         {
-            return null;
+            first = previous.Value;
         }
 
-        var path = CdnPaths.GetMediaPath(area, kind, published, id, filename);
-        return System.IO.File.Exists(path) ? path : null;
+        var parts = new List<TutorialArticle> { first };
+        visited = [first.Id];
+        var cursor = first;
+        while (cursor.NextPart is { } nextId
+               && _tutorialService.GetArticle(nextId) is { IsSuccess: true } next
+               && visited.Add(next.Value.Id))
+        {
+            parts.Add(next.Value);
+            cursor = next.Value;
+        }
+
+        parts = [.. parts.Where(part => part.Id == article.Id || part.Visibility == Visibility.Published)];
+        var number = parts.FindIndex(part => part.Id == article.Id) + 1;
+        return parts.Count > 1 ? $"{folder.Title} · part {number} of {parts.Count}" : folder.Title;
     }
 
     /// <summary>
@@ -253,14 +266,15 @@ public sealed class OgImageController : ControllerBase
     /// </summary>
     /// <param name="type">The content type, used as the cache sub-directory.</param>
     /// <param name="key">The content's own ID, used as the cache filename.</param>
+    /// <param name="hue">The hue the card is drawn in, so recolouring content renders a new card.</param>
     /// <param name="contentUpdatedAt">
     ///     The content's last-modified timestamp, or <see langword="null" /> for content with no such concept - the
     ///     cached file is then treated as permanently fresh once it exists.
     /// </param>
     /// <param name="render">Renders a fresh card, only invoked on a cache miss.</param>
-    private IActionResult ServeCached(string type, string key, DateTimeOffset? contentUpdatedAt, Func<byte[]> render)
+    private IActionResult ServeCached(string type, string key, PaletteHue hue, DateTimeOffset? contentUpdatedAt, Func<byte[]> render)
     {
-        var cachePath = Path.Combine(CdnPaths.GetRoot(), "og", OgImageService.TemplateVersion, type, $"{key}.png");
+        var cachePath = Path.Combine(CdnPaths.GetRoot(), "og", OgImageService.TemplateVersion, type, $"{key}-{hue.ToDataHue()}.png");
         var isFresh = System.IO.File.Exists(cachePath) &&
                       (contentUpdatedAt is null ||
                        System.IO.File.GetLastWriteTimeUtc(cachePath) >= contentUpdatedAt.Value.UtcDateTime);

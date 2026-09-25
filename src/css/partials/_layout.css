@@ -3,6 +3,10 @@ body {
   height: 100%;
 }
 
+html {
+  scroll-padding-top: 6rem;
+}
+
 .layout {
   display: flex;
   flex-direction: column;
@@ -16,32 +20,39 @@ body {
 }
 
 .page,
-.page-wide {
+.page-wide,
+.page-grid {
+  box-sizing: content-box;
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 3rem 2rem 4rem;
   position: relative;
-  background: var(--bg);
 }
 
 .page {
-  max-width: var(--content-width);
+  max-width: var(--width-narrow);
 }
 
 .page-wide {
-  max-width: 760px;
+  max-width: var(--width-mid);
+}
+
+.page-grid {
+  max-width: var(--width-wide);
 }
 
 .crumb {
-  font-size: 13px;
-  color: var(--text-muted);
   margin-bottom: 8px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
 
   a {
-    text-decoration: none;
-    color: var(--text-muted);
+    color: var(--text-faint);
+    text-underline-offset: 3px;
 
-    &:hover {
-      color: var(--text-secondary);
+    &:hover,
+    &:focus-visible {
+      color: var(--text);
     }
   }
 }
@@ -58,9 +69,14 @@ body {
   gap: 8px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 760px) {
+  .layout {
+    padding-bottom: 90px;
+  }
+
   .page,
-  .page-wide {
+  .page-wide,
+  .page-grid {
     padding: 2rem 1.25rem 5rem;
   }
 }

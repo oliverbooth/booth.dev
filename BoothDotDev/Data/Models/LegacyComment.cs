@@ -17,13 +17,7 @@ public sealed class LegacyComment : IMarkdownBody
     ///     Gets the name of the comment's author.
     /// </summary>
     /// <value>The author's name.</value>
-    public string Author { get; private set; } = string.Empty;
-
-    /// <summary>
-    ///     Gets the body of the comment.
-    /// </summary>
-    /// <value>The comment body.</value>
-    public string Body { get; private set; } = string.Empty;
+    public string Author { get; } = string.Empty;
 
     /// <summary>
     ///     Gets the date and time at which this comment was posted.
@@ -48,6 +42,12 @@ public sealed class LegacyComment : IMarkdownBody
     /// </summary>
     /// <value>The post ID.</value>
     public Guid PostId { get; private set; }
+
+    /// <summary>
+    ///     Gets the body of the comment.
+    /// </summary>
+    /// <value>The comment body.</value>
+    public string Body { get; } = string.Empty;
 
     /// <summary>
     ///     Gets the avatar URL of the comment's author.

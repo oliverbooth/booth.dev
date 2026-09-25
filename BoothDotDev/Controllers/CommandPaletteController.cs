@@ -54,22 +54,28 @@ public sealed class CommandPaletteController : ControllerBase
         List<CommandPaletteEntry> entries = [.. StaticPages(isAuthenticated)];
 
         entries.AddRange(_blogPostService.GetAllBlogPosts(visibility: visibility)
-            .Select(post => new CommandPaletteEntry(post.Title, $"/blog/{post.Slug}", "Blog", PlainTextBody(post.CurrentDraft!.Body))));
+            .Select(post =>
+                new CommandPaletteEntry(post.Title, $"/blog/{post.Slug}", "Blog", PlainTextBody(post.CurrentDraft!.Body))));
 
         entries.AddRange(_noteService.GetAllNotes(visibility)
-            .Select(note => new CommandPaletteEntry(note.Title, $"/note/{(ShortGuid)note.Id}", "Notes", PlainTextBody(note.CurrentDraft!.Content))));
+            .Select(note => new CommandPaletteEntry(note.Title, $"/note/{(ShortGuid)note.Id}", "Notes",
+                PlainTextBody(note.CurrentDraft!.Content))));
 
         entries.AddRange(_devChallengeService.GetAllChallenges(visibility)
-            .Select(challenge => new CommandPaletteEntry(challenge.Title, $"/challenge/{challenge.Id}", "Challenges", ChallengeBody(challenge.CurrentDraft!))));
+            .Select(challenge => new CommandPaletteEntry(challenge.Title, $"/challenge/{challenge.Id}", "Challenges",
+                ChallengeBody(challenge.CurrentDraft!))));
 
         entries.AddRange(_tutorialService.GetAllArticles(visibility)
-            .Select(article => new CommandPaletteEntry(article.Title, $"/learn/{_tutorialService.GetFullSlug(article)}", "Learn", PlainTextBody(article.CurrentDraft!.Body))));
+            .Select(article => new CommandPaletteEntry(article.Title, $"/learn/{_tutorialService.GetFullSlug(article)}", "Learn",
+                PlainTextBody(article.CurrentDraft!.Body))));
 
         foreach (var project in _projectService.GetAllProjects())
         {
-            entries.Add(new CommandPaletteEntry(project.Name, $"/project/{project.Slug}", "Projects", PlainTextBody(project.Details)));
+            entries.Add(new CommandPaletteEntry(project.Name, $"/project/{project.Slug}", "Projects",
+                PlainTextBody(project.Details)));
             entries.AddRange(_projectService.GetDevlogs(project, visibility)
-                .Select(devlog => new CommandPaletteEntry(devlog.Title, $"/project/{project.Slug}/devlog/{devlog.Slug}", "Projects", PlainTextBody(devlog.CurrentDraft!.Body))));
+                .Select(devlog => new CommandPaletteEntry(devlog.Title, $"/project/{project.Slug}/devlog/{devlog.Slug}",
+                    "Projects", PlainTextBody(devlog.CurrentDraft!.Body))));
         }
 
         return Ok(entries);
@@ -109,10 +115,9 @@ public sealed class CommandPaletteController : ControllerBase
     private static IEnumerable<CommandPaletteEntry> StaticPages(bool isAuthenticated)
     {
         yield return new CommandPaletteEntry("Home", "/", "Pages");
-        yield return new CommandPaletteEntry("Write", "/blog", "Pages");
-        yield return new CommandPaletteEntry("Build", "/projects", "Pages");
+        yield return new CommandPaletteEntry("Words", "/blog", "Pages");
+        yield return new CommandPaletteEntry("Stuff I made", "/portfolio", "Pages");
         yield return new CommandPaletteEntry("Learn", "/learn", "Pages");
-        yield return new CommandPaletteEntry("Create", "/create", "Pages");
         yield return new CommandPaletteEntry("Now", "/now", "Pages");
         yield return new CommandPaletteEntry("Someday", "/someday", "Pages");
         yield return new CommandPaletteEntry("Books", "/books", "Pages");

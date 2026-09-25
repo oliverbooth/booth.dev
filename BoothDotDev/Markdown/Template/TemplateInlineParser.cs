@@ -104,7 +104,7 @@ public sealed class TemplateInlineParser : InlineParser
             }
             else
             {
-                var result = ReadNext(argumentSpan, ref index, true, out var _);
+                var result = ReadNext(argumentSpan, ref index, true, out _);
                 var key = buffer.ToString();
                 var value = result.ToString();
 

@@ -80,53 +80,46 @@
             </div>
         </div>
 
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Kind</th>
-                <th>State</th>
-                <th style="text-align:right">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.Watchables)
+        <div class="row-groups" data-state-groups>
+            @foreach (var group in Model.StateGroups)
             {
-                <tr>
-                    <td>
-                        <div class="row-title" data-search>@item.Title</div>
-                    </td>
-                    <td data-search>@item.Kind.Humanize(LetterCasing.Title)</td>
-                    <td>
-                        <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions"
-                              style="justify-content:flex-start">
-                            <select name="state" aria-label="State" class="inline-select">
-                                @foreach (var state in Enum.GetValues<WatchableState>())
-                                {
-                                    <option value="@state" selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
-                                }
-                            </select>
-                            <button type="submit" class="icon-btn" aria-label="Update state"><i class="ti ti-check"></i></button>
-                        </form>
-                    </td>
-                    <td>
-                        <div class="row-actions">
-                            <a asp-page="/Admin/Watchlist/Edit" asp-route-id="@item.Id" class="icon-btn" aria-label="Edit">
-                                <i class="ti ti-edit"></i>
-                            </a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
-                                  data-confirm="Remove '@item.Title' from the watchlist?">
-                                <button type="submit" class="icon-btn danger" aria-label="Delete"><i class="ti ti-trash"></i></button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                <div class="row-group">
+                    <div class="row-group-header">
+                        <span class="@group.DotClass"></span>
+                        <span class="row-group-title">@group.Label</span>
+                        <span class="row-group-count">@("title".ToQuantity(group.Watchables.Count))</span>
+                    </div>
+                    <ul class="admin-row-list admin-row-list--dropzone" data-state-drop-zone data-state="@group.State">
+                        @foreach (var item in group.Watchables)
+                        {
+                            <li class="admin-row" draggable="true" data-search-item data-state-item data-id="@item.Id">
+                                <div class="row-body">
+                                    <div class="row-title" data-search>@item.Title</div>
+                                    <div class="row-sub" data-search>@item.Kind.Humanize(LetterCasing.Title)</div>
+                                </div>
+                                <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions" data-state-form>
+                                    <select name="state" aria-label="State" class="inline-select">
+                                        @foreach (var state in Enum.GetValues<WatchableState>())
+                                        {
+                                            <option value="@state"
+                                                    selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
+                                        }
+                                    </select>
+                                </form>
+                                <div class="row-actions">
+                                    <a asp-page="/Admin/Watchlist/Edit" asp-route-id="@item.Id" class="icon-btn">edit</a>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
+                                          data-confirm="Remove '@item.Title' from the watchlist?">
+                                        <button type="submit" class="icon-btn danger">delete</button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
             }
-            <tr data-search-empty hidden>
-                <td colspan="4" class="table-empty-state">No watchlist entries found</td>
-            </tr>
-            </tbody>
-        </table>
+        </div>
+        <p class="list-empty-state" data-search-empty hidden>No watchlist entries found</p>
     </div>
 
 </div>

@@ -41,8 +41,7 @@ const DIALOG_SELECTOR = '#command-palette';
 const TRIGGER_SELECTOR = '[data-palette-trigger]';
 const INDEX_URL = '/api/command-palette/index';
 
-// how much body text to keep on either side of a match, in characters
-const SNIPPET_RADIUS = 60;
+const SNIPPET_RADIUS_CHARACTERS = 60;
 
 let refs: CommandPaletteRefs | null = null;
 let paletteIndex: IndexedEntry[] | null = null;
@@ -98,7 +97,6 @@ function onGlobalKeyDown(event: KeyboardEvent): void {
         return;
     }
 
-    // don't stack on top of another already-open dialog (e.g. the lightbox)
     if (document.querySelector('dialog[open]')) {
         return;
     }
@@ -244,8 +242,8 @@ function buildSnippet(indexed: IndexedEntry, query: string): Snippet | null {
     }
 
     const body: string = indexed.entry.body;
-    const start: number = Math.max(0, matchIndex - SNIPPET_RADIUS);
-    const end: number = Math.min(body.length, matchIndex + query.length + SNIPPET_RADIUS);
+    const start: number = Math.max(0, matchIndex - SNIPPET_RADIUS_CHARACTERS);
+    const end: number = Math.min(body.length, matchIndex + query.length + SNIPPET_RADIUS_CHARACTERS);
 
     return {
         before: (start > 0 ? '…' : '') + body.slice(start, matchIndex),

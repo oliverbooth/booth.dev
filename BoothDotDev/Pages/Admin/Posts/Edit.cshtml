@@ -2,6 +2,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @using X10D.Linq
@@ -12,6 +13,12 @@
 @{
     Layout = "_AdminLayout";
     var postModel = Model.Input;
+    var huePicker = new HuePicker
+    {
+        Name = "Input.Color",
+        Selected = postModel.Color,
+        AutoDescription = "the colour of the post's category"
+    };
 }
 
 <div class="admin-page admin-page--split" id="post-editor">
@@ -117,6 +124,11 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <div class="field">
+            <label>Colour</label>
+            <partial name="Partials/_HuePicker" model="huePicker" />
         </div>
 
         <div class="field">

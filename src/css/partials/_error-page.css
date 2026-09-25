@@ -1,38 +1,84 @@
 .error-page {
-  min-height: calc(100vh - 130px);
   display: flex;
+  min-height: calc(100vh - 130px);
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
-  position: relative;
-  background: var(--bg);
 }
 
 .error-card {
-  width: 100%;
-  max-width: 560px;
+  display: flex;
+  max-width: 440px;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.error-icon {
+  --tile-bg: var(--tag-bg);
+  --tile-text: var(--text-muted);
+
+  display: flex;
+  width: 120px;
+  height: 120px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28px;
+  background: var(--tile-bg);
+  box-shadow: var(--shadow-card);
+  color: var(--tile-text);
+  font-size: 48px;
+  transform: rotate(calc(-2deg * var(--motion) * var(--tilt-on)));
+}
+
+.error-icon--danger {
+  --tile-bg: var(--dont-bg);
+  --tile-text: var(--dont-text);
+}
+
+.error-icon--warn {
+  --tile-bg: var(--warn-tile-bg);
+  --tile-text: var(--warn-tile-text);
+}
+
+.error-icon--brand {
+  --tile-bg: var(--brand-chip);
+  --tile-text: var(--brand-text);
 }
 
 .error-code {
+  margin: 0;
+  color: var(--brand-text);
   font-family: var(--font-mono);
-  font-size: 15px;
-  color: var(--accent);
-  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  transform: rotate(calc(-1deg * var(--motion)));
 }
 
 .error-title {
-  font-size: 26px;
-  margin: 0 0 14px;
+  margin: 0;
+  font-size: 38px;
 }
 
 .error-desc {
-  font-size: 15px;
-  color: var(--text-secondary);
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 16px;
   line-height: 1.7;
-  margin: 0 0 1.5rem;
 }
 
 .error-actions {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.error-tag {
+  margin: 12px 0 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
 }

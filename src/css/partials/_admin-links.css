@@ -1,0 +1,22 @@
+.admin-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 0 0 1.25rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 3px;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--brand-text);
+      text-decoration: underline;
+    }
+  }
+}

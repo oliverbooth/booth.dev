@@ -1,0 +1,13 @@
+@model IReadOnlyList<BoothDotDev.Data.LinkItem>
+
+@if (Model.Count > 0)
+{
+    <div class="action-row">
+        @foreach (var link in Model.OrderByDescending(l => l.IsPrimary))
+        {
+            <a href="@link.Url" class="btn @(link.IsPrimary ? "btn-primary" : "")">
+                <partial name="Partials/_LinkGlyph" model="link.Kind" /> @link.Text
+            </a>
+        }
+    </div>
+}

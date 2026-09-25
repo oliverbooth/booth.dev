@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using BoothDotDev.Extensions;
+
 namespace BoothDotDev.Data.Models;
 
 /// <summary>
@@ -5,6 +8,22 @@ namespace BoothDotDev.Data.Models;
 /// </summary>
 public sealed class TutorialFolder : IEquatable<TutorialFolder>
 {
+    /// <summary>
+    ///     Gets or sets the colour of the folder, or <see langword="null" /> to fall back to a hash of <see cref="Id" />.
+    /// </summary>
+    /// <value>The explicitly-assigned colour, or <see langword="null" />.</value>
+    public PaletteHue? Color { get; set; }
+
+    /// <summary>
+    ///     Gets the colour this folder renders with: <see cref="Color" /> if set, otherwise a hash of <see cref="Id" />.
+    /// </summary>
+    /// <value>The effective colour.</value>
+    [NotMapped]
+    public PaletteHue EffectiveColor
+    {
+        get => Color ?? PaletteHueExtensions.HashFrom(Id);
+    }
+
     /// <summary>
     ///     Gets or sets the description of this folder.
     /// </summary>
@@ -15,7 +34,7 @@ public sealed class TutorialFolder : IEquatable<TutorialFolder>
     ///     Gets the ID of this folder.
     /// </summary>
     /// <value>The ID of the folder.</value>
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; } = Guid.CreateVersion7();
 
     /// <summary>
     ///     Gets or sets the ID of this folder's parent.
@@ -54,6 +73,30 @@ public sealed class TutorialFolder : IEquatable<TutorialFolder>
     public Visibility Visibility { get; set; }
 
     /// <summary>
+    ///     Returns a value indicating whether this instance of <see cref="TutorialFolder" /> is equal to another
+    ///     instance.
+    /// </summary>
+    /// <param name="other">An instance to compare with this instance.</param>
+    /// <returns>
+    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
+    ///     <see langword="false" />.
+    /// </returns>
+    public bool Equals(TutorialFolder? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id.Equals(other.Id);
+    }
+
+    /// <summary>
     ///     Returns a value indicating whether two instances of <see cref="TutorialFolder" /> are equal.
     /// </summary>
     /// <param name="left">The first instance of <see cref="TutorialFolder" /> to compare.</param>
@@ -82,30 +125,6 @@ public sealed class TutorialFolder : IEquatable<TutorialFolder>
     }
 
     /// <summary>
-    ///     Returns a value indicating whether this instance of <see cref="TutorialFolder" /> is equal to another
-    ///     instance.
-    /// </summary>
-    /// <param name="other">An instance to compare with this instance.</param>
-    /// <returns>
-    ///     <see langword="true" /> if <paramref name="other" /> is equal to this instance; otherwise,
-    ///     <see langword="false" />.
-    /// </returns>
-    public bool Equals(TutorialFolder? other)
-    {
-        if (ReferenceEquals(null, other))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Id.Equals(other.Id);
-    }
-
-    /// <summary>
     ///     Returns a value indicating whether this instance is equal to a specified object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
@@ -115,7 +134,7 @@ public sealed class TutorialFolder : IEquatable<TutorialFolder>
     /// </returns>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is TutorialFolder other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is TutorialFolder other && Equals(other));
     }
 
     /// <summary>
