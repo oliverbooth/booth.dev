@@ -35,8 +35,8 @@ if [ -f "$env_file" ]; then
 fi
 
 prod_db="${PROD_DB_CONTAINER:-booth.dev-db}"
-staging_db="${STAGING_DB_CONTAINER:-booth.dev-staging-db}"
-staging_app="${STAGING_APP_CONTAINER:-booth.dev-staging}"
+staging_db="${STAGING_DB_CONTAINER:-staging.booth.dev-db}"
+staging_app="${STAGING_APP_CONTAINER:-staging.booth.dev}"
 dump_dir="${DUMP_DIR:-$HOME/booth.dev-dumps}"
 assume_yes=false
 start_app=true
