@@ -21,12 +21,9 @@
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Made">Stuff I Made</a> /
-        <a asp-page="/Portfolio/Item" asp-route-slug="@Model.Project.Slug">@Model.Project.Name</a> /
-        @devlog.Title
-    </p>
+    <span class="eyebrow">
+        <a asp-page="/Portfolio/Item" asp-route-slug="@Model.Project.Slug"><i class="ti ti-arrow-narrow-left"></i> back to @Model.Project.Name</a>
+    </span>
 
     @if (devlog.Visibility == Visibility.Private)
     {

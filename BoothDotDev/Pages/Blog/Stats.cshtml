@@ -11,7 +11,9 @@
 
 <div class="page-wide">
 
-    <p class="crumb"><a asp-page="/Index">Home</a> / <a asp-page="/Blog/Index">Write</a> / Stats</p>
+    <span class="eyebrow">
+        <a asp-page="/Blog/Index"><i class="ti ti-arrow-narrow-left"></i> back to words</a>
+    </span>
     <h1>Blog stats</h1>
 
     @if (Model.TotalPosts == 0)

@@ -22,11 +22,15 @@
     var author = post.Author;
     var published = post.PublishedAt;
     var category = BlogPostService.GetCategory(post.CategoryId)!;
+    var rootCategory = BlogPostService.GetParentCategory(post);
+    var backFilter = rootCategory.IsSuccess ? $"filter={rootCategory.Value.Id}" : null;
 }
 
 <div class="page">
 
-    <p class="crumb"><a asp-page="/Blog/Index">Write</a> / @post.Title</p>
+    <span class="eyebrow">
+        <a asp-page="/Blog/Index" asp-fragment="@backFilter"><i class="ti ti-arrow-narrow-left"></i> back to posts</a>
+    </span>
 
     @if (post.Visibility == Visibility.Private)
     {

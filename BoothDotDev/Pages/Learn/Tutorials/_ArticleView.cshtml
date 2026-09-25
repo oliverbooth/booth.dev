@@ -53,34 +53,24 @@
     var partNumber = series.FindIndex(part => part.Id == article.Id) + 1;
     var seriesFolder = TutorialService.GetFolder(article.Folder);
     var hue = article.Color ?? (seriesFolder.IsSuccess ? seriesFolder.Value.EffectiveColor : PaletteHue.Mint);
-
-    var parents = new Stack<TutorialFolder>();
-    Guid? parent = article.Folder;
-    while (parent is not null)
-    {
-        var folderResult = TutorialService.GetFolder(parent.Value);
-        if (folderResult.IsFailed)
-        {
-            throw new InvalidOperationException($"TutorialArticle {article.Id} references a folder chain with a missing parent {parent.Value}.");
-        }
-
-        parents.Push(folderResult.Value);
-        parent = folderResult.Value.Parent;
-    }
 }
 
 <div class="page">
 
-    <p class="crumb">
-        <a asp-page="/Index">Home</a> /
-        <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">Tutorials</a>
-        @while (parents.Count > 0)
+    <span class="eyebrow">
+        @if (seriesFolder.IsSuccess)
         {
-            var current = parents.Pop();
-            <text> / <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(current)">@current.Title</a></text>
+            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="@TutorialService.GetFullSlug(seriesFolder.Value)">
+                <i class="ti ti-arrow-narrow-left"></i> back to @seriesFolder.Value.Title
+            </a>
         }
-        / @article.Title
-    </p>
+        else
+        {
+            <a asp-page="/Learn/Tutorials/Index" asp-route-slug="">
+                <i class="ti ti-arrow-narrow-left"></i> back to learn
+            </a>
+        }
+    </span>
 
     @if (article.Visibility == Visibility.Private)
     {
