@@ -10,7 +10,6 @@ export function initFiltering(): void {
         }
 
         const sections: NodeListOf<HTMLElement> = scope.querySelectorAll<HTMLElement>('[data-state]');
-        sections.forEach(section => section.classList.add('is-visible'));
 
         const pills: NodeListOf<HTMLElement> = filterRow.querySelectorAll<HTMLElement>('.pill');
 
