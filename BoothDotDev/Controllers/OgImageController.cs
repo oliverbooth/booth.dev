@@ -14,7 +14,7 @@ namespace BoothDotDev.Controllers;
 ///     Every image is rendered once and then cached to disk under the CDN mount, keyed by content ID rather than
 ///     slug so the URL stays stable across route/slug changes and content edits. For content types that expose an
 ///     <c>UpdatedAt</c>, the cached file is regenerated once it's older than the content itself; for types that
-///     don't (<see cref="Project" />, <see cref="ArtworkItem" />, <see cref="MusicItem" />), the cache is
+///     don't (<see cref="Project" />, <see cref="Creation" />), the cache is
 ///     effectively permanent until the file is deleted by hand.
 /// </remarks>
 [ApiController]
@@ -193,7 +193,7 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("artwork/{id:guid}.png")]
     public IActionResult GetArtworkCard(Guid id)
     {
-        var result = _creationService.GetArtworkItem(id, true);
+        var result = _creationService.GetCreation(id, true);
         return GetCreationCard(result.IsFailed ? null : result.Value, "artwork");
     }
 
@@ -203,11 +203,11 @@ public sealed class OgImageController : ControllerBase
     [HttpGet("music/{id:guid}.png")]
     public IActionResult GetMusicCard(Guid id)
     {
-        var result = _creationService.GetMusicItem(id, true);
+        var result = _creationService.GetCreation(id, true);
         return GetCreationCard(result.IsFailed ? null : result.Value, "music");
     }
 
-    private IActionResult GetCreationCard(CreativeItem? item, string type)
+    private IActionResult GetCreationCard(Creation? item, string type)
     {
         if (item is null)
         {

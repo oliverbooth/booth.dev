@@ -11,8 +11,6 @@ using Microsoft.Extensions.Options;
 
 namespace BoothDotDev.Pages.Admin.Creations.Music;
 
-using MusicItem = MusicItem;
-
 /// <summary>
 ///     Represents the page model for editing a music item in the admin section.
 /// </summary>
@@ -90,7 +88,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var itemResult = _creationService.GetMusicItem(id.Value, true);
+        var itemResult = GetMusic(id.Value);
         if (itemResult.IsFailed)
         {
             return NotFound();
@@ -132,16 +130,16 @@ public sealed class Edit : PageModel
         }
 
         string fileName;
-        TimeSpan duration;
+        TimeSpan? duration;
 
         if (id is null)
         {
             fileName = string.Empty;
-            duration = TimeSpan.Zero;
+            duration = null;
         }
         else
         {
-            var existingResult = _creationService.GetMusicItem(id.Value, true);
+            var existingResult = GetMusic(id.Value);
             if (existingResult.IsFailed)
             {
                 return NotFound();
@@ -151,7 +149,8 @@ public sealed class Edit : PageModel
             duration = existingResult.Value.Duration;
         }
 
-        var request = new MusicItemSaveRequest(
+        var request = new CreationSaveRequest(
+            CreationKind.Music,
             Input.Title,
             Input.Description,
             Input.PublishedAt,
@@ -159,11 +158,11 @@ public sealed class Edit : PageModel
             Input.IsWorkInProgress,
             Input.MadeWith,
             fileName,
-            duration);
+            Duration: duration);
 
         var result = id is null
-            ? _creationService.CreateMusicItem(request)
-            : _creationService.UpdateMusicItem(id.Value, request);
+            ? _creationService.CreateCreation(request)
+            : _creationService.UpdateCreation(id.Value, request);
 
         return RedirectOnSuccess(result);
     }
@@ -183,7 +182,7 @@ public sealed class Edit : PageModel
             return BadRequest("No file was uploaded.");
         }
 
-        var itemResult = _creationService.GetMusicItem(id, true);
+        var itemResult = GetMusic(id);
         if (itemResult.IsFailed)
         {
             return NotFound();
@@ -231,7 +230,8 @@ public sealed class Edit : PageModel
 
         var duration = TagLib.File.Create(filePath).Properties.Duration;
 
-        var request = new MusicItemSaveRequest(
+        var request = new CreationSaveRequest(
+            CreationKind.Music,
             item.Title,
             item.Description,
             item.PublishedAt,
@@ -239,9 +239,9 @@ public sealed class Edit : PageModel
             item.IsWorkInProgress,
             item.MadeWith,
             fileName,
-            duration);
+            Duration: duration);
 
-        _creationService.UpdateMusicItem(id, request);
+        _creationService.UpdateCreation(id, request);
 
         return RedirectToPage(new { id });
     }
@@ -254,7 +254,7 @@ public sealed class Edit : PageModel
     public IActionResult OnPostDelete(Guid id)
     {
         ItemId = id;
-        return RedirectOnSuccess(_creationService.TrashMusicItem(id));
+        return RedirectOnSuccess(_creationService.TrashCreation(id));
     }
 
     /// <summary>
@@ -265,13 +265,13 @@ public sealed class Edit : PageModel
     public IActionResult OnPostRestore(Guid id)
     {
         ItemId = id;
-        return RedirectOnSuccess(_creationService.RestoreMusicItem(id));
+        return RedirectOnSuccess(_creationService.RestoreCreation(id));
     }
 
     /// <summary>
     ///     Populates <see cref="FileUrl" /> and <see cref="DurationDisplay" /> from the given item.
     /// </summary>
-    private void PopulateFileDisplay(MusicItem item)
+    private void PopulateFileDisplay(Creation item)
     {
         if (string.IsNullOrEmpty(item.FileName))
         {
@@ -280,7 +280,18 @@ public sealed class Edit : PageModel
 
         var kind = CdnMediaResolver.ResolveMediaKind(item.FileName);
         FileUrl = CdnMediaResolver.BuildCdnUrl(_cdnBaseUrl, Area, kind, item.PublishedAt, item.Id, item.FileName);
-        DurationDisplay = item.Duration.ToString(item.Duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
+        DurationDisplay = item.Duration is { } duration
+            ? duration.ToString(duration.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss")
+            : null;
+    }
+
+    /// <summary>
+    ///     Retrieves a creation by ID, failing if it is not music, since artwork has its own editor.
+    /// </summary>
+    private Result<Creation> GetMusic(Guid id)
+    {
+        var result = _creationService.GetCreation(id, true);
+        return result.IsSuccess && !result.Value.IsMusic ? Result.Fail<Creation>($"The creation with ID {id} is not music") : result;
     }
 
     /// <summary>
@@ -288,7 +299,7 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="result">The result of a save operation.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    private IActionResult RedirectOnSuccess(Result<MusicItem> result)
+    private IActionResult RedirectOnSuccess(Result<Creation> result)
     {
         if (result.IsFailed)
         {

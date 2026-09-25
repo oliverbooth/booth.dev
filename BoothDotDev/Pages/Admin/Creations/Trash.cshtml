@@ -57,11 +57,17 @@
                         Visibility.Private => "private",
                         _ => "unlisted"
                     };
-                    var isMusic = creation.Type == "Music";
+                    var isMusic = creation.Kind == CreationKind.Music;
                     var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
+                    var kindLabel = creation.Kind switch
+                    {
+                        CreationKind.Drawing => "Drawing",
+                        CreationKind.ThreeD => "3D",
+                        _ => "Music"
+                    };
 
                     <li class="admin-row" data-search-item>
-                        <input type="checkbox" name="selections" value="@creation.Type:@creation.Id" form="bulk-delete-form"
+                        <input type="checkbox" name="selections" value="@creation.Id" form="bulk-delete-form"
                                data-row-select aria-label="Select @creation.Title">
                         <span class="badge badge-@badgeClass">
                         @switch (creation.Visibility)
@@ -84,17 +90,16 @@
                         </span>
                         <div class="row-body">
                             <div class="row-title" data-search>@creation.Title</div>
-                            <div class="row-sub" data-search>@creation.Type</div>
+                            <div class="row-sub" data-search>@kindLabel</div>
                         </div>
                         <span class="row-meta"><abbr
                                 title="@creation.TrashedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.TrashedAt.Humanize()</abbr></span>
                         <div class="row-actions">
                             <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn">edit</a>
-                            <form method="post" asp-page-handler="Restore" asp-route-id="@creation.Id" asp-route-type="@creation.Type">
+                            <form method="post" asp-page-handler="Restore" asp-route-id="@creation.Id">
                                 <button type="submit" class="icon-btn">restore</button>
                             </form>
                             <form method="post" asp-page-handler="PermanentlyDelete" asp-route-id="@creation.Id"
-                                  asp-route-type="@creation.Type"
                                   data-confirm="Permanently delete '@creation.Title'? This cannot be undone.">
                                 <button type="submit" class="icon-btn danger">delete</button>
                             </form>

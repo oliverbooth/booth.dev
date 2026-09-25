@@ -78,12 +78,8 @@ public sealed class PortfolioService
 
     private List<PortfolioItem> GetNewestCreations(int creationCount)
     {
-        IEnumerable<(DateTimeOffset PublishedAt, PortfolioItem Item)> artwork = _creationService.GetArtworkItems()
-            .Select(a => (a.PublishedAt, ToItem(a)));
-        IEnumerable<(DateTimeOffset PublishedAt, PortfolioItem Item)> music = _creationService.GetMusicItems()
-            .Select(m => (m.PublishedAt, ToItem(m)));
-
-        return [.. artwork.Concat(music).OrderByDescending(x => x.PublishedAt).Take(creationCount).Select(x => x.Item)];
+        // already newest first
+        return [.. _creationService.GetCreations().Take(creationCount).Select(c => ToItem(c))];
     }
 
     private PortfolioItem ToItem(Project project)
@@ -103,49 +99,36 @@ public sealed class PortfolioService
         };
     }
 
-    private PortfolioItem ToItem(ArtworkItem artwork)
+    private PortfolioItem ToItem(Creation creation)
     {
-        var resolver = new CdnMediaResolver(new MarkdownRenderContext(artwork.Id, artwork.PublishedAt), null!, "content",
+        var resolver = new CdnMediaResolver(new MarkdownRenderContext(creation.Id, creation.PublishedAt), null!, "content",
             _cdnBaseUrl);
 
-        return new PortfolioItem
+        var (kind, hue, label) = creation.Kind switch
         {
-            Kind = PortfolioItemKind.Artwork,
-            Id = artwork.Id,
-            PublishedAt = artwork.PublishedAt,
-            Title = artwork.Title,
-            Description = PlainText(artwork.Description),
-            DescriptionMarkdown = artwork.Description,
-            ImageUrl = resolver.ResolveCdnUrl(artwork.FileName, MediaKind.Image),
-            PagePath = CreationPagePath,
-            Hue = PaletteHue.Pink,
-            Label = "art",
-            Tags = TagsFor(artwork),
-            IsWorkInProgress = artwork.IsWorkInProgress
+            CreationKind.Drawing => (PortfolioItemKind.Drawing, PaletteHue.Pink, "drawing"),
+            CreationKind.ThreeD => (PortfolioItemKind.ThreeD, PaletteHue.Tangerine, "3d"),
+            CreationKind.Music => (PortfolioItemKind.Music, PaletteHue.Mint, "music"),
+            _ => throw new InvalidOperationException($"Unknown creation kind {creation.Kind}.")
         };
-    }
-
-    private PortfolioItem ToItem(MusicItem music)
-    {
-        var resolver = new CdnMediaResolver(new MarkdownRenderContext(music.Id, music.PublishedAt), null!, "content",
-            _cdnBaseUrl);
 
         return new PortfolioItem
         {
-            Kind = PortfolioItemKind.Music,
-            Id = music.Id,
-            PublishedAt = music.PublishedAt,
-            Title = music.Title,
-            Description = PlainText(music.Description),
-            DescriptionMarkdown = music.Description,
-            AudioUrl = resolver.ResolveCdnUrl(music.FileName, MediaKind.Audio),
-            Duration = music.Duration,
+            Kind = kind,
+            Id = creation.Id,
+            PublishedAt = creation.PublishedAt,
+            Title = creation.Title,
+            Description = PlainText(creation.Description),
+            DescriptionMarkdown = creation.Description,
+            ImageUrl = creation.IsMusic ? null : resolver.ResolveCdnUrl(creation.FileName, MediaKind.Image),
+            AudioUrl = creation.IsMusic ? resolver.ResolveCdnUrl(creation.FileName, MediaKind.Audio) : null,
+            Duration = creation.Duration,
             PagePath = CreationPagePath,
-            Hue = PaletteHue.Mint,
-            Label = "music",
-            Tags = TagsFor(music),
-            IsWorkInProgress = music.IsWorkInProgress,
-            WaveformBars = SeededBars(music.Id)
+            Hue = hue,
+            Label = label,
+            Tags = TagsFor(creation),
+            IsWorkInProgress = creation.IsWorkInProgress,
+            WaveformBars = creation.IsMusic ? SeededBars(creation.Id) : []
         };
     }
 
@@ -154,7 +137,7 @@ public sealed class PortfolioService
         return string.IsNullOrWhiteSpace(markdown) ? null : Markdig.Markdown.ToPlainText(markdown).Trim();
     }
 
-    private static IReadOnlyList<string> TagsFor(CreativeItem item)
+    private static IReadOnlyList<string> TagsFor(Creation item)
     {
         return string.IsNullOrWhiteSpace(item.MadeWith) ? [] : [item.MadeWith];
     }

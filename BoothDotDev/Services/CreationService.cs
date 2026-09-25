@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BoothDotDev.Services;
 
 /// <summary>
-///     Represents a service responsible for managing creative content (artwork, music, etc.).
+///     Represents a service responsible for managing creations (drawings, 3D renders, and music).
 /// </summary>
 public sealed class CreationService
 {
@@ -27,183 +27,117 @@ public sealed class CreationService
     }
 
     /// <summary>
-    ///     Gets a read-only view of the artwork items, excluding trashed ones.
+    ///     Gets a read-only view of the creations, excluding trashed ones.
     /// </summary>
     /// <param name="visibility">
-    ///     The visibility of the artwork items to retrieve. A value of <see cref="Visibility.None" /> will retrieve every
-    ///     non-trashed item regardless of visibility.
+    ///     The visibility of the creations to retrieve. A value of <see cref="Visibility.None" /> will retrieve every
+    ///     non-trashed creation regardless of visibility.
     /// </param>
-    /// <returns>A read-only list of <see cref="ArtworkItem" /> objects.</returns>
-    public IReadOnlyList<ArtworkItem> GetArtworkItems(Visibility visibility = Visibility.Published)
+    /// <returns>A read-only list of <see cref="Creation" /> objects, newest first.</returns>
+    public IReadOnlyList<Creation> GetCreations(Visibility visibility = Visibility.Published)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var items = dbContext.ArtworkItems.Where(a => a.TrashedAt == null);
+        var items = dbContext.Creations.Where(c => c.TrashedAt == null);
         return
         [
-            .. (visibility == Visibility.None ? items : items.Where(a => a.Visibility == visibility))
-            .OrderByDescending(a => a.PublishedAt)
+            .. (visibility == Visibility.None ? items : items.Where(c => c.Visibility == visibility))
+            .OrderByDescending(c => c.PublishedAt)
         ];
     }
 
     /// <summary>
-    ///     Gets a read-only view of the music items, excluding trashed ones.
+    ///     Gets every non-trashed creation, regardless of visibility, newest first.
     /// </summary>
-    /// <param name="visibility">
-    ///     The visibility of the music items to retrieve. A value of <see cref="Visibility.None" /> will retrieve every
-    ///     non-trashed item regardless of visibility.
-    /// </param>
-    /// <returns>A read-only list of <see cref="MusicItem" /> objects.</returns>
-    public IReadOnlyList<MusicItem> GetMusicItems(Visibility visibility = Visibility.Published)
+    /// <returns>A read-only view of every creation.</returns>
+    public IReadOnlyList<Creation> GetAllCreations()
     {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        var items = dbContext.MusicItems.Where(m => m.TrashedAt == null);
-        return
-        [
-            .. (visibility == Visibility.None ? items : items.Where(m => m.Visibility == visibility))
-            .OrderByDescending(m => m.PublishedAt)
-        ];
+        return GetCreations(Visibility.None);
     }
 
     /// <summary>
-    ///     Gets every non-trashed artwork item, regardless of visibility, newest first.
+    ///     Retrieves a creation by its ID.
     /// </summary>
-    /// <returns>A read-only view of every artwork item.</returns>
-    public IReadOnlyList<ArtworkItem> GetAllArtworkItems()
-    {
-        return GetArtworkItems(Visibility.None);
-    }
-
-    /// <summary>
-    ///     Gets every non-trashed music item, regardless of visibility, newest first.
-    /// </summary>
-    /// <returns>A read-only view of every music item.</returns>
-    public IReadOnlyList<MusicItem> GetAllMusicItems()
-    {
-        return GetMusicItems(Visibility.None);
-    }
-
-    /// <summary>
-    ///     Retrieves an artwork item by its ID.
-    /// </summary>
-    /// <param name="id">The ID of the artwork item.</param>
+    /// <param name="id">The ID of the creation.</param>
     /// <param name="includeTrashed">
-    ///     Whether to include the item if it's trashed. Only the admin editor should pass <see langword="true" /> - every
-    ///     public-facing caller should get the trash exclusion for free.
+    ///     Whether to include the creation if it's trashed. Only the admin editor should pass <see langword="true" /> -
+    ///     every public-facing caller should get the trash exclusion for free.
     /// </param>
-    /// <returns>A <see cref="Result{T}" /> containing the item if found; otherwise, an error result.</returns>
-    public Result<ArtworkItem> GetArtworkItem(Guid id, bool includeTrashed = false)
+    /// <returns>A <see cref="Result{T}" /> containing the creation if found; otherwise, an error result.</returns>
+    public Result<Creation> GetCreation(Guid id, bool includeTrashed = false)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.ArtworkItems.Find(id);
+        var item = dbContext.Creations.Find(id);
         if (item is null || (item.TrashedAt is not null && !includeTrashed))
         {
-            return Result.Fail($"The artwork item with ID {id} was not found");
+            return Result.Fail($"The creation with ID {id} was not found");
         }
 
         return item;
     }
 
     /// <summary>
-    ///     Retrieves a music item by its ID.
+    ///     Gets every trashed creation, most recently trashed first.
     /// </summary>
-    /// <param name="id">The ID of the music item.</param>
-    /// <param name="includeTrashed">
-    ///     Whether to include the item if it's trashed. Only the admin editor should pass <see langword="true" /> - every
-    ///     public-facing caller should get the trash exclusion for free.
-    /// </param>
-    /// <returns>A <see cref="Result{T}" /> containing the item if found; otherwise, an error result.</returns>
-    public Result<MusicItem> GetMusicItem(Guid id, bool includeTrashed = false)
+    /// <returns>A read-only list of trashed <see cref="Creation" /> objects.</returns>
+    public IReadOnlyList<Creation> GetTrashedCreations()
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.MusicItems.Find(id);
-        if (item is null || (item.TrashedAt is not null && !includeTrashed))
-        {
-            return Result.Fail($"The music item with ID {id} was not found");
-        }
-
-        return item;
+        return [.. dbContext.Creations.Where(c => c.TrashedAt != null).OrderByDescending(c => c.TrashedAt)];
     }
 
     /// <summary>
-    ///     Gets every trashed artwork item, newest-trashed first.
+    ///     Creates a new creation.
     /// </summary>
-    /// <returns>A read-only view of every trashed artwork item.</returns>
-    public IReadOnlyList<ArtworkItem> GetTrashedArtworkItems()
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        return [.. dbContext.ArtworkItems.Where(a => a.TrashedAt != null).OrderByDescending(a => a.TrashedAt)];
-    }
-
-    /// <summary>
-    ///     Gets every trashed music item, newest-trashed first.
-    /// </summary>
-    /// <returns>A read-only view of every trashed music item.</returns>
-    public IReadOnlyList<MusicItem> GetTrashedMusicItems()
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        return [.. dbContext.MusicItems.Where(m => m.TrashedAt != null).OrderByDescending(m => m.TrashedAt)];
-    }
-
-    /// <summary>
-    ///     Creates a new artwork item.
-    /// </summary>
-    /// <param name="request">The artwork item's fields.</param>
-    /// <returns>A <see cref="Result{T}" /> containing the newly-created item.</returns>
-    public Result<ArtworkItem> CreateArtworkItem(ArtworkItemSaveRequest request)
+    /// <param name="request">The details of the creation to create.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the created creation.</returns>
+    public Result<Creation> CreateCreation(CreationSaveRequest request)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var item = new ArtworkItem();
-        ApplyArtworkRequest(item, request);
+        var item = new Creation();
+        ApplyRequest(item, request);
 
-        dbContext.ArtworkItems.Add(item);
+        dbContext.Creations.Add(item);
         dbContext.SaveChanges();
 
         return item;
     }
 
     /// <summary>
-    ///     Updates an existing artwork item.
+    ///     Updates an existing creation.
     /// </summary>
-    /// <param name="id">The ID of the artwork item to update.</param>
-    /// <param name="request">The item's new fields.</param>
-    /// <returns>
-    ///     A <see cref="Result{T}" /> containing the updated item, or an error if no item with the specified
-    ///     <paramref name="id" /> exists.
-    /// </returns>
-    public Result<ArtworkItem> UpdateArtworkItem(Guid id, ArtworkItemSaveRequest request)
+    /// <param name="id">The ID of the creation to update.</param>
+    /// <param name="request">The new details of the creation.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the updated creation if found; otherwise, an error result.</returns>
+    public Result<Creation> UpdateCreation(Guid id, CreationSaveRequest request)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.ArtworkItems.Find(id);
+        var item = dbContext.Creations.Find(id);
 
         if (item is null)
         {
-            return Result.Fail($"The artwork item with ID {id} was not found");
+            return Result.Fail($"The creation with ID {id} was not found");
         }
 
-        ApplyArtworkRequest(item, request);
+        ApplyRequest(item, request);
         dbContext.SaveChanges();
 
         return item;
     }
 
     /// <summary>
-    ///     Moves an artwork item to the trash. It's excluded from every listing, but nothing about it is otherwise touched, and
-    ///     it can be restored with <see cref="RestoreArtworkItem" />.
+    ///     Moves a creation to the trash.
     /// </summary>
-    /// <param name="id">The ID of the artwork item to trash.</param>
-    /// <returns>
-    ///     A <see cref="Result{T}" /> containing the trashed item, or an error if no item with the specified
-    ///     <paramref name="id" /> exists.
-    /// </returns>
-    public Result<ArtworkItem> TrashArtworkItem(Guid id)
+    /// <param name="id">The ID of the creation to trash.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the trashed creation if found; otherwise, an error result.</returns>
+    public Result<Creation> TrashCreation(Guid id)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.ArtworkItems.Find(id);
+        var item = dbContext.Creations.Find(id);
 
         if (item is null)
         {
-            return Result.Fail($"The artwork item with ID {id} was not found");
+            return Result.Fail($"The creation with ID {id} was not found");
         }
 
         item.TrashedAt = DateTimeOffset.UtcNow;
@@ -213,21 +147,18 @@ public sealed class CreationService
     }
 
     /// <summary>
-    ///     Restores a trashed artwork item, making it visible in listings again.
+    ///     Restores a creation from the trash.
     /// </summary>
-    /// <param name="id">The ID of the artwork item to restore.</param>
-    /// <returns>
-    ///     A <see cref="Result{T}" /> containing the restored item, or an error if no item with the specified
-    ///     <paramref name="id" /> exists.
-    /// </returns>
-    public Result<ArtworkItem> RestoreArtworkItem(Guid id)
+    /// <param name="id">The ID of the creation to restore.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the restored creation if found; otherwise, an error result.</returns>
+    public Result<Creation> RestoreCreation(Guid id)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.ArtworkItems.Find(id);
+        var item = dbContext.Creations.Find(id);
 
         if (item is null)
         {
-            return Result.Fail($"The artwork item with ID {id} was not found");
+            return Result.Fail($"The creation with ID {id} was not found");
         }
 
         item.TrashedAt = null;
@@ -237,21 +168,18 @@ public sealed class CreationService
     }
 
     /// <summary>
-    ///     Permanently deletes a trashed artwork item - the item row and its uploaded file on the CDN. This cannot be undone.
+    ///     Permanently deletes a trashed creation, along with its media.
     /// </summary>
-    /// <param name="id">The ID of the artwork item to permanently delete.</param>
-    /// <returns>
-    ///     A <see cref="Result" /> indicating success, or a failure if no item with the specified <paramref name="id" /> exists
-    ///     or it isn't currently trashed.
-    /// </returns>
-    public Result PermanentlyDeleteArtworkItem(Guid id)
+    /// <param name="id">The ID of the creation to delete.</param>
+    /// <returns>A <see cref="Result" /> indicating success, or why the creation could not be deleted.</returns>
+    public Result PermanentlyDeleteCreation(Guid id)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.ArtworkItems.Find(id);
+        var item = dbContext.Creations.Find(id);
 
         if (item is null)
         {
-            return Result.Fail($"The artwork item with ID {id} was not found");
+            return Result.Fail($"The creation with ID {id} was not found");
         }
 
         if (item.TrashedAt is null)
@@ -261,142 +189,15 @@ public sealed class CreationService
 
         _cdnMediaService.DeleteAllMedia(id, item.PublishedAt, Area);
 
-        dbContext.ArtworkItems.Remove(item);
+        dbContext.Creations.Remove(item);
         dbContext.SaveChanges();
 
         return Result.Ok();
     }
 
-    /// <summary>
-    ///     Creates a new music item.
-    /// </summary>
-    /// <param name="request">The music item's fields.</param>
-    /// <returns>A <see cref="Result{T}" /> containing the newly-created item.</returns>
-    public Result<MusicItem> CreateMusicItem(MusicItemSaveRequest request)
+    private static void ApplyRequest(Creation item, CreationSaveRequest request)
     {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-        var item = new MusicItem();
-        ApplyMusicRequest(item, request);
-
-        dbContext.MusicItems.Add(item);
-        dbContext.SaveChanges();
-
-        return item;
-    }
-
-    /// <summary>
-    ///     Updates an existing music item.
-    /// </summary>
-    /// <param name="id">The ID of the music item to update.</param>
-    /// <param name="request">The item's new fields.</param>
-    /// <returns>
-    ///     A <see cref="Result{T}" /> containing the updated item, or an error if no item with the specified
-    ///     <paramref name="id" /> exists.
-    /// </returns>
-    public Result<MusicItem> UpdateMusicItem(Guid id, MusicItemSaveRequest request)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.MusicItems.Find(id);
-
-        if (item is null)
-        {
-            return Result.Fail($"The music item with ID {id} was not found");
-        }
-
-        ApplyMusicRequest(item, request);
-        dbContext.SaveChanges();
-
-        return item;
-    }
-
-    /// <summary>
-    ///     Moves a music item to the trash. It's excluded from every listing, but nothing about it is otherwise
-    ///     touched, and it can be restored with <see cref="RestoreMusicItem" />.
-    /// </summary>
-    /// <param name="id">The ID of the music item to trash.</param>
-    /// <returns>
-    ///     A <see cref="Result{T}" /> containing the trashed item, or an error if no item with the specified
-    ///     <paramref name="id" /> exists.
-    /// </returns>
-    public Result<MusicItem> TrashMusicItem(Guid id)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.MusicItems.Find(id);
-
-        if (item is null)
-        {
-            return Result.Fail($"The music item with ID {id} was not found");
-        }
-
-        item.TrashedAt = DateTimeOffset.UtcNow;
-        dbContext.SaveChanges();
-
-        return item;
-    }
-
-    /// <summary>
-    ///     Restores a trashed music item, making it visible in listings again.
-    /// </summary>
-    /// <param name="id">The ID of the music item to restore.</param>
-    /// <returns>
-    ///     A <see cref="Result{T}" /> containing the restored item, or an error if no item with the specified
-    ///     <paramref name="id" /> exists.
-    /// </returns>
-    public Result<MusicItem> RestoreMusicItem(Guid id)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.MusicItems.Find(id);
-
-        if (item is null)
-        {
-            return Result.Fail($"The music item with ID {id} was not found");
-        }
-
-        item.TrashedAt = null;
-        dbContext.SaveChanges();
-
-        return item;
-    }
-
-    /// <summary>
-    ///     Permanently deletes a trashed music item - the item row and its uploaded file on the CDN. This cannot be undone.
-    /// </summary>
-    /// <param name="id">The ID of the music item to permanently delete.</param>
-    /// <returns>
-    ///     A <see cref="Result" /> indicating success, or a failure if no item with the specified <paramref name="id" /> exists
-    ///     or it isn't currently trashed.
-    /// </returns>
-    public Result PermanentlyDeleteMusicItem(Guid id)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-        var item = dbContext.MusicItems.Find(id);
-
-        if (item is null)
-        {
-            return Result.Fail($"The music item with ID {id} was not found");
-        }
-
-        if (item.TrashedAt is null)
-        {
-            return Result.Fail("Only trashed items can be permanently deleted.");
-        }
-
-        _cdnMediaService.DeleteAllMedia(id, item.PublishedAt, Area);
-
-        dbContext.MusicItems.Remove(item);
-        dbContext.SaveChanges();
-
-        return Result.Ok();
-    }
-
-    /// <summary>
-    ///     Applies the fields of a save request onto an artwork item.
-    /// </summary>
-    /// <param name="item">The artwork item to apply the request to.</param>
-    /// <param name="request">The save request containing the fields to apply.</param>
-    private static void ApplyArtworkRequest(ArtworkItem item, ArtworkItemSaveRequest request)
-    {
+        item.Kind = request.Kind;
         item.Title = request.Title;
         item.Description = request.Description;
         item.PublishedAt = request.PublishedAt.ToUniversalTime();
@@ -405,22 +206,6 @@ public sealed class CreationService
         item.MadeWith = request.MadeWith;
         item.FileName = request.FileName;
         item.Resolution = request.Resolution;
-    }
-
-    /// <summary>
-    ///     Applies the fields of a save request onto a music item.
-    /// </summary>
-    /// <param name="item">The music item to apply the request to.</param>
-    /// <param name="request">The save request containing the fields to apply.</param>
-    private static void ApplyMusicRequest(MusicItem item, MusicItemSaveRequest request)
-    {
-        item.Title = request.Title;
-        item.Description = request.Description;
-        item.PublishedAt = request.PublishedAt.ToUniversalTime();
-        item.Visibility = request.Visibility;
-        item.IsWorkInProgress = request.IsWorkInProgress;
-        item.MadeWith = request.MadeWith;
-        item.FileName = request.FileName;
         item.Duration = request.Duration;
     }
 }

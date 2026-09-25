@@ -11,9 +11,14 @@ public enum PortfolioItemKind
     Project,
 
     /// <summary>
-    ///     A piece of artwork.
+    ///     A piece of 2D artwork.
     /// </summary>
-    Artwork,
+    Drawing,
+
+    /// <summary>
+    ///     A 3D render.
+    /// </summary>
+    ThreeD,
 
     /// <summary>
     ///     A piece of music.

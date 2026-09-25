@@ -13,8 +13,6 @@ using Image = SixLabors.ImageSharp.Image;
 
 namespace BoothDotDev.Pages.Admin.Creations.Artwork;
 
-using ArtworkItem = ArtworkItem;
-
 /// <summary>
 ///     Represents the page model for editing an artwork item in the admin section.
 /// </summary>
@@ -92,7 +90,7 @@ public sealed class Edit : PageModel
             return Page();
         }
 
-        var itemResult = _creationService.GetArtworkItem(id.Value, true);
+        var itemResult = GetArtwork(id.Value);
         if (itemResult.IsFailed)
         {
             return NotFound();
@@ -103,6 +101,7 @@ public sealed class Edit : PageModel
         IsTrashed = item.TrashedAt is not null;
         Input = new EditModel
         {
+            Kind = item.Kind,
             Title = item.Title,
             Description = item.Description,
             PublishedAt = item.PublishedAt.ToLocalTime(),
@@ -133,17 +132,22 @@ public sealed class Edit : PageModel
             return Page();
         }
 
+        if (Input.Kind == CreationKind.Music)
+        {
+            return BadRequest("Artwork can't be music.");
+        }
+
         string fileName;
-        Size resolution;
+        Size? resolution;
 
         if (id is null)
         {
             fileName = string.Empty;
-            resolution = Size.Empty;
+            resolution = null;
         }
         else
         {
-            var existingResult = _creationService.GetArtworkItem(id.Value, true);
+            var existingResult = GetArtwork(id.Value);
             if (existingResult.IsFailed)
             {
                 return NotFound();
@@ -153,7 +157,8 @@ public sealed class Edit : PageModel
             resolution = existingResult.Value.Resolution;
         }
 
-        var request = new ArtworkItemSaveRequest(
+        var request = new CreationSaveRequest(
+            Input.Kind,
             Input.Title,
             Input.Description,
             Input.PublishedAt,
@@ -164,8 +169,8 @@ public sealed class Edit : PageModel
             resolution);
 
         var result = id is null
-            ? _creationService.CreateArtworkItem(request)
-            : _creationService.UpdateArtworkItem(id.Value, request);
+            ? _creationService.CreateCreation(request)
+            : _creationService.UpdateCreation(id.Value, request);
 
         return RedirectOnSuccess(result);
     }
@@ -185,7 +190,7 @@ public sealed class Edit : PageModel
             return BadRequest("No file was uploaded.");
         }
 
-        var itemResult = _creationService.GetArtworkItem(id, true);
+        var itemResult = GetArtwork(id);
         if (itemResult.IsFailed)
         {
             return NotFound();
@@ -205,6 +210,7 @@ public sealed class Edit : PageModel
             ItemId = id;
             Input = new EditModel
             {
+                Kind = item.Kind,
                 Title = item.Title,
                 Description = item.Description,
                 PublishedAt = item.PublishedAt.ToLocalTime(),
@@ -226,7 +232,8 @@ public sealed class Edit : PageModel
             resolution = new Size(info.Width, info.Height);
         }
 
-        var request = new ArtworkItemSaveRequest(
+        var request = new CreationSaveRequest(
+            item.Kind,
             item.Title,
             item.Description,
             item.PublishedAt,
@@ -236,7 +243,7 @@ public sealed class Edit : PageModel
             fileName,
             resolution);
 
-        _creationService.UpdateArtworkItem(id, request);
+        _creationService.UpdateCreation(id, request);
 
         return RedirectToPage(new { id });
     }
@@ -249,7 +256,7 @@ public sealed class Edit : PageModel
     public IActionResult OnPostDelete(Guid id)
     {
         ItemId = id;
-        return RedirectOnSuccess(_creationService.TrashArtworkItem(id));
+        return RedirectOnSuccess(_creationService.TrashCreation(id));
     }
 
     /// <summary>
@@ -260,13 +267,13 @@ public sealed class Edit : PageModel
     public IActionResult OnPostRestore(Guid id)
     {
         ItemId = id;
-        return RedirectOnSuccess(_creationService.RestoreArtworkItem(id));
+        return RedirectOnSuccess(_creationService.RestoreCreation(id));
     }
 
     /// <summary>
     ///     Populates <see cref="FileUrl" /> and <see cref="ResolutionDisplay" /> from the given item.
     /// </summary>
-    private void PopulateFileDisplay(ArtworkItem item)
+    private void PopulateFileDisplay(Creation item)
     {
         if (string.IsNullOrEmpty(item.FileName))
         {
@@ -275,7 +282,16 @@ public sealed class Edit : PageModel
 
         var kind = CdnMediaResolver.ResolveMediaKind(item.FileName);
         FileUrl = CdnMediaResolver.BuildCdnUrl(_cdnBaseUrl, Area, kind, item.PublishedAt, item.Id, item.FileName);
-        ResolutionDisplay = $"{item.Resolution.Width}x{item.Resolution.Height}";
+        ResolutionDisplay = item.Resolution is { } resolution ? $"{resolution.Width}x{resolution.Height}" : null;
+    }
+
+    /// <summary>
+    ///     Retrieves a creation by ID, failing if it is music, since that has its own editor.
+    /// </summary>
+    private Result<Creation> GetArtwork(Guid id)
+    {
+        var result = _creationService.GetCreation(id, true);
+        return result.IsSuccess && result.Value.IsMusic ? Result.Fail<Creation>($"The creation with ID {id} is not artwork") : result;
     }
 
     /// <summary>
@@ -283,7 +299,7 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="result">The result of a save operation.</param>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    private IActionResult RedirectOnSuccess(Result<ArtworkItem> result)
+    private IActionResult RedirectOnSuccess(Result<Creation> result)
     {
         if (result.IsFailed)
         {
@@ -299,6 +315,12 @@ public sealed class Edit : PageModel
     /// </summary>
     public sealed class EditModel
     {
+        /// <summary>
+        ///     Gets or sets the kind of the artwork.
+        /// </summary>
+        /// <value>The kind, either <see cref="CreationKind.Drawing" /> or <see cref="CreationKind.ThreeD" />.</value>
+        public CreationKind Kind { get; set; } = CreationKind.Drawing;
+
         /// <summary>
         ///     Gets or sets the title of the artwork.
         /// </summary>

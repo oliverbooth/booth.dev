@@ -39,6 +39,14 @@
             <textarea id="description" rows="5" asp-for="Input.Description" data-markdown></textarea>
         </div>
 
+        <div class="field">
+            <label asp-for="Input.Kind">Kind</label>
+            <select asp-for="Input.Kind">
+                <option value="@CreationKind.Drawing">Drawing</option>
+                <option value="@CreationKind.ThreeD">3D</option>
+            </select>
+        </div>
+
         <div class="field-row">
             <div class="field">
                 <label asp-for="Input.Visibility">Visibility</label>

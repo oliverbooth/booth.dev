@@ -19,12 +19,12 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
-    ///     Gets the collection of artwork items in the database.
+    ///     Gets the collection of creations in the database.
     /// </summary>
-    /// <value>The collection of artwork items.</value>
-    public DbSet<ArtworkItem> ArtworkItems
+    /// <value>The collection of creations.</value>
+    public DbSet<Creation> Creations
     {
-        get => Set<ArtworkItem>();
+        get => Set<Creation>();
     }
 
     /// <summary>
@@ -106,15 +106,6 @@ public sealed class AppDbContext : DbContext
     public DbSet<LegacyComment> LegacyComments
     {
         get => Set<LegacyComment>();
-    }
-
-    /// <summary>
-    ///     Gets the collection of music items in the database.
-    /// </summary>
-    /// <value>The collection of music items.</value>
-    public DbSet<MusicItem> MusicItems
-    {
-        get => Set<MusicItem>();
     }
 
     /// <summary>
@@ -239,6 +230,7 @@ public sealed class AppDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema("public");
         modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<CreationKind>("public", "creation_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<PaletteHue>("public", "palette_hue", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
@@ -248,16 +240,15 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<WatchableSource>("public", "watchable_source", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<WatchableState>("public", "watchable_state", new NpgsqlSnakeCaseNameTranslator());
 
-        modelBuilder.ApplyConfiguration(new ArtworkItemConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostConfiguration());
         modelBuilder.ApplyConfiguration(new BlogPostDraftConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
         modelBuilder.ApplyConfiguration(new CodeSnippetConfiguration());
+        modelBuilder.ApplyConfiguration(new CreationConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeDraftConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
-        modelBuilder.ApplyConfiguration(new MusicItemConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());

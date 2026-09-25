@@ -51,7 +51,7 @@
                 <audio controls preload="none" src="@Model.AudioUrl" class="portfolio-card-audio"></audio>
             }
         }
-        else if (interactive && Model.Kind == PortfolioItemKind.Artwork && Model.ImageUrl is not null)
+        else if (interactive && Model.Kind is PortfolioItemKind.Drawing or PortfolioItemKind.ThreeD && Model.ImageUrl is not null)
         {
             // the caption template is looked up from the enclosing <figure>
             <figure class="portfolio-card-media">

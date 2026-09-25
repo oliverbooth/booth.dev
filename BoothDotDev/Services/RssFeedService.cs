@@ -154,7 +154,7 @@ public sealed class RssFeedService
     }
 
     /// <summary>
-    ///     Builds the RSS feed for creations (artwork and music).
+    ///     Builds the RSS feed for creations (drawings, 3D renders, and music).
     /// </summary>
     /// <param name="baseUrl">The site's own base URL, used to build absolute links.</param>
     /// <returns>The serialized RSS feed.</returns>
@@ -165,8 +165,7 @@ public sealed class RssFeedService
         var pageUrl = new Uri(baseUrl, "/create").ToString();
         var items = new List<RssItem>();
 
-        foreach (var item in _creationService.GetArtworkItems().Cast<CreativeItem>()
-                     .Concat(_creationService.GetMusicItems()))
+        foreach (var item in _creationService.GetCreations())
         {
             items.Add(new RssItem
             {
