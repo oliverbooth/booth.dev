@@ -11,6 +11,7 @@
 @import "partials/admin/_preview.css";
 @import "partials/admin/_link-manager.css";
 @import "partials/admin/_media-manager.css";
+@import "partials/admin/_status-manager.css";
 @import "partials/admin/_post-media.css";
 @import "partials/admin/_post-drafts.css";
 @import "partials/admin/_cdn-browser.css";

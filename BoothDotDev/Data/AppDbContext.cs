@@ -199,6 +199,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of homepage statuses in the database.
+    /// </summary>
+    /// <value>The collection of statuses.</value>
+    public DbSet<Status> Statuses
+    {
+        get => Set<Status>();
+    }
+
+    /// <summary>
     ///     Gets the stored Trakt OAuth credential.
     /// </summary>
     /// <value>The stored Trakt OAuth credential.</value>
@@ -288,6 +297,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryDraftConfiguration());
+        modelBuilder.ApplyConfiguration(new StatusConfiguration());
         modelBuilder.ApplyConfiguration(new TraktCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());

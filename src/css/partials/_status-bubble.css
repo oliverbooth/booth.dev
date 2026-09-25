@@ -1,0 +1,81 @@
+.status-dot {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border-radius: 50%;
+  background: var(--polaroid-bg);
+  box-shadow: var(--shadow-card-soft);
+}
+
+.status-dot--small {
+  width: 5px;
+  height: 5px;
+  margin-top: 14px;
+  transform: translateX(-50%);
+}
+
+.status-dot--large {
+  width: 9px;
+  height: 9px;
+  margin: 21px 0 0 6px;
+}
+
+.status-bubble {
+  --collapsed: min(220px, calc(100vw - 64px));
+  --expanded: min(340px, calc(100vw - 64px));
+
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 2;
+  width: max-content;
+  max-width: var(--collapsed);
+  margin-top: 32px;
+  padding: 9px 13px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--polaroid-bg);
+  box-shadow: var(--shadow-card-soft);
+  color: var(--text-muted);
+  cursor: default;
+  font-family: var(--font-voice);
+  font-size: 15px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translateX(-50%) rotate(calc(-1deg * var(--motion) * var(--tilt-on)));
+  transition: max-width 0.35s ease;
+
+  /* wrapping while the width is still growing would reflow the text every frame, so it waits for the width to arrive */
+  &:hover,
+  &:focus-visible {
+    z-index: 3;
+    max-width: var(--expanded);
+    text-overflow: clip;
+    white-space: normal;
+    transition:
+      max-width 0.35s ease,
+      text-overflow 0s 0.35s allow-discrete,
+      white-space 0s 0.35s allow-discrete;
+  }
+
+  /* there is no hover to hover with, so a tap (which focuses it) does the same */
+  @media (hover: none) {
+    &:focus {
+      z-index: 3;
+      max-width: var(--expanded);
+      text-overflow: clip;
+      white-space: normal;
+      transition:
+        max-width 0.35s ease,
+        text-overflow 0s 0.35s allow-discrete,
+        white-space 0s 0.35s allow-discrete;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    max-width: var(--expanded);
+    text-overflow: clip;
+    white-space: normal;
+  }
+}

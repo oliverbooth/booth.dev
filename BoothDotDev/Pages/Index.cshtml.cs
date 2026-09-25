@@ -12,6 +12,7 @@ internal sealed class Index : PageModel
     private readonly ActivityService _activityService;
     private readonly BlogPostService _blogPostService;
     private readonly PortfolioService _portfolioService;
+    private readonly StatusService _statusService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Index" /> class.
@@ -19,11 +20,17 @@ internal sealed class Index : PageModel
     /// <param name="activityService">The activity service.</param>
     /// <param name="portfolioService">The portfolio service.</param>
     /// <param name="blogPostService">The blog post service.</param>
-    public Index(ActivityService activityService, PortfolioService portfolioService, BlogPostService blogPostService)
+    /// <param name="statusService">The status service.</param>
+    public Index(
+        ActivityService activityService,
+        PortfolioService portfolioService,
+        BlogPostService blogPostService,
+        StatusService statusService)
     {
         _activityService = activityService;
         _portfolioService = portfolioService;
         _blogPostService = blogPostService;
+        _statusService = statusService;
     }
 
     /// <summary>
@@ -45,10 +52,17 @@ internal sealed class Index : PageModel
     public IReadOnlyList<PortfolioItem> Featured { get; private set; } = [];
 
     /// <summary>
+    ///     Gets the status to show in the thought bubble.
+    /// </summary>
+    /// <value>The status, or <see langword="null" /> if none is in rotation.</value>
+    public string? StatusText { get; private set; }
+
+    /// <summary>
     ///     Handles the GET request for the index page.
     /// </summary>
     public void OnGet()
     {
+        StatusText = _statusService.GetRandomActive();
         RecentActivity = _activityService.GetRecentActivity(new ActivitySearchOptions(RecentActivityCount));
         Featured = _portfolioService.GetFeatured();
         LatestPosts = _blogPostService.GetRecentBlogPosts(new ActivitySearchOptions(LatestPostCount));

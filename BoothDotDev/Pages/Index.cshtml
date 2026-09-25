@@ -6,28 +6,6 @@
 @inject BlogPostService BlogPostService
 @inject MarkdownRenderingService MarkdownRenderingService
 
-@{
-    string[] statuses =
-    [
-        "injecting copious amounts of java into my veins",
-        "literally screaming at the pain of web dev",
-        "seeing sharp",
-        "rust? i think you mean CORROSION",
-        "help i'm stuck in a website",
-        "sudo make me a sandwich (permission denied)",
-        "yes, i test in production, how could you tell",
-        "it's not a bug, it's an undocumented feature",
-        "01101000 01100101 01101100 01110000",
-        "418",
-        "what even is life anyway",
-        "okay but web dev is kinda fun actually",
-        "outer wilds is game of the year, every year",
-        "test status please ignore"
-    ];
-
-    var status = statuses[Random.Shared.Next(statuses.Length)];
-}
-
 <div class="page-grid home">
 
     <section class="home-hero">
@@ -37,7 +15,6 @@
             <p class="home-tagline">
                 Coffee enthusiast with a love for all things tech. Tech enthusiast with a love for all things coffee.
             </p>
-            <p class="home-status"><i class="ti ti-terminal-2" aria-hidden="true"></i> @status</p>
 
             <div class="home-hero-actions">
                 <a asp-page="/Portfolio/Index" class="btn btn-primary">see my stuff <i class="ti ti-arrow-right"></i></a>
@@ -47,6 +24,14 @@
 
         <div class="polaroid">
             <img src="~/img/headshot_512x512_2023.jpg" asp-append-version="true" alt="Photo of @Strings.MyName">
+
+            @if (Model.StatusText is not null)
+            {
+                <span class="status-dot status-dot--small" aria-hidden="true"></span>
+                <span class="status-dot status-dot--large" aria-hidden="true"></span>
+                @* focusable so a tap or keypress expands it the way hover does *@
+                <p class="status-bubble" tabindex="0">@Model.StatusText</p>
+            }
         </div>
     </section>
 
