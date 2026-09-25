@@ -1,5 +1,4 @@
 using BoothDotDev.Services;
-using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,12 +10,12 @@ namespace BoothDotDev.Pages.Admin.Portfolio;
 /// </summary>
 [Authorize(Policy = "Admin")]
 [RequestSizeLimit(CdnUploadPolicy.MaxUploadSizeBytes)]
-public sealed class MediaHandler : PageModel
+public sealed class MediaHandler : OwnerPostPage
 {
     /// <summary>
     ///     The key the media manager reads its errors from, in <see cref="PageModel.TempData" />.
     /// </summary>
-    public const string ErrorsKey = "MediaErrors";
+    public const string MediaErrorsKey = "MediaErrors";
 
     private readonly MediaService _mediaService;
 
@@ -29,13 +28,16 @@ public sealed class MediaHandler : PageModel
         _mediaService = mediaService;
     }
 
-    /// <summary>
-    ///     Handles the GET request. There is nothing to show.
-    /// </summary>
-    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
-    public IActionResult OnGet()
+    /// <inheritdoc />
+    protected override string ErrorsKey
     {
-        return NotFound();
+        get => MediaErrorsKey;
+    }
+
+    /// <inheritdoc />
+    protected override string SectionId
+    {
+        get => "media";
     }
 
     /// <summary>
@@ -130,22 +132,5 @@ public sealed class MediaHandler : PageModel
     public IActionResult OnPostAlt(Guid ownerId, Guid mediaId, string? alt, string? returnUrl)
     {
         return Back(returnUrl, _mediaService.SetAlt(ownerId, mediaId, alt));
-    }
-
-    private IActionResult Back(string? returnUrl, ResultBase result)
-    {
-        return Back(returnUrl, result.Errors.Select(e => e.Message).ToList());
-    }
-
-    private IActionResult Back(string? returnUrl, List<string> errors)
-    {
-        if (errors.Count > 0)
-        {
-            TempData[ErrorsKey] = string.Join(" ", errors);
-        }
-
-        return returnUrl is not null && Url.IsLocalUrl(returnUrl)
-            ? LocalRedirect(returnUrl + "#media")
-            : RedirectToPage("/Admin/Portfolio/Index");
     }
 }

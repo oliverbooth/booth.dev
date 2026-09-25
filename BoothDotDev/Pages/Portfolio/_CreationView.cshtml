@@ -2,8 +2,9 @@
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
 @model BoothDotDev.Data.Models.Creation
-@inject MediaService MediaService
+@inject LinkService LinkService
 @inject MarkdownRenderingService MarkdownRenderingService
+@inject MediaService MediaService
 
 @{
     var creation = Model;
@@ -50,6 +51,8 @@
             }
         </div>
     }
+
+    <partial name="_LinkButtons" model="LinkService.GetLinks(creation.Id)" />
 
     @if (showHero)
     {

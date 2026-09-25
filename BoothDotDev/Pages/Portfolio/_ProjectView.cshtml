@@ -6,8 +6,9 @@
 @using Markdig
 @model BoothDotDev.Data.Models.Project
 @inject MarkdownPipeline MarkdownPipeline
-@inject ProjectService ProjectService
+@inject LinkService LinkService
 @inject MediaService MediaService
+@inject ProjectService ProjectService
 
 @{
     var project = Model;
@@ -26,24 +27,6 @@
         ProjectStatus.Retired => "retired",
         ProjectStatus.Hiatus => "on hiatus",
         _ => project.Status.ToString().ToLower()
-    };
-
-    var icon = project.RemoteTarget switch
-    {
-        "GitHub" => "brand-github",
-        "GitLab" => "brand-gitlab",
-        "Itch.io" => "building-store",
-        "PlayStore" => "brand-google-play",
-        _ => "world"
-    };
-
-    var linkText = project.RemoteTarget switch
-    {
-        "GitHub" => "Repository",
-        "GitLab" => "Repository",
-        "Itch.io" => "itch.io Page",
-        "PlayStore" => "Google Play Store Page",
-        _ => "External site"
     };
 
     var languages = project.Languages.Where(language => language != "various").ToList();
@@ -86,12 +69,7 @@
         </div>
     }
 
-    @if (!string.IsNullOrEmpty(project.RemoteUrl))
-    {
-        <div class="action-row">
-            <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon"></i> @linkText</a>
-        </div>
-    }
+    <partial name="_LinkButtons" model="LinkService.GetLinks(project.Id)" />
 
     <div class="project-frame" data-hue="sky">
         @if (cover is not null)

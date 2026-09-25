@@ -1,0 +1,130 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model LinkManager
+
+@{
+    var kinds = Enum.GetValues<LinkKind>()
+        .Where(kind => kind != LinkKind.Other)
+        .OrderBy(kind => kind.DisplayName)
+        .Append(LinkKind.Other);
+}
+
+@* outside the page's main form: the browser silently drops a form nested inside another *@
+<section class="admin-media link-manager" id="links" data-reorder-scope style="margin-top:2rem">
+    <div class="admin-header">
+        <div>
+            <h2>Links</h2>
+            <p>Where else this can be found. The primary link is shown first and stands out, and it's optional.</p>
+        </div>
+    </div>
+
+    @if (Model.Errors is not null)
+    {
+        <p class="hint form-error">@Model.Errors</p>
+    }
+
+    @if (Model.Items.Count == 0)
+    {
+        <p class="hint">No links yet.</p>
+    }
+    else
+    {
+        <form method="post" asp-page="/Admin/Portfolio/Links" asp-page-handler="Reorder" id="link-reorder-form">
+            <input type="hidden" name="ownerId" value="@Model.OwnerId">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+        </form>
+
+        <ul class="reorder-list" data-reorder-list data-reorder-form="link-reorder-form">
+            @foreach (var item in Model.Items)
+            {
+                <li class="reorder-item link-row" data-reorder-item data-id="@item.Id">
+                    @* only the grip is draggable: a draggable row would swallow text selection in the fields *@
+                    <i class="ti ti-grip-vertical reorder-handle" draggable="true" aria-hidden="true"></i>
+                    <div class="reorder-move">
+                        <button type="button" class="reorder-move-btn" data-move="up" aria-label="Move '@item.Text' up"><i
+                                class="ti ti-chevron-up"></i></button>
+                        <button type="button" class="reorder-move-btn" data-move="down" aria-label="Move '@item.Text' down"><i
+                                class="ti ti-chevron-down"></i></button>
+                    </div>
+
+                    <span class="link-row-glyph"><partial name="Partials/_LinkGlyph" model="item.Kind" /></span>
+
+                    <form method="post" asp-page="/Admin/Portfolio/Links" asp-page-handler="Update" class="link-edit">
+                        <input type="hidden" name="ownerId" value="@Model.OwnerId">
+                        <input type="hidden" name="linkId" value="@item.Id">
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                        <div class="field link-edit-kind">
+                            <select name="kind" aria-label="Kind of link">
+                                @foreach (var kind in kinds)
+                                {
+                                    <option value="@kind" selected="@(kind == item.Kind)">@kind.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field link-edit-label">
+                            <input type="text" name="label" value="@item.Label" maxlength="100" placeholder="@item.Kind.DefaultText"
+                                   aria-label="Label">
+                        </div>
+                        <div class="field link-edit-url">
+                            <input type="url" name="url" value="@item.Url" required maxlength="2048" aria-label="Address">
+                        </div>
+                        <button type="submit" class="icon-btn">save</button>
+                    </form>
+
+                    <div class="row-actions">
+                        @if (item.IsPrimary)
+                        {
+                            <span class="badge badge-published">primary</span>
+                            <form method="post" asp-page="/Admin/Portfolio/Links" asp-page-handler="ClearPrimary">
+                                <input type="hidden" name="ownerId" value="@Model.OwnerId">
+                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                                <button type="submit" class="icon-btn">clear primary</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page="/Admin/Portfolio/Links" asp-page-handler="Primary">
+                                <input type="hidden" name="ownerId" value="@Model.OwnerId">
+                                <input type="hidden" name="linkId" value="@item.Id">
+                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                                <button type="submit" class="icon-btn">make primary</button>
+                            </form>
+                        }
+                        <form method="post" asp-page="/Admin/Portfolio/Links" asp-page-handler="Remove"
+                              data-confirm="Delete the link to '@item.Url'? This can't be undone.">
+                            <input type="hidden" name="ownerId" value="@Model.OwnerId">
+                            <input type="hidden" name="linkId" value="@item.Id">
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                            <button type="submit" class="icon-btn danger">delete</button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <div class="table-toolbar" data-reorder-save hidden>
+            <p class="hint">Order changed - it isn't saved yet.</p>
+            <button type="submit" form="link-reorder-form" class="btn btn-primary"><i class="ti ti-device-floppy"></i>Save order</button>
+        </div>
+    }
+
+    <form method="post" asp-page="/Admin/Portfolio/Links" asp-page-handler="Add" class="link-add">
+        <input type="hidden" name="ownerId" value="@Model.OwnerId">
+        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+        <div class="field link-edit-kind">
+            <select name="kind" aria-label="Kind of link">
+                @foreach (var kind in kinds)
+                {
+                    <option value="@kind">@kind.DisplayName</option>
+                }
+            </select>
+        </div>
+        <div class="field link-edit-label">
+            <input type="text" name="label" maxlength="100" placeholder="Label (optional)" aria-label="Label">
+        </div>
+        <div class="field link-edit-url">
+            <input type="url" name="url" required maxlength="2048" placeholder="https://" aria-label="Address">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="ti ti-plus"></i> Add link</button>
+    </form>
+</section>

@@ -118,6 +118,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of links belonging to projects and creations in the database.
+    /// </summary>
+    /// <value>The collection of links.</value>
+    public DbSet<Link> Links
+    {
+        get => Set<Link>();
+    }
+
+    /// <summary>
     ///     Gets the collection of files belonging to projects and creations in the database.
     /// </summary>
     /// <value>The collection of media.</value>
@@ -250,6 +259,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<CreationKind>("public", "creation_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<LinkKind>("public", "link_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<PaletteHue>("public", "palette_hue", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
@@ -267,6 +277,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeDraftConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
+        modelBuilder.ApplyConfiguration(new LinkConfiguration());
         modelBuilder.ApplyConfiguration(new MediaConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());

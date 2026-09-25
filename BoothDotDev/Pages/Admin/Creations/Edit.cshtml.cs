@@ -18,6 +18,7 @@ namespace BoothDotDev.Pages.Admin.Creations;
 public sealed class Edit : PageModel
 {
     private readonly CreationService _creationService;
+    private readonly LinkService _linkService;
     private readonly MediaService _mediaService;
 
     /// <summary>
@@ -25,10 +26,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="creationService">The <see cref="CreationService" />.</param>
     /// <param name="mediaService">The <see cref="MediaService" />.</param>
-    public Edit(CreationService creationService, MediaService mediaService)
+    /// <param name="linkService">The <see cref="LinkService" />.</param>
+    public Edit(CreationService creationService, MediaService mediaService, LinkService linkService)
     {
         _creationService = creationService;
         _mediaService = mediaService;
+        _linkService = linkService;
     }
 
     /// <summary>
@@ -61,6 +64,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <value>The media manager, or <see langword="null" /> if a new creation is being created.</value>
     public MediaManager? Media { get; private set; }
+
+    /// <summary>
+    ///     Gets what the link manager shows: the creation's links.
+    /// </summary>
+    /// <value>The link manager, or <see langword="null" /> if a new creation is being created.</value>
+    public LinkManager? Links { get; private set; }
 
     /// <summary>
     ///     Handles the GET request.
@@ -166,7 +175,15 @@ public sealed class Edit : PageModel
             OwnerId = item.Id,
             Items = _mediaService.GetMedia(MediaOwner.For(item)),
             ReturnUrl = Url.Page("/Admin/Creations/Edit", new { id = item.Id })!,
-            Errors = TempData[MediaHandler.ErrorsKey] as string
+            Errors = TempData[MediaHandler.MediaErrorsKey] as string
+        };
+
+        Links = new LinkManager
+        {
+            OwnerId = item.Id,
+            Items = _linkService.GetLinks(item.Id),
+            ReturnUrl = Url.Page("/Admin/Creations/Edit", new { id = item.Id })!,
+            Errors = TempData[LinksHandler.LinkErrorsKey] as string
         };
     }
 

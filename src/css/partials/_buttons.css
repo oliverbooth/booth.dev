@@ -48,3 +48,12 @@
   background: var(--danger-bg);
   color: var(--danger-text);
 }
+
+.link-glyph {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.15em;
+  height: 1.15em;
+  background: currentColor;
+  mask: var(--glyph) center / contain no-repeat;
+}

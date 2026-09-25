@@ -59,12 +59,14 @@ public sealed class Project : IEquatable<Project>
     ///     Gets or sets the host of the project.
     /// </summary>
     /// <value>The host of the project.</value>
+    /// <remarks>Superseded by <see cref="Link" />, which is the only thing read.</remarks>
     public string? RemoteTarget { get; set; }
 
     /// <summary>
     ///     Gets or sets the URL of the project.
     /// </summary>
     /// <value>The URL of the project.</value>
+    /// <remarks>Superseded by <see cref="Link" />, which is the only thing read.</remarks>
     public string? RemoteUrl { get; set; }
 
     /// <summary>

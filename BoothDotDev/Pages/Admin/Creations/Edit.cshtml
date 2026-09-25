@@ -114,6 +114,11 @@
 
     </form>
 
+    @if (Model.Links is { } links)
+    {
+        <partial name="Partials/_LinkManager" model="links" />
+    }
+
     @if (Model.Media is { } media)
     {
         <partial name="Partials/_MediaManager" model="media" />

@@ -1,0 +1,56 @@
+.link-manager {
+  .link-row {
+    align-items: center;
+  }
+
+  .link-row-glyph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    color: var(--text-muted);
+    font-size: 20px;
+  }
+
+  .link-edit,
+  .link-add {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .link-edit {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .link-add {
+    margin-top: 16px;
+  }
+
+  .link-edit-kind {
+    flex: 0 0 150px;
+  }
+
+  .link-edit-label {
+    flex: 1 1 140px;
+  }
+
+  .link-edit-url {
+    flex: 3 1 220px;
+  }
+
+  .field {
+    min-width: 0;
+  }
+
+  .link-row .field :is(input, select):not(:focus) {
+    background: var(--bg);
+  }
+
+  .row-actions {
+    flex-shrink: 0;
+  }
+}

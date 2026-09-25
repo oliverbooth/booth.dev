@@ -636,8 +636,6 @@ public sealed class ProjectService
         project.Details = request.Details;
         project.Languages = request.Languages;
         project.Rank = request.Rank;
-        project.RemoteUrl = request.RemoteUrl;
-        project.RemoteTarget = request.RemoteTarget;
         project.Status = request.Status;
         project.Type = request.Type;
         project.CreatedAt = request.CreatedAt.ToUniversalTime();

@@ -19,6 +19,7 @@ using Project = Project;
 [Authorize(Policy = "Admin")]
 public sealed class Edit : PageModel
 {
+    private readonly LinkService _linkService;
     private readonly MediaService _mediaService;
     private readonly ProjectService _projectService;
 
@@ -27,10 +28,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <param name="projectService">The project service.</param>
     /// <param name="mediaService">The <see cref="MediaService" />.</param>
-    public Edit(ProjectService projectService, MediaService mediaService)
+    /// <param name="linkService">The <see cref="LinkService" />.</param>
+    public Edit(ProjectService projectService, MediaService mediaService, LinkService linkService)
     {
         _projectService = projectService;
         _mediaService = mediaService;
+        _linkService = linkService;
     }
 
     /// <summary>
@@ -57,6 +60,12 @@ public sealed class Edit : PageModel
     /// </summary>
     /// <value>The media manager, or <see langword="null" /> if a new project is being created.</value>
     public MediaManager? Media { get; private set; }
+
+    /// <summary>
+    ///     Gets what the link manager shows: the project's links.
+    /// </summary>
+    /// <value>The link manager, or <see langword="null" /> if a new project is being created.</value>
+    public LinkManager? Links { get; private set; }
 
     /// <summary>
     ///     Gets the project's non-trashed devlog entries, newest-published first.
@@ -158,8 +167,6 @@ public sealed class Edit : PageModel
             Details = project.Details,
             Languages = string.Join(", ", project.Languages),
             Rank = project.Rank,
-            RemoteUrl = project.RemoteUrl,
-            RemoteTarget = project.RemoteTarget,
             Status = project.Status,
             Type = project.Type,
             CreatedAt = project.CreatedAt.ToLocalTime()
@@ -170,7 +177,15 @@ public sealed class Edit : PageModel
             OwnerId = project.Id,
             Items = _mediaService.GetMedia(MediaOwner.For(project)),
             ReturnUrl = Url.Page("/Admin/Projects/Edit", new { id = project.Id })!,
-            Errors = TempData[MediaHandler.ErrorsKey] as string
+            Errors = TempData[MediaHandler.MediaErrorsKey] as string
+        };
+
+        Links = new LinkManager
+        {
+            OwnerId = project.Id,
+            Items = _linkService.GetLinks(project.Id),
+            ReturnUrl = Url.Page("/Admin/Projects/Edit", new { id = project.Id })!,
+            Errors = TempData[LinksHandler.LinkErrorsKey] as string
         };
     }
 
@@ -192,8 +207,6 @@ public sealed class Edit : PageModel
             Input.Details,
             languages,
             Input.Rank,
-            Input.RemoteUrl,
-            Input.RemoteTarget,
             Input.Status,
             Input.Type,
             Input.CreatedAt);
@@ -266,18 +279,6 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The rank.</value>
         public int Rank { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the URL of the project.
-        /// </summary>
-        /// <value>The URL, or <see langword="null" /> if it has none.</value>
-        public string? RemoteUrl { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the host of the project.
-        /// </summary>
-        /// <value>The host, or <see langword="null" /> if it has none.</value>
-        public string? RemoteTarget { get; set; }
 
         /// <summary>
         ///     Gets or sets the status of the project.

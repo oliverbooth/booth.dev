@@ -89,17 +89,6 @@
             <p class="hint">Comma-separated. Matches the icon filenames under <code>img/lang/</code>.</p>
         </div>
 
-        <div class="field-row">
-            <div class="field">
-                <label for="remote-target">Host</label>
-                <input type="text" id="remote-target" asp-for="Input.RemoteTarget" placeholder="e.g. GitHub, GitLab, Itch.io, PlayStore" />
-            </div>
-            <div class="field">
-                <label for="remote-url">URL</label>
-                <input type="url" id="remote-url" asp-for="Input.RemoteUrl" />
-            </div>
-        </div>
-
         <div class="field">
             <label for="date">Created date</label>
             <div class="input-with-button">
@@ -116,6 +105,11 @@
         </div>
 
     </form>
+
+    @if (Model.Links is { } links)
+    {
+        <partial name="Partials/_LinkManager" model="links" />
+    }
 
     @if (Model.Media is { } media)
     {

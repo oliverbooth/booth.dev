@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BoothDotDev.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260925133628_AddLinks")]
+    partial class AddLinks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +28,7 @@ namespace BoothDotDev.Data.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "book_state", new[] { "read", "reading", "plan_to_read" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "creation_kind", new[] { "drawing", "three_d", "music" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "font_style", new[] { "sans_serif", "serif" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "link_kind", new[] { "github", "gitlab", "itch", "play_store", "steam", "youtube", "discord", "deviantart", "behance", "soundcloud", "documentation", "website", "other", "gamejolt" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "link_kind", new[] { "github", "gitlab", "itch", "play_store", "steam", "youtube", "discord", "deviantart", "behance", "soundcloud", "documentation", "website", "other" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "palette_hue", new[] { "brand", "grape", "pink", "tangerine", "sun", "mint", "sky" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "project_status", new[] { "ongoing", "hiatus", "past", "retired" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "public", "project_type", new[] { "app", "game", "library", "tool", "website" });
