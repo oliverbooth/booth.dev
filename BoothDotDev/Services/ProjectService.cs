@@ -347,6 +347,12 @@ public sealed class ProjectService
             return Result.Fail($"The slug '{request.Slug}' is already used by a creation.");
         }
 
+        var moveResult = _cdnMediaService.MoveDate(id, project.CreatedAt, request.CreatedAt.ToUniversalTime(), ProjectArea);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<Project>();
+        }
+
         ApplyProjectRequest(project, request);
         context.SaveChanges();
 

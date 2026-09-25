@@ -83,8 +83,14 @@ public sealed record PortfolioItem
     /// <summary>
     ///     Gets or initializes the text of the pill shown on the item.
     /// </summary>
-    /// <value>The name of the kind of work, such as <c>code</c> or <c>music</c>.</value>
+    /// <value>What the work is, such as <c>game</c>, <c>library</c>, or <c>music</c>.</value>
     public required string Label { get; init; }
+
+    /// <summary>
+    ///     Gets or initializes the key the portfolio's filter pills match the item against.
+    /// </summary>
+    /// <value>The kind of work, such as <c>code</c> or <c>music</c>, which every project shares whatever its label.</value>
+    public required string FilterKey { get; init; }
 
     /// <summary>
     ///     Gets or initializes small labels shown along the bottom of the item, such as languages or tools.

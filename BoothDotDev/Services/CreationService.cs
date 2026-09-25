@@ -144,6 +144,12 @@ public sealed class CreationService
             return slugResult.ToResult<Creation>();
         }
 
+        var moveResult = _cdnMediaService.MoveDate(id, item.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<Creation>();
+        }
+
         ApplyRequest(item, request, slugResult.Value);
         dbContext.SaveChanges();
 

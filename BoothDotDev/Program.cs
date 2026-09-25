@@ -6,6 +6,7 @@ using Fido2NetLib;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -121,6 +122,8 @@ builder.Services.AddSingleton<IFido2>(services =>
 });
 builder.Services.AddMemoryCache();
 
+// [RequestSizeLimit] lifts Kestrel's body cap on the upload pages, but parsing a multipart form has its own 128 MB cap
+builder.Services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = CdnUploadPolicy.MaxUploadSizeBytes);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 

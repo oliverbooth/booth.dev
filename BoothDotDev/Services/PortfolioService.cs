@@ -20,6 +20,7 @@ public sealed class PortfolioService
     private const int WaveformBarCount = 18;
 
     private const string ItemPagePath = "/Portfolio/Item";
+    private const string CodeFilterKey = "code";
 
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly MediaService _mediaService;
@@ -90,8 +91,8 @@ public sealed class PortfolioService
             .Where(p => !dbContext.PortfolioEntries.Any(e => e.ProjectId == p.Id))
             .OrderBy(p => p.Name)
             .AsEnumerable()
-            .Select(p => new PortfolioAdminItem(p.Id, null, p.Name, PortfolioItemKind.Project, PaletteHue.Sky, "code", false,
-                null));
+            .Select(p => new PortfolioAdminItem(p.Id, null, p.Name, PortfolioItemKind.Project, PaletteHue.Sky, p.Type.Label,
+                false, null));
 
         var unlistedCreations = dbContext.Creations
             .Where(c => c.TrashedAt == null && !dbContext.PortfolioEntries.Any(e => e.CreationId == c.Id))
@@ -270,7 +271,7 @@ public sealed class PortfolioService
         if (entry.Project is { } project)
         {
             return new PortfolioAdminItem(project.Id, entry.Id, project.Name, PortfolioItemKind.Project, PaletteHue.Sky,
-                "code", entry.FeaturedPosition is not null, null);
+                project.Type.Label, entry.FeaturedPosition is not null, null);
         }
 
         var creation = entry.Creation!;
@@ -316,7 +317,8 @@ public sealed class PortfolioService
             PagePath = ItemPagePath,
             RouteValues = new Dictionary<string, string> { ["slug"] = project.Slug },
             Hue = PaletteHue.Sky,
-            Label = "code",
+            Label = project.Type.Label,
+            FilterKey = CodeFilterKey,
             Tags = project.Languages,
             Status = project.Status
         };
@@ -339,6 +341,7 @@ public sealed class PortfolioService
             RouteValues = new Dictionary<string, string> { ["slug"] = creation.Slug },
             Hue = hue,
             Label = label,
+            FilterKey = label,
             Tags = creation.Tools,
             IsWorkInProgress = creation.IsWorkInProgress,
             WaveformBars = creation.IsMusic ? SeededBars(creation.Id) : []

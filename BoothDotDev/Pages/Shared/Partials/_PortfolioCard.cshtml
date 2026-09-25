@@ -3,7 +3,7 @@
 @model BoothDotDev.Data.PortfolioItem
 
 <a asp-page="@Model.PagePath" asp-all-route-data="@Model.RouteValues" class="portfolio-card" data-hue="@Model.Hue.ToDataHue()"
-   data-state="@Model.Label">
+   data-state="@Model.FilterKey">
     <div class="portfolio-card-top">
         <span class="badge">@Model.Label</span>
         @if (Model.Status is { } status)
