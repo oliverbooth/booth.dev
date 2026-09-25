@@ -77,8 +77,10 @@
                             <input type="hidden" name="ownerId" value="@Model.OwnerId">
                             <input type="hidden" name="mediaId" value="@item.Id">
                             <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
-                            <input type="text" name="alt" value="@item.Alt" maxlength="1000" placeholder="Alt text"
-                                   aria-label="Alt text for @item.FileName">
+                            <div class="field">
+                                <input type="text" name="alt" value="@item.Alt" maxlength="1000" placeholder="Alt text"
+                                       aria-label="Alt text for @item.FileName">
+                            </div>
                             <button type="submit" class="icon-btn">save</button>
                         </form>
                     </div>

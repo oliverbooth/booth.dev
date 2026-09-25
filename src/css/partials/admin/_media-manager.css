@@ -12,7 +12,7 @@
     height: 64px;
     overflow: hidden;
     border-radius: var(--radius);
-    background: var(--surface-2, var(--bg));
+    background: var(--bg);
     color: var(--text-faint);
     font-size: 24px;
 
@@ -33,11 +33,16 @@
 
   .media-alt {
     display: flex;
+    align-items: center;
     gap: 8px;
 
-    input {
+    .field {
       flex: 1;
       min-width: 0;
+
+      input:not(:focus) {
+        background: var(--bg);
+      }
     }
   }
 
