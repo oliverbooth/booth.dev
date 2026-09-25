@@ -108,7 +108,7 @@
                     <i class="ti ti-clock"></i>
                 </button>
             </div>
-            <p class="hint">Only used to organise the hero image's CDN path - not shown publicly.</p>
+            <p class="hint">Only used to organise the project's media on the CDN - not shown publicly.</p>
         </div>
 
         <div class="form-actions">
@@ -117,33 +117,19 @@
 
     </form>
 
-    <section class="admin-media" id="hero-media" style="margin-top:2rem">
-        <div class="admin-header">
-            <div><h2>Hero image</h2></div>
-        </div>
-
-        @if (Model.CreatingNew)
-        {
-            <p class="hint">Save this project before uploading a hero image.</p>
-        }
-        else
-        {
-            @if (Model.HeroUrl is { } heroUrl)
-            {
-                <img src="@heroUrl" alt="" style="max-width:320px;border-radius:8px;margin-bottom:12px;display:block">
-            }
-            else
-            {
-                <p class="hint">No hero image uploaded yet.</p>
-            }
-
-            <p class="hint" id="hero-error" hidden></p>
-            <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile" asp-route-id="@Model.ProjectId">
-                <input type="file" name="file" accept="image/*" />
-                <button type="submit" class="btn btn-primary"><i class="ti ti-upload"></i> Upload</button>
-            </form>
-        }
-    </section>
+    @if (Model.Media is { } media)
+    {
+        <partial name="Partials/_MediaManager" model="media" />
+    }
+    else
+    {
+        <section class="admin-media" style="margin-top:2rem">
+            <div class="admin-header">
+                <div><h2>Media</h2></div>
+            </div>
+            <p class="hint">Save this project before uploading media.</p>
+        </section>
+    }
 
     <section class="admin-devlogs" id="project-devlogs" style="margin-top:2rem">
         <div class="admin-header">

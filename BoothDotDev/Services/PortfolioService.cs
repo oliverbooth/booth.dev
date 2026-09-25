@@ -1,10 +1,7 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
-using BoothDotDev.Markdown;
-using BoothDotDev.Markdown.Link;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace BoothDotDev.Services;
 
@@ -26,24 +23,18 @@ public sealed class PortfolioService
     /// </summary>
     private const string CreationPagePath = "/Portfolio/Index";
 
-    private readonly string _cdnBaseUrl;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
-    private readonly ProjectService _projectService;
+    private readonly MediaService _mediaService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="PortfolioService" /> class.
     /// </summary>
     /// <param name="dbContextFactory">The database context factory.</param>
-    /// <param name="projectService">The <see cref="ProjectService" />.</param>
-    /// <param name="cdnOptions">The CDN options.</param>
-    public PortfolioService(
-        IDbContextFactory<AppDbContext> dbContextFactory,
-        ProjectService projectService,
-        IOptions<CdnOptions> cdnOptions)
+    /// <param name="mediaService">The <see cref="MediaService" />.</param>
+    public PortfolioService(IDbContextFactory<AppDbContext> dbContextFactory, MediaService mediaService)
     {
         _dbContextFactory = dbContextFactory;
-        _projectService = projectService;
-        _cdnBaseUrl = cdnOptions.Value.BaseUrl;
+        _mediaService = mediaService;
     }
 
     /// <summary>
@@ -53,7 +44,7 @@ public sealed class PortfolioService
     public IReadOnlyList<PortfolioItem> GetAll()
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        return [.. ShownEntries(dbContext).OrderBy(e => e.Position).AsEnumerable().Select(ToItem)];
+        return ToItems([.. ShownEntries(dbContext).OrderBy(e => e.Position)]);
     }
 
     /// <summary>
@@ -81,7 +72,7 @@ public sealed class PortfolioService
             featured = [.. ShownEntries(dbContext).OrderBy(e => e.Position).Take(count)];
         }
 
-        return [.. featured.Select(ToItem)];
+        return ToItems(featured);
     }
 
     /// <summary>
@@ -94,13 +85,15 @@ public sealed class PortfolioService
 
         PortfolioEntry[] entries = [.. WithTargets(dbContext).OrderBy(e => e.Position)];
         PortfolioAdminItem[] listed = [.. entries.Select(ToAdminItem)];
-        PortfolioAdminItem[] featured = [.. entries.Where(e => e.FeaturedPosition != null).OrderBy(e => e.FeaturedPosition).Select(ToAdminItem)];
+        PortfolioAdminItem[] featured =
+            [.. entries.Where(e => e.FeaturedPosition != null).OrderBy(e => e.FeaturedPosition).Select(ToAdminItem)];
 
         var unlistedProjects = dbContext.Projects
             .Where(p => !dbContext.PortfolioEntries.Any(e => e.ProjectId == p.Id))
             .OrderBy(p => p.Name)
             .AsEnumerable()
-            .Select(p => new PortfolioAdminItem(p.Id, null, p.Name, PortfolioItemKind.Project, PaletteHue.Sky, "code", false, null));
+            .Select(p => new PortfolioAdminItem(p.Id, null, p.Name, PortfolioItemKind.Project, PaletteHue.Sky, "code", false,
+                null));
 
         var unlistedCreations = dbContext.Creations
             .Where(c => c.TrashedAt == null && !dbContext.PortfolioEntries.Any(e => e.CreationId == c.Id))
@@ -138,9 +131,7 @@ public sealed class PortfolioService
         var position = dbContext.PortfolioEntries.Select(e => (int?)e.Position).Max() + 1 ?? 0;
         dbContext.PortfolioEntries.Add(new PortfolioEntry
         {
-            Position = position,
-            ProjectId = isProject ? itemId : null,
-            CreationId = isProject ? null : itemId
+            Position = position, ProjectId = isProject ? itemId : null, CreationId = isProject ? null : itemId
         });
         dbContext.SaveChanges();
 
@@ -300,19 +291,36 @@ public sealed class PortfolioService
             entry.FeaturedPosition is not null, hiddenReason);
     }
 
-    private PortfolioItem ToItem(PortfolioEntry entry)
+    private IReadOnlyList<PortfolioItem> ToItems(IReadOnlyList<PortfolioEntry> entries)
     {
-        return entry.Project is { } project ? ToItem(project) : ToItem(entry.Creation!);
+        var media = _mediaService.GetMedia([
+            .. entries.Select(e => e.Project is { } project ? MediaOwner.For(project) : MediaOwner.For(e.Creation!))
+        ]);
+
+        return
+        [
+            .. entries.Select(e => e.Project is { } project
+                ? ToItem(project, FilesOf(media, project.Id))
+                : ToItem(e.Creation!, FilesOf(media, e.Creation!.Id)))
+        ];
     }
 
-    private PortfolioItem ToItem(Project project)
+    private static IReadOnlyList<MediaItem> FilesOf(IReadOnlyDictionary<Guid, IReadOnlyList<MediaItem>> media, Guid ownerId)
     {
+        return media.TryGetValue(ownerId, out var files) ? files : [];
+    }
+
+    private static PortfolioItem ToItem(Project project, IReadOnlyList<MediaItem> files)
+    {
+        var cover = files.FirstOrDefault(f => f.IsCover);
+
         return new PortfolioItem
         {
             Kind = PortfolioItemKind.Project,
             Title = project.Name,
             Description = Markdig.Markdown.ToPlainText(project.Description),
-            ImageUrl = _projectService.GetHeroUrl(project),
+            ImageUrl = cover?.Url,
+            ImageAlt = cover?.Alt,
             PagePath = "/Portfolio/Project",
             RouteValues = new Dictionary<string, string> { ["slug"] = project.Slug },
             Hue = PaletteHue.Sky,
@@ -322,12 +330,12 @@ public sealed class PortfolioService
         };
     }
 
-    private PortfolioItem ToItem(Creation creation)
+    private static PortfolioItem ToItem(Creation creation, IReadOnlyList<MediaItem> files)
     {
-        var resolver = new CdnMediaResolver(new MarkdownRenderContext(creation.Id, creation.PublishedAt), null!, "content",
-            _cdnBaseUrl);
-
         var (kind, hue, label) = Describe(creation);
+
+        var cover = creation.IsMusic ? null : files.FirstOrDefault(f => f.IsCover);
+        var track = creation.IsMusic ? files.FirstOrDefault(f => f.Kind == MediaKind.Audio) : null;
 
         return new PortfolioItem
         {
@@ -337,9 +345,10 @@ public sealed class PortfolioService
             Title = creation.Title,
             Description = PlainText(creation.Description),
             DescriptionMarkdown = creation.Description,
-            ImageUrl = creation.IsMusic ? null : resolver.ResolveCdnUrl(creation.FileName, MediaKind.Image),
-            AudioUrl = creation.IsMusic ? resolver.ResolveCdnUrl(creation.FileName, MediaKind.Audio) : null,
-            Duration = creation.Duration,
+            ImageUrl = cover?.Url,
+            ImageAlt = cover?.Alt,
+            AudioUrl = track?.Url,
+            Duration = track?.Duration,
             PagePath = CreationPagePath,
             Hue = hue,
             Label = label,

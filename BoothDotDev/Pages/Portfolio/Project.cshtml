@@ -8,6 +8,7 @@
 @model Project
 @inject MarkdownPipeline MarkdownPipeline
 @inject ProjectService ProjectService
+@inject MediaService MediaService
 
 @{
     var project = Model.SelectedProject;
@@ -92,9 +93,47 @@
         <a href="@project.RemoteUrl" class="btn btn-primary"><i class="ti ti-@icon"></i> @linkText</a>
     </div>
 
-    <div class="project-frame">
-        <img src="@ProjectService.GetHeroUrl(project)" alt="@project.Name">
+    @{
+        var files = MediaService.GetMedia(MediaOwner.For(project));
+        var cover = files.FirstOrDefault(f => f.IsCover);
+        var otherFiles = files.Where(f => !f.IsCover).ToList();
+    }
+
+    <div class="project-frame" data-hue="sky">
+        @if (cover is not null)
+        {
+            <img src="@cover.Url" alt="@(cover.Alt ?? project.Name)">
+        }
+        else
+        {
+            <div class="media-placeholder" aria-hidden="true"></div>
+        }
     </div>
+
+    @if (otherFiles.Count > 0)
+    {
+        <section class="media-gallery" aria-label="Media">
+            @foreach (var file in otherFiles)
+            {
+                <figure>
+                    @switch (file.Kind)
+                    {
+                        case MediaKind.Image:
+                            <img src="@file.Url" alt="@(file.Alt ?? "")" loading="lazy" data-lightbox data-lightbox-src="@file.Url">
+                            break;
+
+                        case MediaKind.Video:
+                            <video controls preload="metadata" src="@file.Url" aria-label="@file.Alt"></video>
+                            break;
+
+                        default:
+                            <audio controls preload="none" src="@file.Url" aria-label="@(file.Alt ?? file.FileName)"></audio>
+                            break;
+                    }
+                </figure>
+            }
+        </section>
+    }
 
     <dl class="project-facts">
         <div>

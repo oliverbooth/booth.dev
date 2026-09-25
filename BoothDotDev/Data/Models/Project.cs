@@ -25,9 +25,10 @@ public sealed class Project : IEquatable<Project>
     public string Details { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Gets or sets the URL of the hero image.
+    ///     Gets or sets the file name of the hero image.
     /// </summary>
-    /// <value>The URL of the hero image.</value>
+    /// <value>The file name of the hero image.</value>
+    /// <remarks>Superseded by <see cref="Media" />, which is the only thing read.</remarks>
     public string HeroUrl { get; set; } = string.Empty;
 
     /// <summary>

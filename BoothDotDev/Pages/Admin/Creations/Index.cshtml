@@ -17,9 +17,7 @@
         </div>
         <div style="display:flex;gap:8px">
             <a asp-page="/Admin/Creations/Trash" class="btn icon-btn"><i class="ti ti-trash" style="font-size:15px"></i>Trash</a>
-            <a asp-page="/Admin/Creations/Artwork/Edit" class="btn"><i class="ti ti-photo" style="font-size:15px"></i>New artwork</a>
-            <a asp-page="/Admin/Creations/Music/Edit" class="btn btn-primary"><i class="ti ti-music" style="font-size:15px"></i>New
-                music</a>
+            <a asp-page="/Admin/Creations/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New creation</a>
         </div>
     </div>
 
@@ -40,8 +38,6 @@
                     Visibility.Private => "private",
                     _ => "unlisted"
                 };
-                var isMusic = creation.Kind == CreationKind.Music;
-                var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
                 var kindLabel = creation.Kind switch
                 {
                     CreationKind.Drawing => "Drawing",
@@ -76,7 +72,7 @@
                     <span class="row-meta"><abbr
                             title="@creation.PublishedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.PublishedAt.Humanize()</abbr></span>
                     <div class="row-actions">
-                        <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn">edit</a>
+                        <a asp-page="/Admin/Creations/Edit" asp-route-id="@creation.Id" class="icon-btn">edit</a>
                         <form method="post" asp-page-handler="Delete" asp-route-id="@creation.Id">
                             <button type="submit" class="icon-btn danger">delete</button>
                         </form>

@@ -75,6 +75,7 @@ builder.Services.AddSingleton<CodeSnippetService>();
 builder.Services.AddSingleton<CreationService>();
 builder.Services.AddSingleton<DevChallengeService>();
 builder.Services.AddSingleton<MarkdownRenderingService>();
+builder.Services.AddSingleton<MediaService>();
 builder.Services.AddSingleton<NoteService>();
 builder.Services.AddSingleton<OgImageService>();
 builder.Services.AddSingleton<PortfolioService>();

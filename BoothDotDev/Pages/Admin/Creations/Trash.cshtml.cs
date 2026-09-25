@@ -36,7 +36,7 @@ public sealed class Trash : PageModel
     {
         Creations =
         [
-            .._creationService.GetTrashedCreations()
+            .. _creationService.GetTrashedCreations()
                 .Select(c => new TrashedCreationListItem(c.Id, c.Title, c.Kind, c.Visibility, c.TrashedAt!.Value))
         ];
     }

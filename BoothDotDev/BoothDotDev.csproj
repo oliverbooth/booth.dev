@@ -96,4 +96,9 @@
         <InternalsVisibleTo Include="BoothDotDev.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Pages\Admin\Creations\Artwork\Edit.cshtml" />
+        <_ContentIncludedByDefault Remove="Pages\Admin\Creations\Music\Edit.cshtml" />
+    </ItemGroup>
+
 </Project>

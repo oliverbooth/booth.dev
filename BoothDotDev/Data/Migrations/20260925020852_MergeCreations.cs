@@ -65,8 +65,7 @@ namespace BoothDotDev.Data.Migrations
                 table: "creation",
                 column: "trashed_at");
 
-            // IDs and published dates are kept as they are, since a creation's CDN path is derived from both
-            // there was no way to tell a render from a drawing, so the only 3D tool used so far decides it
+            // nothing recorded whether artwork was a render or a drawing, so Blender, the only 3D tool used so far, decides
             migrationBuilder.Sql("""
                 INSERT INTO public.creation (id, kind, file_name, title, description, published_at, trashed_at, visibility,
                                              is_work_in_progress, made_with, resolution, duration)

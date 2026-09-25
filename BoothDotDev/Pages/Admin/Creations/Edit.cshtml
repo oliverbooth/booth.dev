@@ -1,4 +1,4 @@
-@page "/admin/creations/music/edit/{id:guid?}"
+@page "/admin/creations/edit/{id:guid?}"
 @using BoothDotDev.Data
 @model Edit
 
@@ -25,7 +25,7 @@
         }
 
         <div class="admin-header">
-            <div><h1>@(Model.CreatingNew ? "New music" : Model.Input.Title)</h1></div>
+            <div><h1>@(Model.CreatingNew ? "New creation" : Model.Input.Title)</h1></div>
             <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-device-floppy"></i> Save changes</button>
         </div>
 
@@ -41,6 +41,14 @@
 
         <div class="field-row">
             <div class="field">
+                <label asp-for="Input.Kind">Kind</label>
+                <select asp-for="Input.Kind">
+                    <option value="@CreationKind.Drawing">Drawing</option>
+                    <option value="@CreationKind.ThreeD">3D</option>
+                    <option value="@CreationKind.Music">Music</option>
+                </select>
+            </div>
+            <div class="field">
                 <label asp-for="Input.Visibility">Visibility</label>
                 <select asp-for="Input.Visibility">
                     @{
@@ -51,7 +59,6 @@
                         }
                     }
                 </select>
-                <p class="hint">New tracks default to Private &mdash; publish when you're ready.</p>
             </div>
             <div class="field">
                 <label for="date">Published date</label>
@@ -66,7 +73,7 @@
 
         <div class="field">
             <label for="made-with">Made with</label>
-            <input type="text" id="made-with" asp-for="Input.MadeWith" placeholder="e.g. Ableton, a guitar" />
+            <input type="text" id="made-with" asp-for="Input.MadeWith" placeholder="e.g. Blender, Krita" />
         </div>
 
         <div class="field">
@@ -100,34 +107,18 @@
 
     </form>
 
-    <section class="admin-media" id="music-file" style="margin-top:2rem">
-        <div class="admin-header">
-            <div><h2>Audio file</h2></div>
-        </div>
-
-        @if (Model.CreatingNew)
-        {
-            <p class="hint">Save this item before uploading its audio file.</p>
-        }
-        else
-        {
-            @if (Model.FileUrl is not null)
-            {
-                <p class="hint">Currently: <code>@Model.DurationDisplay</code></p>
-                <audio controls src="@Model.FileUrl" style="display:block;margin-bottom:12px;width:100%;max-width:420px"></audio>
-            }
-            else
-            {
-                <p class="hint">No audio file uploaded yet.</p>
-            }
-
-            <form method="post" asp-page-handler="UploadFile" asp-route-id="@Model.ItemId" enctype="multipart/form-data">
-                <div class="field">
-                    <input type="file" name="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/flac" required />
-                </div>
-                <button type="submit" class="btn btn-primary"><i class="ti ti-upload"></i> Upload</button>
-            </form>
-        }
-    </section>
+    @if (Model.Media is { } media)
+    {
+        <partial name="Partials/_MediaManager" model="media" />
+    }
+    else
+    {
+        <section class="admin-media" style="margin-top:2rem">
+            <div class="admin-header">
+                <div><h2>Media</h2></div>
+            </div>
+            <p class="hint">Save this creation before uploading media.</p>
+        </section>
+    }
 
 </div>

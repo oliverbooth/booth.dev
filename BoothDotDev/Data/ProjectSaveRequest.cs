@@ -8,7 +8,6 @@ namespace BoothDotDev.Data;
 /// <param name="Tagline">The tagline of the project, if it has one.</param>
 /// <param name="Description">The description of the project.</param>
 /// <param name="Details">The details of the project.</param>
-/// <param name="HeroUrl">The bare filename of the project's hero image.</param>
 /// <param name="Languages">The set of languages used for this project.</param>
 /// <param name="Rank">The rank of the project.</param>
 /// <param name="RemoteUrl">The URL of the project, if it has one.</param>
@@ -22,7 +21,6 @@ public sealed record ProjectSaveRequest(
     string? Tagline,
     string Description,
     string Details,
-    string HeroUrl,
     List<string> Languages,
     int Rank,
     string? RemoteUrl,

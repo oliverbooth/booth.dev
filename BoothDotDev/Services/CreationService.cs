@@ -204,8 +204,5 @@ public sealed class CreationService
         item.Visibility = request.Visibility;
         item.IsWorkInProgress = request.IsWorkInProgress;
         item.MadeWith = request.MadeWith;
-        item.FileName = request.FileName;
-        item.Resolution = request.Resolution;
-        item.Duration = request.Duration;
     }
 }

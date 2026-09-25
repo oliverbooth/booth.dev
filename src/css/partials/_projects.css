@@ -50,6 +50,44 @@
     max-height: 420px;
     object-fit: cover;
   }
+
+  .media-placeholder {
+    aspect-ratio: 16 / 6;
+    background-image: repeating-linear-gradient(
+      50deg,
+      color-mix(in oklch, var(--solid) 16%, transparent) 0 9px,
+      color-mix(in oklch, var(--solid) 8%, transparent) 9px 18px
+    );
+  }
+}
+
+.media-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 1.5rem;
+
+  figure {
+    margin: 0;
+  }
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card-soft);
+    object-fit: cover;
+  }
+
+  img[data-lightbox] {
+    cursor: pointer;
+  }
+
+  audio {
+    width: 100%;
+  }
 }
 
 .project-facts {

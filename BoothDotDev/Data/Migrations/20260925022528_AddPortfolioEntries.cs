@@ -56,9 +56,6 @@ namespace BoothDotDev.Data.Migrations
                 column: "project_id",
                 unique: true);
 
-            // list everything the portfolio page shows today, in the order it shows it (creations newest first, then projects
-            // by status, rank and name), and feature what the home page shows today (the two newest creations, then projects
-            // up to six in all)
             migrationBuilder.Sql("""
                 WITH shown_creations AS (
                     SELECT id, row_number() OVER (ORDER BY published_at DESC) - 1 AS n

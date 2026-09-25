@@ -1,0 +1,55 @@
+.media-manager {
+  .media-row {
+    align-items: flex-start;
+  }
+
+  .media-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 96px;
+    height: 64px;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--surface-2, var(--bg));
+    color: var(--text-faint);
+    font-size: 24px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .media-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .media-alt {
+    display: flex;
+    gap: 8px;
+
+    input {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .row-actions {
+    flex-shrink: 0;
+  }
+
+  .media-upload {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+}

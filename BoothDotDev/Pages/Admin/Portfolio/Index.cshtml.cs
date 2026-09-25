@@ -34,7 +34,10 @@ public sealed class Index : PageModel
     ///     Gets the number of featured items the home page shows.
     /// </summary>
     /// <value>The featured limit.</value>
-    public int FeaturedLimit => PortfolioService.FeaturedLimit;
+    public int FeaturedLimit
+    {
+        get => PortfolioService.FeaturedLimit;
+    }
 
     /// <summary>
     ///     Handles the GET request.

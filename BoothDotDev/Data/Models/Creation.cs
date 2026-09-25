@@ -23,12 +23,16 @@ public sealed class Creation
     ///     Gets a value indicating whether the creation is a piece of music.
     /// </summary>
     /// <value><see langword="true" /> if the creation is music; otherwise, <see langword="false" />.</value>
-    public bool IsMusic => Kind == CreationKind.Music;
+    public bool IsMusic
+    {
+        get => Kind == CreationKind.Music;
+    }
 
     /// <summary>
     ///     Gets or sets the file name of the creation.
     /// </summary>
     /// <value>The file name.</value>
+    /// <remarks>Superseded by <see cref="Media" />, which is the only thing read.</remarks>
     public string FileName { get; set; } = string.Empty;
 
     /// <summary>
@@ -79,11 +83,13 @@ public sealed class Creation
     ///     Gets or sets the pixel resolution of the creation's image.
     /// </summary>
     /// <value>The resolution, or <see langword="null" /> if the creation is music.</value>
+    /// <remarks>Superseded by <see cref="Media" />. See <see cref="FileName" />.</remarks>
     public Size? Resolution { get; set; }
 
     /// <summary>
     ///     Gets or sets the duration of the creation's audio.
     /// </summary>
     /// <value>The duration, or <see langword="null" /> if the creation is not music.</value>
+    /// <remarks>Superseded by <see cref="Media" />. See <see cref="FileName" />.</remarks>
     public TimeSpan? Duration { get; set; }
 }

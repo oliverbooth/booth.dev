@@ -1,5 +1,4 @@
 @page "/admin/portfolio"
-@using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @model Index
 
@@ -63,7 +62,9 @@
 
             <div class="table-toolbar" data-reorder-save hidden>
                 <p class="hint">Order changed - it isn't saved yet.</p>
-                <button type="submit" form="reorder-featured-form" class="btn btn-primary"><i class="ti ti-device-floppy"></i>Save order</button>
+                <button type="submit" form="reorder-featured-form" class="btn btn-primary">
+                    <i class="ti ti-device-floppy"></i>Save order
+                </button>
             </div>
         }
     </section>

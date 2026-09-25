@@ -75,6 +75,12 @@ public sealed record PortfolioItem
     public string? ImageUrl { get; init; }
 
     /// <summary>
+    ///     Gets or initializes the alternative text of the item's image.
+    /// </summary>
+    /// <value>The alternative text, or <see langword="null" /> if the item has none.</value>
+    public string? ImageAlt { get; init; }
+
+    /// <summary>
     ///     Gets or initializes the URL of the item's audio file.
     /// </summary>
     /// <value>The audio URL, or <see langword="null" /> if the item is not music.</value>

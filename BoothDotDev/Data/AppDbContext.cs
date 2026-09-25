@@ -118,6 +118,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of files belonging to projects and creations in the database.
+    /// </summary>
+    /// <value>The collection of media.</value>
+    public DbSet<Media> Media
+    {
+        get => Set<Media>();
+    }
+
+    /// <summary>
     ///     Gets the collection of notes in the database.
     /// </summary>
     /// <value>The collection of notes.</value>
@@ -258,6 +267,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new DevChallengeConfiguration());
         modelBuilder.ApplyConfiguration(new DevChallengeDraftConfiguration());
         modelBuilder.ApplyConfiguration(new LegacyCommentConfiguration());
+        modelBuilder.ApplyConfiguration(new MediaConfiguration());
         modelBuilder.ApplyConfiguration(new NoteConfiguration());
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());

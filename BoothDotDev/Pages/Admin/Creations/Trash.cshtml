@@ -57,8 +57,6 @@
                         Visibility.Private => "private",
                         _ => "unlisted"
                     };
-                    var isMusic = creation.Kind == CreationKind.Music;
-                    var editPage = isMusic ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit";
                     var kindLabel = creation.Kind switch
                     {
                         CreationKind.Drawing => "Drawing",
@@ -95,7 +93,7 @@
                         <span class="row-meta"><abbr
                                 title="@creation.TrashedAt.ToString("yyyy-MM-dd HH:mm:ss")">@creation.TrashedAt.Humanize()</abbr></span>
                         <div class="row-actions">
-                            <a asp-page="@editPage" asp-route-id="@creation.Id" class="icon-btn">edit</a>
+                            <a asp-page="/Admin/Creations/Edit" asp-route-id="@creation.Id" class="icon-btn">edit</a>
                             <form method="post" asp-page-handler="Restore" asp-route-id="@creation.Id">
                                 <button type="submit" class="icon-btn">restore</button>
                             </form>

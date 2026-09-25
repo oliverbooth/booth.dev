@@ -36,7 +36,7 @@ public sealed class Index : PageModel
     {
         Creations =
         [
-            .._creationService.GetAllCreations()
+            .. _creationService.GetAllCreations()
                 .Select(c => new CreationListItem(c.Id, c.Title, c.Kind, c.Visibility, c.PublishedAt))
         ];
     }

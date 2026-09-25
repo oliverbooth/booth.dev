@@ -1,7 +1,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using BoothDotDev.Services
-@model PortfolioItem
+@model BoothDotDev.Data.PortfolioItem
 @inject MarkdownRenderingService MarkdownRenderingService
 
 @{
@@ -16,7 +16,8 @@
             @if (Model.Status is { } status)
             {
                 <span class="portfolio-card-status">
-                    <span class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
+                    <span
+                        class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
                 </span>
             }
             else if (Model.IsWorkInProgress || (interactive && Model.Duration is not null))
@@ -34,7 +35,7 @@
             }
             @if (isAdmin && Model.Id is { } id)
             {
-                <a asp-page="@(Model.Kind == PortfolioItemKind.Music ? "/Admin/Creations/Music/Edit" : "/Admin/Creations/Artwork/Edit")" asp-route-id="@id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
+                <a asp-page="/Admin/Creations/Edit" asp-route-id="@id" class="icon-btn" aria-label="Edit"><i class="ti ti-edit"></i></a>
             }
         </div>
 
@@ -55,7 +56,8 @@
         {
             // the caption template is looked up from the enclosing <figure>
             <figure class="portfolio-card-media">
-                <img loading="lazy" src="@Model.ImageUrl" alt="@Model.Title" title="@Model.Title" data-lightbox data-lightbox-src="@Model.ImageUrl">
+                <img loading="lazy" src="@Model.ImageUrl" alt="@(Model.ImageAlt ?? Model.Title)" title="@Model.Title" data-lightbox
+                     data-lightbox-src="@Model.ImageUrl">
                 <template data-lightbox-caption-template>
                     @if (!string.IsNullOrWhiteSpace(Model.DescriptionMarkdown))
                     {
@@ -72,7 +74,7 @@
             <div class="portfolio-card-media">
                 @if (Model.ImageUrl is not null)
                 {
-                    <img loading="lazy" src="@Model.ImageUrl" alt="@Model.Title">
+                    <img loading="lazy" src="@Model.ImageUrl" alt="@(Model.ImageAlt ?? Model.Title)">
                 }
             </div>
         }
@@ -82,6 +84,7 @@
         {
             <p class="portfolio-card-desc">@Model.Description</p>
         }
+
         @if (Model.Tags.Count > 0)
         {
             <div class="portfolio-card-tags">
@@ -96,7 +99,8 @@
 
 @if (isLink)
 {
-    <a asp-page="@Model.PagePath" asp-all-route-data="@Model.RouteValues" class="portfolio-card" data-hue="@Model.Hue.ToDataHue()" data-state="@Model.Label">
+    <a asp-page="@Model.PagePath" asp-all-route-data="@Model.RouteValues" class="portfolio-card" data-hue="@Model.Hue.ToDataHue()"
+       data-state="@Model.Label">
         @{ await CardContent(); }
     </a>
 }

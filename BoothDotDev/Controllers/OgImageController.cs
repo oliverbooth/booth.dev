@@ -25,6 +25,7 @@ public sealed class OgImageController : ControllerBase
     private readonly CreationService _creationService;
     private readonly DevChallengeService _devChallengeService;
     private readonly MarkdownRenderingService _markdownRenderingService;
+    private readonly MediaService _mediaService;
     private readonly NoteService _noteService;
     private readonly OgImageService _ogImageService;
     private readonly ProjectService _projectService;
@@ -41,8 +42,10 @@ public sealed class OgImageController : ControllerBase
         NoteService noteService,
         TutorialService tutorialService,
         ProjectService projectService,
-        CreationService creationService)
+        CreationService creationService,
+        MediaService mediaService)
     {
+        _mediaService = mediaService;
         _ogImageService = ogImageService;
         _markdownRenderingService = markdownRenderingService;
         _blogPostService = blogPostService;
@@ -180,7 +183,8 @@ public sealed class OgImageController : ControllerBase
 
         return ServeCached("project", id.ToString("N"), null, () =>
         {
-            var backdropPath = ResolveImagePath("projects", project.HeroUrl, project.CreatedAt, project.Id);
+            var backdropPath = ResolveImagePath(
+                MediaOwner.ProjectArea, _mediaService.GetCover(MediaOwner.For(project))?.FileName, project.CreatedAt, project.Id);
             return backdropPath is null
                 ? _ogImageService.RenderFlatCard("PROJECT", project.Name, description)
                 : _ogImageService.RenderPhotoCard("PROJECT", project.Name, description, backdropPath);
@@ -220,7 +224,8 @@ public sealed class OgImageController : ControllerBase
 
         return ServeCached(type, item.Id.ToString("N"), null, () =>
         {
-            var backdropPath = ResolveImagePath("content", item.FileName, item.PublishedAt, item.Id);
+            var backdropPath = ResolveImagePath(
+                MediaOwner.CreationArea, _mediaService.GetCover(MediaOwner.For(item))?.FileName, item.PublishedAt, item.Id);
             return backdropPath is null
                 ? _ogImageService.RenderFlatCard(type.ToUpperInvariant(), item.Title, description)
                 : _ogImageService.RenderPhotoCard(type.ToUpperInvariant(), item.Title, description, backdropPath);
