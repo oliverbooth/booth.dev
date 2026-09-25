@@ -7,6 +7,7 @@ services:
       dockerfile: BoothDotDev/Dockerfile
     environment:
       - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
     volumes:
       - ${LOGS_PATH}:/app/logs
       - ${DATA_PATH}:/app/data
