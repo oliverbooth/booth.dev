@@ -234,12 +234,19 @@ async Task HandleRssFeedAsync(HttpContext context, string path)
     var rssFeedService = context.RequestServices.GetRequiredService<RssFeedService>();
     var segments = path.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
 
+    // creations and projects used to have a feed each, before the portfolio brought them together; readers subscribed to
+    // those addresses are sent to the new one
+    if (segments is ["create"] or ["projects"])
+    {
+        context.Response.Redirect("/portfolio.rss", true);
+        return;
+    }
+
     var xml = segments.Length switch
     {
         1 when segments[0] == "blog" => rssFeedService.BuildBlogFeed(baseUrl),
         1 when segments[0] == "notes" => rssFeedService.BuildNotesFeed(baseUrl),
-        1 when segments[0] == "create" => rssFeedService.BuildCreationsFeed(baseUrl),
-        1 when segments[0] == "projects" => rssFeedService.BuildProjectsFeed(baseUrl),
+        1 when segments[0] == "portfolio" => rssFeedService.BuildPortfolioFeed(baseUrl),
         1 when segments[0] == "challenges" => rssFeedService.BuildChallengesFeed(baseUrl),
         1 when segments[0] == "learn" => rssFeedService.BuildTutorialFeed(baseUrl, null),
         > 1 when segments[0] == "learn" => BuildScopedTutorialFeed(context, rssFeedService, baseUrl, segments[1..]),

@@ -47,6 +47,39 @@ public sealed class PortfolioService
     }
 
     /// <summary>
+    ///     Gets every listed item that can be shown publicly as an RSS feed needs it, in portfolio order.
+    /// </summary>
+    /// <returns>The items.</returns>
+    public IReadOnlyList<PortfolioFeedItem> GetFeedItems()
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        PortfolioEntry[] entries = [.. ShownEntries(dbContext).OrderBy(e => e.Position)];
+
+        return
+        [
+            .. entries.Select(e => e.Project is { } project
+                ? new PortfolioFeedItem
+                {
+                    Id = project.Id,
+                    IsProject = true,
+                    Slug = project.Slug,
+                    Title = project.Name,
+                    Description = project.Description,
+                    Date = project.CreatedAt
+                }
+                : new PortfolioFeedItem
+                {
+                    Id = e.Creation!.Id,
+                    IsProject = false,
+                    Slug = e.Creation.Slug,
+                    Title = e.Creation.Title,
+                    Description = e.Creation.Description,
+                    Date = e.Creation.PublishedAt
+                })
+        ];
+    }
+
+    /// <summary>
     ///     Gets the items featured on the home page, in featured order.
     /// </summary>
     /// <param name="count">The most items to return.</param>
