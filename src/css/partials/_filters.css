@@ -41,3 +41,21 @@
     margin-bottom: 0;
   }
 }
+
+.filter-empty {
+  padding: 3rem 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: center;
+
+  &:not([hidden]) {
+    animation: filter-empty-in 0.25s ease both;
+  }
+}
+
+@keyframes filter-empty-in {
+  from {
+    opacity: 0;
+  }
+}

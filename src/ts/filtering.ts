@@ -14,8 +14,15 @@ export function initFiltering(): void {
 
         const pills: NodeListOf<HTMLElement> = filterRow.querySelectorAll<HTMLElement>('.pill');
 
+        const empty: HTMLElement | null = scope.querySelector<HTMLElement>('[data-filter-empty]');
+        const syncEmpty = (): void => {
+            if (empty) {
+                empty.hidden = Array.from(sections).some(section => !section.classList.contains('is-collapsed'));
+            }
+        };
+
         const animateGrid: ((matches: (section: HTMLElement) => boolean) => void) | null =
-            scope.hasAttribute('data-filter-flip') ? createGridFilterAnimator(Array.from(sections)) : null;
+            scope.hasAttribute('data-filter-flip') ? createGridFilterAnimator(Array.from(sections), syncEmpty) : null;
 
         const applyFilter = (pill: HTMLElement, updateHistory: boolean, animate: boolean = true): void => {
             const filter: string = pill.dataset.filter ?? 'all';
@@ -39,6 +46,8 @@ export function initFiltering(): void {
                 for (const section of sections) {
                     section.classList.toggle('is-collapsed', !matches(section));
                 }
+
+                syncEmpty();
             }
 
             if (updateHistory) {
@@ -69,7 +78,9 @@ const MOVE_DURATION_MS = 300;
 const ENTER_DELAY_MS = 100;
 const ENTER_DURATION_MS = 250;
 
-function createGridFilterAnimator(items: HTMLElement[]): (matches: (item: HTMLElement) => boolean) => void {
+function createGridFilterAnimator(
+    items: HTMLElement[],
+    onApplied: () => void): (matches: (item: HTMLElement) => boolean) => void {
     let running: Animation[] = [];
     let generation = 0;
 
@@ -82,7 +93,10 @@ function createGridFilterAnimator(items: HTMLElement[]): (matches: (item: HTMLEl
         settle();
         const token: number = ++generation;
 
-        const apply = (): void => items.forEach(item => item.classList.toggle('is-collapsed', !matches(item)));
+        const apply = (): void => {
+            items.forEach(item => item.classList.toggle('is-collapsed', !matches(item)));
+            onApplied();
+        };
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             apply();
             return;
