@@ -170,13 +170,12 @@ app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {
-    // `vite`/HMR mode only serves the public dir from its own dev-server port - it copies public/ into wwwroot only on an actual
-    // `vite build`. plain (non-asp-vite) static reference, like Prism's autoloader fetching a language file, otherwise 404s in
-    // dev until a build has happened at least once
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "..", "public"))
     });
+
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(cdnDir), RequestPath = "/cdn" });
 }
 
 app.UseRouting();
