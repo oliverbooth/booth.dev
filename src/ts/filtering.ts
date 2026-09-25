@@ -14,7 +14,10 @@ export function initFiltering(): void {
 
         const pills: NodeListOf<HTMLElement> = filterRow.querySelectorAll<HTMLElement>('.pill');
 
-        const applyFilter = (pill: HTMLElement, updateHistory: boolean): void => {
+        const animateGrid: ((matches: (section: HTMLElement) => boolean) => void) | null =
+            scope.hasAttribute('data-filter-flip') ? createGridFilterAnimator(Array.from(sections)) : null;
+
+        const applyFilter = (pill: HTMLElement, updateHistory: boolean, animate: boolean = true): void => {
             const filter: string = pill.dataset.filter ?? 'all';
             const filterKind: string = pill.dataset.filterKind ?? 'post';
 
@@ -23,11 +26,19 @@ export function initFiltering(): void {
                 p.setAttribute('aria-pressed', String(p === pill));
             }
 
-            for (const section of sections) {
+            const matches = (section: HTMLElement): boolean => {
                 const sectionKind: string = section.dataset.kind ?? 'post';
                 const kindMatches: boolean = sectionKind === filterKind;
                 const stateMatches: boolean = filterKind === 'note' || filter === 'all' || section.dataset.state === filter;
-                section.classList.toggle('is-collapsed', !(kindMatches && stateMatches));
+                return kindMatches && stateMatches;
+            };
+
+            if (animate && animateGrid) {
+                animateGrid(matches);
+            } else {
+                for (const section of sections) {
+                    section.classList.toggle('is-collapsed', !matches(section));
+                }
             }
 
             if (updateHistory) {
@@ -48,7 +59,76 @@ export function initFiltering(): void {
 
         const initialPill = matchingPill ?? filterRow.querySelector<HTMLElement>('.pill.active') ?? pills[0];
         if (initialPill) {
-            applyFilter(initialPill, false); // false: don't rewrite history on initial load, we're just reading it
+            applyFilter(initialPill, false, false); // false: don't rewrite history on initial load, we're just reading it
         }
     }
+}
+
+const EXIT_DURATION_MS = 160;
+const MOVE_DURATION_MS = 300;
+const ENTER_DELAY_MS = 100;
+const ENTER_DURATION_MS = 250;
+
+function createGridFilterAnimator(items: HTMLElement[]): (matches: (item: HTMLElement) => boolean) => void {
+    let running: Animation[] = [];
+    let generation = 0;
+
+    const settle = (): void => {
+        running.forEach(animation => animation.cancel());
+        running = [];
+    };
+
+    return matches => {
+        settle();
+        const token: number = ++generation;
+
+        const apply = (): void => items.forEach(item => item.classList.toggle('is-collapsed', !matches(item)));
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            apply();
+            return;
+        }
+
+        const shown = (item: HTMLElement): boolean => !item.classList.contains('is-collapsed');
+        const staying: HTMLElement[] = items.filter(item => shown(item) && matches(item));
+        const leaving: HTMLElement[] = items.filter(item => shown(item) && !matches(item));
+        const entering: HTMLElement[] = items.filter(item => !shown(item) && matches(item));
+
+        const reflow = (): void => {
+            const before = new Map(staying.map(item => [item, item.getBoundingClientRect()]));
+            apply();
+
+            for (const item of staying) {
+                const from: DOMRect = before.get(item)!;
+                const to: DOMRect = item.getBoundingClientRect();
+                const dx: number = from.left - to.left;
+                const dy: number = from.top - to.top;
+                if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+                    running.push(item.animate({translate: [`${dx}px ${dy}px`, '0 0']}, {duration: MOVE_DURATION_MS, easing: 'ease'}));
+                }
+            }
+
+            for (const item of entering) {
+                running.push(item.animate(
+                    {opacity: ['0', '1'], scale: ['0.9', '1']},
+                    {duration: ENTER_DURATION_MS, delay: ENTER_DELAY_MS, easing: 'ease', fill: 'backwards'}));
+            }
+        };
+
+        if (leaving.length === 0) {
+            reflow();
+            return;
+        }
+
+        const exits: Animation[] = leaving.map(item => item.animate(
+            {opacity: ['1', '0'], scale: ['1', '0.9']},
+            {duration: EXIT_DURATION_MS, easing: 'ease', fill: 'forwards'}));
+        running.push(...exits);
+
+        Promise.all(exits.map(exit => exit.finished)).then(() => {
+            if (token === generation) {
+                settle();
+                reflow();
+            }
+        }, () => {});
+    };
 }
