@@ -1,9 +1,7 @@
 const PROSE_SELECTOR = '.note-card .prose';
 
-/** Blocks whose height CSS already keeps to whole lines. */
 const TEXT_BLOCKS = 'p, ul, ol';
 
-/** Sub-pixel slack below which a block counts as already being a whole number of lines tall. */
 const TOLERANCE = 0.5;
 
 /**

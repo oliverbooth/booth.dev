@@ -234,8 +234,6 @@ async Task HandleRssFeedAsync(HttpContext context, string path)
     var rssFeedService = context.RequestServices.GetRequiredService<RssFeedService>();
     var segments = path.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-    // creations and projects used to have a feed each, before the portfolio brought them together; readers subscribed to
-    // those addresses are sent to the new one
     if (segments is ["create"] or ["projects"])
     {
         context.Response.Redirect("/portfolio.rss", true);

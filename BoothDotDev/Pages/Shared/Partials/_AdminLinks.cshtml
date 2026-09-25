@@ -1,0 +1,12 @@
+@model IReadOnlyList<AdminLink>
+
+@if (User.Identity?.IsAuthenticated == true && Model.Count > 0)
+{
+    <p class="admin-links">
+        <i class="ti ti-shield-lock" aria-hidden="true" title="Only you can see this"></i>
+        @foreach (var link in Model)
+        {
+            <a href="@Url.Page(link.Page, link.RouteValues)">@link.Text</a>
+        }
+    </p>
+}

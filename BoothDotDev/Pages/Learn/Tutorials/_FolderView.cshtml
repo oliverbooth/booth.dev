@@ -1,6 +1,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @using Markdig
@@ -59,10 +60,6 @@
             <a href="@(feedPath).rss" class="icon-link" aria-label="Subscribe to this listing's RSS feed" title="RSS feed">
                 <i
                     class="ti ti-rss"></i></a>
-            @if (Model is not null && User.Identity?.IsAuthenticated == true)
-            {
-                <a asp-page="/Admin/Tutorials/Folders/Edit" asp-route-id="@Model.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-            }
         </div>
     </div>
 
@@ -86,6 +83,13 @@
     }
 
     <h1 data-hue="@(Model?.EffectiveColor.ToDataHue() ?? "brand")">@(Model?.Title ?? "Learn")</h1>
+    <partial name="Partials/_AdminLinks" model="@(Model is null
+        ? new AdminLink[] { new("manage tutorials", "/Admin/Tutorials/Index") }
+        : new AdminLink[]
+        {
+            new("edit folder", "/Admin/Tutorials/Folders/Edit", new { id = Model.Id }),
+            new("manage tutorials", "/Admin/Tutorials/Index")
+        })"/>
 
     @if (Model is not null && (!string.IsNullOrEmpty(Model.Description) || folders.Count > 0 || articles.Count > 0))
     {

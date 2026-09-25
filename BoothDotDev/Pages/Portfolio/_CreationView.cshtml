@@ -1,5 +1,6 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @model BoothDotDev.Data.Models.Creation
 @inject LinkService LinkService
@@ -16,16 +17,9 @@
 
 <div class="page" data-hue="@creation.Kind.ToHue().ToDataHue()">
 
-    <div class="page-header-row">
-        <span class="eyebrow">
-            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
-        </span>
-
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Creations/Edit" asp-route-id="@creation.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
-    </div>
+    <span class="eyebrow">
+        <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+    </span>
 
     <span class="badge">@creation.Kind.ToLabel()</span>
     @if (creation.IsWorkInProgress)
@@ -34,6 +28,7 @@
     }
 
     <h1 class="project-title">@creation.Title</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Creations/Edit", new { id = creation.Id }) })"/>
 
     @if (!string.IsNullOrWhiteSpace(creation.Description))
     {

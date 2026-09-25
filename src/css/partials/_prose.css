@@ -1,6 +1,5 @@
 .prose {
   font-size: 17.5px;
-  /* --lh lets a container (the note card's ruled paper) pin the line pitch */
   line-height: var(--lh, 1.75);
   color: var(--text);
 

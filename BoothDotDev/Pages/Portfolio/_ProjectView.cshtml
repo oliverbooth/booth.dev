@@ -1,6 +1,7 @@
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @using Markdig
@@ -37,19 +38,13 @@
 
 <div class="page">
 
-    <div class="page-header-row">
-        <span class="eyebrow">
-            <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
-        </span>
-
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <a asp-page="/Admin/Projects/Edit" asp-route-id="@project.Id" class="btn"><i class="ti ti-edit"></i> Edit</a>
-        }
-    </div>
+    <span class="eyebrow">
+        <a asp-page="/Portfolio/Index"><i class="ti ti-arrow-narrow-left"></i> back to portfolio</a>
+    </span>
 
     <span class="status @statusClass"><span class="dot"></span>@statusText</span>
     <h1 class="project-title">@project.Name</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Projects/Edit", new { id = project.Id }) })"/>
 
     <div class="project-desc">
         @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))

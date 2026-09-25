@@ -1,4 +1,5 @@
 @page "/portfolio"
+@using BoothDotDev.Pages.Shared.Partials
 @model Made
 @{
     ViewData["Title"] = "Stuff I Made";
@@ -13,18 +14,17 @@
         </span>
 
         <div class="page-actions">
-            <a href="/projects.rss" class="icon-link" aria-label="Subscribe to the projects RSS feed" title="Projects RSS feed"><i
+            <a href="/portfolio.rss" class="icon-link" aria-label="Subscribe to the portfolio RSS feed" title="Portfolio RSS feed"><i
                     class="ti ti-rss"></i></a>
-            <a href="/create.rss" class="icon-link" aria-label="Subscribe to the creations RSS feed" title="Creations RSS feed"><i
-                    class="ti ti-rss"></i></a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <a asp-page="/Admin/Projects/Index" class="btn"><i class="ti ti-code"></i> Manage projects</a>
-                <a asp-page="/Admin/Creations/Index" class="btn"><i class="ti ti-palette"></i> Manage creations</a>
-            }
         </div>
     </div>
     <h1>Stuff I Made</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[]
+    {
+        new("manage portfolio", "/Admin/Portfolio/Index"),
+        new("manage projects", "/Admin/Projects/Index"),
+        new("manage creations", "/Admin/Creations/Index")
+    })"/>
     <p class="lede">Code, drawings, 3D renders, and music.</p>
 
     <div data-filter-scope>

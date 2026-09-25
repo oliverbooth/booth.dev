@@ -1,5 +1,6 @@
 @page "/challenges"
 @using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
 @model Index
@@ -17,6 +18,7 @@
     </span>
 
     <h1>Dev Challenges</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage challenges", "/Admin/Challenges/Index") })"/>
     <p class="lede">
         These are a collection of challenges I've written to help you improve your skills as a developer.
         They're designed to be fun, challenging, and educational. I hope you enjoy them!

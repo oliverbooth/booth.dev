@@ -59,7 +59,6 @@
       white-space 0s 0.35s allow-discrete;
   }
 
-  /* there is no hover to hover with, so a tap (which focuses it) does the same */
   @media (hover: none) {
     &:focus {
       z-index: 3;
