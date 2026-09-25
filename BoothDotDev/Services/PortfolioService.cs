@@ -276,7 +276,7 @@ public sealed class PortfolioService
         return creation.Kind switch
         {
             CreationKind.Drawing => (PortfolioItemKind.Drawing, PaletteHue.Pink, "drawing"),
-            CreationKind.ThreeD => (PortfolioItemKind.ThreeD, PaletteHue.Tangerine, "3d"),
+            CreationKind.ThreeD => (PortfolioItemKind.ThreeD, PaletteHue.Grape, "3d"),
             CreationKind.Music => (PortfolioItemKind.Music, PaletteHue.Mint, "music"),
             _ => throw new InvalidOperationException($"Unknown creation kind {creation.Kind}.")
         };
