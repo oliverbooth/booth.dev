@@ -8,7 +8,7 @@
 .card {
   --tilt: -1.5deg;
   --tint: var(--tint-brand);
-  --pin: var(--accent-coral);
+  --pin: var(--accent-tangerine);
 
   position: relative;
   display: block;
@@ -57,17 +57,17 @@
   }
 
   &:not([data-hue]):nth-child(4n + 2) {
-    --tint: var(--tint-coral);
-    --pin: var(--accent-teal);
+    --tint: var(--tint-tangerine);
+    --pin: var(--accent-mint);
   }
 
   &:not([data-hue]):nth-child(4n + 3) {
-    --tint: var(--tint-teal);
-    --pin: var(--accent-magenta);
+    --tint: var(--tint-mint);
+    --pin: var(--accent-bubblegum);
   }
 
   &:not([data-hue]):nth-child(4n + 4) {
-    --tint: var(--tint-magenta);
+    --tint: var(--tint-bubblegum);
     --pin: var(--brand);
   }
 }
@@ -107,7 +107,7 @@
   font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  color: var(--accent-teal);
+  color: var(--accent-mint);
   background: rgb(13 13 16 / 0.78);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);

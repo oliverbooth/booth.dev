@@ -10,7 +10,7 @@
         {
             <span class="portfolio-card-status">
                 <span
-                    class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-coral", ProjectStatus.Retired => "dot-magenta", _ => "" })"></span>@status.ToString().ToLower()
+                    class="dot @(status switch { ProjectStatus.Past => "done", ProjectStatus.Hiatus => "dot-tangerine", ProjectStatus.Retired => "dot-bubblegum", _ => "" })"></span>@status.ToString().ToLower()
             </span>
         }
         else if (Model.IsWorkInProgress)

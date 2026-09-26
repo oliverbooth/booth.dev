@@ -32,17 +32,17 @@
 
   &:nth-child(4n + 2) {
     --tilt: 1deg;
-    --tint: var(--row-tint-coral);
+    --tint: var(--row-tint-tangerine);
   }
 
   &:nth-child(4n + 3) {
     --tilt: -0.5deg;
-    --tint: var(--row-tint-teal);
+    --tint: var(--row-tint-mint);
   }
 
   &:nth-child(4n + 4) {
     --tilt: 0.5deg;
-    --tint: var(--row-tint-magenta);
+    --tint: var(--row-tint-bubblegum);
   }
 
   i:first-child {

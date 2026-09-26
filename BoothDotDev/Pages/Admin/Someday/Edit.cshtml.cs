@@ -128,6 +128,7 @@ public sealed class Edit : PageModel
             Title = draft.Title,
             Body = draft.Body,
             Slug = entry.Slug,
+            AchievedOn = entry.AchievedOn,
             Color = draft.Color,
             Visibility = draft.Visibility
         };
@@ -372,7 +373,7 @@ public sealed class Edit : PageModel
             : _somedayEntryService.GetAllEntries().Count;
 
         var content = new SomedayEntryDraftContent(Input.Title, Input.Body, Input.Visibility, Input.Color);
-        return new SomedayEntrySaveRequest(Input.Slug, sortOrder, content);
+        return new SomedayEntrySaveRequest(Input.Slug, sortOrder, Input.AchievedOn, content);
     }
 
     /// <summary>
@@ -416,6 +417,12 @@ public sealed class Edit : PageModel
         /// <value>The slug of the entry.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Slug { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the date the wish was achieved.
+        /// </summary>
+        /// <value>The date the wish was achieved, or <see langword="null" /> if it hasn't been.</value>
+        public DateOnly? AchievedOn { get; set; }
 
         /// <summary>
         ///     Gets or sets the colour of the entry's card.

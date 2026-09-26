@@ -19,8 +19,8 @@ public sealed class Index : PageModel
     private static readonly (BookState State, string Label, string DotClass)[] StateOrder =
     [
         (BookState.Reading, "reading", "dot"),
-        (BookState.PlanToRead, "plan to read", "dot dot-coral"),
-        (BookState.Read, "read", "dot dot-magenta")
+        (BookState.PlanToRead, "plan to read", "dot dot-tangerine"),
+        (BookState.Read, "read", "dot dot-bubblegum")
     ];
 
     private readonly ReadingListService _readingListService;

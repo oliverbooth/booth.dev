@@ -154,7 +154,7 @@ public sealed class OgImageService
                 new PointF(start + side, start + side),
                 GradientRepetitionMode.None,
                 new ColorStop(0f, Brand),
-                new ColorStop(1f, ColorOf(PaletteHue.Pink))),
+                new ColorStop(1f, ColorOf(PaletteHue.Bubblegum))),
             RoundedRectangle(start, start, side, side, side * cornerRatio)));
 
         var text = initials.ToUpperInvariant();
@@ -353,7 +353,7 @@ public sealed class OgImageService
         return hue switch
         {
             PaletteHue.Grape => Color.ParseHex("442E5C").WithAlpha(0.5f),
-            PaletteHue.Pink => Color.ParseHex("552847").WithAlpha(0.5f),
+            PaletteHue.Bubblegum => Color.ParseHex("552847").WithAlpha(0.5f),
             PaletteHue.Tangerine => Color.ParseHex("5D2919").WithAlpha(0.5f),
             PaletteHue.Sun => Color.ParseHex("52471F").WithAlpha(0.5f),
             PaletteHue.Mint => Color.ParseHex("074631").WithAlpha(0.5f),

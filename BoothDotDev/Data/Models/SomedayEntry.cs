@@ -9,6 +9,16 @@ namespace BoothDotDev.Data.Models;
 public sealed class SomedayEntry : IEquatable<SomedayEntry>, IMarkdownBody
 {
     /// <summary>
+    ///     Gets or sets the date the wish was achieved.
+    /// </summary>
+    /// <value>The date the wish was achieved, or <see langword="null" /> if it hasn't been.</value>
+    /// <remarks>
+    ///     A parent-level field, like <see cref="TrashedAt" />: whether a wish came true is its state, not a revision of its
+    ///     wording, so marking it never produces a draft.
+    /// </remarks>
+    public DateOnly? AchievedOn { get; set; }
+
+    /// <summary>
     ///     Gets the colour of the entry, as of its current draft.
     /// </summary>
     /// <value>The explicitly-assigned colour, or <see langword="null" /> to fall back to its position on the page.</value>

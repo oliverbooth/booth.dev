@@ -11,7 +11,7 @@
   gap: 12px;
   padding: 18px 24px;
   border-radius: var(--radius-md);
-  background: var(--row-tint-teal);
+  background: var(--row-tint-mint);
   box-shadow: var(--shadow-card-soft);
   cursor: pointer;
   list-style: none;
@@ -42,7 +42,7 @@
   font-weight: 700;
 
   .ti {
-    color: var(--accent-teal);
+    color: var(--accent-mint);
     font-size: 20px;
   }
 }
@@ -95,7 +95,7 @@
   margin-top: 2rem;
   padding: 32px 24px;
   border-radius: var(--radius-lg);
-  background: var(--row-tint-magenta);
+  background: var(--row-tint-bubblegum);
   box-shadow: var(--shadow-card-soft);
   text-align: center;
 }
@@ -106,8 +106,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
-  color: var(--magenta-text);
+  background: color-mix(in oklch, var(--accent-bubblegum) 18%, transparent);
+  color: var(--bubblegum-text);
   font-size: 22px;
 }
 
