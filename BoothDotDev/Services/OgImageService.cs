@@ -160,13 +160,16 @@ public sealed class OgImageService
         var text = initials.ToUpperInvariant();
         var options = new RichTextOptions(_titleFamily.CreateFont(side * letterRatio));
         var bounds = TextMeasurer.MeasureBounds(text, options);
-        options.Origin = new PointF(centre - (bounds.X + bounds.Width / 2), centre - (bounds.Y + bounds.Height / 2));
+        options.Origin = new PointF(centre - (bounds.X + (bounds.Width / 2)), centre - (bounds.Y + (bounds.Height / 2)));
 
         canvas.Mutate(ctx =>
         {
             ctx.DrawText(options, text, Color.White);
             ctx.Rotate(BrandIconTilt);
-            ctx.Resize(new ResizeOptions { Size = new Size(size, size), Mode = ResizeMode.Pad, Sampler = KnownResamplers.Lanczos3 });
+            ctx.Resize(new ResizeOptions
+            {
+                Size = new Size(size, size), Mode = ResizeMode.Pad, Sampler = KnownResamplers.Lanczos3
+            });
         });
 
         return canvas;
@@ -183,13 +186,13 @@ public sealed class OgImageService
         var text = badge.ToUpperInvariant();
         var options = new TextOptions(_badgeFont);
         var size = TextMeasurer.MeasureSize(text, options);
-        var width = size.Width + BadgePaddingX * 2;
-        var height = size.Height + BadgePaddingY * 2;
+        var width = size.Width + (BadgePaddingX * 2);
+        var height = size.Height + (BadgePaddingY * 2);
 
         var ink = TextMeasurer.MeasureBounds(text, options);
         var caps = TextMeasurer.MeasureBounds("H", options);
         var origin = new PointF(
-            MarginX + width / 2 - (ink.X + ink.Width / 2), MarginY + height / 2 - (caps.Y + caps.Height / 2));
+            MarginX + (width / 2) - (ink.X + (ink.Width / 2)), MarginY + (height / 2) - (caps.Y + (caps.Height / 2)));
 
         image.Mutate(ctx =>
         {
@@ -218,14 +221,14 @@ public sealed class OgImageService
         };
         if (!string.IsNullOrWhiteSpace(subtitle))
         {
-            fitted = FitText(subtitle, subtitleOptions, MaxSubtitleLines * _subtitleFont.Size * SubtitleLineHeight + 1);
+            fitted = FitText(subtitle, subtitleOptions, (MaxSubtitleLines * _subtitleFont.Size * SubtitleLineHeight) + 1);
             subtitleHeight = TextMeasurer.MeasureSize(fitted, subtitleOptions).Height;
         }
 
         // the block sits midway between the badge and the wordmark, like the mockup's space-between column
         var wordmarkTop = Height - MarginY - WordmarkIconSize;
         var blockHeight = titleHeight + (fitted is null ? 0 : TitleToSubtitleGap + subtitleHeight);
-        var titleY = top + (wordmarkTop - top - blockHeight) / 2;
+        var titleY = top + ((wordmarkTop - top - blockHeight) / 2);
 
         titleOptions.Origin = new PointF(MarginX, titleY);
         using (var shadow = new Image<Rgba32>(Width, Height, Color.Transparent))
@@ -256,7 +259,7 @@ public sealed class OgImageService
 
         // the tile is drawn inside a transparent margin so its tilted corners aren't clipped, so it is drawn larger than the
         // slot it sits in
-        using var icon = CreateBrandIcon(Initials, WordmarkIconSize + WordmarkIconBleed * 2);
+        using var icon = CreateBrandIcon(Initials, WordmarkIconSize + (WordmarkIconBleed * 2));
 
         image.Mutate(ctx =>
         {
@@ -265,7 +268,8 @@ public sealed class OgImageService
                 new RichTextOptions(_wordmarkFont)
                 {
                     Origin = new PointF(
-                        MarginX + WordmarkIconSize + WordmarkGap - bounds.X, top + WordmarkIconSize / 2f - (bounds.Y + bounds.Height / 2))
+                        MarginX + WordmarkIconSize + WordmarkGap - bounds.X,
+                        top + (WordmarkIconSize / 2f) - (bounds.Y + (bounds.Height / 2)))
                 },
                 name, Color.White);
         });

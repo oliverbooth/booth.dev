@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using BoothDotDev.Extensions;
 using DEDrake;
 
 namespace BoothDotDev.Data.Models;
@@ -28,6 +29,29 @@ public sealed class DevChallenge : IEquatable<DevChallenge>, IMarkdownExcerpt
     public string Description
     {
         get => Draft.Description;
+    }
+
+    /// <summary>
+    ///     Gets the difficulty of the challenge, as of its current draft.
+    /// </summary>
+    /// <value>The difficulty of the challenge, or <see langword="null" /> if it hasn't been rated.</value>
+    [NotMapped]
+    public Difficulty? Difficulty
+    {
+        get => Draft.Difficulty;
+    }
+
+    /// <summary>
+    ///     Gets the hue the challenge is coloured with, as of its current draft.
+    /// </summary>
+    /// <value>
+    ///     The hue of its difficulty, or <see cref="PaletteHue.Brand" /> if it hasn't been rated - deliberately not one of the
+    ///     difficulty hues, so an unrated challenge is never mistaken for a rated one.
+    /// </value>
+    [NotMapped]
+    public PaletteHue Hue
+    {
+        get => Draft.Difficulty?.ToHue() ?? PaletteHue.Brand;
     }
 
     /// <summary>

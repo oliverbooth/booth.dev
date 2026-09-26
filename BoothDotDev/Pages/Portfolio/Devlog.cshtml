@@ -22,7 +22,8 @@
 <div class="page">
 
     <span class="eyebrow">
-        <a asp-page="/Portfolio/Item" asp-route-slug="@Model.Project.Slug"><i class="ti ti-arrow-narrow-left"></i> back to @Model.Project.Name</a>
+        <a asp-page="/Portfolio/Item" asp-route-slug="@Model.Project.Slug"><i
+                class="ti ti-arrow-narrow-left"></i> back to @Model.Project.Name</a>
     </span>
 
     @if (devlog.Visibility == Visibility.Private)

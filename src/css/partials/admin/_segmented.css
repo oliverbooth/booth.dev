@@ -1,0 +1,40 @@
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.segmented-option {
+  position: relative;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  span {
+    display: block;
+    padding: 7px 15px;
+    border-radius: var(--radius-pill);
+    background: var(--tag-bg);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  input:checked + span {
+    background: var(--solid, var(--text));
+    color: var(--on-solid, var(--bg));
+  }
+
+  input:focus-visible + span {
+    outline: 2px solid var(--brand-text);
+    outline-offset: 2px;
+  }
+}

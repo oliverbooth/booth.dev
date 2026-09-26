@@ -14,7 +14,7 @@
 
     <span class="eyebrow">a little bucket list -</span>
     <h1>Someday</h1>
-    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage someday", "/Admin/Someday/Index") })"/>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage someday", "/Admin/Someday/Index") })" />
 
     @if (Model.UpdatedAt is { } updatedAt)
     {
