@@ -41,3 +41,7 @@ body:has(.env-bar) .admin-rail {
   top: 8px;
   height: calc(100vh - 8px);
 }
+
+body:has(.env-bar) .admin-topbar {
+  top: 8px;
+}
