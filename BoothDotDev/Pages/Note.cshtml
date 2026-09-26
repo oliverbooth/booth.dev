@@ -50,11 +50,13 @@
         };
     }
 
-    <article class="note-card" data-hue="sun">
-        <partial name="Partials/_ContentHeader" model="header" />
+    <div class="note-sheet">
+        <article class="note-card" data-hue="sun">
+            <partial name="Partials/_ContentHeader" model="header" />
 
-        <div class="prose @note.FontStyle.ToProseClass()">
-            @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
-        </div>
-    </article>
+            <div class="prose @note.FontStyle.ToProseClass()">
+                @Html.Raw(MarkdownRenderingService.Render(note, note.Id, note.PublishedAt))
+            </div>
+        </article>
+    </div>
 </div>
