@@ -18,6 +18,7 @@ import {initSomedayEditorPreview} from './admin/someday-editor.ts';
 import {initBookLookup} from './admin/book-lookup.ts';
 import {initWatchableLookup} from './admin/watchable-lookup.ts';
 import {initStateGroups} from './admin/state-groups.ts';
+import {initNavDrawer} from './admin/nav-drawer.ts';
 
 (() => {
     initTheme();
@@ -40,4 +41,5 @@ import {initStateGroups} from './admin/state-groups.ts';
     initBookLookup();
     initWatchableLookup();
     initStateGroups();
+    initNavDrawer();
 })();

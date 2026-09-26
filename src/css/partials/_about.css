@@ -108,7 +108,7 @@
   box-shadow: var(--shadow-card-soft);
   color: var(--text);
   text-decoration: none;
-  transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+  transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on) * var(--row-tilt-scale)));
   transition: transform 0.25s ease;
 
   &:focus-visible {

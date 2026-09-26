@@ -17,7 +17,7 @@
     box-shadow: var(--shadow-card-soft);
     color: inherit;
     text-decoration: none;
-    transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+    transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on) * var(--row-tilt-scale)));
     transition: transform 0.25s ease;
   }
 
@@ -26,7 +26,8 @@
   }
 
   @media (hover: hover) {
-    > a:hover {
+    > a:hover,
+    > div:hover {
       transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
     }
   }
@@ -78,7 +79,7 @@
     border-radius: var(--radius-md);
     background: var(--tint);
     box-shadow: var(--shadow-card-soft);
-    transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+    transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on) * var(--row-tilt-scale)));
     transition: transform 0.25s ease;
   }
 
