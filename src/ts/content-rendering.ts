@@ -66,6 +66,10 @@ function initPrismCodeblocks(element: HTMLElement): void {
         }
 
         Prism.highlightAllUnder(block.parentElement, false, () => {
+            if (block.dataset.terminal) {
+                block.closest('.code-toolbar')?.setAttribute('data-terminal-title', block.dataset.terminal);
+            }
+
             if (block.dataset.highlight) {
                 applyCodeBlockHighlights(block);
             }
