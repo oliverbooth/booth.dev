@@ -54,7 +54,7 @@
   }
 
   > :nth-child(6n + 4) i {
-    color: var(--accent-magenta);
+    color: var(--accent-bubblegum);
   }
 
   > :nth-child(6n + 5) i {

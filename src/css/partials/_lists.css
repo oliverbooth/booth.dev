@@ -49,7 +49,7 @@
   }
 
   > :not([data-hue]):nth-child(4n + 3) {
-    --tint: var(--row-tint-magenta);
+    --tint: var(--row-tint-bubblegum);
   }
 
   > :not([data-hue]):nth-child(4n + 4) {
@@ -114,7 +114,7 @@
   }
 
   &:not([data-hue]):nth-child(4n + 4) {
-    --tint: var(--row-tint-magenta);
+    --tint: var(--row-tint-bubblegum);
   }
 }
 

@@ -9,8 +9,8 @@
 }
 
 .badge-private {
-  --badge-bg: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
-  --badge-text: var(--magenta-text);
+  --badge-bg: color-mix(in oklch, var(--accent-bubblegum) 18%, transparent);
+  --badge-text: var(--bubblegum-text);
 }
 
 .badge-missing {

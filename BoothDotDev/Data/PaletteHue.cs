@@ -18,9 +18,9 @@ public enum PaletteHue
     [PgName("grape")] Grape,
 
     /// <summary>
-    ///     Bubblegum pink.
+    ///     Bubblegum.
     /// </summary>
-    [PgName("pink")] Pink,
+    [PgName("bubblegum")] Bubblegum,
 
     /// <summary>
     ///     Tangerine.

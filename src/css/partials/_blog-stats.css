@@ -23,7 +23,7 @@
   }
 
   &:nth-child(4n + 4) {
-    --bar: var(--magenta-text);
+    --bar: var(--bubblegum-text);
   }
 }
 

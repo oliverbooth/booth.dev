@@ -532,7 +532,7 @@
     }
 
     &:nth-of-type(4n + 3) {
-      --dot: var(--accent-magenta);
+      --dot: var(--accent-bubblegum);
     }
 
     &:nth-of-type(4n + 4) {
@@ -562,8 +562,8 @@
     text-transform: lowercase;
 
     &:nth-of-type(even) {
-      background: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
-      color: var(--magenta-text);
+      background: color-mix(in oklch, var(--accent-bubblegum) 18%, transparent);
+      color: var(--bubblegum-text);
       transform: rotate(calc(2deg * var(--motion)));
     }
 

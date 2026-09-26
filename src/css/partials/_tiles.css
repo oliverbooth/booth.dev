@@ -42,7 +42,7 @@
 
   &:nth-child(4n + 4) {
     --tilt: 0.5deg;
-    --tint: var(--row-tint-magenta);
+    --tint: var(--row-tint-bubblegum);
   }
 
   i:first-child {

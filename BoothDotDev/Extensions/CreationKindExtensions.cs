@@ -39,7 +39,7 @@ public static class CreationKindExtensions
         {
             return kind switch
             {
-                CreationKind.Drawing => PaletteHue.Pink,
+                CreationKind.Drawing => PaletteHue.Bubblegum,
                 CreationKind.ThreeD => PaletteHue.Grape,
                 CreationKind.Music => PaletteHue.Mint,
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)

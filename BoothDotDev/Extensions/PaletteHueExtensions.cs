@@ -12,7 +12,7 @@ public static class PaletteHueExtensions
     // enum order puts brand and grape (both purple-ish) side by side; this order keeps neighbours visually distinct
     private static readonly PaletteHue[] PositionOrder =
     [
-        PaletteHue.Brand, PaletteHue.Mint, PaletteHue.Sun, PaletteHue.Pink, PaletteHue.Sky, PaletteHue.Tangerine, PaletteHue.Grape
+        PaletteHue.Brand, PaletteHue.Mint, PaletteHue.Sun, PaletteHue.Bubblegum, PaletteHue.Sky, PaletteHue.Tangerine, PaletteHue.Grape
     ];
 
     /// <summary>
@@ -57,7 +57,7 @@ public static class PaletteHueExtensions
             return hue switch
             {
                 PaletteHue.Grape => 0xAB6AEA,
-                PaletteHue.Pink => 0xE867C3,
+                PaletteHue.Bubblegum => 0xE867C3,
                 PaletteHue.Tangerine => 0xFF7041,
                 PaletteHue.Sun => 0xF2CF3B,
                 PaletteHue.Mint => 0x00CD94,
@@ -79,7 +79,7 @@ public static class PaletteHueExtensions
             {
                 PaletteHue.Brand => "brand",
                 PaletteHue.Grape => "grape",
-                PaletteHue.Pink => "pink",
+                PaletteHue.Bubblegum => "bubblegum",
                 PaletteHue.Tangerine => "tangerine",
                 PaletteHue.Sun => "sun",
                 PaletteHue.Mint => "mint",
@@ -97,9 +97,9 @@ public static class PaletteHueExtensions
         ///     <paramref name="hue" /> is not a recognised <see cref="PaletteHue" />.
         /// </exception>
         /// <remarks>
-        ///     The class names deliberately do not correspond to the enum member names for <see cref="PaletteHue.Pink" /> and
-        ///     <see cref="PaletteHue.Tangerine" />: these hues predate this enum as <c>badge-magenta</c> and <c>badge-coral</c>
-        ///     respectively.
+        ///     The class names deliberately do not correspond to the enum member names for <see cref="PaletteHue.Tangerine" /> and
+        ///     <see cref="PaletteHue.Mint" />: these hues predate this enum as <c>badge-coral</c> and the default teal
+        ///     <c>badge</c> respectively.
         /// </remarks>
         public string ToBadgeClass()
         {
@@ -107,7 +107,7 @@ public static class PaletteHueExtensions
             {
                 PaletteHue.Brand => "badge-brand",
                 PaletteHue.Grape => "badge-grape",
-                PaletteHue.Pink => "badge-magenta",
+                PaletteHue.Bubblegum => "badge-bubblegum",
                 PaletteHue.Tangerine => "badge-coral",
                 PaletteHue.Sun => "badge-sun",
                 PaletteHue.Mint => "",

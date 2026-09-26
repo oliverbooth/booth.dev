@@ -63,11 +63,11 @@
 
   &:not([data-hue]):nth-child(4n + 3) {
     --tint: var(--tint-teal);
-    --pin: var(--accent-magenta);
+    --pin: var(--accent-bubblegum);
   }
 
   &:not([data-hue]):nth-child(4n + 4) {
-    --tint: var(--tint-magenta);
+    --tint: var(--tint-bubblegum);
     --pin: var(--brand);
   }
 }

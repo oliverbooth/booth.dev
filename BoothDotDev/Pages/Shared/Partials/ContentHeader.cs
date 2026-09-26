@@ -18,7 +18,7 @@ public sealed class ContentHeader
     public string? Badge { get; init; }
 
     /// <summary>
-    ///     Gets the CSS class modifier selecting the badge's colour, such as <c>badge-magenta</c>.
+    ///     Gets the CSS class modifier selecting the badge's colour, such as <c>badge-bubblegum</c>.
     /// </summary>
     /// <value>The badge class. The default is an empty string, which is the default teal badge.</value>
     public string BadgeClass { get; init; } = string.Empty;

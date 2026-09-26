@@ -3,12 +3,12 @@
   --on-brand-solid: #ffffff;
   --accent-coral: oklch(72% 0.19 38);
   --accent-teal: oklch(75% 0.16 165);
-  --accent-magenta: oklch(70% 0.19 340);
+  --accent-bubblegum: oklch(70% 0.19 340);
   --accent-grape: oklch(65% 0.19 305);
   --accent-sun: oklch(86% 0.16 95);
   --accent-sky: oklch(72% 0.14 235);
 
-  --toggle-bg: linear-gradient(135deg, var(--brand), var(--accent-magenta));
+  --toggle-bg: linear-gradient(135deg, var(--brand), var(--accent-bubblegum));
 
   --font-heading: "Baloo 2 Variable", "Baloo 2", sans-serif;
   --font-body: "Nunito Variable", "Nunito", sans-serif;
@@ -67,14 +67,14 @@
   /* text-safe accents: same hues as the fills, adjusted to clear AA on the backgrounds they sit on */
   --coral-text: var(--accent-coral);
   --teal-text: var(--accent-teal);
-  --magenta-text: oklch(74% 0.19 340);
+  --bubblegum-text: oklch(74% 0.19 340);
   --grape-text: oklch(82% 0.11 305);
   --sun-text: oklch(89% 0.12 95);
   --sky-text: oklch(83% 0.1 235);
 
   --on-coral-text: oklch(18% 0.04 40);
   --on-teal-text: oklch(18% 0.04 165);
-  --on-magenta-text: oklch(18% 0.04 340);
+  --on-bubblegum-text: oklch(18% 0.04 340);
   --on-grape-text: oklch(18% 0.04 305);
   --on-sun-text: oklch(22% 0.05 85);
   --on-sky-text: oklch(18% 0.04 235);
@@ -87,7 +87,7 @@
 
   --glow-tangerine: 0 4px 24px oklch(50% 0.2 38 / 0.4);
   --glow-mint: 0 4px 24px oklch(50% 0.2 165 / 0.4);
-  --glow-pink: 0 4px 24px oklch(50% 0.2 340 / 0.4);
+  --glow-bubblegum: 0 4px 24px oklch(50% 0.2 340 / 0.4);
   --glow-grape: 0 4px 24px oklch(50% 0.2 305 / 0.4);
   --glow-sun: 0 4px 24px oklch(50% 0.2 95 / 0.4);
   --glow-sky: 0 4px 24px oklch(50% 0.2 235 / 0.4);
@@ -128,7 +128,7 @@
   --tint-brand: oklch(26% 0.06 275);
   --tint-coral: oklch(27% 0.08 32);
   --tint-teal: oklch(25% 0.062 195);
-  --tint-magenta: oklch(27% 0.085 335);
+  --tint-bubblegum: oklch(27% 0.085 335);
   --tint-grape: oklch(25% 0.045 305);
   --tint-sun: oklch(26% 0.04 95);
   --tint-sky: oklch(25% 0.045 235);
@@ -137,7 +137,7 @@
   --row-tint-brand: oklch(23.5% 0.032 275);
   --row-tint-coral: oklch(24% 0.036 36);
   --row-tint-teal: oklch(23% 0.03 180);
-  --row-tint-magenta: oklch(24% 0.038 338);
+  --row-tint-bubblegum: oklch(24% 0.038 338);
   --row-tint-grape: oklch(22% 0.02 305);
   --row-tint-sun: oklch(23% 0.03 95);
   --row-tint-sky: oklch(22% 0.02 235);
@@ -160,7 +160,7 @@
   --callout-warning-bg: oklch(28% 0.05 70);
   --callout-warning-text: oklch(82% 0.1 70);
   --callout-private-bg: oklch(27% 0.05 340);
-  --callout-private-text: var(--magenta-text);
+  --callout-private-text: var(--bubblegum-text);
   --callout-unlisted-bg: oklch(23% 0.015 275);
   --callout-unlisted-text: oklch(65% 0.015 275);
   --callout-success-bg: oklch(26% 0.04 195);
@@ -220,14 +220,14 @@
 
   --coral-text: oklch(48% 0.16 38);
   --teal-text: oklch(45% 0.136 165);
-  --magenta-text: oklch(48% 0.16 340);
+  --bubblegum-text: oklch(48% 0.16 340);
   --grape-text: oklch(46% 0.17 305);
   --sun-text: oklch(50% 0.11 80);
   --sky-text: oklch(47% 0.12 240);
 
   --on-coral-text: oklch(20% 0.04 38);
   --on-teal-text: oklch(20% 0.04 165);
-  --on-magenta-text: oklch(20% 0.04 340);
+  --on-bubblegum-text: oklch(20% 0.04 340);
   --on-grape-text: #ffffff;
   --on-sun-text: oklch(24% 0.05 85);
   --on-sky-text: oklch(20% 0.04 235);
@@ -240,7 +240,7 @@
 
   --glow-tangerine: 0 4px 18px oklch(55% 0.19 38 / 0.2);
   --glow-mint: 0 4px 18px oklch(55% 0.19 165 / 0.2);
-  --glow-pink: 0 4px 18px oklch(55% 0.19 340 / 0.2);
+  --glow-bubblegum: 0 4px 18px oklch(55% 0.19 340 / 0.2);
   --glow-grape: 0 4px 18px oklch(55% 0.19 305 / 0.2);
   --glow-sun: 0 4px 18px oklch(55% 0.19 95 / 0.2);
   --glow-sky: 0 4px 18px oklch(55% 0.19 235 / 0.2);
@@ -279,7 +279,7 @@
   --tint-brand: oklch(95% 0.03 275);
   --tint-coral: oklch(95% 0.035 40);
   --tint-teal: oklch(95% 0.03 165);
-  --tint-magenta: oklch(95% 0.035 340);
+  --tint-bubblegum: oklch(95% 0.035 340);
   --tint-grape: oklch(95% 0.03 305);
   --tint-sun: oklch(95% 0.05 95);
   --tint-sky: oklch(95% 0.03 235);
@@ -287,7 +287,7 @@
   --row-tint-brand: oklch(96% 0.02 275);
   --row-tint-coral: oklch(96% 0.025 40);
   --row-tint-teal: oklch(96% 0.02 165);
-  --row-tint-magenta: oklch(96% 0.025 340);
+  --row-tint-bubblegum: oklch(96% 0.025 340);
   --row-tint-grape: oklch(96% 0.02 305);
   --row-tint-sun: oklch(96% 0.04 95);
   --row-tint-sky: oklch(96% 0.02 235);
@@ -310,7 +310,7 @@
   --callout-warning-bg: oklch(93% 0.05 75);
   --callout-warning-text: oklch(45% 0.11 60);
   --callout-private-bg: oklch(93% 0.03 340);
-  --callout-private-text: var(--magenta-text);
+  --callout-private-text: var(--bubblegum-text);
   --callout-unlisted-bg: oklch(90% 0.008 275);
   --callout-unlisted-text: oklch(45% 0.015 275);
   --callout-success-bg: oklch(93% 0.035 195);

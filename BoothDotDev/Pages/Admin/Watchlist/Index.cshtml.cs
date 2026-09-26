@@ -20,7 +20,7 @@ public sealed class Index : PageModel
     [
         (WatchableState.Watching, "watching", "dot"),
         (WatchableState.PlanToWatch, "plan to watch", "dot dot-coral"),
-        (WatchableState.Watched, "watched", "dot dot-magenta")
+        (WatchableState.Watched, "watched", "dot dot-bubblegum")
     ];
 
     private readonly TraktAuthService _traktAuthService;

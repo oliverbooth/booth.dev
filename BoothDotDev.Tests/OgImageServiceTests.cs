@@ -34,7 +34,7 @@ internal sealed class OgImageServiceTests
         var title = string.Join(' ', Enumerable.Repeat("extraordinarily", 20));
         var subtitle = string.Join(' ', Enumerable.Repeat("word", 400));
 
-        Assert.That(Service.RenderCard(PaletteHue.Pink, "CHALLENGE", title, subtitle), Is.Not.Empty);
+        Assert.That(Service.RenderCard(PaletteHue.Bubblegum, "CHALLENGE", title, subtitle), Is.Not.Empty);
     }
 
     [Test]
@@ -51,7 +51,7 @@ internal sealed class OgImageServiceTests
         {
             (PaletteHue.Brand, "POST", "Why I stopped caching everything", "A postmortem on a cache bug, and what changed after."),
             (PaletteHue.Mint, "TUTORIAL", "TCP handshakes, three steps at a time", "Networking · part 2 of 5"),
-            (PaletteHue.Pink, "CHALLENGE", "Rate Limiter From Scratch", "Implement a sliding-window rate limiter with no external libraries."),
+            (PaletteHue.Bubblegum, "CHALLENGE", "Rate Limiter From Scratch", "Implement a sliding-window rate limiter with no external libraries."),
             (PaletteHue.Sun, "NOTE", "Postgres connection pooling gotcha", "a quick note · Sep 2026"),
             (PaletteHue.Sky, "LIBRARY", "X10D", "A NuGet offering dozens of extension methods for countless .NET types."),
             (PaletteHue.Grape, "DRAWING", "An extraordinarily long title that goes on and on across several lines of the card just to see what happens",
