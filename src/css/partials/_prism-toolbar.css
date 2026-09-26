@@ -87,10 +87,20 @@ div.code-toolbar:has(> pre > code[data-terminal]) {
   }
 
   &::before {
-    content: "";
     order: -1;
     flex-shrink: 0;
     height: 34px;
+    padding: 0 80px;
+    overflow: hidden;
+    content: attr(data-terminal-title);
+    color: var(--syntax-punct);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 34px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     background:
       radial-gradient(circle 5px at 23px 50%, var(--terminal-dot-1) 98%, transparent 100%),
       radial-gradient(circle 5px at 41px 50%, var(--terminal-dot-2) 98%, transparent 100%),
