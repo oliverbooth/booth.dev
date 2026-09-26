@@ -26,7 +26,8 @@
   }
 
   @media (hover: hover) {
-    > a:hover {
+    > a:hover,
+    > div:hover {
       transform: rotate(0deg) scale(calc(1 + 0.03 * var(--motion)));
     }
   }
