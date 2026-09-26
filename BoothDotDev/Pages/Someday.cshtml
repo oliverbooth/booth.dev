@@ -14,7 +14,7 @@
 
     <span class="eyebrow">a little bucket list -</span>
     <h1>Someday</h1>
-    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage someday", "/Admin/Someday/Index") })"/>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage someday", "/Admin/Someday/Index") })" />
 
     @if (Model.UpdatedAt is { } updatedAt)
     {
@@ -31,9 +31,27 @@
         {
             var entry = Model.Entries[index];
             var hue = entry.Color ?? PaletteHueExtensions.FromPosition(index);
+            var achievedOn = entry.AchievedOn;
+            var badgeLabel = achievedOn is null ? (index + 1).ToString("00") : "\u2713 done";
 
-            <section class="someday-entry" id="@entry.Slug" data-hue="@hue.ToDataHue()">
-                <span class="badge">@((index + 1).ToString("00"))</span>
+            <section class="someday-entry@(achievedOn is null ? "" : " is-achieved")" id="@entry.Slug" data-hue="@hue.ToDataHue()">
+                <div class="someday-entry-top">
+                    @if (Model.CanMarkAchieved)
+                    {
+                        <form method="post" asp-page-handler="ToggleAchieved" asp-route-id="@entry.Id">
+                            <button type="submit" class="badge someday-toggle"
+                                    title="@(achievedOn is null ? "Mark as achieved" : "Mark as not achieved")">@badgeLabel</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge">@badgeLabel</span>
+                    }
+                    @if (achievedOn is { } date)
+                    {
+                        <span class="someday-achieved">achieved &middot; @date.ToShortString()</span>
+                    }
+                </div>
                 <h2>Someday, @entry.Title</h2>
                 <div class="prose prose--serif">
                     @Html.Raw(MarkdownRenderingService.Render(entry, entry.Id, entry.PublishedAt))

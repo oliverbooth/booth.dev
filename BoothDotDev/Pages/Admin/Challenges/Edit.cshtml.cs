@@ -140,6 +140,7 @@ public sealed class Edit : PageModel
             Title = draft.Title,
             Excerpt = draft.Excerpt,
             Description = draft.Description,
+            Difficulty = draft.Difficulty,
             Solution = draft.Solution,
             ShowSolution = draft.ShowSolution,
             Visibility = draft.Visibility,
@@ -397,8 +398,8 @@ public sealed class Edit : PageModel
     /// <returns>The built <see cref="DevChallengeSaveRequest" />.</returns>
     private DevChallengeSaveRequest BuildSaveRequest()
     {
-        var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Excerpt, Input.Solution,
-            Input.ShowSolution, Input.Visibility);
+        var content = new DevChallengeDraftContent(Input.Title, Input.Description, Input.Difficulty, Input.Excerpt,
+            Input.Solution, Input.ShowSolution, Input.Visibility);
         return new DevChallengeSaveRequest(Input.PublishedAt, content);
     }
 
@@ -429,6 +430,12 @@ public sealed class Edit : PageModel
         /// <value>The title of the challenge.</value>
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the difficulty of the challenge.
+        /// </summary>
+        /// <value>The difficulty of the challenge, or <see langword="null" /> if it isn't rated.</value>
+        public Difficulty? Difficulty { get; set; }
 
         /// <summary>
         ///     Gets or sets the excerpt of the challenge.

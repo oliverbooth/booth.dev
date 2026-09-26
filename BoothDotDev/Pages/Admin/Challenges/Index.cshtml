@@ -1,6 +1,7 @@
 @page "/admin/challenges"
 @using System.Diagnostics
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using Humanizer
 @model Index
 
@@ -63,6 +64,10 @@
                     <div class="row-body">
                         <div class="row-title" data-search>@challenge.Title</div>
                     </div>
+                    @if (challenge.Difficulty is { } difficulty)
+                    {
+                        <span class="badge" data-hue="@difficulty.ToHue().ToDataHue()">@difficulty.ToString().ToLowerInvariant()</span>
+                    }
                     <span class="row-meta"><abbr title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></span>
                     <div class="row-actions">
                         <a asp-page="/Admin/Challenges/Edit" asp-route-id="@challenge.Id" class="icon-btn">edit</a>

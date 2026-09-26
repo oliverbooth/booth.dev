@@ -25,7 +25,7 @@
 
   &[data-callout="failure"], &[data-callout="danger"], &[data-callout="bug"] {
     --callout-bg: var(--callout-private-bg);
-    --callout-text: var(--magenta-text);
+    --callout-text: var(--bubblegum-text);
   }
 
   &[data-callout="cite"] {

@@ -21,7 +21,7 @@ public sealed class OgImageService
     ///     own <c>UpdatedAt</c>) has no way to know the *template* changed rather than the content - bump this whenever
     ///     <see cref="RenderCard" /> or its layout changes, so previously-cached cards stop being served stale.
     /// </summary>
-    public const string TemplateVersion = "v3";
+    public const string TemplateVersion = "v4";
 
     /// <summary>
     ///     The pixel width every rendered card is encoded at, exposed for the <c>og:image:width</c> meta tag.
@@ -154,19 +154,22 @@ public sealed class OgImageService
                 new PointF(start + side, start + side),
                 GradientRepetitionMode.None,
                 new ColorStop(0f, Brand),
-                new ColorStop(1f, ColorOf(PaletteHue.Pink))),
+                new ColorStop(1f, ColorOf(PaletteHue.Bubblegum))),
             RoundedRectangle(start, start, side, side, side * cornerRatio)));
 
         var text = initials.ToUpperInvariant();
         var options = new RichTextOptions(_titleFamily.CreateFont(side * letterRatio));
         var bounds = TextMeasurer.MeasureBounds(text, options);
-        options.Origin = new PointF(centre - (bounds.X + bounds.Width / 2), centre - (bounds.Y + bounds.Height / 2));
+        options.Origin = new PointF(centre - (bounds.X + (bounds.Width / 2)), centre - (bounds.Y + (bounds.Height / 2)));
 
         canvas.Mutate(ctx =>
         {
             ctx.DrawText(options, text, Color.White);
             ctx.Rotate(BrandIconTilt);
-            ctx.Resize(new ResizeOptions { Size = new Size(size, size), Mode = ResizeMode.Pad, Sampler = KnownResamplers.Lanczos3 });
+            ctx.Resize(new ResizeOptions
+            {
+                Size = new Size(size, size), Mode = ResizeMode.Pad, Sampler = KnownResamplers.Lanczos3
+            });
         });
 
         return canvas;
@@ -181,15 +184,20 @@ public sealed class OgImageService
     private float DrawBadge(Image<Rgba32> image, PaletteHue hue, string badge)
     {
         var text = badge.ToUpperInvariant();
-        var size = TextMeasurer.MeasureSize(text, new TextOptions(_badgeFont));
-        var width = size.Width + BadgePaddingX * 2;
-        var height = size.Height + BadgePaddingY * 2;
+        var options = new TextOptions(_badgeFont);
+        var size = TextMeasurer.MeasureSize(text, options);
+        var width = size.Width + (BadgePaddingX * 2);
+        var height = size.Height + (BadgePaddingY * 2);
+
+        var ink = TextMeasurer.MeasureBounds(text, options);
+        var caps = TextMeasurer.MeasureBounds("H", options);
+        var origin = new PointF(
+            MarginX + (width / 2) - (ink.X + (ink.Width / 2)), MarginY + (height / 2) - (caps.Y + (caps.Height / 2)));
 
         image.Mutate(ctx =>
         {
             ctx.Fill(BadgeColor(hue), RoundedRectangle(MarginX, MarginY, width, height, height / 2));
-            ctx.DrawText(new RichTextOptions(_badgeFont) { Origin = new PointF(MarginX + BadgePaddingX, MarginY + BadgePaddingY) },
-                text, Color.White);
+            ctx.DrawText(new RichTextOptions(_badgeFont) { Origin = origin }, text, Color.White);
         });
 
         return MarginY + height;
@@ -213,14 +221,14 @@ public sealed class OgImageService
         };
         if (!string.IsNullOrWhiteSpace(subtitle))
         {
-            fitted = FitText(subtitle, subtitleOptions, MaxSubtitleLines * _subtitleFont.Size * SubtitleLineHeight + 1);
+            fitted = FitText(subtitle, subtitleOptions, (MaxSubtitleLines * _subtitleFont.Size * SubtitleLineHeight) + 1);
             subtitleHeight = TextMeasurer.MeasureSize(fitted, subtitleOptions).Height;
         }
 
         // the block sits midway between the badge and the wordmark, like the mockup's space-between column
         var wordmarkTop = Height - MarginY - WordmarkIconSize;
         var blockHeight = titleHeight + (fitted is null ? 0 : TitleToSubtitleGap + subtitleHeight);
-        var titleY = top + (wordmarkTop - top - blockHeight) / 2;
+        var titleY = top + ((wordmarkTop - top - blockHeight) / 2);
 
         titleOptions.Origin = new PointF(MarginX, titleY);
         using (var shadow = new Image<Rgba32>(Width, Height, Color.Transparent))
@@ -251,7 +259,7 @@ public sealed class OgImageService
 
         // the tile is drawn inside a transparent margin so its tilted corners aren't clipped, so it is drawn larger than the
         // slot it sits in
-        using var icon = CreateBrandIcon(Initials, WordmarkIconSize + WordmarkIconBleed * 2);
+        using var icon = CreateBrandIcon(Initials, WordmarkIconSize + (WordmarkIconBleed * 2));
 
         image.Mutate(ctx =>
         {
@@ -260,7 +268,8 @@ public sealed class OgImageService
                 new RichTextOptions(_wordmarkFont)
                 {
                     Origin = new PointF(
-                        MarginX + WordmarkIconSize + WordmarkGap - bounds.X, top + WordmarkIconSize / 2f - (bounds.Y + bounds.Height / 2))
+                        MarginX + WordmarkIconSize + WordmarkGap - bounds.X,
+                        top + (WordmarkIconSize / 2f) - (bounds.Y + (bounds.Height / 2)))
                 },
                 name, Color.White);
         });
@@ -344,7 +353,7 @@ public sealed class OgImageService
         return hue switch
         {
             PaletteHue.Grape => Color.ParseHex("442E5C").WithAlpha(0.5f),
-            PaletteHue.Pink => Color.ParseHex("552847").WithAlpha(0.5f),
+            PaletteHue.Bubblegum => Color.ParseHex("552847").WithAlpha(0.5f),
             PaletteHue.Tangerine => Color.ParseHex("5D2919").WithAlpha(0.5f),
             PaletteHue.Sun => Color.ParseHex("52471F").WithAlpha(0.5f),
             PaletteHue.Mint => Color.ParseHex("074631").WithAlpha(0.5f),

@@ -1,3 +1,4 @@
+using System.Text;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Discord;
 using BoothDotDev.Data.Models;
@@ -105,7 +106,7 @@ public sealed class DiscordEmbedService
     {
         var description = _markdownRenderingService.RenderPlainTextExcerpt(challenge, out _);
 
-        return Compose(PaletteHue.Pink, challenge.Title, description, page,
+        return Compose(challenge.Hue, challenge.Title, description, page,
             HtmlUtility.OgImageUrl(siteBaseUrl, "challenge", challenge.Id),
             Link("View challenge", page), Link("All challenges", new Uri(siteBaseUrl, "/challenges")));
     }
@@ -114,7 +115,8 @@ public sealed class DiscordEmbedService
     {
         var description = _markdownRenderingService.RenderPlainTextPreview(project.Description);
 
-        return Compose(PaletteHue.Sky, project.Name, description, page, HtmlUtility.OgImageUrl(siteBaseUrl, "project", project.Id),
+        return Compose(PaletteHue.Sky, project.Name, description, page,
+            HtmlUtility.OgImageUrl(siteBaseUrl, "project", project.Id),
             [Link("View project", page), .. OwnLinks(project.Id)]);
     }
 
@@ -219,7 +221,7 @@ public sealed class DiscordEmbedService
 
     private static string EscapeMarkdown(string text)
     {
-        var builder = new System.Text.StringBuilder(text.Length + 8);
+        var builder = new StringBuilder(text.Length + 8);
         foreach (var ch in text)
         {
             if (ch is '\\' or '*' or '_' or '~' or '`' or '|' or '[' or ']' or '(' or ')' or '<' or '>' or '#' or '@')

@@ -34,8 +34,9 @@
         {
             Title = challenge.Title,
             Badge = "challenge",
-            BadgeClass = "badge-magenta",
-            Hue = "pink",
+            BadgeClass = challenge.Hue.ToBadgeClass(),
+            Hue = challenge.Hue.ToDataHue(),
+            Rating = challenge.Difficulty?.ToString().ToLowerInvariant(),
             Meta = hasSolution
                 ? [$"published {challenge.PublishedAt.ToShortString()}"]
                 : [$"published {challenge.PublishedAt.ToShortString()}", "solution locked"],

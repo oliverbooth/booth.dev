@@ -100,8 +100,7 @@ public sealed record DiscordComponentEmbed(DiscordComponent Component)
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        Encoder = JavaScriptEncoder.Default
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, Encoder = JavaScriptEncoder.Default
     };
 
     /// <summary>

@@ -25,11 +25,11 @@
         </div>
     </div>
     <partial name="Partials/_AdminLinks" model="@(new AdminLink[]
-    {
-        new("manage posts", "/Admin/Posts/Index"),
-        new("manage notes", "/Admin/Notes/Index"),
-        new("manage categories", "/Admin/Posts/Categories/Index")
-    })"/>
+                                                {
+                                                    new("manage posts", "/Admin/Posts/Index"),
+                                                    new("manage notes", "/Admin/Notes/Index"),
+                                                    new("manage categories", "/Admin/Posts/Categories/Index")
+                                                })" />
     @if (Model.Tag is { } tag)
     {
         <p class="lede">

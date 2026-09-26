@@ -6,6 +6,7 @@
 @import "partials/admin/_badges.css";
 @import "partials/admin/_toolbar.css";
 @import "partials/admin/_forms.css";
+@import "partials/admin/_segmented.css";
 @import "partials/admin/_login.css";
 @import "partials/admin/_path-builder.css";
 @import "partials/admin/_preview.css";

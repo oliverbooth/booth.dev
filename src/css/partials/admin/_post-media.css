@@ -47,8 +47,8 @@
   }
 
   &.media-item--missing .media-item-icon {
-    color: var(--coral-text);
-    background: color-mix(in oklch, var(--accent-coral) 18%, transparent);
+    color: var(--tangerine-text);
+    background: color-mix(in oklch, var(--accent-tangerine) 18%, transparent);
   }
 }
 

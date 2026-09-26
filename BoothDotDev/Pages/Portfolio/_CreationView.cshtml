@@ -30,7 +30,7 @@
     }
 
     <h1 class="project-title">@creation.Title</h1>
-    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Creations/Edit", new { id = creation.Id }) })"/>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Creations/Edit", new { id = creation.Id }) })" />
 
     @if (!string.IsNullOrWhiteSpace(creation.Description))
     {

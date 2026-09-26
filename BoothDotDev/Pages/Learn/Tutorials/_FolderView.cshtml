@@ -1,5 +1,4 @@
 @using BoothDotDev.Data
-@using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
 @using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
@@ -76,12 +75,12 @@
 
     <h1 data-hue="@(Model?.EffectiveColor.ToDataHue() ?? "brand")">@(Model?.Title ?? "Learn")</h1>
     <partial name="Partials/_AdminLinks" model="@(Model is null
-        ? new AdminLink[] { new("manage tutorials", "/Admin/Tutorials/Index") }
-        : new AdminLink[]
-        {
-            new("edit folder", "/Admin/Tutorials/Folders/Edit", new { id = Model.Id }),
-            new("manage tutorials", "/Admin/Tutorials/Index")
-        })"/>
+                                                    ? new AdminLink[] { new("manage tutorials", "/Admin/Tutorials/Index") }
+                                                    : new AdminLink[]
+                                                    {
+                                                        new("edit folder", "/Admin/Tutorials/Folders/Edit", new { id = Model.Id }),
+                                                        new("manage tutorials", "/Admin/Tutorials/Index")
+                                                    })" />
 
     @if (Model is not null && (!string.IsNullOrEmpty(Model.Description) || folders.Count > 0 || articles.Count > 0))
     {
@@ -108,7 +107,7 @@
         <div class="sticky-grid">
             @if (Model is null)
             {
-                <a asp-page="/Learn/Challenges/Index" class="folder-card" data-hue="pink">
+                <a asp-page="/Learn/Challenges/Index" class="folder-card" data-hue="bubblegum">
                     <i class="ti ti-code folder-card-glyph" aria-hidden="true"></i>
                     <h3>Dev Challenges</h3>
                     <p class="folder-card-count">Codewars-style problems to test your skills.</p>

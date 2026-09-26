@@ -18,9 +18,9 @@ public sealed class ContentHeader
     public string? Badge { get; init; }
 
     /// <summary>
-    ///     Gets the CSS class modifier selecting the badge's colour, such as <c>badge-magenta</c>.
+    ///     Gets the CSS class modifier selecting the badge's colour, such as <c>badge-bubblegum</c>.
     /// </summary>
-    /// <value>The badge class. The default is an empty string, which is the default teal badge.</value>
+    /// <value>The badge class. The default is an empty string, which is the default mint badge.</value>
     public string BadgeClass { get; init; } = string.Empty;
 
     /// <summary>
@@ -28,6 +28,13 @@ public sealed class ContentHeader
     /// </summary>
     /// <value>The hue's <c>data-hue</c> value, or <see langword="null" /> to render with no hue at all.</value>
     public string? Hue { get; init; }
+
+    /// <summary>
+    ///     Gets the text of a chip shown right after the badge, tinted with the header's hue, such as a challenge's
+    ///     difficulty.
+    /// </summary>
+    /// <value>The chip text, or <see langword="null" /> to show no chip.</value>
+    public string? Rating { get; init; }
 
     /// <summary>
     ///     Gets the tags to link to the blog's tag filter.

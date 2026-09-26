@@ -41,7 +41,7 @@ public sealed class SomedayEntryService
             return Result.Fail($"Slug '{request.Slug}' is already in use.");
         }
 
-        var entry = new SomedayEntry { Slug = request.Slug, SortOrder = request.SortOrder };
+        var entry = new SomedayEntry { Slug = request.Slug, SortOrder = request.SortOrder, AchievedOn = request.AchievedOn };
 
         // two SaveChanges calls, not one: SomedayEntry -> SomedayEntryDraft (via SomedayEntryId) and
         // SomedayEntryDraft -> SomedayEntry (via CurrentDraftId) form a cycle between two rows that are both
@@ -87,6 +87,7 @@ public sealed class SomedayEntryService
 
         entry.Slug = request.Slug;
         entry.SortOrder = request.SortOrder;
+        entry.AchievedOn = request.AchievedOn;
 
         context.SaveChanges();
         return entry;
@@ -121,9 +122,33 @@ public sealed class SomedayEntryService
 
         entry.Slug = request.Slug;
         entry.SortOrder = request.SortOrder;
+        entry.AchievedOn = request.AchievedOn;
         entry.CurrentDraftId = draft.Id;
         entry.UpdatedAt = DateTimeOffset.UtcNow;
 
+        context.SaveChanges();
+        return entry;
+    }
+
+    /// <summary>
+    ///     Marks a someday entry as achieved today, or, if it already is, clears that. Neither produces a draft.
+    /// </summary>
+    /// <param name="id">The ID of the entry to toggle.</param>
+    /// <returns>
+    ///     A <see cref="Result{T}" /> containing the updated entry, or an error if no entry with the specified
+    ///     <paramref name="id" /> exists.
+    /// </returns>
+    public Result<SomedayEntry> ToggleAchieved(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var entry = context.SomedayEntries.Find(id);
+
+        if (entry is null)
+        {
+            return Result.Fail($"Someday entry with ID '{id}' not found.");
+        }
+
+        entry.AchievedOn = entry.AchievedOn is null ? DateOnly.FromDateTime(DateTime.UtcNow) : null;
         context.SaveChanges();
         return entry;
     }

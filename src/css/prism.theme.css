@@ -107,7 +107,7 @@ pre[class*="language-"] {
   }
 
   &.deleted {
-    color: var(--accent-coral);
+    color: var(--accent-tangerine);
   }
 
   &.important,
