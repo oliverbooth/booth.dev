@@ -22,3 +22,8 @@
 .badge .dot {
   background: currentColor;
 }
+
+.admin-row .badge[data-hue] {
+  --badge-bg: color-mix(in oklch, var(--solid) 18%, transparent);
+  --badge-text: var(--ink);
+}
