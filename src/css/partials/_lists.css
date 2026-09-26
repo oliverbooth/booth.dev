@@ -45,7 +45,7 @@
   }
 
   > :not([data-hue]):nth-child(4n + 2) {
-    --tint: var(--row-tint-teal);
+    --tint: var(--row-tint-mint);
   }
 
   > :not([data-hue]):nth-child(4n + 3) {
@@ -110,7 +110,7 @@
   }
 
   &:not([data-hue]):nth-child(4n + 3) {
-    --tint: var(--row-tint-teal);
+    --tint: var(--row-tint-mint);
   }
 
   &:not([data-hue]):nth-child(4n + 4) {
@@ -228,11 +228,11 @@
 
 .section-icon--accent { color: var(--brand-text); }
 .section-icon--muted { color: var(--text-faint); }
-.section-icon--success { color: var(--teal-text); }
+.section-icon--success { color: var(--mint-text); }
 
 .item-icon--accent { color: var(--brand-text); }
 .item-icon--muted { color: var(--text-faint); }
-.item-icon--success { color: var(--teal-text); }
+.item-icon--success { color: var(--mint-text); }
 
 .stack-meta--row {
   display: flex;

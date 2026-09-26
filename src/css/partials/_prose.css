@@ -528,7 +528,7 @@
     }
 
     &:nth-of-type(4n + 2) {
-      --dot: var(--accent-teal);
+      --dot: var(--accent-mint);
     }
 
     &:nth-of-type(4n + 3) {

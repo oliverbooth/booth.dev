@@ -58,11 +58,11 @@
 
   &:not([data-hue]):nth-child(4n + 2) {
     --tint: var(--tint-tangerine);
-    --pin: var(--accent-teal);
+    --pin: var(--accent-mint);
   }
 
   &:not([data-hue]):nth-child(4n + 3) {
-    --tint: var(--tint-teal);
+    --tint: var(--tint-mint);
     --pin: var(--accent-bubblegum);
   }
 
@@ -107,7 +107,7 @@
   font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  color: var(--accent-teal);
+  color: var(--accent-mint);
   background: rgb(13 13 16 / 0.78);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);

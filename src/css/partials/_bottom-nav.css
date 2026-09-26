@@ -50,7 +50,7 @@
   }
 
   > :nth-child(6n + 3) i {
-    color: var(--accent-teal);
+    color: var(--accent-mint);
   }
 
   > :nth-child(6n + 4) i {

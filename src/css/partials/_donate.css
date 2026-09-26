@@ -120,8 +120,8 @@
 
   &:nth-child(2) {
     --tilt: 1deg;
-    --ink: var(--teal-text);
-    background: var(--tint-teal);
+    --ink: var(--mint-text);
+    background: var(--tint-mint);
   }
 
   @media (hover: hover) {
@@ -155,7 +155,7 @@
   }
 
   &.crypto-icon--eth {
-    background: var(--accent-teal);
+    background: var(--accent-mint);
   }
 }
 
@@ -198,6 +198,6 @@
   transition: color 0.15s ease;
 
   &.is-copied {
-    color: var(--teal-text);
+    color: var(--mint-text);
   }
 }

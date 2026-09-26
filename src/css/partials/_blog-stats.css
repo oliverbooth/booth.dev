@@ -19,7 +19,7 @@
   }
 
   &:nth-child(4n + 3) {
-    --bar: var(--teal-text);
+    --bar: var(--mint-text);
   }
 
   &:nth-child(4n + 4) {

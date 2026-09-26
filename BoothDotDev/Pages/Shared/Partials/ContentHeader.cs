@@ -20,7 +20,7 @@ public sealed class ContentHeader
     /// <summary>
     ///     Gets the CSS class modifier selecting the badge's colour, such as <c>badge-bubblegum</c>.
     /// </summary>
-    /// <value>The badge class. The default is an empty string, which is the default teal badge.</value>
+    /// <value>The badge class. The default is an empty string, which is the default mint badge.</value>
     public string BadgeClass { get; init; } = string.Empty;
 
     /// <summary>
