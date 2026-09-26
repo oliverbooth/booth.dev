@@ -26,6 +26,12 @@ public sealed class DevChallengeDraft : IEquatable<DevChallengeDraft>
     public ShortGuid DevChallengeId { get; internal set; }
 
     /// <summary>
+    ///     Gets or sets the difficulty of the challenge, as of this draft.
+    /// </summary>
+    /// <value>The difficulty of the challenge, or <see langword="null" /> if it hasn't been rated.</value>
+    public Difficulty? Difficulty { get; set; }
+
+    /// <summary>
     ///     Gets or sets the excerpt of the challenge, as of this draft.
     /// </summary>
     /// <value>

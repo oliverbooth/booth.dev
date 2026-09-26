@@ -407,6 +407,7 @@ public sealed class DevChallengeService
             DevChallengeId = devChallengeId,
             Title = content.Title,
             Description = content.Description,
+            Difficulty = content.Difficulty,
             Excerpt = content.Excerpt,
             Solution = content.Solution,
             ShowSolution = content.ShowSolution,

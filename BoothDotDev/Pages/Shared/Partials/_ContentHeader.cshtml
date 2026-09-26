@@ -1,11 +1,15 @@
 @model ContentHeader
 
-@if (Model.Badge is not null || Model.Tags.Count > 0)
+@if (Model.Badge is not null || Model.Rating is not null || Model.Tags.Count > 0)
 {
     <div class="post-tags" data-hue="@Model.Hue">
         @if (Model.Badge is not null)
         {
             <span class="badge @Model.BadgeClass">@Model.Badge</span>
+        }
+        @if (Model.Rating is not null)
+        {
+            <span class="tag tag-rating">@Model.Rating</span>
         }
         @foreach (var tag in Model.Tags)
         {

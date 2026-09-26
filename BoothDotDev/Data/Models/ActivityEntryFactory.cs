@@ -103,7 +103,7 @@ public static class ActivityEntryFactory
             CommitSha = challenge.Id.ToCommitSha(),
             PagePath = "/Learn/Challenges/Challenge",
             Category = "challenge",
-            Hue = PaletteHue.Pink,
+            Hue = challenge.Hue,
             Excerpt = excerpt,
             RouteValues = new Dictionary<string, string> { ["id"] = challenge.Id.ToString() },
             Visibility = challenge.Visibility

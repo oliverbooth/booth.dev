@@ -129,9 +129,9 @@ public sealed class OgImageController : ControllerBase
 
         var challenge = result.Value;
         var description = _markdownRenderingService.RenderPlainTextExcerpt(challenge, out _);
-        return ServeCached("challenge", ((Guid)challenge.Id).ToString("N"), PaletteHue.Pink,
+        return ServeCached("challenge", ((Guid)challenge.Id).ToString("N"), challenge.Hue,
             challenge.UpdatedAt ?? challenge.PublishedAt,
-            () => _ogImageService.RenderCard(PaletteHue.Pink, "CHALLENGE", challenge.Title, description));
+            () => _ogImageService.RenderCard(challenge.Hue, "CHALLENGE", challenge.Title, description));
     }
 
     /// <summary>
@@ -272,9 +272,11 @@ public sealed class OgImageController : ControllerBase
     ///     cached file is then treated as permanently fresh once it exists.
     /// </param>
     /// <param name="render">Renders a fresh card, only invoked on a cache miss.</param>
-    private IActionResult ServeCached(string type, string key, PaletteHue hue, DateTimeOffset? contentUpdatedAt, Func<byte[]> render)
+    private IActionResult ServeCached(string type, string key, PaletteHue hue, DateTimeOffset? contentUpdatedAt,
+        Func<byte[]> render)
     {
-        var cachePath = Path.Combine(CdnPaths.GetRoot(), "og", OgImageService.TemplateVersion, type, $"{key}-{hue.ToDataHue()}.png");
+        var cachePath = Path.Combine(CdnPaths.GetRoot(), "og", OgImageService.TemplateVersion, type,
+            $"{key}-{hue.ToDataHue()}.png");
         var isFresh = System.IO.File.Exists(cachePath) &&
                       (contentUpdatedAt is null ||
                        System.IO.File.GetLastWriteTimeUtc(cachePath) >= contentUpdatedAt.Value.UtcDateTime);

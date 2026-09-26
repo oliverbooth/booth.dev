@@ -5,6 +5,7 @@ namespace BoothDotDev.Data;
 /// </summary>
 /// <param name="Title">The title of the challenge.</param>
 /// <param name="Description">The description of the challenge.</param>
+/// <param name="Difficulty">The difficulty of the challenge, or <see langword="null" /> if it hasn't been rated.</param>
 /// <param name="Excerpt">
 ///     The excerpt of the challenge, or <see langword="null" /> to fall back to one auto-derived from the description.
 /// </param>
@@ -14,6 +15,7 @@ namespace BoothDotDev.Data;
 public sealed record DevChallengeDraftContent(
     string Title,
     string Description,
+    Difficulty? Difficulty,
     string? Excerpt,
     string? Solution,
     bool ShowSolution,
