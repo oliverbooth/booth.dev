@@ -77,10 +77,6 @@
 }
 
 @media (max-width: 760px) {
-  .topnav {
-    display: none;
-  }
-
   .bottom-nav {
     display: flex;
   }
