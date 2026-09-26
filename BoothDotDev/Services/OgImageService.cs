@@ -21,7 +21,7 @@ public sealed class OgImageService
     ///     own <c>UpdatedAt</c>) has no way to know the *template* changed rather than the content - bump this whenever
     ///     <see cref="RenderCard" /> or its layout changes, so previously-cached cards stop being served stale.
     /// </summary>
-    public const string TemplateVersion = "v3";
+    public const string TemplateVersion = "v4";
 
     /// <summary>
     ///     The pixel width every rendered card is encoded at, exposed for the <c>og:image:width</c> meta tag.
@@ -181,15 +181,20 @@ public sealed class OgImageService
     private float DrawBadge(Image<Rgba32> image, PaletteHue hue, string badge)
     {
         var text = badge.ToUpperInvariant();
-        var size = TextMeasurer.MeasureSize(text, new TextOptions(_badgeFont));
+        var options = new TextOptions(_badgeFont);
+        var size = TextMeasurer.MeasureSize(text, options);
         var width = size.Width + BadgePaddingX * 2;
         var height = size.Height + BadgePaddingY * 2;
+
+        var ink = TextMeasurer.MeasureBounds(text, options);
+        var caps = TextMeasurer.MeasureBounds("H", options);
+        var origin = new PointF(
+            MarginX + width / 2 - (ink.X + ink.Width / 2), MarginY + height / 2 - (caps.Y + caps.Height / 2));
 
         image.Mutate(ctx =>
         {
             ctx.Fill(BadgeColor(hue), RoundedRectangle(MarginX, MarginY, width, height, height / 2));
-            ctx.DrawText(new RichTextOptions(_badgeFont) { Origin = new PointF(MarginX + BadgePaddingX, MarginY + BadgePaddingY) },
-                text, Color.White);
+            ctx.DrawText(new RichTextOptions(_badgeFont) { Origin = origin }, text, Color.White);
         });
 
         return MarginY + height;
