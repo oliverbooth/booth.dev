@@ -24,7 +24,7 @@ public static class DifficultyExtensions
                 Difficulty.Easy => PaletteHue.Mint,
                 Difficulty.Intermediate => PaletteHue.Sun,
                 Difficulty.Hard => PaletteHue.Tangerine,
-                Difficulty.Insane => PaletteHue.Pink,
+                Difficulty.Insane => PaletteHue.Bubblegum,
                 _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null)
             };
         }

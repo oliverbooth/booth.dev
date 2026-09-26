@@ -24,7 +24,7 @@ function showCopyFeedback(button: HTMLElement): void {
     const originalClasses = glyph.className;
     glyph.classList.remove('ti-copy');
     glyph.classList.add('ti-check');
-    button.style.color = 'var(--teal-text)';
+    button.style.color = 'var(--mint-text)';
 
     setTimeout(() => {
         glyph.className = originalClasses;

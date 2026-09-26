@@ -1,7 +1,7 @@
 .badge,
 .status {
-  --badge-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
-  --badge-text: var(--teal-text);
+  --badge-bg: color-mix(in oklch, var(--accent-mint) 18%, transparent);
+  --badge-text: var(--mint-text);
 
   display: inline-flex;
   align-items: center;
@@ -20,16 +20,16 @@
   }
 }
 
-.badge-coral,
+.badge-tangerine,
 .status.hiatus {
-  --badge-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
-  --badge-text: var(--coral-text);
+  --badge-bg: color-mix(in oklch, var(--accent-tangerine) 18%, transparent);
+  --badge-text: var(--tangerine-text);
 }
 
-.badge-magenta,
+.badge-bubblegum,
 .status.retired {
-  --badge-bg: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
-  --badge-text: var(--magenta-text);
+  --badge-bg: color-mix(in oklch, var(--accent-bubblegum) 18%, transparent);
+  --badge-text: var(--bubblegum-text);
 }
 
 .badge-brand,
@@ -42,7 +42,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--accent-teal);
+  background: var(--accent-mint);
   display: inline-block;
   flex-shrink: 0;
 
@@ -51,10 +51,10 @@
   }
 }
 
-.dot-coral {
-  background: var(--accent-coral);
+.dot-tangerine {
+  background: var(--accent-tangerine);
 }
 
-.dot-magenta {
-  background: var(--accent-magenta);
+.dot-bubblegum {
+  background: var(--accent-bubblegum);
 }

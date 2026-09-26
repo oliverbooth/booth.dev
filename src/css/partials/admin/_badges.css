@@ -1,6 +1,6 @@
 .badge-published {
-  --badge-bg: color-mix(in oklch, var(--accent-teal) 18%, transparent);
-  --badge-text: var(--teal-text);
+  --badge-bg: color-mix(in oklch, var(--accent-mint) 18%, transparent);
+  --badge-text: var(--mint-text);
 }
 
 .badge-unlisted {
@@ -9,13 +9,13 @@
 }
 
 .badge-private {
-  --badge-bg: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
-  --badge-text: var(--magenta-text);
+  --badge-bg: color-mix(in oklch, var(--accent-bubblegum) 18%, transparent);
+  --badge-text: var(--bubblegum-text);
 }
 
 .badge-missing {
-  --badge-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
-  --badge-text: var(--coral-text);
+  --badge-bg: color-mix(in oklch, var(--accent-tangerine) 18%, transparent);
+  --badge-text: var(--tangerine-text);
   flex-shrink: 0;
 }
 

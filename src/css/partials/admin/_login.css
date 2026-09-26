@@ -115,11 +115,11 @@
 }
 
 .validation-summary-errors {
-  background: color-mix(in oklch, var(--accent-magenta) 18%, transparent);
+  background: color-mix(in oklch, var(--accent-bubblegum) 18%, transparent);
   border-radius: var(--radius-lg);
   padding: 0.75rem 1rem;
   margin-bottom: 1.25rem;
-  color: var(--magenta-text);
+  color: var(--bubblegum-text);
   font-size: 14px;
   text-align: left;
 
