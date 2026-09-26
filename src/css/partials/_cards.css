@@ -9,6 +9,7 @@
   --tilt: -1.5deg;
   --tint: var(--tint-brand);
   --pin: var(--accent-tangerine);
+  --solid: var(--brand);
 
   position: relative;
   display: block;
@@ -20,7 +21,7 @@
   transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
   transition: transform 0.25s ease;
 
-  &::before {
+  &.card-pin::before {
     content: "";
     position: absolute;
     z-index: 1;
@@ -58,16 +59,19 @@
 
   &:not([data-hue]):nth-child(4n + 2) {
     --tint: var(--tint-tangerine);
+    --solid: var(--accent-tangerine);
     --pin: var(--accent-mint);
   }
 
   &:not([data-hue]):nth-child(4n + 3) {
     --tint: var(--tint-mint);
+    --solid: var(--accent-mint);
     --pin: var(--accent-bubblegum);
   }
 
   &:not([data-hue]):nth-child(4n + 4) {
     --tint: var(--tint-bubblegum);
+    --solid: var(--accent-bubblegum);
     --pin: var(--brand);
   }
 }
