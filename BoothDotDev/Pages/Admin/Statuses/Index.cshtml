@@ -48,7 +48,7 @@
                 <div class="row-group-header">
                     <span class="@group.Dot"></span>
                     <span class="row-group-title">@group.Label</span>
-                    <span class="row-group-count">@("status".ToQuantity(group.Items.Count, ShowQuantityAs.Numeric))</span>
+                    <span class="row-group-count">@("status".ToQuantity(group.Items.Count))</span>
                 </div>
                 <ul class="admin-row-list">
                     @foreach (var status in group.Items)

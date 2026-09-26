@@ -50,7 +50,8 @@
     @Html.Raw(HtmlUtility.CreateMetaTagsForContent(ViewData["Post"], SiteBaseUrl, MarkdownRenderingService, PageTitle, Strings.Tagline))
     @if (Context.Response.StatusCode == StatusCodes.Status200OK)
     {
-        <script id="discord:component-embed" type="application/json">@Html.Raw(DiscordEmbedService.Build(ViewData["Post"], SiteBaseUrl, CurrentUrl, ViewData["Title"] as string ?? Strings.MyName, Strings.Tagline))</script>
+        <script id="discord:component-embed"
+                type="application/json">@Html.Raw(DiscordEmbedService.Build(ViewData["Post"], SiteBaseUrl, CurrentUrl, ViewData["Title"] as string ?? Strings.MyName, Strings.Tagline))</script>
     }
     <link rel="icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
@@ -86,7 +87,8 @@
             <div class="topnav-secondary">
                 <a asp-page="/About" page-match="/About">About</a>
                 <a asp-page="/Donate" page-match="/Donate">Donate</a>
-                <button type="button" class="icon-link" data-palette-trigger aria-label="Search" aria-keyshortcuts="Control+K Meta+K" title="Search (Ctrl+K)">
+                <button type="button" class="icon-link" data-palette-trigger aria-label="Search" aria-keyshortcuts="Control+K Meta+K"
+                        title="Search (Ctrl+K)">
                     <i class="ti ti-search"></i>
                 </button>
                 <button type="button" class="theme-toggle" data-theme-toggle aria-label="Dark mode" title="Toggle dark mode">

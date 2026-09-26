@@ -46,7 +46,7 @@
 
     <span class="status @statusClass"><span class="dot"></span>@statusText</span>
     <h1 class="project-title">@project.Name</h1>
-    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Projects/Edit", new { id = project.Id }) })"/>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("edit", "/Admin/Projects/Edit", new { id = project.Id }) })" />
 
     <div class="project-desc">
         @Html.Raw(Markdown.ToHtmlUnwrapped(project.Description, MarkdownPipeline))
