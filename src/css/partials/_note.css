@@ -1,3 +1,15 @@
+/* the shadow lives here because clip-path would slice a box-shadow off along the cut; a filter shadows the clipped silhouette */
+.note-sheet {
+  --sheet-shadow: oklch(45% 0.06 275 / 0.3);
+
+  margin: 1.5rem 0 2rem;
+  filter: drop-shadow(0 7px 8px var(--sheet-shadow));
+
+  :root[data-theme="dark"] & {
+    --sheet-shadow: oklch(5% 0.02 275 / 0.6);
+  }
+}
+
 .note-card {
   --tilt: -1deg;
   --tint: var(--row-tint-sun);
@@ -6,8 +18,8 @@
      Patrick Hand 21px's rounded ascent/descent, so a font or size change means re-measuring it */
   --lh: 30px;
   --rule-y: 21.5px;
+  --fold: 34px;
 
-  margin: 1.5rem 0 2rem;
   /* one line of paper below the text; anchoring the rules to the bottom edge keeps them in phase with the last line */
   padding: 26px 28px var(--lh);
   background-color: var(--tint);
@@ -20,8 +32,33 @@
   );
   background-position: 0 100%;
   background-size: 100% var(--lh);
-  box-shadow: var(--shadow-card-soft);
+  border-radius: 6px 18px 0 16px;
+  /* overshoots the box on the other three sides so the tape isn't clipped with the corner */
+  clip-path: polygon(
+    -40px -40px,
+    calc(100% + 40px) -40px,
+    calc(100% + 40px) calc(100% - var(--fold) - 40px),
+    calc(100% - var(--fold) - 40px) calc(100% + 40px),
+    -40px calc(100% + 40px)
+  );
   transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: var(--fold);
+    height: var(--fold);
+    border-top-left-radius: 16px;
+    background: linear-gradient(
+      to bottom right,
+      color-mix(in oklch, var(--tint), var(--sun-text) 16%),
+      color-mix(in oklch, var(--tint), black 14%) calc(50% - 0.5px),
+      transparent calc(50% + 0.5px)
+    );
+    filter: drop-shadow(-1px -1px 3px oklch(5% 0.02 275 / 0.45));
+  }
 
   /* the same step in luminance reads stronger against a dark ground, so the dark rule needs less mix */
   :root[data-theme="dark"] & {

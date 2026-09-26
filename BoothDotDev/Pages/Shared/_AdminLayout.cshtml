@@ -42,7 +42,7 @@
 }
 <div class="admin-shell">
 
-    <nav class="admin-rail">
+    <nav class="admin-rail" id="admin-rail">
         <div class="admin-rail-brand">
             <a asp-page="/Admin/Index" class="topnav-brand" title="@Strings.MyName (Alt + H)" accesskey="h">@Strings.MyName</a>
             <span class="admin-chip">admin</span>
@@ -104,7 +104,24 @@
         </div>
     </nav>
 
+    <div class="admin-scrim" data-admin-nav-scrim></div>
+
     <main class="admin-main">
+        <header class="admin-topbar">
+            <div class="admin-topbar-brand">
+                <a asp-page="/Admin/Index" class="topnav-brand">@Strings.MyName</a>
+                <span class="admin-chip">admin</span>
+                @if (EnvironmentLabel is { } topbarLabel)
+                {
+                    <span class="env-badge">@topbarLabel</span>
+                }
+            </div>
+            <button type="button" class="admin-menu-btn" data-admin-nav-toggle aria-controls="admin-rail"
+                    aria-expanded="false" aria-label="Menu">
+                <i class="ti ti-menu-2" aria-hidden="true"></i>
+            </button>
+        </header>
+
         @RenderBody()
     </main>
 
