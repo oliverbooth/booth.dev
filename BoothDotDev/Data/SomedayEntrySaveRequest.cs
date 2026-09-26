@@ -15,5 +15,6 @@ public sealed record SomedayEntryDraftContent(string Title, string Body, Visibil
 /// </summary>
 /// <param name="Slug">The slug of the entry.</param>
 /// <param name="SortOrder">The entry's position on the someday page.</param>
+/// <param name="AchievedOn">The date the wish was achieved, or <see langword="null" /> if it hasn't been.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
-public sealed record SomedayEntrySaveRequest(string Slug, int SortOrder, SomedayEntryDraftContent Content);
+public sealed record SomedayEntrySaveRequest(string Slug, int SortOrder, DateOnly? AchievedOn, SomedayEntryDraftContent Content);

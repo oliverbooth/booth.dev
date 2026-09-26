@@ -19,6 +19,7 @@ internal sealed class SomedayEntryConfiguration : IEntityTypeConfiguration<Somed
         builder.Property(e => e.UpdatedAt).IsRequired(false);
         builder.Property(e => e.CurrentDraftId).IsRequired(false);
         builder.Property(e => e.TrashedAt).IsRequired(false);
+        builder.Property(e => e.AchievedOn).IsRequired(false);
 
         builder.HasOne(e => e.CurrentDraft).WithMany().HasForeignKey(e => e.CurrentDraftId);
 

@@ -80,6 +80,13 @@
         </div>
 
         <div class="field">
+            <label for="achieved-on">Achieved on</label>
+            <input type="date" id="achieved-on" asp-for="Input.AchievedOn">
+            <p class="hint">Marks this wish as achieved on that date, striking it out on the someday page. Leave blank if it hasn't
+                happened yet. You can also click an entry's number on the page itself while signed in.</p>
+        </div>
+
+        <div class="field">
             <label>Colour</label>
             <partial name="Partials/_HuePicker" model="huePicker" />
         </div>
