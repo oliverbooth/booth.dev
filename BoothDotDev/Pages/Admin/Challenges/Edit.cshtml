@@ -1,5 +1,6 @@
 @page "/admin/challenges/edit/{id?}"
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using Humanizer
 @model Edit
 
@@ -61,6 +62,25 @@
             <label for="solution">Solution (markdown supported)</label>
             <textarea id="solution" rows="10" asp-for="Input.Solution" data-markdown data-preview-source
                       data-preview-field="solution"></textarea>
+        </div>
+
+        <div class="field">
+            <label>Difficulty</label>
+            <div class="segmented" role="radiogroup" aria-label="Difficulty">
+                <label class="segmented-option">
+                    <input type="radio" name="Input.Difficulty" value="" checked="@(challengeModel.Difficulty is null)">
+                    <span>unrated</span>
+                </label>
+                @foreach (var difficulty in Enum.GetValues<Difficulty>())
+                {
+                    <label class="segmented-option" data-hue="@difficulty.ToHue().ToDataHue()">
+                        <input type="radio" name="Input.Difficulty" value="@difficulty"
+                               checked="@(challengeModel.Difficulty == difficulty)">
+                        <span>@difficulty.ToString().ToLowerInvariant()</span>
+                    </label>
+                }
+            </div>
+            <p class="hint">Shown as a badge on the challenge and colours its card. Leave unrated to show none.</p>
         </div>
 
         <div class="field-row">

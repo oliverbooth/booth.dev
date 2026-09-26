@@ -30,6 +30,13 @@ public sealed class ContentHeader
     public string? Hue { get; init; }
 
     /// <summary>
+    ///     Gets the text of a chip shown right after the badge, tinted with the header's hue, such as a challenge's
+    ///     difficulty.
+    /// </summary>
+    /// <value>The chip text, or <see langword="null" /> to show no chip.</value>
+    public string? Rating { get; init; }
+
+    /// <summary>
     ///     Gets the tags to link to the blog's tag filter.
     /// </summary>
     /// <value>The tags.</value>

@@ -267,6 +267,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasDefaultSchema("public");
         modelBuilder.HasPostgresEnum<BookState>("public", "book_state", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<CreationKind>("public", "creation_kind", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<Difficulty>("public", "difficulty", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<LinkKind>("public", "link_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<PaletteHue>("public", "palette_hue", new NpgsqlSnakeCaseNameTranslator());

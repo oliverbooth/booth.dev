@@ -566,6 +566,12 @@
       color: var(--magenta-text);
       transform: rotate(calc(2deg * var(--motion)));
     }
+
+    &.tag-rating {
+      background: color-mix(in oklch, var(--solid) 18%, transparent);
+      color: var(--ink);
+      transform: rotate(calc(-2deg * var(--motion)));
+    }
   }
 }
 
