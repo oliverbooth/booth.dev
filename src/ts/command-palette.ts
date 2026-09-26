@@ -109,6 +109,7 @@ function open(): void {
         return;
     }
 
+    refs.dialog.classList.remove('is-closing');
     refs.dialog.showModal();
     refs.input.value = '';
     refs.input.focus();
@@ -121,15 +122,17 @@ function close(): void {
         return;
     }
 
-    refs.dialog.classList.add('is-closing');
-    refs.dialog.addEventListener(
-        'transitionend',
-        () => {
-            refs?.dialog.classList.remove('is-closing');
-            refs?.dialog.close();
-        },
-        {once: true}
-    );
+    const dialog: HTMLDialogElement = refs.dialog;
+
+    dialog.classList.add('is-closing');
+    dialog.addEventListener('transitionend', function onTransitionEnd(event: TransitionEvent): void {
+        if (event.target !== dialog || event.pseudoElement !== '') {
+            return;
+        }
+
+        dialog.removeEventListener('transitionend', onTransitionEnd);
+        dialog.close();
+    });
 }
 
 function onDialogClose(): void {
