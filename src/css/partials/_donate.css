@@ -106,14 +106,14 @@
 
 .crypto-card {
   --tilt: -1deg;
-  --ink: var(--coral-text);
+  --ink: var(--tangerine-text);
 
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 20px 20px 22px;
   border-radius: var(--radius-lg);
-  background: var(--tint-coral);
+  background: var(--tint-tangerine);
   box-shadow: var(--shadow-card-soft);
   transform: rotate(calc(var(--tilt) * var(--motion) * var(--tilt-on)));
   transition: transform 0.25s ease;
@@ -151,7 +151,7 @@
   flex-shrink: 0;
 
   &.crypto-icon--btc {
-    background: var(--accent-coral);
+    background: var(--accent-tangerine);
   }
 
   &.crypto-icon--eth {

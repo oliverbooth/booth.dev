@@ -15,7 +15,7 @@
 
   /* the text-safe accents, so the fill still stands out from the track in light mode */
   &:nth-child(4n + 2) {
-    --bar: var(--coral-text);
+    --bar: var(--tangerine-text);
   }
 
   &:nth-child(4n + 3) {

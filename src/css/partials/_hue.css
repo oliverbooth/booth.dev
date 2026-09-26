@@ -1,5 +1,5 @@
 [data-hue="brand"] { --ink: var(--brand-text); --solid: var(--brand); --on-solid: var(--on-brand-solid); --glow: var(--shadow-hero-text); }
-[data-hue="tangerine"] { --ink: var(--coral-text); --solid: var(--accent-coral); --on-solid: var(--on-coral-text); --glow: var(--glow-tangerine); }
+[data-hue="tangerine"] { --ink: var(--tangerine-text); --solid: var(--accent-tangerine); --on-solid: var(--on-tangerine-text); --glow: var(--glow-tangerine); }
 [data-hue="mint"] { --ink: var(--teal-text); --solid: var(--accent-teal); --on-solid: var(--on-teal-text); --glow: var(--glow-mint); }
 [data-hue="bubblegum"] { --ink: var(--bubblegum-text); --solid: var(--accent-bubblegum); --on-solid: var(--on-bubblegum-text); --glow: var(--glow-bubblegum); }
 [data-hue="grape"] { --ink: var(--grape-text); --solid: var(--accent-grape); --on-solid: var(--on-grape-text); --glow: var(--glow-grape); }
@@ -39,11 +39,11 @@ h1[data-hue] {
 .article-card[data-hue="brand"],
 .challenge-card[data-hue="brand"],
 .portfolio-card[data-hue="brand"] { --tint: var(--tint-brand); }
-.card[data-hue="tangerine"] { --tint: var(--tint-coral); --pin: var(--accent-coral); }
+.card[data-hue="tangerine"] { --tint: var(--tint-tangerine); --pin: var(--accent-tangerine); }
 .folder-card[data-hue="tangerine"],
 .article-card[data-hue="tangerine"],
 .challenge-card[data-hue="tangerine"],
-.portfolio-card[data-hue="tangerine"] { --tint: var(--tint-coral); }
+.portfolio-card[data-hue="tangerine"] { --tint: var(--tint-tangerine); }
 .card[data-hue="mint"] { --tint: var(--tint-teal); --pin: var(--accent-teal); }
 .folder-card[data-hue="mint"],
 .article-card[data-hue="mint"],
@@ -78,7 +78,7 @@ h1[data-hue] {
 .stack-list > [data-hue="tangerine"],
 .post-row[data-hue="tangerine"],
 .post-nav-link[data-hue="tangerine"],
-.series-box[data-hue="tangerine"] { --tint: var(--row-tint-coral); }
+.series-box[data-hue="tangerine"] { --tint: var(--row-tint-tangerine); }
 
 .stack-list > [data-hue="mint"],
 .post-row[data-hue="mint"],

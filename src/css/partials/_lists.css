@@ -53,7 +53,7 @@
   }
 
   > :not([data-hue]):nth-child(4n + 4) {
-    --tint: var(--row-tint-coral);
+    --tint: var(--row-tint-tangerine);
   }
 }
 
@@ -106,7 +106,7 @@
   }
 
   &:not([data-hue]):nth-child(4n + 2) {
-    --tint: var(--row-tint-coral);
+    --tint: var(--row-tint-tangerine);
   }
 
   &:not([data-hue]):nth-child(4n + 3) {

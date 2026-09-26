@@ -32,7 +32,7 @@
 
   &:nth-child(4n + 2) {
     --tilt: 1deg;
-    --tint: var(--row-tint-coral);
+    --tint: var(--row-tint-tangerine);
   }
 
   &:nth-child(4n + 3) {

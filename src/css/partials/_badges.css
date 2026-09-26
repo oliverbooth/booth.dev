@@ -20,10 +20,10 @@
   }
 }
 
-.badge-coral,
+.badge-tangerine,
 .status.hiatus {
-  --badge-bg: color-mix(in oklch, var(--accent-coral) 18%, transparent);
-  --badge-text: var(--coral-text);
+  --badge-bg: color-mix(in oklch, var(--accent-tangerine) 18%, transparent);
+  --badge-text: var(--tangerine-text);
 }
 
 .badge-bubblegum,
@@ -51,8 +51,8 @@
   }
 }
 
-.dot-coral {
-  background: var(--accent-coral);
+.dot-tangerine {
+  background: var(--accent-tangerine);
 }
 
 .dot-bubblegum {

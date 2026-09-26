@@ -506,7 +506,7 @@
   }
 
   h2 {
-    --dot: var(--accent-coral);
+    --dot: var(--accent-tangerine);
 
     display: flex;
     align-items: center;

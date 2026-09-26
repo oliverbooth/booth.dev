@@ -37,7 +37,7 @@
   }
 
   &[data-hue="brand"] { --tint: var(--row-tint-brand); }
-  &[data-hue="tangerine"] { --tint: var(--row-tint-coral); }
+  &[data-hue="tangerine"] { --tint: var(--row-tint-tangerine); }
   &[data-hue="mint"] { --tint: var(--row-tint-teal); }
   &[data-hue="bubblegum"] { --tint: var(--row-tint-bubblegum); }
   &[data-hue="grape"] { --tint: var(--row-tint-grape); }

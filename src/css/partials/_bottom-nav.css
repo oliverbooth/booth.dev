@@ -46,7 +46,7 @@
   }
 
   > :nth-child(6n + 2) i {
-    color: var(--accent-coral);
+    color: var(--accent-tangerine);
   }
 
   > :nth-child(6n + 3) i {
@@ -62,7 +62,7 @@
   }
 
   > :nth-child(6n) i {
-    color: var(--accent-coral);
+    color: var(--accent-tangerine);
   }
 
   .theme-toggle {

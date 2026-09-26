@@ -96,11 +96,6 @@ public static class PaletteHueExtensions
         /// <exception cref="ArgumentOutOfRangeException">
         ///     <paramref name="hue" /> is not a recognised <see cref="PaletteHue" />.
         /// </exception>
-        /// <remarks>
-        ///     The class names deliberately do not correspond to the enum member names for <see cref="PaletteHue.Tangerine" /> and
-        ///     <see cref="PaletteHue.Mint" />: these hues predate this enum as <c>badge-coral</c> and the default teal
-        ///     <c>badge</c> respectively.
-        /// </remarks>
         public string ToBadgeClass()
         {
             return hue switch
@@ -108,7 +103,7 @@ public static class PaletteHueExtensions
                 PaletteHue.Brand => "badge-brand",
                 PaletteHue.Grape => "badge-grape",
                 PaletteHue.Bubblegum => "badge-bubblegum",
-                PaletteHue.Tangerine => "badge-coral",
+                PaletteHue.Tangerine => "badge-tangerine",
                 PaletteHue.Sun => "badge-sun",
                 PaletteHue.Mint => "",
                 PaletteHue.Sky => "badge-sky",
