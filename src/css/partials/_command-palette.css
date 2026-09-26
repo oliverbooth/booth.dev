@@ -90,6 +90,10 @@
   color: var(--kbd-text);
   font-family: var(--font-mono);
   font-size: 11px;
+
+  @media (hover: none) {
+    display: none;
+  }
 }
 
 .command-palette-results {
