@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Starts a release cycle: branches `release/X.Y.Z` off main and commits the version bump as
+# Starts a release cycle: branches `release/X.Y[.Z]` off main and commits the version bump as
 # the branch's first commit, so it begins life already on a clean, correctly-versioned slate.
 # Deliberately does NOT tag - that happens later, via release.sh, once this branch is merged
 # back into main.
 #
-# Usage: scripts/start-release.sh <patch|minor|major>
+# Usage: scripts/start-release.sh <drop|patch>
 set -euo pipefail
 
-bump="${1:?Usage: scripts/start-release.sh <patch|minor|major>}"
+bump="${1:?Usage: scripts/start-release.sh <drop|patch>}"
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
@@ -27,13 +27,13 @@ if ! git merge-base --is-ancestor origin/main HEAD; then
     exit 1
 fi
 
-# bumps package.json + runs the "version" script (syncs and stages Directory.Build.props),
-# but makes no commit/tag - `git-tag-version` off skips both, per `npm help version`.
-npm version --no-git-tag-version "$bump"
+# bumps package.json, resyncs package-lock.json and Directory.Build.props, but makes no commit -
+# that's this script's job, once the version is settled on the new release branch.
+node scripts/bump-version.mjs "$bump"
 version="$(node -p "require('./package.json').version")"
 
 git checkout -b "release/$version"
-git add package.json package-lock.json
+git add package.json package-lock.json Directory.Build.props
 git commit -m "chore: bump to $version"
 
 echo "Started release/$version"
