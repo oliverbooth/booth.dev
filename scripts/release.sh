@@ -5,8 +5,8 @@
 # Usage:
 #   scripts/release.sh
 #       tags the version already sitting in package.json
-#   scripts/release.sh <patch|minor|major|x.y.z>
-#       bumps + commits + tags via `npm version`, in one step
+#   scripts/release.sh <drop|patch|x.y[.z]>
+#       bumps + commits + tags directly on main, in one step
 set -euo pipefail
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
@@ -23,10 +23,14 @@ if ! git merge-base --is-ancestor origin/main HEAD; then
 fi
 
 if [[ $# -gt 0 ]]; then
-    npm version "$1"
+    node scripts/bump-version.mjs "$1"
+    version="$(node -p "require('./package.json').version")"
+    git add package.json package-lock.json Directory.Build.props
+    git commit -m "chore: bump to $version"
 else
     version="$(node -p "require('./package.json').version")"
-    git tag -m "chore: bump to $version" "v$version"
 fi
+
+git tag -m "chore: bump to $version" "v$version"
 
 git push --follow-tags
