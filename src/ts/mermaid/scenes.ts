@@ -3,20 +3,40 @@ import mermaid from 'mermaid';
 mermaid.initialize({
     startOnLoad: false,
     theme: 'base',
-    themeVariables: {
-        darkMode: true,
-        background: cssColor('--surface-1'),
-        primaryColor: cssColor('--surface-2'),
-        primaryTextColor: cssColor('--code-text'),
-        primaryBorderColor: cssColor('--accent'),
-        secondaryColor: cssColor('--surface-2'),
-        tertiaryColor: cssColor('--surface-2'),
-        lineColor: cssColor('--syntax-punct'),
-        textColor: cssColor('--code-text'),
-        edgeLabelBackground: cssColor('--surface-1'),
-        fontFamily: cssVar('--font-sans'),
-    },
+    themeVariables: buildThemeVariables(),
 });
+
+document.addEventListener('themechange', () => {
+    mermaid.initialize({startOnLoad: false, theme: 'base', themeVariables: buildThemeVariables()});
+    rerenderMountedDiagrams().catch(error => console.error('Failed to re-theme mermaid diagrams:', error));
+});
+
+function buildThemeVariables() {
+    return {
+        darkMode: true,
+        background: cssColor('--scene-bg'),
+        primaryColor: cssColor('--surface'),
+        primaryTextColor: cssColor('--text'),
+        primaryBorderColor: cssColor('--brand'),
+        secondaryColor: cssColor('--surface'),
+        tertiaryColor: cssColor('--surface'),
+        lineColor: cssColor('--syntax-punct'),
+        textColor: cssColor('--text'),
+        edgeLabelBackground: cssColor('--scene-bg'),
+        fontFamily: cssVar('--font-body'),
+    };
+}
+
+let renderCounter = 0;
+
+async function rerenderMountedDiagrams(): Promise<void> {
+    const panels: NodeListOf<HTMLElement> = document.querySelectorAll<HTMLElement>('.mermaid-scene-panel[data-mermaid-source]');
+    for (const panel of panels) {
+        const source = panel.dataset.mermaidSource ?? '';
+        const {svg} = await mermaid.render(`mermaid-retheme-${renderCounter++}`, source);
+        panel.innerHTML = svg;
+    }
+}
 
 /**
  * Reads the resolved value of a CSS custom property off the document root.
@@ -29,7 +49,7 @@ function cssVar(name: string): string {
 /**
  * Reads a CSS custom property holding a color and converts it to sRGB hex. Mermaid's color parser doesn't understand
  * modern color spaces like `oklch()`, which is what the theme tokens resolve to, so the browser does the conversion.
- * @param name The custom property's name, e.g. `--code-text`.
+ * @param name The custom property's name, e.g. `--text`.
  */
 function cssColor(name: string): string {
     const context = document.createElement('canvas').getContext('2d');
@@ -83,6 +103,7 @@ async function mountDiagram(codeElement: HTMLElement): Promise<void> {
     const diagramPanel = document.createElement('div');
     diagramPanel.className = 'mermaid-scene-panel';
     diagramPanel.textContent = source;
+    diagramPanel.dataset.mermaidSource = source;
 
     (codeToolbar ?? pre).replaceWith(wrapper);
 

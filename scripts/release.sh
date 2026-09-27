@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Cuts a release and pushes it. GitLab turns the new tag into a Release, which fires the
+# Cuts a release and pushes it. GitLab CI creates the Release for the new tag, then fires the
 # Portainer webhook.
 #
 # Usage:
