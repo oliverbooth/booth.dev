@@ -145,7 +145,9 @@ public sealed class Edit : PageModel
             Tags = string.Join(", ", draft.Tags),
             CategoryId = draft.CategoryId,
             Visibility = draft.Visibility,
-            PublishedAt = post.PublishedAt.ToLocalTime()
+            PublishedAt = post.PublishedAt.ToLocalTime(),
+            IsRedirect = post.IsRedirect,
+            RedirectUrl = post.RedirectUrl?.ToString()
         };
 
         return Page();
@@ -160,12 +162,12 @@ public sealed class Edit : PageModel
     {
         CreatingNew = id is null;
 
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid || !TryParseRedirectUrl(out var redirectUrl))
         {
             return Page();
         }
 
-        var request = BuildSaveRequest();
+        var request = BuildSaveRequest(redirectUrl);
         var result = id is null
             ? _blogPostService.CreatePost(request)
             : _blogPostService.PublishPost(id.Value, request);
@@ -183,12 +185,12 @@ public sealed class Edit : PageModel
     {
         CreatingNew = id is null;
 
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid || !TryParseRedirectUrl(out var redirectUrl))
         {
             return Page();
         }
 
-        var request = BuildSaveRequest();
+        var request = BuildSaveRequest(redirectUrl);
 
         // A brand-new post has no prior draft to leave untouched, so its first save - draft or not - always
         // becomes the post's current draft. There's nothing else for it to sensibly point at.
@@ -394,8 +396,9 @@ public sealed class Edit : PageModel
     ///     Builds a save request from the current state of <see cref="Input" />, for either creating a post or
     ///     saving a new draft of one.
     /// </summary>
+    /// <param name="redirectUrl">The parsed redirect URL, as returned by <see cref="TryParseRedirectUrl" />.</param>
     /// <returns>The built <see cref="BlogPostSaveRequest" />.</returns>
-    private BlogPostSaveRequest BuildSaveRequest()
+    private BlogPostSaveRequest BuildSaveRequest(Uri? redirectUrl)
     {
         var content = new BlogPostDraftContent(Input.Title,
             Input.Body,
@@ -407,7 +410,37 @@ public sealed class Edit : PageModel
             Input.TableOfContentsExpanded,
             Input.Color);
 
-        return new BlogPostSaveRequest(Input.AuthorId, Input.Slug, Input.PublishedAt, Input.EnableComments, content);
+        return new BlogPostSaveRequest(Input.AuthorId,
+            Input.Slug,
+            Input.PublishedAt,
+            Input.EnableComments,
+            Input.IsRedirect,
+            redirectUrl,
+            content);
+    }
+
+    /// <summary>
+    ///     Validates and parses <see cref="EditModel.RedirectUrl" /> into an absolute <see cref="Uri" />, adding a
+    ///     model error if the post is marked as a redirect but the URL is missing or not absolute.
+    /// </summary>
+    /// <param name="redirectUrl">When this method returns, the parsed URL, or <see langword="null" /> if invalid.</param>
+    /// <returns><see langword="true" /> if the URL is valid or the post is not a redirect; otherwise, <see langword="false" />.</returns>
+    private bool TryParseRedirectUrl(out Uri? redirectUrl)
+    {
+        redirectUrl = null;
+
+        if (!Input.IsRedirect)
+        {
+            return true;
+        }
+
+        if (Uri.TryCreate(Input.RedirectUrl, UriKind.Absolute, out redirectUrl))
+        {
+            return true;
+        }
+
+        ModelState.AddModelError(nameof(Input.RedirectUrl), "Enter a valid absolute URL to redirect to.");
+        return false;
     }
 
     /// <summary>
@@ -477,6 +510,19 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The excerpt of the blog post.</value>
         public string? Excerpt { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the post redirects to another URL instead of showing its own
+        ///     content.
+        /// </summary>
+        /// <value><see langword="true" /> if the post redirects to another URL; otherwise, <see langword="false" />.</value>
+        public bool IsRedirect { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the URL the post redirects to.
+        /// </summary>
+        /// <value>The URL the post redirects to, or <see langword="null" /> if it does not redirect.</value>
+        public string? RedirectUrl { get; set; }
 
         /// <summary>
         ///     Gets or sets the publication date and time of the blog post.

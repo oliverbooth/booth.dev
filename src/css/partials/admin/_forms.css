@@ -26,6 +26,10 @@
   font-size: 14px;
 }
 
+.form-grid:not(:has([data-redirect-toggle]:checked)) [data-redirect-url-field] {
+  display: none;
+}
+
 .form-actions {
   display: flex;
   gap: 8px;
