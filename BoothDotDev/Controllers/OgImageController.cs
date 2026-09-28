@@ -65,6 +65,61 @@ public sealed class OgImageController : ControllerBase
     }
 
     /// <summary>
+    ///     Gets the card for the dev challenges index.
+    /// </summary>
+    [HttpGet("challenges.png")]
+    public IActionResult GetChallengesIndexCard()
+    {
+        const string description = "Hands-on coding challenges to help you improve your skills.";
+        return ServeCached("challenges", "index", PaletteHue.Bubblegum, null,
+            () => _ogImageService.RenderCard(PaletteHue.Bubblegum, "CHALLENGES", "Dev Challenges", description));
+    }
+
+    /// <summary>
+    ///     Gets the card for the blog index.
+    /// </summary>
+    [HttpGet("blog.png")]
+    public IActionResult GetBlogIndexCard()
+    {
+        const string description = "look mom, i know how to english gooder. are you proud of me?";
+        return ServeCached("blog", "index", PaletteHue.Brand, null,
+            () => _ogImageService.RenderCard(PaletteHue.Brand, "BLOG", "Words", description));
+    }
+
+    /// <summary>
+    ///     Gets the card for the portfolio index.
+    /// </summary>
+    [HttpGet("portfolio.png")]
+    public IActionResult GetPortfolioIndexCard()
+    {
+        const string description = "Code, drawings, 3D renders, and music.";
+        return ServeCached("portfolio", "index", PaletteHue.Sky, null,
+            () => _ogImageService.RenderCard(PaletteHue.Sky, "PORTFOLIO", "Stuff I Made", description));
+    }
+
+    /// <summary>
+    ///     Gets the card for the learn (tutorials + challenges) index.
+    /// </summary>
+    [HttpGet("learn.png")]
+    public IActionResult GetLearnIndexCard()
+    {
+        const string description = "Tutorials and hands-on coding challenges to help you learn by building.";
+        return ServeCached("learn", "index", PaletteHue.Brand, null,
+            () => _ogImageService.RenderCard(PaletteHue.Brand, "LEARN", "Learn", description));
+    }
+
+    /// <summary>
+    ///     Gets the card for the donate page.
+    /// </summary>
+    [HttpGet("donate.png")]
+    public IActionResult GetDonateIndexCard()
+    {
+        const string description = "Keep tutorials free and the site running - totally optional, always appreciated.";
+        return ServeCached("donate", "index", PaletteHue.Mint, null,
+            () => _ogImageService.RenderCard(PaletteHue.Mint, "DONATE", "Buy Me a Coffee", description));
+    }
+
+    /// <summary>
     ///     Gets the card for a blog post.
     /// </summary>
     [HttpGet("blog/{id:guid}.png")]

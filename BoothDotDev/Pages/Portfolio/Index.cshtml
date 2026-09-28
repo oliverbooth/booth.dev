@@ -1,9 +1,12 @@
 @page "/portfolio"
+@using BoothDotDev.Data
 @using BoothDotDev.Pages.Shared.Partials
 @model Made
 @{
     ViewData["Title"] = "Stuff I Made";
     ViewData["Page"] = "Made";
+    ViewData["Post"] = new IndexPageCard("PORTFOLIO", "Stuff I Made",
+        "Code, drawings, 3D renders, and music.", PaletteHue.Sky, "portfolio");
 }
 
 <div class="page-grid">
