@@ -1,0 +1,83 @@
+@page "/streaks"
+@inject MarkdownRenderingService MarkdownRenderingService
+@using BoothDotDev.Extensions
+@using BoothDotDev.Pages.Shared.Partials
+@using BoothDotDev.Services
+@model Streaks
+
+@{
+    ViewData["Page"] = "Streaks";
+    ViewData["Title"] = "Streaks";
+}
+
+<div class="page streaks-page">
+
+    <span class="eyebrow">don't break the chain -</span>
+    <h1>Streaks</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage streaks", "/Admin/Streaks/Index") })" />
+
+    @if (Model.UpdatedAt is { } updatedAt)
+    {
+        <p class="page-updated">Updated @updatedAt.ToShortString()</p>
+    }
+
+    @if (Model.AllStreaks.Count == 0)
+    {
+        <p class="body-copy">Nothing here yet.</p>
+    }
+    else
+    {
+        @for (var index = 0; index < Model.AllStreaks.Count; index++)
+        {
+            var streak = Model.AllStreaks[index];
+            var stats = Model.GetStats(streak);
+            var hue = streak.Color ?? PaletteHueExtensions.FromPosition(index);
+            var dotHue = streak.DotColor ?? hue;
+            var dots = Model.GetDots(streak, stats);
+            var dotCount = dots.Count;
+            var hasFreeze = dots.Contains(true);
+
+            <section class="streak-card" id="@streak.Slug" data-hue="@hue.ToDataHue()">
+                <div class="streak-card-top">
+                    <h2>@streak.Title</h2>
+                    <span class="badge">@Streaks.CadenceLabel(streak)</span>
+                </div>
+
+                <div class="streak-count">
+                    <span class="streak-number">@stats.Current.ToString("N0")</span>
+                    <span class="streak-unit">@Streaks.UnitLabel(streak, stats.Current) strong</span>
+                </div>
+
+                <div class="prose prose--sans">
+                    @Html.Raw(MarkdownRenderingService.Render(streak, streak.Id, streak.PublishedAt))
+                </div>
+
+                <div class="streak-dots" data-hue="@dotHue.ToDataHue()">
+                    @for (var d = 0; d < dotCount; d++)
+                    {
+                        var isFrozen = dots[d];
+                        var isLatest = !isFrozen && d == dotCount - 1;
+                        @if (isFrozen)
+                        {
+                            <i class="streak-dot is-frozen ti ti-snowflake" aria-hidden="true"></i>
+                        }
+                        else
+                        {
+                            <span class="streak-dot@(isLatest ? " is-latest" : "")"></span>
+                        }
+                    }
+                </div>
+
+                <div class="streak-card-bottom">
+                    <span class="streak-dots-caption">last @dotCount @Streaks.UnitLabel(streak, dotCount)</span>
+                    <span class="streak-best">best &middot; @stats.Best.ToString("N0") @Streaks.UnitLabel(streak, stats.Best)</span>
+                </div>
+                @if (hasFreeze)
+                {
+                    <p class="streak-freeze-note"><i class="streak-dot is-frozen ti ti-snowflake" aria-hidden="true"></i> - streak freeze used</p>
+                }
+            </section>
+        }
+    }
+
+</div>
