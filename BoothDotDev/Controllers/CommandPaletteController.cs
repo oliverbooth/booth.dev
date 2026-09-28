@@ -120,6 +120,7 @@ public sealed class CommandPaletteController : ControllerBase
         yield return new CommandPaletteEntry("Learn", "/learn", "Pages");
         yield return new CommandPaletteEntry("Now", "/now", "Pages");
         yield return new CommandPaletteEntry("Someday", "/someday", "Pages");
+        yield return new CommandPaletteEntry("Streaks", "/streaks", "Pages");
         yield return new CommandPaletteEntry("Books", "/books", "Pages");
         yield return new CommandPaletteEntry("Watchlist", "/watchlist", "Pages");
         yield return new CommandPaletteEntry("About", "/about", "Pages");
