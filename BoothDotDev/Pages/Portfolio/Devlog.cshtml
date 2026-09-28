@@ -3,6 +3,7 @@
 @using BoothDotDev.Extensions
 @using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
+@using Markdig
 @model Devlog
 @inject ProjectService ProjectService
 @inject MarkdownRenderingService MarkdownRenderingService
@@ -64,7 +65,8 @@
             SourceUrl = $"/project/{Model.Project.Slug}/devlog/{devlog.Slug}.md",
             EditUrl = User.Identity?.IsAuthenticated == true
                 ? Url.Page("/Admin/Projects/Devlogs/Edit", new { projectId = Model.Project.Id, id = devlog.Id })
-                : null
+                : null,
+            ShowLigatureToggle = Markdown.ContainsCode(devlog.Body)
         };
     }
 

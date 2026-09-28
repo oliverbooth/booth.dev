@@ -333,6 +333,12 @@
     }
   }
 
+  :root[data-ligatures="off"] & code,
+  :root[data-ligatures="off"] & pre {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
   &.prose--serif {
     font-family: var(--font-voice);
     /* Patrick Hand's x-height reads noticeably smaller than Lora's at the same pixel size, and its letterforms
@@ -444,7 +450,6 @@
     }
   }
 
-  .byline-link,
   .meta a {
     color: var(--brand-text);
     font-family: var(--font-mono);
@@ -454,17 +459,61 @@
     text-decoration: none;
   }
 
-  button.byline-link {
+  .byline-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .byline-icon-btn {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
     border: none;
-    background: none;
-    padding: 0;
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text-faint);
+    font-size: 17px;
+    line-height: 1;
     cursor: pointer;
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--tag-bg);
+        color: var(--text);
+      }
+    }
 
     &[aria-pressed="true"] {
-      color: var(--text);
+      background: var(--tint-brand);
+      color: var(--brand-text);
+    }
+  }
+
+  .byline-icon-sample {
+    font-family: var(--font-voice);
+    font-size: 15px;
+
+    :root[data-voice-font="sans"] & {
+      font-family: var(--font-body);
+      font-weight: 700;
+    }
+  }
+
+  .byline-icon-ligature-sample {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-variant-ligatures: normal;
+    font-feature-settings: "liga" 1, "calt" 1;
+
+    :root[data-ligatures="off"] & {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "calt" 0;
     }
   }
 }

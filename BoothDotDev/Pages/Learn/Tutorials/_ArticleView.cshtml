@@ -106,7 +106,8 @@
             Hue = hue.ToDataHue(),
             Meta = meta,
             SourceUrl = $"/learn/{TutorialService.GetFullSlug(article)}.md",
-            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Tutorials/Edit", new { id = article.Id }) : null
+            EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Tutorials/Edit", new { id = article.Id }) : null,
+            ShowLigatureToggle = Markdown.ContainsCode(article.Body)
         };
     }
 
