@@ -44,6 +44,20 @@
                 document.documentElement.dataset.voiceFont = 'sans';
             }
         })();
+
+        // runs before first paint to avoid a flash of ligatures on pages the reader opted out of;
+        // keep in step with ligatures.ts
+        (() => {
+            let ligatures = null;
+            try {
+                ligatures = localStorage.getItem('ligatures');
+            } catch {
+            }
+
+            if (ligatures === 'off') {
+                document.documentElement.dataset.ligatures = 'off';
+            }
+        })();
     </script>
     <title>@PageTitle</title>
 
