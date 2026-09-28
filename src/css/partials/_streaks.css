@@ -131,6 +131,15 @@
   margin: 10px 0 0;
 }
 
+.streak-detail-link {
+  display: inline-block;
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--text-faint);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .streak-best {
   display: inline-flex;
   align-items: center;
