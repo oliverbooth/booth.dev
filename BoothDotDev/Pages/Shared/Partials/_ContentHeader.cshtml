@@ -48,24 +48,32 @@
             }
         </div>
     </div>
-    @if (Model.ShowVoiceFontToggle)
-    {
-        <button type="button" class="byline-link" data-voice-font-toggle aria-pressed="false">
-            <i class="ti ti-letter-case" aria-hidden="true"></i> <span data-voice-font-label>sans-serif</span>
-        </button>
-    }
-    @if (Model.ShowLigatureToggle)
-    {
-        <button type="button" class="byline-link" data-ligature-toggle aria-pressed="false">
-            <i class="ti ti-arrows-join" aria-hidden="true"></i> <span data-ligature-label>no ligatures</span>
-        </button>
-    }
-    @if (Model.SourceUrl is { } sourceUrl)
-    {
-        <a href="@sourceUrl" class="byline-link">view source</a>
-    }
-    @if (Model.EditUrl is { } editUrl)
-    {
-        <a href="@editUrl" class="byline-link">edit</a>
-    }
+    <div class="byline-icons">
+        @if (Model.ShowVoiceFontToggle)
+        {
+            <button type="button" class="byline-icon-btn" data-voice-font-toggle aria-pressed="false"
+                    title="toggle sans-serif font" aria-label="toggle sans-serif font">
+                <span class="byline-icon-sample" aria-hidden="true">Aa</span>
+            </button>
+        }
+        @if (Model.ShowLigatureToggle)
+        {
+            <button type="button" class="byline-icon-btn" data-ligature-toggle aria-pressed="false"
+                    title="toggle ligatures" aria-label="toggle ligatures">
+                <span class="byline-icon-ligature-sample" aria-hidden="true">!=</span>
+            </button>
+        }
+        @if (Model.SourceUrl is { } sourceUrl)
+        {
+            <a href="@sourceUrl" class="byline-icon-btn" title="view source" aria-label="view source">
+                <i class="ti ti-code" aria-hidden="true"></i>
+            </a>
+        }
+        @if (Model.EditUrl is { } editUrl)
+        {
+            <a href="@editUrl" class="byline-icon-btn" title="edit" aria-label="edit">
+                <i class="ti ti-pencil" aria-hidden="true"></i>
+            </a>
+        }
+    </div>
 </div>
