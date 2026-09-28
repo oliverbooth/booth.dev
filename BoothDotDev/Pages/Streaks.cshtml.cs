@@ -1,7 +1,6 @@
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoothDotDev.Pages;
@@ -55,44 +54,6 @@ public sealed class Streaks : PageModel
     public StreakStats GetStats(Streak streak)
     {
         return _streakService.GetStats(streak);
-    }
-
-    /// <summary>
-    ///     Describes a streak's cadence for its badge, e.g. "daily", "every 2 weeks", "ongoing".
-    /// </summary>
-    /// <param name="streak">The streak.</param>
-    /// <returns>The cadence label.</returns>
-    public static string CadenceLabel(Streak streak)
-    {
-        if (streak.Mode == StreakMode.CheckOut)
-        {
-            return "ongoing";
-        }
-
-        var unit = streak.CadenceUnit!.Value;
-        var interval = streak.CadenceInterval!.Value;
-
-        return (unit, interval) switch
-        {
-            (StreakCadenceUnit.Day, 1) => "daily",
-            (StreakCadenceUnit.Week, 1) => "weekly",
-            (StreakCadenceUnit.Month, 1) => "monthly",
-            (StreakCadenceUnit.Month, 3) => "quarterly",
-            (StreakCadenceUnit.Year, 1) => "annually",
-            _ => $"every {interval} {unit.ToString().ToLowerInvariant().ToQuantity(interval, ShowQuantityAs.None)}"
-        };
-    }
-
-    /// <summary>
-    ///     Describes the unit a streak's count is measured in, e.g. "days", "weeks".
-    /// </summary>
-    /// <param name="streak">The streak.</param>
-    /// <param name="count">The count being labelled, so the unit is correctly singular or plural.</param>
-    /// <returns>The unit label.</returns>
-    public static string UnitLabel(Streak streak, int count)
-    {
-        var unit = streak.Mode == StreakMode.CheckOut ? StreakCadenceUnit.Day : streak.CadenceUnit!.Value;
-        return unit.ToString().ToLowerInvariant().ToQuantity(count, ShowQuantityAs.None);
     }
 
     /// <summary>

@@ -40,12 +40,12 @@
             <section class="streak-card" id="@streak.Slug" data-hue="@hue.ToDataHue()">
                 <div class="streak-card-top">
                     <h2>@streak.Title</h2>
-                    <span class="badge">@Streaks.CadenceLabel(streak)</span>
+                    <span class="badge">@streak.CadenceLabel()</span>
                 </div>
 
                 <div class="streak-count">
                     <span class="streak-number">@stats.Current.ToString("N0")</span>
-                    <span class="streak-unit">@Streaks.UnitLabel(streak, stats.Current) strong</span>
+                    <span class="streak-unit">@streak.UnitLabel(stats.Current) strong</span>
                 </div>
 
                 <div class="prose prose--sans">
@@ -69,8 +69,8 @@
                 </div>
 
                 <div class="streak-card-bottom">
-                    <span class="streak-dots-caption">last @dotCount @Streaks.UnitLabel(streak, dotCount)</span>
-                    <span class="streak-best">best &middot; @stats.Best.ToString("N0") @Streaks.UnitLabel(streak, stats.Best)</span>
+                    <span class="streak-dots-caption">last @dotCount @streak.UnitLabel(dotCount)</span>
+                    <span class="streak-best">best &middot; @stats.Best.ToString("N0") @streak.UnitLabel(stats.Best)</span>
                 </div>
                 @if (hasFreeze)
                 {
