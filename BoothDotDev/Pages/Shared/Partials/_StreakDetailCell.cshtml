@@ -1,0 +1,18 @@
+@using BoothDotDev.Data
+@model StreakDetailCell
+
+<div class="streak-detail-cell@(Model.IsToday ? " is-today" : "")">
+    @switch (Model.State)
+    {
+        case StreakDayState.Frozen:
+            <i class="streak-detail-dot is-frozen ti ti-snowflake" aria-hidden="true"></i>
+            break;
+        case StreakDayState.Reset:
+            <i class="streak-detail-dot is-reset ti ti-flame-off" aria-hidden="true"></i>
+            break;
+        default:
+            <span class="streak-detail-dot is-@(Model.State.ToString().ToLowerInvariant())"></span>
+            break;
+    }
+    <span class="streak-detail-cell-label">@Model.Label</span>
+</div>

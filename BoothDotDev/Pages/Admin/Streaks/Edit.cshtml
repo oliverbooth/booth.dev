@@ -1,0 +1,342 @@
+@page "/admin/streaks/edit/{id:guid?}"
+@using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
+@using Humanizer
+@model Edit
+
+@{
+    Layout = "_AdminLayout";
+    var streakModel = Model.Input;
+    var colorPicker = new HuePicker
+    {
+        Name = "Input.Color",
+        Selected = streakModel.Color,
+        AutoDescription = "derived from this streak's position on the page"
+    };
+    var dotColorPicker = new HuePicker
+    {
+        Name = "Input.DotColor",
+        Selected = streakModel.DotColor,
+        AutoDescription = "the same colour as the card"
+    };
+}
+
+<div class="admin-page admin-page--split">
+
+    <p class="crumb"><a asp-page="/Admin/Streaks/Index">Streaks</a> / Edit</p>
+
+    <div class="admin-page-main">
+
+    <form class="form-grid" method="post" data-streak-form>
+
+        <div asp-validation-summary="All"></div>
+
+        @if (Model.IsTrashed)
+        {
+            <div class="callout" data-callout="danger">
+                <p class="callout-title"><i class="ti ti-trash"></i> This streak is trashed</p>
+                <div class="callout-body">
+                    <p>It's hidden from the streaks page. Restore it to bring it back.</p>
+                </div>
+            </div>
+        }
+
+        <div class="admin-header">
+            <div>
+                <h1>@(Model.CreatingNew ? "New streak" : streakModel.Title)</h1>
+                @if (Model.Stats is { } stats)
+                {
+                    <p class="hint" data-streak-stats>@stats.Current current &middot; @stats.Best best</p>
+                }
+            </div>
+            <div style="display:flex;gap:8px">
+                @if (!Model.CreatingNew)
+                {
+                    <a asp-page="/Streaks" asp-fragment="@streakModel.Slug" target="_blank" class="btn">
+                        <i class="ti ti-eye"></i> View on streaks page
+                    </a>
+                }
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" asp-for="Input.Title">
+        </div>
+
+        <div class="field">
+            <label for="body">Body (markdown supported)</label>
+            <textarea id="body" rows="10" asp-for="Input.Body" data-markdown data-preview-source></textarea>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="slug">Slug</label>
+                <input type="text" id="slug" asp-for="Input.Slug" placeholder="duolingo">
+                <p class="hint">Used as this streak's anchor on the streaks page, and in its own URL. Set once.</p>
+            </div>
+            <div class="field">
+                <label asp-for="Input.Visibility">Visibility</label>
+                <select asp-for="Input.Visibility">
+                    @{
+                        var visibilities = Enum.GetValues<Visibility>().Except([Visibility.None]);
+                        foreach (var visibility in visibilities)
+                        {
+                            <option value="@visibility">@visibility</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="mode">Tracking mode</label>
+            <select id="mode" asp-for="Input.Mode" data-streak-mode>
+                <option value="@StreakMode.CheckIn">Check-in - I do something to keep it alive (e.g. a gym session, a lesson)</option>
+                <option value="@StreakMode.CheckOut">Check-out - it counts up on its own until I log breaking it (e.g. staying smoke-free)</option>
+            </select>
+        </div>
+
+        <div class="field-row" data-mode-section="@StreakMode.CheckIn">
+            <div class="field">
+                <label for="cadence-interval">Check in every</label>
+                <input type="number" id="cadence-interval" min="1" asp-for="Input.CadenceInterval">
+            </div>
+            <div class="field">
+                <label for="cadence-unit">&nbsp;</label>
+                <select id="cadence-unit" asp-for="Input.CadenceUnit">
+                    <option value="@StreakCadenceUnit.Day">day(s)</option>
+                    <option value="@StreakCadenceUnit.Week">week(s)</option>
+                    <option value="@StreakCadenceUnit.Month">month(s)</option>
+                    <option value="@StreakCadenceUnit.Year">year(s)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="field" data-mode-section="@StreakMode.CheckOut">
+            <label for="started-on">Started on</label>
+            <input type="date" id="started-on" asp-for="Input.StartedOn">
+            <p class="hint">The streak's count starts from this date, and keeps counting up until a reset is logged below.</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Card colour</label>
+                <partial name="Partials/_HuePicker" model="colorPicker" />
+            </div>
+            <div class="field">
+                <label>Dot colour</label>
+                <partial name="Partials/_HuePicker" model="dotColorPicker" />
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Publish changes</button>
+            <button type="submit" class="btn" asp-page-handler="SaveDraft"><i class="ti ti-device-floppy"></i> Save as draft</button>
+            @if (!Model.CreatingNew)
+            {
+                @if (Model.IsTrashed)
+                {
+                    <button type="submit" class="btn" asp-page-handler="Restore">
+                        <i class="ti ti-trash-off"></i> Restore
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn icon-btn danger" asp-page-handler="Delete" aria-label="Move to trash">
+                        <i class="ti ti-trash"></i> Move to trash
+                    </button>
+                }
+            }
+        </div>
+
+    </form>
+
+        @if (!Model.CreatingNew)
+        {
+            <section class="admin-streak-log">
+                <div class="admin-header">
+                    <div><h2>Log</h2></div>
+                </div>
+
+                @if (Model.Input.Mode == StreakMode.CheckIn)
+                {
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                        <form method="post" asp-page-handler="LogToday" asp-route-id="@Model.StreakId">
+                            <button type="submit" class="btn btn-primary"><i class="ti ti-check"></i> Log today</button>
+                        </form>
+                    </div>
+
+                    <div class="log-actions">
+                        <div class="log-action">
+                            <p class="log-action-title">Backfill a range</p>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label for="backfill-start">From</label>
+                                    <input type="date" id="backfill-start" name="start" form="backfill-form">
+                                </div>
+                                <div class="field">
+                                    <label for="backfill-end">To</label>
+                                    <input type="date" id="backfill-end" name="end" form="backfill-form">
+                                </div>
+                            </div>
+                            <form method="post" asp-page-handler="Backfill" asp-route-id="@Model.StreakId" id="backfill-form">
+                                <input type="hidden" name="kind" value="@StreakCheckInKind.Completed">
+                                <button type="submit" class="btn">Backfill range</button>
+                            </form>
+                            <p class="hint">For importing a big stretch of existing history in one go. Never overwrites a day that's
+                                already logged, so it's safe to re-run over an existing range. For everyday editing, use the calendar
+                                below.</p>
+                        </div>
+                    </div>
+
+                    <div class="streak-calendar" data-streak-calendar data-streak-id="@Model.StreakId"
+                         data-log-url="@Url.Page("Edit", "LogCheckIn")" data-remove-url="@Url.Page("Edit", "RemoveCheckIn")"
+                         data-bulk-set-url="@Url.Page("Edit", "BulkSetCheckInKind")"
+                         data-bulk-remove-url="@Url.Page("Edit", "BulkRemoveCheckIns")">
+                        <div hidden data-calendar-source>
+                            @foreach (var checkIn in Model.CheckIns)
+                            {
+                                <span data-date="@checkIn.OccurredOn.ToString("yyyy-MM-dd")" data-kind="@checkIn.Kind"></span>
+                            }
+                        </div>
+
+                        <div class="streak-calendar-header">
+                            <button type="button" class="icon-btn" data-calendar-prev aria-label="Previous month">
+                                <i class="ti ti-chevron-left"></i>
+                            </button>
+                            <button type="button" class="streak-calendar-month" data-calendar-month-label></button>
+                            <input type="month" class="streak-calendar-month-input" data-calendar-month-input hidden>
+                            <div class="streak-calendar-header-right">
+                                <button type="button" class="icon-btn" data-calendar-today>today</button>
+                                <button type="button" class="icon-btn" data-calendar-next aria-label="Next month">
+                                    <i class="ti ti-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="streak-calendar-weekdays">
+                            <span>mo</span><span>tu</span><span>we</span><span>th</span><span>fr</span><span>sa</span><span>su</span>
+                        </div>
+
+                        <div class="streak-calendar-grid" data-calendar-grid></div>
+
+                        <div class="streak-calendar-legend">
+                            <span><span class="streak-calendar-dot is-completed"></span> completed</span>
+                            <span><span class="streak-calendar-dot is-frozen"></span> frozen</span>
+                            <span><span class="streak-calendar-dot is-today"></span> today</span>
+                        </div>
+
+                        <p class="hint">Click a day to set it or remove it. Click and drag across days to do the same to a whole range.</p>
+                    </div>
+                }
+                else
+                {
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                        <form method="post" asp-page-handler="LogResetToday" asp-route-id="@Model.StreakId"
+                              data-confirm="Log today as the day this streak broke?">
+                            <button type="submit" class="btn btn-primary"><i class="ti ti-flame-off"></i> Log a reset today</button>
+                        </form>
+                    </div>
+
+                    <div class="log-actions">
+                        <div class="log-action">
+                            <p class="log-action-title">Log a specific reset day</p>
+                            <div class="field">
+                                <label for="reset-date">Date</label>
+                                <input type="date" id="reset-date" name="date" form="log-reset-form">
+                            </div>
+                            <form method="post" asp-page-handler="LogReset" asp-route-id="@Model.StreakId" id="log-reset-form">
+                                <button type="submit" class="btn">Log reset</button>
+                            </form>
+                        </div>
+
+                        <div class="log-action">
+                            <p class="log-action-title">Bulk remove a range</p>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label for="bulk-remove-reset-start">From</label>
+                                    <input type="date" id="bulk-remove-reset-start" name="start" form="bulk-remove-reset-form">
+                                </div>
+                                <div class="field">
+                                    <label for="bulk-remove-reset-end">To</label>
+                                    <input type="date" id="bulk-remove-reset-end" name="end" form="bulk-remove-reset-form">
+                                </div>
+                            </div>
+                            <form method="post" asp-page-handler="BulkRemoveResets" asp-route-id="@Model.StreakId" id="bulk-remove-reset-form"
+                                  data-confirm="Un-log every reset in that range? This can't be undone.">
+                                <button type="submit" class="btn btn-danger">Remove range</button>
+                            </form>
+                            <p class="hint">Un-logs every reset in that range, e.g. to undo a batch of mistaken entries.</p>
+                        </div>
+                    </div>
+
+                    @if (Model.Resets.Count == 0)
+                    {
+                        <p class="hint">No resets logged - the streak has been alive since it started.</p>
+                    }
+                    else
+                    {
+                        <ul class="admin-row-list">
+                            @foreach (var reset in Model.Resets)
+                            {
+                                <li class="admin-row">
+                                    <div class="row-body">
+                                        <div class="row-title">@reset.OccurredOn.ToString("yyyy-MM-dd")</div>
+                                    </div>
+                                    <div class="row-actions">
+                                        <form method="post" asp-page-handler="RemoveReset" asp-route-id="@Model.StreakId"
+                                              asp-route-date="@reset.OccurredOn.ToString("yyyy-MM-dd")">
+                                            <button type="submit" class="icon-btn danger">remove</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+            </section>
+
+            <section class="admin-drafts" id="streak-drafts">
+                <div class="admin-header">
+                    <div><h2>Revision history</h2></div>
+                </div>
+
+                <p class="hint">
+                    Viewing an older revision loads it into the form above - nothing is saved until you hit Publish changes or Save as
+                    draft.
+                </p>
+                <ul class="draft-list">
+                    @foreach (var draft in Model.DraftHistory)
+                    {
+                        var isPublished = draft.Id == Model.CurrentDraftId;
+                        var isViewing = draft.Id == Model.ViewingDraftId;
+
+                        <li class="draft-item">
+                            <a class="draft-item-link" aria-current="@(isViewing ? "true" : null)"
+                               asp-page="Edit" asp-route-id="@Model.StreakId" asp-route-draftId="@draft.Id">
+                                <div class="draft-item-body">
+                                    <p class="name">@draft.Title</p>
+                                    <p class="meta">@draft.CreatedAt.Humanize()</p>
+                                </div>
+                                @if (isPublished)
+                                {
+                                    <span class="badge badge-published">Published</span>
+                                }
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+
+    </div>
+
+    <aside class="admin-preview" id="preview-pane">
+        <span class="eyebrow">Preview</span>
+        <h1 id="preview-title">@streakModel.Title</h1>
+        <div class="prose prose--sans" id="preview-body"></div>
+    </aside>
+
+</div>
