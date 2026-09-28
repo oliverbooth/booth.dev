@@ -7,6 +7,10 @@
 @model Index
 @inject BlogPostService BlogPostService
 @inject MarkdownRenderingService MarkdownRenderingService
+@{
+    ViewData["Post"] = new IndexPageCard("BLOG", "Words",
+        "look mom, i know how to english gooder. are you proud of me?", PaletteHue.Brand, "blog");
+}
 
 <div class="page">
 
