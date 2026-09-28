@@ -1,4 +1,5 @@
 @page "/learn/{**slug}"
+@using BoothDotDev.Data
 @model Index
 
 @{
@@ -13,6 +14,11 @@
     else
     {
         ViewData["Title"] = "Tutorials";
+        if (Model.CurrentFolder is null)
+        {
+            ViewData["Post"] = new IndexPageCard("LEARN", "Learn",
+                "Tutorials and hands-on coding challenges to help you learn by building.", PaletteHue.Brand, "learn");
+        }
     }
 
     ViewData["Page"] = "Learn";

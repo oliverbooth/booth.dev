@@ -1,4 +1,5 @@
 using System.Web;
+using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
 using BoothDotDev.Services;
 using Cysharp.Text;
@@ -18,7 +19,8 @@ public static class HtmlUtility
     /// <param name="content">
     ///     The page's content, as set in <c>ViewData["Post"]</c> - a <see cref="BlogPost" />, <see cref="TutorialArticle" />,
     ///     <see cref="DevChallenge" />, <see cref="Note" />, <see cref="Project" />, <see cref="ProjectDevlog" />,
-    ///     <see cref="Creation" />, or <see langword="null" /> for a non-content page.
+    ///     <see cref="Creation" />, <see cref="IndexPageCard" /> for a listing page with a bespoke card of its own, or
+    ///     <see langword="null" /> for a non-content page.
     /// </param>
     /// <param name="siteBaseUrl">The site's own base URL, used to build an absolute Open Graph image URL.</param>
     /// <param name="markdownRenderingService">The <see cref="MarkdownRenderingService" /> injected by the page.</param>
@@ -78,6 +80,12 @@ public static class HtmlUtility
             }),
             Creation creation => CreateCreationMetaTags(creation, siteBaseUrl, creation.IsMusic ? "music" : "artwork",
                 markdownRenderingService),
+            IndexPageCard card => CreateMetaTags(new Dictionary<string, string>
+            {
+                ["title"] = card.Title,
+                ["description"] = card.Description,
+                ["image"] = new Uri(siteBaseUrl, $"/og/{card.ImageKey}.png").ToString()
+            }),
             _ => CreateMetaTags(new Dictionary<string, string>
             {
                 ["title"] = fallbackTitle,
