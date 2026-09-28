@@ -84,6 +84,13 @@ public sealed class ContentHeader
     /// </summary>
     /// <value><see langword="true" /> to show the toggle; otherwise, <see langword="false" />.</value>
     public bool ShowVoiceFontToggle { get; init; }
+
+    /// <summary>
+    ///     Gets a value indicating whether to show the reader a toggle to disable the mono font's programming
+    ///     ligatures (such as rendering <c>-&gt;</c> as a single arrow glyph) in this content's code blocks.
+    /// </summary>
+    /// <value><see langword="true" /> to show the toggle; otherwise, <see langword="false" />.</value>
+    public bool ShowLigatureToggle { get; init; }
 }
 
 /// <summary>

@@ -12,12 +12,14 @@ import {initNowClock} from './now-clock.ts';
 import {initRetryButtons} from './retry-button.ts';
 import {initRuledPaper} from './ruled-paper.ts';
 import {initHeaderAutoHide} from './header-auto-hide.ts';
+import {initLigatureToggle} from './ligatures.ts';
 import {initTheme} from './theme.ts';
 import {initVoiceFontToggle} from './voice-font.ts';
 
 (() => {
     initTheme();
     initVoiceFontToggle();
+    initLigatureToggle();
     initHeaderAutoHide();
     initAltTextPopovers();
     initCopyButtons();

@@ -8,6 +8,7 @@
 @using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using Humanizer
+@using Markdig
 @model Article
 
 @if (Model.Post is not { } post)
@@ -65,7 +66,8 @@
             Meta = [$"published {published.ToShortString()}", $"{post.GetEstimatedReadingTime()} min read"],
             SourceUrl = $"/blog/{post.Slug}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Posts/Edit", new { id = post.Id }) : null,
-            ShowVoiceFontToggle = category.FontStyle == FontStyle.Serif
+            ShowVoiceFontToggle = category.FontStyle == FontStyle.Serif,
+            ShowLigatureToggle = Markdown.ContainsCode(post.Body)
         };
     }
 

@@ -64,6 +64,7 @@ public sealed class DiscordEmbedService
             Project project => ForProject(project, siteBaseUrl, page),
             Creation creation => ForCreation(creation, siteBaseUrl, page),
             ProjectDevlog devlog => ForDevlog(devlog, siteBaseUrl, page),
+            IndexPageCard card => ForIndexCard(card, siteBaseUrl, page),
             _ => ForPage(siteBaseUrl, page, fallbackTitle, fallbackDescription)
         };
 
@@ -149,6 +150,16 @@ public sealed class DiscordEmbedService
 
         return Compose(PaletteHue.Sky, devlog.Title, description, page, HtmlUtility.OgImageUrl(siteBaseUrl, "devlog", devlog.Id),
             [.. buttons]);
+    }
+
+    private static DiscordContainer ForIndexCard(IndexPageCard card, Uri siteBaseUrl, Uri page)
+    {
+        var image = new Uri(siteBaseUrl, $"/og/{card.ImageKey}.png").ToString();
+
+        return Compose(card.Hue, card.Title, card.Description, page, image,
+            Link("Stuff I made", new Uri(siteBaseUrl, "/portfolio")),
+            Link("Words", new Uri(siteBaseUrl, "/blog")),
+            Link("Learn", new Uri(siteBaseUrl, "/learn")));
     }
 
     private static DiscordContainer ForPage(Uri siteBaseUrl, Uri page, string title, string description)
