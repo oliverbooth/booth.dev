@@ -69,7 +69,9 @@ public sealed class BlogPostService : BackgroundService
             Slug = request.Slug,
             PublishedAt = request.PublishedAt.ToUniversalTime(),
             UpdatedAt = null,
-            EnableComments = request.EnableComments
+            EnableComments = request.EnableComments,
+            IsRedirect = request.IsRedirect,
+            RedirectUrl = request.RedirectUrl
         };
 
         // two SaveChanges calls, not one: BlogPost -> BlogPostDraft (via BlogPostId) and BlogPostDraft ->
@@ -121,6 +123,8 @@ public sealed class BlogPostService : BackgroundService
         post.Slug = request.Slug;
         post.PublishedAt = request.PublishedAt.ToUniversalTime();
         post.EnableComments = request.EnableComments;
+        post.IsRedirect = request.IsRedirect;
+        post.RedirectUrl = request.RedirectUrl;
 
         context.SaveChanges();
 
@@ -160,6 +164,8 @@ public sealed class BlogPostService : BackgroundService
         post.Slug = request.Slug;
         post.PublishedAt = request.PublishedAt.ToUniversalTime();
         post.EnableComments = request.EnableComments;
+        post.IsRedirect = request.IsRedirect;
+        post.RedirectUrl = request.RedirectUrl;
         post.CurrentDraft = draft;
         post.UpdatedAt = DateTimeOffset.UtcNow;
 

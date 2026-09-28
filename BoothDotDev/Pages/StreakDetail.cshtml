@@ -1,0 +1,129 @@
+@page "/streak/{slug}"
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model StreakDetail
+
+@{
+    ViewData["Page"] = "Streaks";
+    ViewData["Title"] = $"{Model.Streak.Title} - streaks";
+    var hue = Model.Streak.Color ?? PaletteHueExtensions.FromPosition(Model.AllStreaks.ToList().IndexOf(Model.Streak));
+    var dotHue = Model.Streak.DotColor ?? hue;
+    var showMissedLegend = Model.Streak.Mode == StreakMode.CheckIn && Model.ViewKind != StreakViewKind.Timeline;
+    var showFrozenLegend = Model.Streak.Mode == StreakMode.CheckIn;
+    var showResetLegend = Model.Streak.Mode == StreakMode.CheckOut;
+    var reachedTheStart = Model.ViewKind == StreakViewKind.Timeline && !Model.CanGoOlder;
+}
+
+<div class="page streak-detail-page">
+
+    <span class="eyebrow">
+        <a asp-page="/Streaks"><i class="ti ti-arrow-narrow-left"></i> back to streaks</a>
+    </span>
+    <span class="eyebrow">don't break the chain -</span>
+    <h1>calendar view</h1>
+
+    @if (Model.AllStreaks.Count > 1)
+    {
+        <div class="streak-detail-pills" data-hue="@hue.ToDataHue()">
+            @foreach (var other in Model.AllStreaks)
+            {
+                <a class="streak-detail-pill@(other.Id == Model.Streak.Id ? " is-active" : "")" asp-page="/StreakDetail" asp-route-slug="@other.Slug">@other.Title</a>
+            }
+        </div>
+    }
+
+    <section class="streak-detail-card" data-hue="@hue.ToDataHue()">
+        <div class="streak-detail-card-top">
+            <h2>@Model.Streak.Title</h2>
+            <span class="badge">@Model.Stats.Current.ToString("N0") @Model.Streak.UnitLabel(Model.Stats.Current)</span>
+        </div>
+
+        <div class="streak-detail-nav">
+            @if (reachedTheStart)
+            {
+                <span class="btn icon-btn is-disabled">&larr; older</span>
+            }
+            else
+            {
+                <a class="btn icon-btn" asp-page="/StreakDetail" asp-route-slug="@Model.Streak.Slug" asp-route-offset="@(Model.Offset + 1)">&larr; older</a>
+            }
+            <span class="streak-detail-page-label">@Model.PageLabel</span>
+            @if (Model.CanGoNewer)
+            {
+                <a class="btn icon-btn" asp-page="/StreakDetail" asp-route-slug="@Model.Streak.Slug" asp-route-offset="@(Model.Offset - 1)">newer &rarr;</a>
+            }
+            else
+            {
+                <span class="btn icon-btn is-disabled">newer &rarr;</span>
+            }
+        </div>
+
+        <div data-hue="@dotHue.ToDataHue()">
+            @if (Model.ViewKind == StreakViewKind.DailyDots)
+            {
+                <div class="streak-detail-weekdays">
+                    @foreach (var label in Model.WeekdayLabels)
+                    {
+                        <span>@label</span>
+                    }
+                </div>
+                <div class="streak-detail-grid streak-detail-grid--daily">
+                    @for (var i = 0; i < Model.DailyLeadingBlanks; i++)
+                    {
+                        <div class="streak-detail-cell is-empty"></div>
+                    }
+                    @foreach (var cell in Model.DailyCells)
+                    {
+                        <partial name="Partials/_StreakDetailCell" model="cell" />
+                    }
+                </div>
+            }
+            else if (Model.ViewKind == StreakViewKind.PeriodDots)
+            {
+                <div class="streak-detail-grid streak-detail-grid--period" style="--period-columns:@Model.PeriodColumns">
+                    @foreach (var cell in Model.PeriodCells)
+                    {
+                        <partial name="Partials/_StreakDetailCell" model="cell" />
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="streak-detail-timeline">
+                    @foreach (var item in Model.TimelineItems)
+                    {
+                        <div class="streak-detail-timeline-item">
+                            <partial name="Partials/_StreakDetailCell" model="item" />
+                            @if (item.State == StreakDayState.Frozen)
+                            {
+                                <span class="streak-detail-timeline-note">frozen</span>
+                            }
+                        </div>
+                    }
+                    @if (Model.TimelineItems.Count == 0)
+                    {
+                        <p class="hint">Nothing logged yet.</p>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="streak-detail-legend">
+            <span><span class="streak-detail-dot is-completed"></span> done</span>
+            @if (showFrozenLegend)
+            {
+                <span><i class="streak-detail-dot is-frozen ti ti-snowflake" aria-hidden="true"></i> frozen</span>
+            }
+            @if (showMissedLegend)
+            {
+                <span><span class="streak-detail-dot is-missed"></span> missed</span>
+            }
+            @if (showResetLegend)
+            {
+                <span><i class="streak-detail-dot is-reset ti ti-flame-off" aria-hidden="true"></i> reset</span>
+            }
+            <span><span class="streak-detail-dot is-today-swatch"></span> today</span>
+        </div>
+    </section>
+
+</div>
