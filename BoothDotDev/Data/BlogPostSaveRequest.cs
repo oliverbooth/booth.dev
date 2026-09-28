@@ -31,10 +31,14 @@ public sealed record BlogPostDraftContent(
 /// <param name="Slug">The URL slug of the post.</param>
 /// <param name="PublishedAt">The publication date and time of the post.</param>
 /// <param name="EnableComments">A value indicating whether comments are enabled for the post.</param>
+/// <param name="IsRedirect">A value indicating whether the post redirects to another URL.</param>
+/// <param name="RedirectUrl">The URL to which the post redirects, or <see langword="null" /> if it does not redirect.</param>
 /// <param name="Content">The content of the draft this save produces.</param>
 public sealed record BlogPostSaveRequest(
     Guid AuthorId,
     string Slug,
     DateTimeOffset PublishedAt,
     bool EnableComments,
+    bool IsRedirect,
+    Uri? RedirectUrl,
     BlogPostDraftContent Content);

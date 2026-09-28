@@ -1,0 +1,285 @@
+[data-mode-section] {
+  display: none;
+}
+
+[data-streak-form][data-mode="CheckIn"] .field-row[data-mode-section="CheckIn"] {
+  display: flex;
+}
+
+[data-streak-form][data-mode="CheckOut"] .field[data-mode-section="CheckOut"] {
+  display: block;
+}
+
+.admin-streak-log {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in oklch, var(--text) 8%, transparent);
+
+  h2 {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  p.hint {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin: 1em 0;
+  }
+}
+
+.log-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.log-action {
+  padding: 14px 16px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+
+  .field-row,
+  .field {
+    margin-bottom: 12px;
+  }
+
+  p.hint {
+    margin: 10px 0 0;
+  }
+
+  :is(input, select):not(:focus) {
+    background: var(--bg);
+  }
+
+  .btn:not(.btn-primary, .btn-danger) {
+    background: var(--bg);
+  }
+}
+
+.log-action-title {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.streak-calendar {
+  margin-top: 4px;
+}
+
+.streak-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.streak-calendar-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.streak-calendar-month {
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--surface);
+    }
+  }
+}
+
+.streak-calendar-month-input {
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  padding: 4px 8px;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.streak-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+
+  span {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+}
+
+.streak-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.streak-calendar-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+
+  &.is-empty {
+    background: none;
+    cursor: default;
+  }
+
+  &.is-completed {
+    background: var(--accent-mint);
+    color: var(--on-mint-text);
+  }
+
+  &.is-frozen {
+    background: color-mix(in oklch, var(--accent-sky) 35%, var(--bg));
+    color: var(--text);
+  }
+
+  /* a Tabler icon rather than a shape - never tinted by the cell's own state colours, so it reads as "frozen"
+     regardless of theme. */
+  .streak-calendar-snowflake {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 11px;
+    color: oklch(62% 0.13 230);
+  }
+
+  /* a dot rather than another ring - a colour-only distinction from .is-selected's ring reads too similarly in
+     dark mode, where --brand-text is a pale 80%-lightness lavender close to the selection ring's white line. */
+  &.is-today::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--brand-text);
+  }
+
+  &.is-selected {
+    /* a single-colour ring can vanish against a light (mint/frozen) or dark (empty) fill depending on theme, so
+       this pairs a near-white line with a near-black one - one of the two always shows up regardless of fill. */
+    box-shadow:
+      inset 0 0 0 2px oklch(98% 0 0),
+      inset 0 0 0 4px oklch(10% 0 0);
+  }
+}
+
+.streak-calendar-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.streak-calendar-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg);
+
+  &.is-completed {
+    background: var(--accent-mint);
+  }
+
+  &.is-frozen {
+    background: color-mix(in oklch, var(--accent-sky) 35%, var(--bg));
+  }
+
+  &.is-today {
+    background: var(--brand-text);
+  }
+}
+
+.streak-calendar-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+
+  .btn:not(.btn-primary, .btn-danger) {
+    background: var(--bg);
+  }
+}
+
+.streak-calendar-selection-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+.streak-calendar-cancel {
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--text);
+    }
+  }
+}

@@ -15,6 +15,7 @@
 @import "partials/admin/_status-manager.css";
 @import "partials/admin/_post-media.css";
 @import "partials/admin/_post-drafts.css";
+@import "partials/admin/_streak-editor.css";
 @import "partials/admin/_cdn-browser.css";
 @import "partials/admin/_reorder.css";
 @import "partials/admin/_book-lookup.css";

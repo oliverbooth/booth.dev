@@ -208,6 +208,42 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of streaks in the database.
+    /// </summary>
+    /// <value>The collection of streaks.</value>
+    public DbSet<Streak> Streaks
+    {
+        get => Set<Streak>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of streak check-ins in the database.
+    /// </summary>
+    /// <value>The collection of streak check-ins.</value>
+    public DbSet<StreakCheckIn> StreakCheckIns
+    {
+        get => Set<StreakCheckIn>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of streak drafts in the database.
+    /// </summary>
+    /// <value>The collection of streak drafts.</value>
+    public DbSet<StreakDraft> StreakDrafts
+    {
+        get => Set<StreakDraft>();
+    }
+
+    /// <summary>
+    ///     Gets the collection of streak resets in the database.
+    /// </summary>
+    /// <value>The collection of streak resets.</value>
+    public DbSet<StreakReset> StreakResets
+    {
+        get => Set<StreakReset>();
+    }
+
+    /// <summary>
     ///     Gets the stored Trakt OAuth credential.
     /// </summary>
     /// <value>The stored Trakt OAuth credential.</value>
@@ -273,6 +309,9 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<PaletteHue>("public", "palette_hue", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<StreakCadenceUnit>("public", "streak_cadence_unit", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<StreakCheckInKind>("public", "streak_check_in_kind", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<StreakMode>("public", "streak_mode", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<Visibility>("public", "visibility", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<WatchableKind>("public", "watchable_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<WatchableSource>("public", "watchable_source", new NpgsqlSnakeCaseNameTranslator());
@@ -299,6 +338,10 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new SomedayEntryConfiguration());
         modelBuilder.ApplyConfiguration(new SomedayEntryDraftConfiguration());
         modelBuilder.ApplyConfiguration(new StatusConfiguration());
+        modelBuilder.ApplyConfiguration(new StreakConfiguration());
+        modelBuilder.ApplyConfiguration(new StreakCheckInConfiguration());
+        modelBuilder.ApplyConfiguration(new StreakDraftConfiguration());
+        modelBuilder.ApplyConfiguration(new StreakResetConfiguration());
         modelBuilder.ApplyConfiguration(new TraktCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleConfiguration());
         modelBuilder.ApplyConfiguration(new TutorialArticleDraftConfiguration());

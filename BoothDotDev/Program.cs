@@ -88,6 +88,7 @@ builder.Services.AddSingleton<ReadingListService>();
 builder.Services.AddSingleton<RssFeedService>();
 builder.Services.AddSingleton<SomedayEntryService>();
 builder.Services.AddSingleton<StatusService>();
+builder.Services.AddSingleton<StreakService>();
 builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BookLookupService>();
