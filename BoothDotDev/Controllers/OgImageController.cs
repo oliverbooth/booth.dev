@@ -65,6 +65,17 @@ public sealed class OgImageController : ControllerBase
     }
 
     /// <summary>
+    ///     Gets the card for the dev challenges index.
+    /// </summary>
+    [HttpGet("challenges.png")]
+    public IActionResult GetChallengesIndexCard()
+    {
+        const string description = "Hands-on coding challenges to help you level up, each with an optional unlockable solution.";
+        return ServeCached("challenges", "index", PaletteHue.Bubblegum, null,
+            () => _ogImageService.RenderCard(PaletteHue.Bubblegum, "CHALLENGES", "Dev Challenges", description));
+    }
+
+    /// <summary>
     ///     Gets the card for a blog post.
     /// </summary>
     [HttpGet("blog/{id:guid}.png")]
