@@ -5,6 +5,7 @@
 @using BoothDotDev.Pages.Shared.Partials
 @using BoothDotDev.Services
 @using DEDrake
+@using Markdig
 @model Note
 
 @if (!Model.RetrievedNote.HasValue)
@@ -46,7 +47,8 @@
             Meta = [$"published {published.ToShortString()}"],
             SourceUrl = $"/note/{(ShortGuid)note.Id}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Notes/Edit", new { id = note.Id }) : null,
-            ShowVoiceFontToggle = note.FontStyle == FontStyle.Serif
+            ShowVoiceFontToggle = note.FontStyle == FontStyle.Serif,
+            ShowLigatureToggle = Markdown.ContainsCode(note.Content)
         };
     }
 

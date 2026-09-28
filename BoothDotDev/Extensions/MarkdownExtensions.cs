@@ -121,5 +121,15 @@ public static class MarkdownExtensions
 
             return html;
         }
+
+        /// <summary>
+        ///     Determines whether the specified Markdown string contains a code span or fenced/indented code block.
+        /// </summary>
+        /// <param name="markdown">The Markdown string to inspect.</param>
+        /// <returns><see langword="true" /> if <paramref name="markdown" /> contains a backtick; otherwise, <see langword="false" />.</returns>
+        public static bool ContainsCode([StringSyntax("markdown")] string markdown)
+        {
+            return markdown.Contains('`');
+        }
     }
 }
