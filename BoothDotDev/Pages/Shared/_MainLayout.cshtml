@@ -15,46 +15,24 @@
     <meta property="og:url" content="@CurrentUrl">
     <meta property="twitter:url" content="@CurrentUrl">
     <meta name="theme-color" content="#6161cd">
+    <partial name="Partials/_PrePaintTheme" />
     <script>
-        // runs before first paint to avoid a flash of the wrong theme; keep in step with resolveTheme() in theme.ts
+        // runs before first paint to avoid a flash of reader-opted-out typography;
+        // keep in step with voice-font.ts / ligatures.ts
         (() => {
-            let theme = null;
-            try {
-                theme = localStorage.getItem('theme');
-            } catch {
-            }
+            const read = key => {
+                try {
+                    return localStorage.getItem(key);
+                } catch {
+                    return null;
+                }
+            };
 
-            if (theme !== 'light' && theme !== 'dark') {
-                theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-            }
-
-            document.documentElement.dataset.theme = theme;
-        })();
-
-        // runs before first paint to avoid a flash of the serif voice font on pages the reader opted out of;
-        // keep in step with voice-font.ts
-        (() => {
-            let voiceFont = null;
-            try {
-                voiceFont = localStorage.getItem('voiceFont');
-            } catch {
-            }
-
-            if (voiceFont === 'sans') {
+            if (read('voiceFont') === 'sans') {
                 document.documentElement.dataset.voiceFont = 'sans';
             }
-        })();
 
-        // runs before first paint to avoid a flash of ligatures on pages the reader opted out of;
-        // keep in step with ligatures.ts
-        (() => {
-            let ligatures = null;
-            try {
-                ligatures = localStorage.getItem('ligatures');
-            } catch {
-            }
-
-            if (ligatures === 'off') {
+            if (read('ligatures') === 'off') {
                 document.documentElement.dataset.ligatures = 'off';
             }
         })();
