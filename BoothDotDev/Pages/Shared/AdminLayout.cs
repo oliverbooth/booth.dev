@@ -45,6 +45,15 @@ public abstract class AdminLayout : RazorPage<object>
     public User CurrentUser { get; private set; } = null!;
 
     /// <summary>
+    ///     Gets the URL of <see cref="CurrentUser" />'s avatar.
+    /// </summary>
+    /// <value>The avatar URL, or <see langword="null" /> to show only the user's initial.</value>
+    public Uri? CurrentUserAvatarUrl
+    {
+        get => Context.RequestServices.GetRequiredService<UserService>().GetAvatarUrl(CurrentUser, 28);
+    }
+
+    /// <summary>
     ///     Initializes the admin layout.
     /// </summary>
     public Task InitializeAsync()

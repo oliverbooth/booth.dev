@@ -19,7 +19,10 @@
                 @if (!Model.CreatingNew)
                 {
                     <div class="avatar" data-initial="@Model.Input.DisplayName[0]" style="width:36px;height:36px;font-size:15px">
-                        <img src="@Model.AvatarUrl" alt="@Model.Input.DisplayName" />
+                        @if (Model.AvatarUrl is { } headerAvatarUrl)
+                        {
+                            <img src="@headerAvatarUrl" alt="@Model.Input.DisplayName" />
+                        }
                     </div>
                 }
                 <h1>@(Model.CreatingNew ? "New user" : Model.Input.DisplayName)</h1>
@@ -38,6 +41,46 @@
         <div class="field">
             <label asp-for="Input.EmailAddress">Email address</label>
             <input asp-for="Input.EmailAddress" type="email" autocomplete="email" />
+        </div>
+
+        <div class="field">
+            <label>Avatar</label>
+            <div class="radio-row">
+                <label class="radio-option">
+                    <input type="checkbox" asp-for="Input.UseGravatar" />
+                    Use Gravatar (based on email address)
+                </label>
+            </div>
+            @if (Model.CreatingNew)
+            {
+                <p class="hint">Save the user before uploading a custom avatar.</p>
+            }
+            else
+            {
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                    <div class="avatar" data-initial="@Model.Input.DisplayName[0]" style="width:48px;height:48px;font-size:18px">
+                        @if (Model.CustomAvatarUrl is { } customAvatarUrl)
+                        {
+                            <img src="@customAvatarUrl" alt="@Model.Input.DisplayName" />
+                        }
+                    </div>
+                    <div class="input-with-button">
+                        <input type="file" name="file" accept="image/*" form="upload-avatar-form" />
+                        <button type="submit" form="upload-avatar-form" asp-page-handler="UploadAvatar" asp-route-id="@Model.UserId"
+                                class="btn"><i class="ti ti-upload"></i> Upload</button>
+                    </div>
+                    @if (Model.CustomAvatarUrl is not null)
+                    {
+                        <button type="submit" form="clear-avatar-form" asp-page-handler="ClearAvatar" asp-route-id="@Model.UserId"
+                                class="icon-btn danger" aria-label="Remove uploaded avatar"
+                                data-confirm="Remove the uploaded avatar? This deletes the file from the CDN and can't be undone.">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    }
+                </div>
+                <p class="hint">The uploaded avatar is shown when "Use Gravatar" is off. If neither applies, the initial above is
+                    shown instead.</p>
+            }
         </div>
 
         <div class="field">
@@ -153,6 +196,8 @@
     @if (!Model.CreatingNew)
     {
         <form id="delete-passkey-form" method="post" hidden></form>
+        <form id="upload-avatar-form" method="post" enctype="multipart/form-data" hidden></form>
+        <form id="clear-avatar-form" method="post" hidden></form>
     }
 
 </div>

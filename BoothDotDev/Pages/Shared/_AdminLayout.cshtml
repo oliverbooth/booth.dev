@@ -70,8 +70,12 @@
         <div class="admin-rail-footer">
             <div class="admin-user">
                 <div class="admin-user-id">
-                    <div class="avatar" data-initial="@CurrentUser.DisplayName[0]"><img src="@CurrentUser.AvatarUrl"
-                                                                                        alt="@CurrentUser.DisplayName" /></div>
+                    <div class="avatar" data-initial="@CurrentUser.DisplayName[0]">
+                        @if (CurrentUserAvatarUrl is { } avatarUrl)
+                        {
+                            <img src="@avatarUrl" alt="@CurrentUser.DisplayName" />
+                        }
+                    </div>
                     <div>
                         <p class="name">@CurrentUser.DisplayName</p>
                         <p class="role">Admin</p>

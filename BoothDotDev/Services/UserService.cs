@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
 using BoothDotDev.Data;
 using BoothDotDev.Data.Models;
+using BoothDotDev.Markdown.Link;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OtpNet;
 
 namespace BoothDotDev.Services;
@@ -14,9 +16,16 @@ using BCrypt = BCrypt.Net.BCrypt;
 /// </summary>
 public sealed class UserService
 {
+    /// <summary>
+    ///     The CDN area a user's uploaded avatar lives under.
+    /// </summary>
+    private const string AvatarArea = "users";
+
     // allow for a 1-step window before and after the current time step to account for clock drift
     private static readonly VerificationWindow TotpVerificationWindow = new(1, 1);
 
+    private readonly string _cdnBaseUrl;
+    private readonly CdnMediaService _cdnMediaService;
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly ConcurrentDictionary<Guid, User> _userCache = new();
 
@@ -26,9 +35,14 @@ public sealed class UserService
     /// <param name="dbContextFactory">
     ///     The <see cref="IDbContextFactory{TContext}" /> used to create a <see cref="AppDbContext" />.
     /// </param>
-    public UserService(IDbContextFactory<AppDbContext> dbContextFactory)
+    /// <param name="cdnMediaService">The <see cref="CdnMediaService" />.</param>
+    /// <param name="cdnOptions">The CDN options.</param>
+    public UserService(IDbContextFactory<AppDbContext> dbContextFactory, CdnMediaService cdnMediaService,
+        IOptions<CdnOptions> cdnOptions)
     {
         _dbContextFactory = dbContextFactory;
+        _cdnMediaService = cdnMediaService;
+        _cdnBaseUrl = cdnOptions.Value.BaseUrl;
     }
 
     /// <summary>
@@ -58,7 +72,8 @@ public sealed class UserService
         {
             DisplayName = request.DisplayName,
             EmailAddress = request.EmailAddress,
-            TotpSecret = string.IsNullOrWhiteSpace(request.TotpSecret) ? null : request.TotpSecret
+            TotpSecret = string.IsNullOrWhiteSpace(request.TotpSecret) ? null : request.TotpSecret,
+            UseGravatar = request.UseGravatar
         };
 
         ApplyPassword(user, request);
@@ -101,6 +116,7 @@ public sealed class UserService
         user.DisplayName = request.DisplayName;
         user.EmailAddress = request.EmailAddress;
         user.TotpSecret = string.IsNullOrWhiteSpace(request.TotpSecret) ? null : request.TotpSecret;
+        user.UseGravatar = request.UseGravatar;
         ApplyPassword(user, request);
 
         context.SaveChanges();
@@ -166,6 +182,106 @@ public sealed class UserService
         }
 
         return user is not null ? Result.Ok(user) : Result.Fail("User not found.");
+    }
+
+    /// <summary>
+    ///     Resolves the URL of a user's avatar.
+    /// </summary>
+    /// <param name="user">The user whose avatar to resolve.</param>
+    /// <param name="size">The size of the avatar, only meaningful for a Gravatar.</param>
+    /// <returns>
+    ///     <see cref="User.GetGravatarUrl" /> if <see cref="User.UseGravatar" /> is <see langword="true" />; otherwise, the CDN
+    ///     URL of <see cref="User.AvatarFileName" />, or <see langword="null" /> if neither applies, so the caller falls back
+    ///     to showing the user's initial.
+    /// </returns>
+    public Uri? GetAvatarUrl(User user, int size)
+    {
+        return user.UseGravatar ? user.GetGravatarUrl(size) : GetCustomAvatarUrl(user);
+    }
+
+    /// <summary>
+    ///     Resolves the CDN URL of a user's uploaded custom avatar, regardless of <see cref="User.UseGravatar" />.
+    /// </summary>
+    /// <param name="user">The user whose custom avatar to resolve.</param>
+    /// <returns>The CDN URL of <see cref="User.AvatarFileName" />, or <see langword="null" /> if none has been uploaded.</returns>
+    public Uri? GetCustomAvatarUrl(User user)
+    {
+        return user.AvatarFileName is { } fileName
+            ? new Uri(CdnMediaResolver.BuildCdnUrl(_cdnBaseUrl, AvatarArea, MediaKind.Image, user.Registered, user.Id, fileName))
+            : null;
+    }
+
+    /// <summary>
+    ///     Uploads a new custom avatar for a user, replacing any previous one.
+    /// </summary>
+    /// <param name="id">The ID of the user.</param>
+    /// <param name="file">The uploaded image.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
+    /// <returns>A <see cref="Result" /> indicating success, or why the avatar could not be uploaded.</returns>
+    public async Task<Result> SetAvatarAsync(Guid id, IFormFile file, CancellationToken cancellationToken)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var user = context.Users.Find(id);
+        if (user is null)
+        {
+            return Result.Fail($"User with ID '{id}' not found.");
+        }
+
+        if (CdnMediaResolver.ResolveMediaKind(file.FileName) != MediaKind.Image)
+        {
+            return Result.Fail($"'{file.FileName}' isn't an image.");
+        }
+
+        // replacing the avatar with a file of the same name as the current one would otherwise collide with itself,
+        // since the old file is normally only removed once the new upload has already succeeded
+        if (user.AvatarFileName is { } currentFileName &&
+            string.Equals(Path.GetFileName(file.FileName), currentFileName, StringComparison.OrdinalIgnoreCase))
+        {
+            _cdnMediaService.DeleteFile(id, user.Registered, currentFileName, AvatarArea);
+        }
+
+        var uploadResult = await _cdnMediaService.UploadAsync(id, user.Registered, file, AvatarArea, cancellationToken);
+        if (uploadResult.IsFailed)
+        {
+            return uploadResult.ToResult();
+        }
+
+        if (user.AvatarFileName is { } oldFileName && oldFileName != uploadResult.Value.FileName)
+        {
+            _cdnMediaService.DeleteFile(id, user.Registered, oldFileName, AvatarArea);
+        }
+
+        user.AvatarFileName = uploadResult.Value.FileName;
+        context.SaveChanges();
+
+        _userCache[id] = user;
+        return Result.Ok();
+    }
+
+    /// <summary>
+    ///     Clears a user's custom avatar, deleting it from the CDN.
+    /// </summary>
+    /// <param name="id">The ID of the user.</param>
+    /// <returns>A <see cref="Result" /> indicating success, or why the avatar could not be cleared.</returns>
+    public Result ClearAvatar(Guid id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var user = context.Users.Find(id);
+        if (user is null)
+        {
+            return Result.Fail($"User with ID '{id}' not found.");
+        }
+
+        if (user.AvatarFileName is { } fileName)
+        {
+            _cdnMediaService.DeleteFile(id, user.Registered, fileName, AvatarArea);
+        }
+
+        user.AvatarFileName = null;
+        context.SaveChanges();
+
+        _userCache[id] = user;
+        return Result.Ok();
     }
 
     /// <summary>
