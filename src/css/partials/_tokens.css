@@ -197,7 +197,6 @@
   --polaroid-bg: oklch(23% 0.02 275);
   --doc-icon: oklch(30% 0.02 275);
   --tape: oklch(45% 0.06 95 / 0.9);
-  --stripe-label: oklch(90% 0.01 275);
 
   --rail-bg: oklch(11% 0.015 280);
 }
@@ -346,7 +345,6 @@
   --polaroid-bg: #fff;
   --doc-icon: oklch(90% 0.02 275);
   --tape: oklch(88% 0.08 95 / 0.9);
-  --stripe-label: oklch(35% 0.02 275);
 
   --rail-bg: oklch(98% 0.006 275);
 }
