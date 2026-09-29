@@ -184,34 +184,6 @@ public sealed class Login : PageModel
         }
     }
 
-    private bool TryGetPendingUserId(out Guid userId)
-    {
-        userId = Guid.Empty;
-
-        if (!Request.Cookies.TryGetValue("pending_totp", out var cookie))
-        {
-            return false;
-        }
-
-        try
-        {
-            var payload = _protector.Unprotect(cookie);
-            var parts = payload.Split('|');
-            var issuedAt = DateTimeOffset.Parse(parts[1]);
-
-            if (DateTimeOffset.UtcNow - issuedAt > TimeSpan.FromMinutes(5))
-            {
-                return false;
-            }
-
-            return Guid.TryParse(parts[0], out userId);
-        }
-        catch (CryptographicException)
-        {
-            return false;
-        }
-    }
-
     /// <summary>
     ///     Represents a passkey login ceremony's state, carried between the begin and complete requests via a short-lived,
     ///     protected cookie.
