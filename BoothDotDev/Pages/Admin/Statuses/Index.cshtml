@@ -8,8 +8,8 @@
 
     var groups = new[]
     {
-        (Label: "in rotation", Dot: "dot", Items: Model.Active),
-        (Label: "out of rotation", Dot: "dot dot-tangerine", Items: Model.Inactive)
+        (Label: "in rotation", Dot: "dot", Items: Model.Active, ShowActivateAll: false),
+        (Label: "out of rotation", Dot: "dot dot-tangerine", Items: Model.Inactive, ShowActivateAll: true)
     };
 }
 
@@ -49,6 +49,12 @@
                     <span class="@group.Dot"></span>
                     <span class="row-group-title">@group.Label</span>
                     <span class="row-group-count">@("status".ToQuantity(group.Items.Count))</span>
+                    @if (group.ShowActivateAll && group.Items.Count > 0)
+                    {
+                        <form method="post" asp-page-handler="SetAllActive" class="row-group-action">
+                            <button type="submit" class="icon-btn">put all in rotation</button>
+                        </form>
+                    }
                 </div>
                 <ul class="admin-row-list">
                     @foreach (var status in group.Items)

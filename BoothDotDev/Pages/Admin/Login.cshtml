@@ -12,22 +12,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script>
-        // runs before first paint to avoid a flash of the wrong theme; keep in step with resolveTheme() in theme.ts
-        (() => {
-            let theme = null;
-            try {
-                theme = localStorage.getItem('theme');
-            } catch {
-            }
-
-            if (theme !== 'light' && theme !== 'dark') {
-                theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-            }
-
-            document.documentElement.dataset.theme = theme;
-        })();
-    </script>
+    <partial name="Partials/_PrePaintTheme" />
     <title>@(Site.CurrentValue.EnvironmentLabel is { Length: > 0 } environmentLabel ? $"[{environmentLabel}] " : "")Sign in
         - @Strings.MyName Admin</title>
     <link rel="icon" href="~/img/favicon.png" asp-append-version="true">

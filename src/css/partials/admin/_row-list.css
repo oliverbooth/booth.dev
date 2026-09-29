@@ -38,6 +38,10 @@
   color: var(--text-faint);
 }
 
+.row-group-action {
+  margin-left: auto;
+}
+
 .admin-row-list--nested {
   padding-left: 24px;
   gap: 8px;

@@ -58,11 +58,7 @@
 
   .media-placeholder {
     aspect-ratio: 16 / 6;
-    background-image: repeating-linear-gradient(
-      50deg,
-      color-mix(in oklch, var(--solid) 16%, transparent) 0 9px,
-      color-mix(in oklch, var(--solid) 8%, transparent) 9px 18px
-    );
+    background-image: var(--stripe-placeholder);
   }
 }
 

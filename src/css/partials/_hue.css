@@ -73,37 +73,58 @@ h1[data-hue] {
 .stack-list > [data-hue="brand"],
 .post-row[data-hue="brand"],
 .post-nav-link[data-hue="brand"],
-.series-box[data-hue="brand"] { --tint: var(--row-tint-brand); }
+.series-box[data-hue="brand"],
+.someday-entry[data-hue="brand"],
+.streak-card[data-hue="brand"],
+.streak-detail-card[data-hue="brand"] { --tint: var(--row-tint-brand); }
 
 .stack-list > [data-hue="tangerine"],
 .post-row[data-hue="tangerine"],
 .post-nav-link[data-hue="tangerine"],
-.series-box[data-hue="tangerine"] { --tint: var(--row-tint-tangerine); }
+.series-box[data-hue="tangerine"],
+.someday-entry[data-hue="tangerine"],
+.streak-card[data-hue="tangerine"],
+.streak-detail-card[data-hue="tangerine"] { --tint: var(--row-tint-tangerine); }
 
 .stack-list > [data-hue="mint"],
 .post-row[data-hue="mint"],
 .post-nav-link[data-hue="mint"],
-.series-box[data-hue="mint"] { --tint: var(--row-tint-mint); }
+.series-box[data-hue="mint"],
+.someday-entry[data-hue="mint"],
+.streak-card[data-hue="mint"],
+.streak-detail-card[data-hue="mint"] { --tint: var(--row-tint-mint); }
 
 .stack-list > [data-hue="bubblegum"],
 .post-row[data-hue="bubblegum"],
 .post-nav-link[data-hue="bubblegum"],
-.series-box[data-hue="bubblegum"] { --tint: var(--row-tint-bubblegum); }
+.series-box[data-hue="bubblegum"],
+.someday-entry[data-hue="bubblegum"],
+.streak-card[data-hue="bubblegum"],
+.streak-detail-card[data-hue="bubblegum"] { --tint: var(--row-tint-bubblegum); }
 
 .stack-list > [data-hue="grape"],
 .post-row[data-hue="grape"],
 .post-nav-link[data-hue="grape"],
-.series-box[data-hue="grape"] { --tint: var(--row-tint-grape); }
+.series-box[data-hue="grape"],
+.someday-entry[data-hue="grape"],
+.streak-card[data-hue="grape"],
+.streak-detail-card[data-hue="grape"] { --tint: var(--row-tint-grape); }
 
 .stack-list > [data-hue="sun"],
 .post-row[data-hue="sun"],
 .post-nav-link[data-hue="sun"],
-.series-box[data-hue="sun"] { --tint: var(--row-tint-sun); }
+.series-box[data-hue="sun"],
+.someday-entry[data-hue="sun"],
+.streak-card[data-hue="sun"],
+.streak-detail-card[data-hue="sun"] { --tint: var(--row-tint-sun); }
 
 .stack-list > [data-hue="sky"],
 .post-row[data-hue="sky"],
 .post-nav-link[data-hue="sky"],
-.series-box[data-hue="sky"] { --tint: var(--row-tint-sky); }
+.series-box[data-hue="sky"],
+.someday-entry[data-hue="sky"],
+.streak-card[data-hue="sky"],
+.streak-detail-card[data-hue="sky"] { --tint: var(--row-tint-sky); }
 
 .badge-grape { --badge-bg: color-mix(in oklch, var(--accent-grape) 18%, transparent); --badge-text: var(--grape-text); }
 .badge-sun { --badge-bg: color-mix(in oklch, var(--accent-sun) 18%, transparent); --badge-text: var(--sun-text); }

@@ -1,5 +1,4 @@
 :root {
-  --prism-background: var(--syntax-bg);
   --prism-foreground: var(--syntax-text);
 
   --prism-comment: var(--syntax-comment);
@@ -10,9 +9,7 @@
   --prism-preprocessor-property: var(--syntax-punct);
 
   --prism-atrule: var(--syntax-keyword);
-  --prism-css-foreground: var(--syntax-text);
   --prism-css-selector: var(--syntax-func);
-  --prism-css-property: var(--syntax-type);
 
   --prism-doctype: var(--syntax-type);
   --prism-markup-tag: var(--syntax-keyword);

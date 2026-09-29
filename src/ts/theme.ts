@@ -1,3 +1,5 @@
+import {readStoredSafe, syncAriaPressed, writeStoredSafe} from './dataset-toggle.ts';
+
 export type Theme = 'light' | 'dark';
 
 const STORAGE_KEY = 'theme';
@@ -25,18 +27,18 @@ export function resolveTheme(stored: string | null, systemPrefersLight: boolean)
  * for as long as they haven't made one. Dispatches a `themechange` event on `document` whenever the theme changes.
  */
 export function initTheme(): void {
-    syncToggles(currentTheme());
+    syncAriaPressed('[data-theme-toggle]', currentTheme() === 'dark');
 
     document.addEventListener('click', event => {
         if ((event.target as Element).closest('[data-theme-toggle]')) {
             const next: Theme = currentTheme() === 'dark' ? 'light' : 'dark';
-            writeStored(next);
+            writeStoredSafe(STORAGE_KEY, next);
             applyTheme(next, true);
         }
     });
 
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
-        if (readStored() === null) {
+        if (readStoredSafe(STORAGE_KEY) === null) {
             applyTheme(resolveTheme(null, systemPrefersLight()), true);
         }
     });
@@ -64,7 +66,7 @@ function applyTheme(theme: Theme, animate: boolean): void {
 
     const swap = (): void => {
         root.dataset.theme = theme;
-        syncToggles(theme);
+        syncAriaPressed('[data-theme-toggle]', theme === 'dark');
         document.dispatchEvent(new CustomEvent('themechange', {detail: {theme}}));
     };
 
@@ -87,28 +89,6 @@ function applyTheme(theme: Theme, animate: boolean): void {
     swap();
 }
 
-function syncToggles(theme: Theme): void {
-    for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
-        toggle.setAttribute('aria-pressed', String(theme === 'dark'));
-    }
-}
-
 function systemPrefersLight(): boolean {
     return window.matchMedia('(prefers-color-scheme: light)').matches;
-}
-
-function readStored(): string | null {
-    try {
-        return localStorage.getItem(STORAGE_KEY);
-    } catch {
-        return null;
-    }
-}
-
-function writeStored(theme: Theme): void {
-    try {
-        localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-        // storage blocked; the choice just won't persist
-    }
 }

@@ -231,7 +231,6 @@
 .section-icon--muted { color: var(--text-faint); }
 .section-icon--success { color: var(--mint-text); }
 
-.item-icon--accent { color: var(--brand-text); }
 .item-icon--muted { color: var(--text-faint); }
 .item-icon--success { color: var(--mint-text); }
 
@@ -276,56 +275,6 @@
 
 .section-list {
   margin-bottom: 2rem;
-}
-
-.crypto-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.crypto-symbol {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 56px;
-  flex-shrink: 0;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-.crypto-address {
-  flex: 1;
-  overflow: hidden;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.copy-icon {
-  flex-shrink: 0;
-  padding: 6px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: none;
-  color: var(--text-muted);
-  font-size: 16px;
-  cursor: pointer;
-  transition: color 0.15s ease;
-
-  &:hover,
-  &:focus-visible {
-    color: var(--text);
-  }
 }
 
 .post-nav {
