@@ -2,6 +2,7 @@
 @inject BlogPostService BlogPostService
 @inject CommentService CommentService
 @inject MarkdownRenderingService MarkdownRenderingService
+@inject UserService UserService
 @using BoothDotDev.Data
 @using BoothDotDev.Data.Models
 @using BoothDotDev.Extensions
@@ -62,7 +63,7 @@
             Hue = hue.ToDataHue(),
             Tags = post.Tags,
             AuthorName = author.DisplayName,
-            AuthorAvatarUrl = author.AvatarUrl,
+            AuthorAvatarUrl = UserService.GetAvatarUrl(author, 28),
             Meta = [$"published {published.ToShortString()}", $"{post.GetEstimatedReadingTime()} min read"],
             SourceUrl = $"/blog/{post.Slug}.md",
             EditUrl = User.Identity?.IsAuthenticated == true ? Url.Page("/Admin/Posts/Edit", new { id = post.Id }) : null,

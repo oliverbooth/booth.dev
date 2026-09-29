@@ -52,10 +52,18 @@ public sealed class Edit : PageModel
     public EditModel Input { get; set; } = new();
 
     /// <summary>
-    ///     Gets the avatar of the user being edited.
+    ///     Gets the resolved avatar of the user being edited.
     /// </summary>
     /// <value>The avatar of the user being edited, or <see langword="null" /> if a new user is being created.</value>
     public Uri? AvatarUrl { get; private set; }
+
+    /// <summary>
+    ///     Gets the uploaded custom avatar of the user being edited, regardless of <see cref="EditModel.UseGravatar" />.
+    /// </summary>
+    /// <value>
+    ///     The custom avatar, or <see langword="null" /> if none has been uploaded, or a new user is being created.
+    /// </value>
+    public Uri? CustomAvatarUrl { get; private set; }
 
     /// <summary>
     ///     Gets a value indicating whether a new user is being created.
@@ -114,7 +122,8 @@ public sealed class Edit : PageModel
             DisplayName = user.DisplayName,
             EmailAddress = user.EmailAddress,
             DisableLogin = string.IsNullOrWhiteSpace(user.Password),
-            TotpSecret = user.TotpSecret
+            TotpSecret = user.TotpSecret,
+            UseGravatar = user.UseGravatar
         };
 
         UpdateTotpQrCode();
@@ -138,10 +147,63 @@ public sealed class Edit : PageModel
         }
 
         var request = new UserSaveRequest(Input.DisplayName, Input.EmailAddress, Input.DisableLogin, Input.NewPassword,
-            Input.TotpSecret);
+            Input.TotpSecret, Input.UseGravatar);
         var result = id is null ? _userService.CreateUser(request) : _userService.UpdateUser(id.Value, request);
 
         return RedirectOnSuccess(id, result);
+    }
+
+    /// <summary>
+    ///     Handles the POST request for uploading a new custom avatar for the user.
+    /// </summary>
+    /// <param name="id">The ID of the user to upload an avatar for.</param>
+    /// <param name="file">The uploaded image.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation requests.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public async Task<IActionResult> OnPostUploadAvatarAsync(Guid? id, IFormFile? file, CancellationToken cancellationToken)
+    {
+        if (id is not { } userId)
+        {
+            return BadRequest("Save the user before uploading an avatar.");
+        }
+
+        if (file is null)
+        {
+            ModelState.AddModelError(string.Empty, "Choose a file to upload.");
+            ReloadDisplayState(id);
+            UpdateTotpQrCode();
+            return Page();
+        }
+
+        var uploadResult = await _userService.SetAvatarAsync(userId, file, cancellationToken);
+        return RedirectOnSuccess(userId, ToUserResult(uploadResult, userId));
+    }
+
+    /// <summary>
+    ///     Handles the POST request for clearing the user's custom avatar.
+    /// </summary>
+    /// <param name="id">The ID of the user whose avatar to clear.</param>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostClearAvatar(Guid? id)
+    {
+        if (id is not { } userId)
+        {
+            return BadRequest("Save the user before clearing their avatar.");
+        }
+
+        return RedirectOnSuccess(userId, ToUserResult(_userService.ClearAvatar(userId), userId));
+    }
+
+    /// <summary>
+    ///     Converts a plain <see cref="Result" /> from an avatar operation into the <see cref="Result{T}" /> shape
+    ///     <see cref="RedirectOnSuccess" /> expects, re-fetching the user on success.
+    /// </summary>
+    /// <param name="result">The result of the avatar operation.</param>
+    /// <param name="userId">The ID of the user the operation was performed on.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the user, or the original failure.</returns>
+    private Result<User> ToUserResult(Result result, Guid userId)
+    {
+        return result.IsFailed ? result.ToResult<User>() : _userService.GetUser(userId);
     }
 
     /// <summary>
@@ -330,7 +392,8 @@ public sealed class Edit : PageModel
     private void LoadDisplayState(User user)
     {
         UserId = user.Id;
-        AvatarUrl = user.GetAvatarUrl(36);
+        AvatarUrl = _userService.GetAvatarUrl(user, 36);
+        CustomAvatarUrl = _userService.GetCustomAvatarUrl(user);
         HasTotp = !string.IsNullOrWhiteSpace(user.TotpSecret);
         Passkeys = _passkeyService.ListCredentials(user.Id);
     }
@@ -433,5 +496,12 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The user's TOTP secret.</value>
         public string? TotpSecret { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the user's avatar is pulled from Gravatar rather than their uploaded
+        ///     avatar.
+        /// </summary>
+        /// <value><see langword="true" /> to use Gravatar; otherwise, <see langword="false" />.</value>
+        public bool UseGravatar { get; set; } = true;
     }
 }
