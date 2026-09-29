@@ -152,7 +152,7 @@
   flex-shrink: 0;
 
   &.is-completed {
-    background: var(--solid);
+    background: var(--ink);
   }
 
   &.is-blank {
@@ -184,7 +184,7 @@
 
 .streak-detail-cell.is-today .streak-detail-dot,
 .streak-detail-dot.is-today {
-  box-shadow: 0 0 0 2.5px var(--tint), 0 0 0 4.5px var(--solid);
+  box-shadow: 0 0 0 2.5px var(--tint), 0 0 0 4.5px var(--ink);
 }
 
 .streak-detail-timeline {
@@ -241,6 +241,6 @@
 
   .is-today-swatch {
     background: var(--bg);
-    box-shadow: 0 0 0 2px var(--solid);
+    box-shadow: 0 0 0 2px var(--ink);
   }
 }
