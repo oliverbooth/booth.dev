@@ -9,6 +9,11 @@
   --accent-sky: oklch(72% 0.14 235);
 
   --toggle-bg: linear-gradient(135deg, var(--brand), var(--accent-bubblegum));
+  --stripe-placeholder: repeating-linear-gradient(
+    50deg,
+    color-mix(in oklch, var(--solid) 16%, transparent) 0 9px,
+    color-mix(in oklch, var(--solid) 8%, transparent) 9px 18px
+  );
 
   --font-heading: "Baloo 2 Variable", "Baloo 2", sans-serif;
   --font-body: "Nunito Variable", "Nunito", sans-serif;
