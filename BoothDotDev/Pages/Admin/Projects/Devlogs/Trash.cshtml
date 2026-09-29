@@ -1,5 +1,4 @@
 @page "/admin/projects/devlogs/trash/{projectId:guid}"
-@using System.Diagnostics
 @using BoothDotDev.Data
 @using Humanizer
 @model Trash
@@ -55,35 +54,10 @@
             <ul class="admin-row-list">
                 @foreach (var devlog in Model.Devlogs)
                 {
-                    var badgeClass = devlog.Visibility switch
-                    {
-                        Visibility.Published => "published",
-                        Visibility.Private => "private",
-                        _ => "unlisted"
-                    };
-
                     <li class="admin-row" data-search-item>
                         <input type="checkbox" name="ids" value="@devlog.Id" form="bulk-delete-form" data-row-select
                                aria-label="Select @devlog.Title">
-                        <span class="badge badge-@badgeClass">
-                        @switch (devlog.Visibility)
-                            {
-                                case Visibility.Published:
-                                    <text><span class="dot"></span> Published</text>
-                                    break;
-
-                                case Visibility.Private:
-                                    <text><i class="ti ti-lock"></i> Private</text>
-                                    break;
-
-                                case Visibility.Unlisted:
-                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                    break;
-
-                                default:
-                                    throw new UnreachableException();
-                            }
-                        </span>
+                        <partial name="Partials/_VisibilityBadge" model="devlog.Visibility" />
                         <div class="row-body">
                             <div class="row-title" data-search>@devlog.Title</div>
                         </div>

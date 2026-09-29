@@ -1,5 +1,4 @@
 @page "/admin/streaks"
-@using System.Diagnostics
 @using BoothDotDev.Data
 @using Humanizer
 @using BoothDotDev.Services
@@ -35,12 +34,6 @@
             @foreach (var streak in Model.Streaks)
             {
                 var timestamp = streak.UpdatedAt ?? streak.PublishedAt;
-                var badgeClass = streak.Visibility switch
-                {
-                    Visibility.Published => "published",
-                    Visibility.Private => "private",
-                    _ => "unlisted"
-                };
                 var stats = StreakService.GetStats(streak);
                 var modeLabel = streak.Mode == StreakMode.CheckIn ? "check-in" : "check-out";
 
@@ -52,25 +45,7 @@
                         <button type="button" class="reorder-move-btn" data-move="down" aria-label="Move '@streak.Title' down"><i
                                 class="ti ti-chevron-down"></i></button>
                     </div>
-                    <span class="badge badge-@badgeClass">
-                        @switch (streak.Visibility)
-                        {
-                            case Visibility.Published:
-                                <text><span class="dot"></span> Published</text>
-                                break;
-
-                            case Visibility.Private:
-                                <text><i class="ti ti-lock"></i> Private</text>
-                                break;
-
-                            case Visibility.Unlisted:
-                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                break;
-
-                            default:
-                                throw new UnreachableException();
-                        }
-                    </span>
+                    <partial name="Partials/_VisibilityBadge" model="streak.Visibility" />
                     <div class="row-body">
                         <div class="row-title">@streak.Title</div>
                         <div class="row-sub">@modeLabel &middot; @stats.Current current &middot; @stats.Best best</div>
