@@ -133,6 +133,18 @@ public sealed class StatusService
     }
 
     /// <summary>
+    ///     Puts every status in rotation.
+    /// </summary>
+    /// <returns>A <see cref="Result" /> indicating success.</returns>
+    public Result SetAllActive()
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        dbContext.Statuses.ExecuteUpdate(u => u.SetProperty(s => s.IsActive, true));
+
+        return Result.Ok();
+    }
+
+    /// <summary>
     ///     Removes a status for good.
     /// </summary>
     /// <param name="id">The ID of the status.</param>
