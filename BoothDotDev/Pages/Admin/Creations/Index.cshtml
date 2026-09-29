@@ -1,5 +1,4 @@
 @page "/admin/creations"
-@using System.Diagnostics
 @using BoothDotDev.Data
 @using Humanizer
 @model Index
@@ -32,12 +31,6 @@
         <ul class="admin-row-list">
             @foreach (var creation in Model.Creations)
             {
-                var badgeClass = creation.Visibility switch
-                {
-                    Visibility.Published => "published",
-                    Visibility.Private => "private",
-                    _ => "unlisted"
-                };
                 var kindLabel = creation.Kind switch
                 {
                     CreationKind.Drawing => "Drawing",
@@ -46,25 +39,7 @@
                 };
 
                 <li class="admin-row" data-search-item>
-                    <span class="badge badge-@badgeClass">
-                    @switch (creation.Visibility)
-                        {
-                            case Visibility.Published:
-                                <text><span class="dot"></span> Published</text>
-                                break;
-
-                            case Visibility.Private:
-                                <text><i class="ti ti-lock"></i> Private</text>
-                                break;
-
-                            case Visibility.Unlisted:
-                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                break;
-
-                            default:
-                                throw new UnreachableException();
-                        }
-                    </span>
+                    <partial name="Partials/_VisibilityBadge" model="creation.Visibility" />
                     <div class="row-body">
                         <div class="row-title" data-search>@creation.Title</div>
                         <div class="row-sub" data-search>@kindLabel</div>

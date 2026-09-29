@@ -290,14 +290,6 @@
       }
     }
 
-    .kw {
-      color: var(--syntax-keyword);
-    }
-
-    .str {
-      color: var(--syntax-string);
-    }
-
     code {
       padding: 0;
       background: none;

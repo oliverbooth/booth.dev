@@ -1,5 +1,4 @@
 @page "/admin/tutorials/folders"
-@using System.Diagnostics
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @model Index
@@ -39,33 +38,8 @@
         <ul class="admin-row-list">
             @foreach (var folder in Model.Folders)
             {
-                var badgeClass = folder.Visibility switch
-                {
-                    Visibility.Published => "published",
-                    Visibility.Private => "private",
-                    _ => "unlisted"
-                };
-
                 <li class="admin-row" data-search-item>
-                    <span class="badge badge-@badgeClass">
-                    @switch (folder.Visibility)
-                        {
-                            case Visibility.Published:
-                                <text><span class="dot"></span> Published</text>
-                                break;
-
-                            case Visibility.Private:
-                                <text><i class="ti ti-lock"></i> Private</text>
-                                break;
-
-                            case Visibility.Unlisted:
-                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                break;
-
-                            default:
-                                throw new UnreachableException();
-                        }
-                    </span>
+                    <partial name="Partials/_VisibilityBadge" model="folder.Visibility" />
                     <div class="row-body">
                         <div class="row-title" data-search>
                             <span class="hue-dot" data-hue="@folder.EffectiveColor.ToDataHue()"

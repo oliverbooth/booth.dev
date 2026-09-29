@@ -96,6 +96,15 @@ public sealed class Index : PageModel
     }
 
     /// <summary>
+    ///     Handles the POST request for putting every status in rotation.
+    /// </summary>
+    /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
+    public IActionResult OnPostSetAllActive()
+    {
+        return Back(_statusService.SetAllActive());
+    }
+
+    /// <summary>
     ///     Handles the POST request for removing a status.
     /// </summary>
     /// <param name="id">The ID of the status.</param>

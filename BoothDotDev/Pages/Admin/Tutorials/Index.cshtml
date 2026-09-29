@@ -1,5 +1,4 @@
 @page "/admin/tutorials"
-@using System.Diagnostics
 @using BoothDotDev.Data
 @using BoothDotDev.Extensions
 @using Humanizer
@@ -51,12 +50,6 @@
                             {
                                 var article = group.Articles[i];
                                 var timestamp = article.UpdatedAt ?? article.PublishedAt;
-                                var badgeClass = article.Visibility switch
-                                {
-                                    Visibility.Published => "published",
-                                    Visibility.Private => "private",
-                                    _ => "unlisted"
-                                };
                                 var path = Model.GetPath(article);
                                 var hue = article.Color ?? group.Folder?.EffectiveColor;
 
@@ -72,25 +65,7 @@
                                             @article.Title
                                         </div>
                                     </div>
-                                    <span class="badge badge-@badgeClass">
-                                    @switch (article.Visibility)
-                                        {
-                                            case Visibility.Published:
-                                                <text><span class="dot"></span> Published</text>
-                                                break;
-
-                                            case Visibility.Private:
-                                                <text><i class="ti ti-lock"></i> Private</text>
-                                                break;
-
-                                            case Visibility.Unlisted:
-                                                <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                                break;
-
-                                            default:
-                                                throw new UnreachableException();
-                                        }
-                                    </span>
+                                    <partial name="Partials/_VisibilityBadge" model="article.Visibility" />
                                     <span class="row-meta"><abbr
                                             title="@timestamp.ToString("yyyy-MM-dd HH:mm:ss")">@timestamp.Humanize()</abbr></span>
                                     <div class="row-actions">

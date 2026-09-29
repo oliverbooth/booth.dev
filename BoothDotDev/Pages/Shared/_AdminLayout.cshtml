@@ -10,22 +10,7 @@
     {
         <meta name="robots" content="noindex, nofollow">
     }
-    <script>
-        // runs before first paint to avoid a flash of the wrong theme; keep in step with resolveTheme() in theme.ts
-        (() => {
-            let theme = null;
-            try {
-                theme = localStorage.getItem('theme');
-            } catch {
-            }
-
-            if (theme !== 'light' && theme !== 'dark') {
-                theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-            }
-
-            document.documentElement.dataset.theme = theme;
-        })();
-    </script>
+    <partial name="Partials/_PrePaintTheme" />
     <title>@PageTitle</title>
     <link rel="icon" href="~/img/favicon.png" asp-append-version="true">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">

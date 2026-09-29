@@ -1,5 +1,4 @@
 @page "/admin/someday/trash"
-@using System.Diagnostics
 @using BoothDotDev.Data
 @using Humanizer
 @model Trash
@@ -51,35 +50,10 @@
             <ul class="admin-row-list">
                 @foreach (var entry in Model.Entries)
                 {
-                    var badgeClass = entry.Visibility switch
-                    {
-                        Visibility.Published => "published",
-                        Visibility.Private => "private",
-                        _ => "unlisted"
-                    };
-
                     <li class="admin-row" data-search-item>
                         <input type="checkbox" name="ids" value="@entry.Id" form="bulk-delete-form" data-row-select
                                aria-label="Select @entry.Title">
-                        <span class="badge badge-@badgeClass">
-                        @switch (entry.Visibility)
-                            {
-                                case Visibility.Published:
-                                    <text><span class="dot"></span> Published</text>
-                                    break;
-
-                                case Visibility.Private:
-                                    <text><i class="ti ti-lock"></i> Private</text>
-                                    break;
-
-                                case Visibility.Unlisted:
-                                    <text><i class="ti ti-eye-off"></i> Unlisted</text>
-                                    break;
-
-                                default:
-                                    throw new UnreachableException();
-                            }
-                        </span>
+                        <partial name="Partials/_VisibilityBadge" model="entry.Visibility" />
                         <div class="row-body">
                             <div class="row-title" data-search>Someday, @entry.Title</div>
                         </div>
