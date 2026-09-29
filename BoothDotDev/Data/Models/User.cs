@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using Cysharp.Text;
@@ -10,17 +9,24 @@ namespace BoothDotDev.Data.Models;
 /// </summary>
 public sealed class User
 {
-    private const int DefaultAvatarSize = 28;
+    /// <summary>
+    ///     Gets or sets a value indicating whether the user's avatar is pulled from Gravatar, keyed by
+    ///     <see cref="EmailAddress" />.
+    /// </summary>
+    /// <value>
+    ///     <see langword="true" /> to use Gravatar; <see langword="false" /> to use <see cref="AvatarFileName" /> instead, if
+    ///     set.
+    /// </value>
+    public bool UseGravatar { get; set; } = true;
 
     /// <summary>
-    ///     Gets the URL of the user's avatar.
+    ///     Gets or sets the bare CDN filename of the user's custom avatar.
     /// </summary>
-    /// <value>The URL of the user's avatar.</value>
-    [NotMapped]
-    public Uri AvatarUrl
-    {
-        get => GetAvatarUrl(DefaultAvatarSize);
-    }
+    /// <value>
+    ///     The bare filename, or <see langword="null" /> if no custom avatar has been uploaded. Only consulted when
+    ///     <see cref="UseGravatar" /> is <see langword="false" />.
+    /// </value>
+    public string? AvatarFileName { get; set; }
 
     /// <summary>
     ///     Gets or sets the email address of the user.
@@ -65,14 +71,14 @@ public sealed class User
     internal string Salt { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Gets the URL of the author's avatar.
+    ///     Gets the URL of the user's Gravatar, keyed by <see cref="EmailAddress" />, regardless of <see cref="UseGravatar" />.
     /// </summary>
     /// <param name="size">The size of the avatar.</param>
     /// <returns>
-    ///     The URL of the author's avatar. 404s if no custom Gravatar is configured, rather than falling back to Gravatar's default
-    ///     silhouette.
+    ///     The URL of the user's Gravatar. 404s if no custom Gravatar is configured, rather than falling back to Gravatar's
+    ///     default silhouette.
     /// </returns>
-    public Uri GetAvatarUrl(int size)
+    public Uri GetGravatarUrl(int size)
     {
         if (string.IsNullOrWhiteSpace(EmailAddress))
         {

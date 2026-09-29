@@ -16,9 +16,14 @@ namespace BoothDotDev.Data;
 /// <param name="TotpSecret">
 ///     The user's TOTP secret, or <see langword="null" /> or whitespace to clear it and disable TOTP entirely.
 /// </param>
+/// <param name="UseGravatar">
+///     <see langword="true" /> to show the user's Gravatar; <see langword="false" /> to show their uploaded avatar (or the
+///     initial fallback, if none has been uploaded) instead.
+/// </param>
 public sealed record UserSaveRequest(
     string DisplayName,
     string EmailAddress,
     bool DisableLogin,
     string? NewPassword,
-    string? TotpSecret);
+    string? TotpSecret,
+    bool UseGravatar);
