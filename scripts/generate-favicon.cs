@@ -12,12 +12,14 @@ const string usage = """
     Options:
         --initials <AB>   Letters to show. Default: taken from MyFirstName and MySurname in Strings.resx.
         --out <dir>       Folder to write into. Default: public/img
-        --size <pixels>   Width and height of the icon. Default: 256
+        --size <pixels>   Width and height of the icon. Default: 256. Ignored with --svg.
+        --svg             Write favicon.svg (a vector icon, letters as outlines) instead of favicon.png.
     """;
 
 var initials = OgImageService.Initials;
 var outDir = Path.Combine("public", "img");
 var size = 256;
+var svg = false;
 
 for (var i = 0; i < args.Length; i++)
 {
@@ -33,6 +35,9 @@ for (var i = 0; i < args.Length; i++)
             size = parsed;
             i++;
             break;
+        case "--svg":
+            svg = true;
+            break;
         default:
             Console.Error.WriteLine(usage);
             return args[i] is "--help" or "-h" ? 0 : 1;
@@ -46,10 +51,18 @@ if (string.IsNullOrWhiteSpace(initials))
 }
 
 Directory.CreateDirectory(outDir);
-var png = new OgImageService().RenderBrandIcon(initials, size);
+var service = new OgImageService();
+
+if (svg)
+{
+    var svgPath = Path.Combine(outDir, "favicon.svg");
+    File.WriteAllText(svgPath, service.RenderBrandIconSvg(initials));
+    Console.WriteLine($"Wrote {svgPath} ({initials.ToUpperInvariant()}, vector)");
+    return 0;
+}
 
 var path = Path.Combine(outDir, "favicon.png");
-File.WriteAllBytes(path, png);
+File.WriteAllBytes(path, service.RenderBrandIcon(initials, size));
 Console.WriteLine($"Wrote {path} ({initials.ToUpperInvariant()}, {size}x{size})");
 
 return 0;

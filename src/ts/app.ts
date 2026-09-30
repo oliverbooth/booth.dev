@@ -13,6 +13,7 @@ import {initRetryButtons} from './retry-button.ts';
 import {initRuledPaper} from './ruled-paper.ts';
 import {initHeaderAutoHide} from './header-auto-hide.ts';
 import {initLigatureToggle} from './ligatures.ts';
+import {initTerminalChrome} from './terminal-chrome.ts';
 import {initTheme} from './theme.ts';
 import {initVoiceFontToggle} from './voice-font.ts';
 
@@ -30,6 +31,7 @@ import {initVoiceFontToggle} from './voice-font.ts';
     initFiltering();
     initGiscusTheme();
     initLightbox();
+    initTerminalChrome();
     initCommandPalette();
     initAvatarFallback();
     initNowClock();

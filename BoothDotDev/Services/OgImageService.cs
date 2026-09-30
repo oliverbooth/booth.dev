@@ -1,4 +1,7 @@
+using System.Globalization;
+using System.Numerics;
 using System.Reflection;
+using System.Text;
 using BoothDotDev.Data;
 using BoothDotDev.Extensions;
 using SixLabors.Fonts;
@@ -50,6 +53,9 @@ public sealed class OgImageService
 
     private const int BrandIconCanvas = 1024;
     private const float BrandIconTilt = -4f;
+    private const float BrandIconSideRatio = 1f;
+    private const float BrandIconCornerRatio = 14f / 42f;
+    private const float BrandIconLetterRatio = 0.47f;
     private const int WordmarkIconBleed = 2;
 
     private static readonly Color Brand = Color.FromRgb(0x61, 0x61, 0xCD);
@@ -101,6 +107,42 @@ public sealed class OgImageService
     }
 
     /// <summary>
+    ///     Renders the brand icon as a vector image, drawn identically to <see cref="RenderBrandIcon" />.
+    /// </summary>
+    /// <param name="initials">The letters to show on the tile.</param>
+    /// <returns>The icon as an SVG document, with the letters converted to outlines so no font is needed to display it.</returns>
+    public string RenderBrandIconSvg(string initials)
+    {
+        const float canvas = BrandIconCanvas;
+        const float side = canvas * BrandIconSideRatio;
+        const float start = (canvas - side) / 2;
+        const float radius = side * BrandIconCornerRatio;
+
+        var tilt = MathF.Abs(BrandIconTilt) * MathF.PI / 180f;
+        // the raster version shrinks the rotated tile to fit its canvas; scaling by the same factor keeps the corners unclipped
+        var fit = 1f / (MathF.Cos(tilt) + MathF.Sin(tilt));
+
+        var text = initials.ToUpperInvariant();
+        var renderer = new SvgPathRenderer();
+        TextRenderer.RenderTextTo(renderer, text, BrandIconTextOptions(text, side));
+
+        return string.Create(CultureInfo.InvariantCulture, $"""
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {BrandIconCanvas} {BrandIconCanvas}">
+              <defs>
+                <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="{start}" y1="{start}" x2="{start + side}" y2="{start + side}">
+                  <stop offset="0" stop-color="#{Brand.ToHex()[..6]}"/>
+                  <stop offset="1" stop-color="#{ColorOf(PaletteHue.Bubblegum).ToHex()[..6]}"/>
+                </linearGradient>
+              </defs>
+              <g transform="translate({canvas / 2} {canvas / 2}) rotate({BrandIconTilt}) scale({fit}) translate({-canvas / 2} {-canvas / 2})">
+                <rect x="{start}" y="{start}" width="{side}" height="{side}" rx="{radius}" fill="url(#g)"/>
+                <path d="{renderer}" fill="#fff"/>
+              </g>
+            </svg>
+            """);
+    }
+
+    /// <summary>
     ///     Renders a card: a gradient in the given hue, a badge, a title and subtitle, and the site's wordmark.
     /// </summary>
     /// <param name="hue">The hue the card is drawn in.</param>
@@ -139,14 +181,9 @@ public sealed class OgImageService
 
     private Image<Rgba32> CreateBrandIcon(string initials, int size)
     {
-        const float sideRatio = 1f;
-        const float cornerRatio = 14f / 42f;
-        const float letterRatio = 0.47f;
-
         var canvas = new Image<Rgba32>(BrandIconCanvas, BrandIconCanvas);
-        var side = BrandIconCanvas * sideRatio;
+        var side = BrandIconCanvas * BrandIconSideRatio;
         var start = (BrandIconCanvas - side) / 2;
-        var centre = BrandIconCanvas / 2f;
 
         canvas.Mutate(ctx => ctx.Fill(
             new LinearGradientBrush(
@@ -155,12 +192,10 @@ public sealed class OgImageService
                 GradientRepetitionMode.None,
                 new ColorStop(0f, Brand),
                 new ColorStop(1f, ColorOf(PaletteHue.Bubblegum))),
-            RoundedRectangle(start, start, side, side, side * cornerRatio)));
+            RoundedRectangle(start, start, side, side, side * BrandIconCornerRatio)));
 
         var text = initials.ToUpperInvariant();
-        var options = new RichTextOptions(_titleFamily.CreateFont(side * letterRatio));
-        var bounds = TextMeasurer.MeasureBounds(text, options);
-        options.Origin = new PointF(centre - (bounds.X + (bounds.Width / 2)), centre - (bounds.Y + (bounds.Height / 2)));
+        var options = BrandIconTextOptions(text, side);
 
         canvas.Mutate(ctx =>
         {
@@ -173,6 +208,15 @@ public sealed class OgImageService
         });
 
         return canvas;
+    }
+
+    private RichTextOptions BrandIconTextOptions(string text, float side)
+    {
+        var options = new RichTextOptions(_titleFamily.CreateFont(side * BrandIconLetterRatio));
+        var bounds = TextMeasurer.MeasureBounds(text, options);
+        var centre = BrandIconCanvas / 2f;
+        options.Origin = new PointF(centre - (bounds.X + (bounds.Width / 2)), centre - (bounds.Y + (bounds.Height / 2)));
+        return options;
     }
 
     private static Color ColorOf(PaletteHue hue)
@@ -368,5 +412,79 @@ public sealed class OgImageService
         using var stream = assembly.GetManifestResourceStream(resourceName)
                            ?? throw new InvalidOperationException($"Embedded font resource '{resourceName}' was not found.");
         return collection.Add(stream);
+    }
+
+    private sealed class SvgPathRenderer : IGlyphRenderer
+    {
+        private readonly StringBuilder _path = new();
+
+        public void BeginText(in FontRectangle bounds)
+        {
+        }
+
+        public bool BeginGlyph(in FontRectangle bounds, in GlyphRendererParameters parameters)
+        {
+            return true;
+        }
+
+        public void BeginFigure()
+        {
+        }
+
+        public void MoveTo(Vector2 point)
+        {
+            Append('M', point);
+        }
+
+        public void LineTo(Vector2 point)
+        {
+            Append('L', point);
+        }
+
+        public void QuadraticBezierTo(Vector2 secondControlPoint, Vector2 point)
+        {
+            Append('Q', secondControlPoint, point);
+        }
+
+        public void CubicBezierTo(Vector2 secondControlPoint, Vector2 thirdControlPoint, Vector2 point)
+        {
+            Append('C', secondControlPoint, thirdControlPoint, point);
+        }
+
+        public void EndFigure()
+        {
+            _path.Append('Z');
+        }
+
+        public void EndGlyph()
+        {
+        }
+
+        public void EndText()
+        {
+        }
+
+        public TextDecorations EnabledDecorations()
+        {
+            return TextDecorations.None;
+        }
+
+        public void SetDecoration(TextDecorations textDecorations, Vector2 start, Vector2 end, float thickness)
+        {
+        }
+
+        public override string ToString()
+        {
+            return _path.ToString();
+        }
+
+        private void Append(char command, params ReadOnlySpan<Vector2> points)
+        {
+            _path.Append(command);
+            foreach (var point in points)
+            {
+                _path.Append(CultureInfo.InvariantCulture, $"{point.X:0.##} {point.Y:0.##} ");
+            }
+        }
     }
 }
