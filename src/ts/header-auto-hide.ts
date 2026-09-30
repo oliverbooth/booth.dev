@@ -52,6 +52,13 @@ export function initHeaderAutoHide(): void {
         return;
     }
 
+    const publishBottom = (): void => {
+        const bottom = header.hasAttribute('data-hidden') ? 0 : header.offsetHeight + parseFloat(getComputedStyle(header).top);
+        document.documentElement.style.setProperty('--header-bottom', `${bottom}px`);
+    };
+    publishBottom();
+    new ResizeObserver(publishBottom).observe(header);
+
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let state: HeaderScrollState = {y: window.scrollY, height: document.documentElement.scrollHeight, down: 0, hidden: false};
     let frame = 0;
@@ -68,6 +75,7 @@ export function initHeaderAutoHide(): void {
         }
 
         header.toggleAttribute('data-hidden', state.hidden);
+        publishBottom();
     };
 
     window.addEventListener('scroll', () => {
@@ -77,5 +85,6 @@ export function initHeaderAutoHide(): void {
     header.addEventListener('focusin', () => {
         state = {...state, hidden: false};
         header.removeAttribute('data-hidden');
+        publishBottom();
     });
 }
