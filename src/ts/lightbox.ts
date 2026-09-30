@@ -135,7 +135,7 @@ async function open(trigger: HTMLElement): Promise<void> {
 
     if (fly) {
         const target: HTMLElement = flightTarget();
-        fling(target, from, visibleRect(target), 'in');
+        fling(target, from, visibleRect(target), 'in', source);
         refs.caption.animate({opacity: [0, 1]}, {duration: 200, delay: FLIGHT_MS * 0.5, easing: 'ease', fill: 'backwards'});
     }
 }
@@ -188,7 +188,11 @@ function visibleRect(element: HTMLElement): DOMRect {
  * Animates <paramref name="target"/> so its visible rect travels between <paramref name="a"/> and <paramref name="b"/>.
  * The scale is uniform (width-driven) so text and pictures never stretch.
  */
-function fling(target: HTMLElement, a: DOMRect, b: DOMRect, direction: 'in' | 'out'): Animation {
+function fling(target: HTMLElement, a: DOMRect, b: DOMRect, direction: 'in' | 'out', source: HTMLElement): Animation {
+    if (target.classList.contains('code-toolbar')) {
+        return flingWindow(target, a, b, direction, source);
+    }
+
     const box: DOMRect = target.getBoundingClientRect();
     const [start, end] = direction === 'in' ? [a, b] : [b, a];
     const pose = (rect: DOMRect, anchor: DOMRect): string => {
@@ -284,7 +288,7 @@ function close(): void {
         const home: DOMRect = visibleRect(flightSource);
         dialog.classList.add('is-closing');
         refs.caption.animate({opacity: [1, 0]}, {duration: 120, easing: 'ease', fill: 'forwards'});
-        fling(target, home, visibleRect(target), 'out').finished.then(() => {
+        fling(target, home, visibleRect(target), 'out', flightSource).finished.then(() => {
             // the close event is async, so restoring the source there leaves a blank frame between the two
             restoreSource();
             dialog.close();
@@ -302,6 +306,52 @@ function close(): void {
         },
         {once: true}
     );
+}
+
+/**
+ * Resizes a terminal like a real window, rather than scaling it: the frame grows or shrinks and the text only changes
+ * size to match the other end, so it never renders at a size it won't actually have.
+ */
+function flingWindow(target: HTMLElement, a: DOMRect, b: DOMRect, direction: 'in' | 'out', source: HTMLElement): Animation {
+    const [start, end] = direction === 'in' ? [a, b] : [b, a];
+    const pre = target.querySelector<HTMLElement>(':scope > pre');
+    const sourcePre = source.querySelector<HTMLElement>(':scope > pre');
+    const fontSizes: string[] = [sourcePre, pre].map(el => (el ? getComputedStyle(el).fontSize : ''));
+    const [startFont, endFont] = direction === 'in' ? fontSizes : [...fontSizes].reverse();
+
+    const frame = (rect: DOMRect): Keyframe => ({
+        transform: `translate(${rect.left - b.left}px, ${rect.top - b.top}px)`,
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+    });
+
+    // the frame is briefly smaller than its text, which would otherwise summon the <pre>'s scrollbars mid-flight
+    const previousOverflow: string = target.style.overflow;
+    const previousPreOverflow: string = pre?.style.overflow ?? '';
+    target.style.overflow = 'hidden';
+    if (pre) {
+        pre.style.overflow = 'hidden';
+    }
+
+    if (pre && startFont && endFont) {
+        pre.animate([{fontSize: startFont}, {fontSize: endFont}], {duration: FLIGHT_MS, easing: FLIGHT_EASING, fill: 'both'});
+    }
+
+    const animation: Animation = target.animate([frame(start), frame(end)], {
+        duration: FLIGHT_MS,
+        easing: FLIGHT_EASING,
+        fill: 'both',
+    });
+    if (direction === 'in') {
+        animation.finished.then(() => {
+            target.style.overflow = previousOverflow;
+            if (pre) {
+                pre.style.overflow = previousPreOverflow;
+            }
+        }, () => undefined);
+    }
+
+    return animation;
 }
 
 function restoreSource(): void {
