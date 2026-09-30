@@ -21,6 +21,11 @@ const TRIGGER_SELECTOR = '[data-lightbox]';
 let refs: LightboxRefs | null = null;
 let lastFocusedTrigger: HTMLElement | null = null;
 let movedVideo: MovedVideo | null = null;
+let flightSource: HTMLElement | null = null;
+let closing = false;
+
+const FLIGHT_MS = 380;
+const FLIGHT_EASING = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
 
 /**
  * Initializes the lightbox component.
@@ -53,6 +58,10 @@ export function initLightbox(): void {
     });
 
     dialog.addEventListener('close', onDialogClose);
+    dialog.addEventListener('cancel', event => {
+        event.preventDefault();
+        close();
+    });
 }
 
 function onDocumentClick(event: MouseEvent): void {
@@ -75,10 +84,14 @@ function onDocumentClick(event: MouseEvent): void {
     open(trigger);
 }
 
-function open(trigger: HTMLElement): void {
-    if (!refs) {
+async function open(trigger: HTMLElement): Promise<void> {
+    if (!refs || refs.dialog.open) {
         return;
     }
+
+    const fly: boolean = !prefersReducedMotion();
+    const source: HTMLElement = flightSourceFor(trigger);
+    const from: DOMRect = visibleRect(source);
 
     switch (trigger.dataset.lightbox) {
         case 'video':
@@ -104,8 +117,97 @@ function open(trigger: HTMLElement): void {
     refs.dialog.classList.toggle('lightbox--voice', usesVoiceFont(trigger));
 
     lastFocusedTrigger = trigger;
+    closing = false;
+
+    if (fly && trigger.dataset.lightbox !== 'video') {
+        source.style.visibility = 'hidden';
+        flightSource = source;
+    }
+
+    // a decoded image has real dimensions at layout time, so the landing rect is right on the first frame
+    if (fly && !refs.image.hidden) {
+        await refs.image.decode().catch(() => undefined);
+    }
+
+    refs.dialog.classList.toggle('lightbox--fly', fly);
     refs.dialog.showModal();
     refs.closeButton.focus();
+
+    if (fly) {
+        const target: HTMLElement = flightTarget();
+        fling(target, from, visibleRect(target), 'in');
+        refs.caption.animate({opacity: [0, 1]}, {duration: 200, delay: FLIGHT_MS * 0.5, easing: 'ease', fill: 'backwards'});
+    }
+}
+
+function prefersReducedMotion(): boolean {
+    return matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function flightSourceFor(trigger: HTMLElement): HTMLElement {
+    if (trigger.dataset.lightbox === 'terminal') {
+        return trigger.closest<HTMLElement>('.code-toolbar') ?? trigger;
+    }
+
+    return trigger;
+}
+
+function flightTarget(): HTMLElement {
+    if (!refs) {
+        throw new Error('Lightbox is not initialized.');
+    }
+
+    if (!refs.image.hidden) {
+        return refs.image;
+    }
+
+    if (!refs.videoSlot.hidden) {
+        return refs.videoSlot;
+    }
+
+    return refs.terminalSlot.firstElementChild as HTMLElement;
+}
+
+/**
+ * The on-screen rect of what the user actually sees, which for an <c>object-fit: contain</c> image is the letterboxed
+ * picture rather than its element box.
+ */
+function visibleRect(element: HTMLElement): DOMRect {
+    const box: DOMRect = element.getBoundingClientRect();
+    if (!(element instanceof HTMLImageElement) || !element.naturalWidth || !element.naturalHeight) {
+        return box;
+    }
+
+    const scale: number = Math.min(box.width / element.naturalWidth, box.height / element.naturalHeight);
+    const width: number = element.naturalWidth * scale;
+    const height: number = element.naturalHeight * scale;
+    return new DOMRect(box.left + (box.width - width) / 2, box.top + (box.height - height) / 2, width, height);
+}
+
+/**
+ * Animates <paramref name="target"/> so its visible rect travels between <paramref name="a"/> and <paramref name="b"/>.
+ * The scale is uniform (width-driven) so text and pictures never stretch.
+ */
+function fling(target: HTMLElement, a: DOMRect, b: DOMRect, direction: 'in' | 'out'): Animation {
+    const box: DOMRect = target.getBoundingClientRect();
+    const [start, end] = direction === 'in' ? [a, b] : [b, a];
+    const pose = (rect: DOMRect, anchor: DOMRect): string => {
+        const scale: number = rect.width / anchor.width;
+        const x: number = rect.left - box.left - (anchor.left - box.left) * scale;
+        const y: number = rect.top - box.top - (anchor.top - box.top) * scale;
+        return `translate(${x}px, ${y}px) scale(${scale})`;
+    };
+
+    // `b` is always the modal rect, so every pose is expressed relative to it
+    const frames: Keyframe[] = [
+        {transformOrigin: '0 0', transform: pose(start, b)},
+        {transformOrigin: '0 0', transform: pose(end, b)},
+    ];
+    return target.animate(frames, {
+        duration: FLIGHT_MS,
+        easing: FLIGHT_EASING,
+        fill: 'both',
+    });
 }
 
 function usesVoiceFont(trigger: HTMLElement): boolean {
@@ -170,7 +272,24 @@ function openTerminal(trigger: HTMLElement): void {
 }
 
 function close(): void {
-    if (!refs) {
+    if (!refs || closing) {
+        return;
+    }
+
+    closing = true;
+
+    if (refs.dialog.classList.contains('lightbox--fly') && flightSource) {
+        const dialog: HTMLDialogElement = refs.dialog;
+        const target: HTMLElement = flightTarget();
+        const home: DOMRect = visibleRect(flightSource);
+        dialog.classList.add('is-closing');
+        refs.caption.animate({opacity: [1, 0]}, {duration: 120, easing: 'ease', fill: 'forwards'});
+        fling(target, home, visibleRect(target), 'out').finished.then(() => {
+            // the close event is async, so restoring the source there leaves a blank frame between the two
+            restoreSource();
+            dialog.close();
+            dialog.classList.remove('is-closing');
+        });
         return;
     }
 
@@ -183,6 +302,13 @@ function close(): void {
         },
         {once: true}
     );
+}
+
+function restoreSource(): void {
+    if (flightSource) {
+        flightSource.style.visibility = '';
+        flightSource = null;
+    }
 }
 
 function onDialogClose(): void {
@@ -199,6 +325,8 @@ function onDialogClose(): void {
         movedVideo = null;
     }
 
+    restoreSource();
+    refs.dialog.getAnimations({subtree: true}).forEach(animation => animation.cancel());
     lastFocusedTrigger?.focus();
     lastFocusedTrigger = null;
 }
