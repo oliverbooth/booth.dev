@@ -394,6 +394,10 @@
   border-radius: 14px;
   background: var(--surface);
   box-shadow: var(--shadow-card-soft);
+  position: sticky;
+  top: calc(var(--header-bottom, 0px) + 10px);
+  z-index: 90;
+  transition: top 0.3s ease;
 
   .avatar {
     width: 34px;

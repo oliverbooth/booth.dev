@@ -76,6 +76,7 @@
   }
 
   .byline {
+    position: static;
     margin: 12px 0 1.25rem;
     padding: 0;
     background: none;
