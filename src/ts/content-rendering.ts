@@ -11,6 +11,7 @@ import 'prismjs/plugins/autoloader/prism-autoloader.js';
 import {applyCodeBlockHighlights} from './codeblock-highlight/highlighting.ts';
 import {initManimScenes} from './manim/scenes.ts';
 import {initMermaidScenes} from './mermaid/scenes.ts';
+import {attachTerminalChrome} from './terminal-chrome.ts';
 import {ansiToHtml, formatRelativeTimestamp} from './utils.ts';
 import {initVexFlowScenes} from './vexflow/scenes.ts';
 
@@ -66,8 +67,9 @@ function initPrismCodeblocks(element: HTMLElement): void {
         }
 
         Prism.highlightAllUnder(block.parentElement, false, () => {
-            if (block.dataset.terminal) {
-                block.closest('.code-toolbar')?.setAttribute('data-terminal-title', block.dataset.terminal);
+            const terminal = block.closest<HTMLElement>('.code-toolbar');
+            if (terminal && block.dataset.terminal !== undefined) {
+                attachTerminalChrome(terminal, block.dataset.terminal);
             }
 
             if (block.dataset.highlight) {

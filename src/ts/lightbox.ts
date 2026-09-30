@@ -1,7 +1,10 @@
+import {resetTerminal} from './terminal-chrome.ts';
+
 interface LightboxRefs {
     dialog: HTMLDialogElement;
     image: HTMLImageElement;
     videoSlot: HTMLElement;
+    terminalSlot: HTMLElement;
     caption: HTMLElement;
     closeButton: HTMLButtonElement;
 }
@@ -30,14 +33,15 @@ export function initLightbox(): void {
 
     const image: HTMLImageElement | null = dialog.querySelector<HTMLImageElement>('.lightbox-image');
     const videoSlot: HTMLElement | null = dialog.querySelector<HTMLElement>('.lightbox-video-slot');
+    const terminalSlot: HTMLElement | null = dialog.querySelector<HTMLElement>('.lightbox-terminal-slot');
     const caption: HTMLElement | null = dialog.querySelector<HTMLElement>('.lightbox-caption');
     const closeButton: HTMLButtonElement | null = dialog.querySelector<HTMLButtonElement>('.lightbox-close');
 
-    if (!image || !videoSlot || !caption || !closeButton) {
+    if (!image || !videoSlot || !terminalSlot || !caption || !closeButton) {
         throw new Error('Lightbox markup is missing required child elements.');
     }
 
-    refs = {dialog, image, videoSlot, caption, closeButton};
+    refs = {dialog, image, videoSlot, terminalSlot, caption, closeButton};
 
     document.addEventListener('click', onDocumentClick);
     closeButton.addEventListener('click', () => close());
@@ -52,8 +56,19 @@ export function initLightbox(): void {
 }
 
 function onDocumentClick(event: MouseEvent): void {
-    const trigger = (event.target as HTMLElement).closest<HTMLElement>(TRIGGER_SELECTOR);
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-lightbox-close]')) {
+        close();
+        return;
+    }
+
+    const trigger = target.closest<HTMLElement>(TRIGGER_SELECTOR);
     if (!trigger) {
+        return;
+    }
+
+    if (refs?.dialog.contains(trigger)) {
+        close();
         return;
     }
 
@@ -65,10 +80,15 @@ function open(trigger: HTMLElement): void {
         return;
     }
 
-    if (trigger.dataset.lightbox === 'video') {
-        openVideo(trigger);
-    } else {
-        openImage(trigger);
+    switch (trigger.dataset.lightbox) {
+        case 'video':
+            openVideo(trigger);
+            break;
+        case 'terminal':
+            openTerminal(trigger);
+            break;
+        default:
+            openImage(trigger);
     }
 
     const captionTemplate: HTMLTemplateElement | null | undefined = trigger
@@ -80,6 +100,7 @@ function open(trigger: HTMLElement): void {
         refs.caption.appendChild(captionTemplate.content.cloneNode(true));
     }
     refs.caption.hidden = !captionTemplate;
+    refs.dialog.classList.toggle('lightbox--terminal', trigger.dataset.lightbox === 'terminal');
     refs.dialog.classList.toggle('lightbox--voice', usesVoiceFont(trigger));
 
     lastFocusedTrigger = trigger;
@@ -103,6 +124,7 @@ function openImage(trigger: HTMLElement): void {
     refs.image.alt = (trigger as HTMLImageElement).alt ?? '';
     refs.image.hidden = false;
     refs.videoSlot.hidden = true;
+    refs.terminalSlot.hidden = true;
 }
 
 function openVideo(trigger: HTMLElement): void {
@@ -120,6 +142,31 @@ function openVideo(trigger: HTMLElement): void {
     refs.videoSlot.appendChild(video);
     refs.videoSlot.hidden = false;
     refs.image.hidden = true;
+    refs.terminalSlot.hidden = true;
+}
+
+function openTerminal(trigger: HTMLElement): void {
+    if (!refs) {
+        return;
+    }
+
+    const terminal = trigger.closest<HTMLElement>('.code-toolbar');
+    if (!terminal) {
+        return;
+    }
+
+    const copy = terminal.cloneNode(true) as HTMLElement;
+    resetTerminal(copy);
+    // a power cycle makes no sense in a modal, so the red orb becomes a second way out
+    const power = copy.querySelector<HTMLElement>('[data-terminal-action="power"]');
+    power?.removeAttribute('data-terminal-action');
+    power?.setAttribute('data-lightbox-close', '');
+    power?.setAttribute('aria-label', 'Close');
+    power?.setAttribute('title', 'Close');
+    refs.terminalSlot.replaceChildren(copy);
+    refs.terminalSlot.hidden = false;
+    refs.image.hidden = true;
+    refs.videoSlot.hidden = true;
 }
 
 function close(): void {
@@ -144,6 +191,7 @@ function onDialogClose(): void {
     }
 
     refs.image.src = '';
+    refs.terminalSlot.replaceChildren();
 
     if (movedVideo) {
         movedVideo.element.pause();

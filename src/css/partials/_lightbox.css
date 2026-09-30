@@ -70,6 +70,26 @@
   }
 }
 
+.lightbox--terminal {
+  width: min(90vw, 1100px);
+}
+
+.lightbox-terminal-slot {
+  &[hidden] {
+    display: none;
+  }
+
+  .code-toolbar {
+    margin: 0;
+    box-shadow: var(--shadow-palette);
+  }
+
+  pre {
+    max-height: min(70vh, calc(100vh - 220px));
+    overflow: auto;
+  }
+}
+
 .lightbox-caption {
   display: flex;
   flex-direction: column;
