@@ -15,7 +15,8 @@
     <partial name="Partials/_PrePaintTheme" />
     <title>@(Site.CurrentValue.EnvironmentLabel is { Length: > 0 } environmentLabel ? $"[{environmentLabel}] " : "")Sign in
         - @Strings.MyName Admin</title>
-    <link rel="icon" href="~/img/favicon.png" asp-append-version="true">
+    <link rel="icon" href="~/img/favicon.png" sizes="256x256" asp-append-version="true">
+    <link rel="icon" href="~/img/favicon.svg" type="image/svg+xml" sizes="any" asp-append-version="true">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     <link rel="stylesheet" asp-vite="css/style.css" />
     <link rel="stylesheet" asp-vite="css/admin.css" />

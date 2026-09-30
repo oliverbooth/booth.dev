@@ -86,13 +86,23 @@ div.code-toolbar:has(> pre > code[data-terminal]) {
     display: none;
   }
 
-  &::before {
+  > .terminal-chrome {
+    position: relative;
     order: -1;
+    display: flex;
     flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
     height: 34px;
+    padding: 0 18px;
+    background: var(--code-header-bg);
+  }
+
+  > .terminal-chrome .terminal-title {
+    position: absolute;
+    inset: 0;
     padding: 0 80px;
     overflow: hidden;
-    content: attr(data-terminal-title);
     color: var(--syntax-punct);
     font-family: var(--font-mono);
     font-size: 12px;
@@ -101,16 +111,56 @@ div.code-toolbar:has(> pre > code[data-terminal]) {
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background:
-      radial-gradient(circle 5px at 23px 50%, var(--terminal-dot-1) 98%, transparent 100%),
-      radial-gradient(circle 5px at 41px 50%, var(--terminal-dot-2) 98%, transparent 100%),
-      radial-gradient(circle 5px at 59px 50%, var(--terminal-dot-3) 98%, transparent 100%),
-      var(--code-header-bg);
+    pointer-events: none;
   }
 
   > pre {
     padding: 20px 24px 24px;
     font-size: 13.5px;
     line-height: 1.6;
+  }
+
+  &.is-minimised > pre {
+    height: 0;
+    padding-block: 0;
+    overflow: hidden;
+  }
+}
+
+.terminal-orb {
+  position: relative;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--terminal-dot-1);
+
+  &.terminal-orb--minimise {
+    background: var(--terminal-dot-2);
+  }
+
+  &.terminal-orb--expand {
+    background: var(--terminal-dot-3);
+  }
+
+  &:is(button) {
+    cursor: pointer;
+
+    &::after {
+      position: absolute;
+      inset: -10px -4px;
+      content: "";
+    }
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--brand-text);
+      outline-offset: 2px;
+    }
   }
 }
