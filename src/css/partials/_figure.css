@@ -97,11 +97,19 @@ audio.figure-img {
     max-width: calc(100% - 24px);
     white-space: normal;
     text-align: left;
+    transition:
+      max-width 0.25s ease,
+      white-space 0s 0.25s allow-discrete,
+      background-color 0.15s ease;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .alt-badge {
     transition: background-color 0.15s ease;
+
+    &.is-open {
+      transition: background-color 0.15s ease;
+    }
   }
 }
