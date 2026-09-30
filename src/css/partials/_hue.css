@@ -6,6 +6,14 @@
 [data-hue="sun"] { --ink: var(--sun-text); --solid: var(--accent-sun); --on-solid: var(--on-sun-text); --glow: var(--glow-sun); }
 [data-hue="sky"] { --ink: var(--sky-text); --solid: var(--accent-sky); --on-solid: var(--on-sky-text); --glow: var(--glow-sky); }
 
+[data-hue] {
+  --stripe-placeholder: repeating-linear-gradient(
+    50deg,
+    color-mix(in oklch, var(--solid) 16%, transparent) 0 9px,
+    color-mix(in oklch, var(--solid) 8%, transparent) 9px 18px
+  );
+}
+
 [data-hue] .stack-icon {
   background: color-mix(in oklch, var(--ink) 16%, transparent);
   color: var(--ink);
