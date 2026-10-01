@@ -126,6 +126,14 @@
   border-top: 1px solid color-mix(in oklch, var(--text) 8%, transparent);
 }
 
+.admin-version {
+  margin: 8px 0 0;
+  padding: 0 10px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+
 .admin-user {
   display: flex;
   align-items: center;

@@ -8,16 +8,16 @@ namespace BoothDotDev.Data.Models;
 public sealed class LegacyComment : IMarkdownBody
 {
     /// <summary>
-    ///     Gets the PNG-encoded avatar of the author.
+    ///     Gets or sets the avatar of the author, as a URL or a <c>data:</c> URI of a PNG.
     /// </summary>
     /// <value>The author's avatar.</value>
     public string? Avatar { get; set; }
 
     /// <summary>
-    ///     Gets the name of the comment's author.
+    ///     Gets or sets the name of the comment's author.
     /// </summary>
     /// <value>The author's name.</value>
-    public string Author { get; } = string.Empty;
+    public string Author { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets the date and time at which this comment was posted.
@@ -44,10 +44,10 @@ public sealed class LegacyComment : IMarkdownBody
     public Guid PostId { get; private set; }
 
     /// <summary>
-    ///     Gets the body of the comment.
+    ///     Gets or sets the body of the comment.
     /// </summary>
     /// <value>The comment body.</value>
-    public string Body { get; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets the avatar URL of the comment's author.
