@@ -1,0 +1,41 @@
+@page "/admin/comments/edit/{id:guid}"
+@model Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb">
+        <a asp-page="/Admin/Comments/Index">Comments</a> /
+        <a asp-page="/Admin/Comments/Author" asp-route-name="@Model.Author">@Model.Author</a> / Edit
+    </p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div><h1>Edit comment</h1></div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save"><i class="ti ti-cloud"></i> Save changes</button>
+                <button type="submit" class="btn danger" asp-page-handler="Delete"
+                        data-confirm="Delete this comment? This can't be undone."><i class="ti ti-trash"></i> Delete</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Author">Author</label>
+            <input asp-for="Input.Author" type="text" maxlength="50" />
+            <p class="hint">Changing this moves only this comment. To rename the author everywhere, use the author's page.</p>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Body">Body</label>
+            <textarea asp-for="Input.Body" rows="10"></textarea>
+        </div>
+
+    </form>
+
+</div>

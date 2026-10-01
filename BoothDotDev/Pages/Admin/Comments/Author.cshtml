@@ -1,0 +1,90 @@
+@page "/admin/comments/author"
+@using Humanizer
+@model Author
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Comments/Index">Comments</a> / @Model.Name</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="avatar" data-initial="@Model.Name[0]" style="width:36px;height:36px;font-size:15px">
+                    @if (!string.IsNullOrEmpty(Model.Avatar))
+                    {
+                        <img src="@Model.Avatar" alt="@Model.Name" />
+                    }
+                </div>
+                <h1>@Model.Name</h1>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Rename" asp-route-name="@Model.Name"><i
+                        class="ti ti-cloud"></i> Save name</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label asp-for="NewName">Name</label>
+            <input asp-for="NewName" type="text" maxlength="50" />
+            <p class="hint">Applies to all @("comment".ToQuantity(Model.Comments.Count)) by this author.</p>
+        </div>
+
+        <div class="field">
+            <label>Avatar</label>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                <div class="avatar" data-initial="@Model.Name[0]" style="width:48px;height:48px;font-size:18px">
+                    @if (!string.IsNullOrEmpty(Model.Avatar))
+                    {
+                        <img src="@Model.Avatar" alt="@Model.Name" />
+                    }
+                </div>
+                <div class="input-with-button">
+                    <input type="file" name="file" accept="image/*" form="upload-avatar-form" />
+                    <button type="submit" form="upload-avatar-form" class="btn"><i class="ti ti-upload"></i> Upload</button>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Avatar))
+                {
+                    <button type="submit" form="clear-avatar-form" class="icon-btn danger" aria-label="Remove avatar"
+                            data-confirm="Remove this author's avatar?">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                }
+            </div>
+            <p class="hint">The image is cropped square, resized, and stored directly in the database; no file is kept.</p>
+        </div>
+
+    </form>
+
+    <form id="upload-avatar-form" method="post" enctype="multipart/form-data" asp-page-handler="UploadAvatar"
+          asp-route-name="@Model.Name" hidden></form>
+    <form id="clear-avatar-form" method="post" asp-page-handler="ClearAvatar" asp-route-name="@Model.Name" hidden></form>
+
+    <div class="row-group">
+        <div class="row-group-header">
+            <span class="row-group-title">comments</span>
+            <span class="row-group-count">@("comment".ToQuantity(Model.Comments.Count))</span>
+        </div>
+        <ul class="admin-row-list">
+            @foreach (var comment in Model.Comments)
+            {
+                <li class="admin-row">
+                    <div class="row-body">
+                        <div class="row-title">@comment.Body.Truncate(120)</div>
+                        <div class="row-sub">@comment.CreatedAt.ToString("d MMM yyyy HH:mm")</div>
+                    </div>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Comments/Edit" asp-route-id="@comment.Id" class="icon-btn">edit</a>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+</div>
