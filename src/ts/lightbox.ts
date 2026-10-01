@@ -137,6 +137,7 @@ async function open(trigger: HTMLElement): Promise<void> {
         const target: HTMLElement = flightTarget();
         fling(target, from, visibleRect(target), 'in', source);
         refs.caption.animate({opacity: [0, 1]}, {duration: 200, delay: FLIGHT_MS * 0.5, easing: 'ease', fill: 'backwards'});
+        refs.closeButton.animate({opacity: [0, 1]}, {duration: 160, delay: FLIGHT_MS, easing: 'ease', fill: 'backwards'});
     }
 }
 
@@ -288,6 +289,7 @@ function close(): void {
         const home: DOMRect = visibleRect(flightSource);
         dialog.classList.add('is-closing');
         refs.caption.animate({opacity: [1, 0]}, {duration: 120, easing: 'ease', fill: 'forwards'});
+        refs.closeButton.animate({opacity: [1, 0]}, {duration: 100, easing: 'ease', fill: 'forwards'});
         fling(target, home, visibleRect(target), 'out', flightSource).finished.then(() => {
             // the close event is async, so restoring the source there leaves a blank frame between the two
             restoreSource();
