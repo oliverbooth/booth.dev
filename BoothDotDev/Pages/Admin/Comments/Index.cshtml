@@ -1,0 +1,51 @@
+@page "/admin/comments"
+@using Humanizer
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Comments</h1>
+            <p>Edit the authors and text of comments imported from the old platform</p>
+        </div>
+    </div>
+
+    <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search authors&hellip;">
+            </div>
+        </div>
+
+        <ul class="admin-row-list">
+            @foreach (var author in Model.Authors)
+            {
+                <li class="admin-row" data-search-item>
+                    <div class="row-body row-title--avatar" data-search>
+                        <div class="avatar" data-initial="@author.Name[0]">
+                            @if (!string.IsNullOrEmpty(author.Avatar))
+                            {
+                                <img src="@author.Avatar" alt="@author.Name" />
+                            }
+                        </div>
+                        <div>
+                            <div class="row-title">@author.Name</div>
+                            <div class="row-sub">@("comment".ToQuantity(author.CommentCount))</div>
+                        </div>
+                    </div>
+                    <div class="row-actions">
+                        <a asp-page="/Admin/Comments/Author" asp-route-name="@author.Name" class="icon-btn">edit</a>
+                    </div>
+                </li>
+            }
+            <li class="list-empty-state" data-search-empty hidden>No authors found</li>
+        </ul>
+    </div>
+
+</div>

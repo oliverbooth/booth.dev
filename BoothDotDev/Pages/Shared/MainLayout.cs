@@ -1,4 +1,3 @@
-using System.Reflection;
 using BoothDotDev.Data;
 using BoothDotDev.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -66,12 +65,6 @@ public abstract class MainLayout : RazorPage<object>
     }
 
     /// <summary>
-    ///     Gets the website's version string.
-    /// </summary>
-    /// <value>The website's version string.</value>
-    public string Version { get; private set; } = "<unknown>";
-
-    /// <summary>
     ///     Initializes the layout.
     /// </summary>
     public Task InitializeAsync()
@@ -79,9 +72,6 @@ public abstract class MainLayout : RazorPage<object>
         var request = Context.Request;
         CurrentUrl = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
         SiteBaseUrl = new Uri($"{request.Scheme}://{request.Host}");
-
-        var attribute = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-        Version = attribute?.InformationalVersion ?? "<unknown>";
         return Task.CompletedTask;
     }
 }
