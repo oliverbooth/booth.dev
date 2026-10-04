@@ -1,5 +1,6 @@
 @page "/admin/gamelist/edit/{id:guid?}"
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using Humanizer
 @model Edit
 
@@ -49,6 +50,23 @@
                 }
             </select>
         </div>
+
+        @foreach (var group in Enum.GetValues<GamePlatform>().GroupBy(p => p.Group))
+        {
+            <div class="field">
+                <label>@group.Key</label>
+                <div class="segmented">
+                    @foreach (var platform in group)
+                    {
+                        <label class="segmented-option">
+                            <input type="checkbox" name="Input.Platforms" value="@platform"
+                                   checked="@Model.Input.Platforms.Contains(platform)">
+                            <span>@platform.DisplayName</span>
+                        </label>
+                    }
+                </div>
+            </div>
+        }
 
         <div class="field">
             <label asp-for="Input.Igdb">IGDB</label>

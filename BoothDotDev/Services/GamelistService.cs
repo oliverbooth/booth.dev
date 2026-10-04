@@ -70,8 +70,10 @@ public sealed class GamelistService
     /// <param name="title">The title.</param>
     /// <param name="state">The state.</param>
     /// <param name="igdbSlug">The IGDB slug to link the game to, if any.</param>
+    /// <param name="platforms">The platforms the game has been played on.</param>
     /// <returns>A <see cref="Result{T}" /> containing the added game, or an error if the slug is already linked.</returns>
-    public Result<Playable> AddPlayable(string title, PlayableState state, string? igdbSlug)
+    public Result<Playable> AddPlayable(string title, PlayableState state, string? igdbSlug,
+        IEnumerable<GamePlatform> platforms)
     {
         using var context = _dbContextFactory.CreateDbContext();
         if (FindSlugConflict(context, igdbSlug, null) is { } conflict)
@@ -79,7 +81,10 @@ public sealed class GamelistService
             return Result.Fail(conflict);
         }
 
-        var playable = new Playable { Id = Guid.NewGuid(), Title = title, State = state, IgdbSlug = igdbSlug };
+        var playable = new Playable
+        {
+            Id = Guid.NewGuid(), Title = title, State = state, IgdbSlug = igdbSlug, Platforms = Normalize(platforms)
+        };
         context.Playables.Add(playable);
         context.SaveChanges();
         return Result.Ok(playable);
@@ -92,11 +97,13 @@ public sealed class GamelistService
     /// <param name="title">The new title.</param>
     /// <param name="state">The new state.</param>
     /// <param name="igdbSlug">The IGDB slug to link the game to, or <see langword="null" /> to unlink it.</param>
+    /// <param name="platforms">The platforms the game has been played on.</param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the updated game, or an error if no game with the specified ID was
     ///     found or the slug is already linked to another game.
     /// </returns>
-    public Result<Playable> UpdatePlayable(Guid id, string title, PlayableState state, string? igdbSlug)
+    public Result<Playable> UpdatePlayable(Guid id, string title, PlayableState state, string? igdbSlug,
+        IEnumerable<GamePlatform> platforms)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var playable = context.Playables.Find(id);
@@ -113,6 +120,7 @@ public sealed class GamelistService
         playable.Title = title;
         playable.State = state;
         playable.IgdbSlug = igdbSlug;
+        playable.Platforms = Normalize(platforms);
         context.SaveChanges();
         return Result.Ok(playable);
     }
@@ -154,6 +162,11 @@ public sealed class GamelistService
         context.Playables.Remove(playable);
         context.SaveChanges();
         return Result.Ok();
+    }
+
+    private static List<GamePlatform> Normalize(IEnumerable<GamePlatform> platforms)
+    {
+        return platforms.Where(platform => Enum.IsDefined(platform)).Distinct().Order().ToList();
     }
 
     private static string? FindSlugConflict(AppDbContext context, string? igdbSlug, Guid? exceptId)

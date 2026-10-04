@@ -18,6 +18,7 @@ internal sealed class PlayableConfiguration : IEntityTypeConfiguration<Playable>
         builder.Property(entry => entry.Id).IsRequired();
         builder.Property(entry => entry.Title).IsRequired().HasMaxLength(128);
         builder.Property(entry => entry.State).IsRequired();
+        builder.PrimitiveCollection(entry => entry.Platforms).ElementType().HasConversion<string>();
         builder.Property(entry => entry.IgdbSlug).IsRequired(false).HasMaxLength(128);
 
         builder.HasIndex(entry => entry.IgdbSlug).IsUnique().HasFilter("igdb_slug IS NOT NULL");

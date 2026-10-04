@@ -78,7 +78,10 @@ public sealed partial class Edit : PageModel
 
         var playable = result.Value;
         Id = playable.Id;
-        Input = new EditModel { Title = playable.Title, State = playable.State, Igdb = playable.IgdbSlug };
+        Input = new EditModel
+        {
+            Title = playable.Title, State = playable.State, Igdb = playable.IgdbSlug, Platforms = playable.Platforms
+        };
 
         if (playable.IgdbSlug is { } slug)
         {
@@ -133,8 +136,8 @@ public sealed partial class Edit : PageModel
 
         var title = Input.Title.Trim();
         var result = id is null
-            ? _gamelistService.AddPlayable(title, Input.State, slug)
-            : _gamelistService.UpdatePlayable(id.Value, title, Input.State, slug);
+            ? _gamelistService.AddPlayable(title, Input.State, slug, Input.Platforms)
+            : _gamelistService.UpdatePlayable(id.Value, title, Input.State, slug, Input.Platforms);
 
         if (result.IsFailed)
         {
@@ -195,6 +198,12 @@ public sealed partial class Edit : PageModel
         /// </summary>
         /// <value>The state of the game.</value>
         public PlayableState State { get; set; } = PlayableState.PlanToPlay;
+
+        /// <summary>
+        ///     Gets or sets the platforms the game has been played on.
+        /// </summary>
+        /// <value>The platforms.</value>
+        public List<GamePlatform> Platforms { get; set; } = [];
 
         /// <summary>
         ///     Gets or sets the IGDB game to link to: a slug or an <c>igdb.com</c> URL.

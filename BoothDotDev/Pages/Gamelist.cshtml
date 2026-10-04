@@ -29,7 +29,7 @@
         </div>
 
         @{
-            Span<PlayableState> states = [PlayableState.Playing, PlayableState.PlanToPlay, PlayableState.Played];
+            PlayableState[] states = [PlayableState.Playing, PlayableState.PlanToPlay, PlayableState.Played];
             string[] filterKey = ["playing", "plan-to-play", "played"];
             string[] sectionIcon = ["device-gamepad-2", "calendar-event", "check"];
             string[] sectionIconModifier = ["accent", "muted", "success"];
@@ -58,7 +58,10 @@
                                         <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
                                     </div>
                                     <div class="stack-meta stack-meta--row">
-                                        <p class="title">@item.Title</p>
+                                        <div>
+                                            <p class="title">@item.Title</p>
+                                            <partial name="Partials/_PlatformChips" model="item.Platforms" />
+                                        </div>
                                         @if (item.IgdbSlug is { } slug)
                                         {
                                             <a href="https://www.igdb.com/games/@slug" class="meta-link" target="_blank" rel="noopener">
