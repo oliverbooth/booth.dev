@@ -129,7 +129,15 @@ public sealed class GamelistService
         playable.IgdbSlug = igdbSlug;
         playable.Platforms = Normalize(platforms);
         playable.Editions.Clear();
-        playable.Editions.AddRange(BuildEditions(editions));
+
+        // new editions carry pre-assigned IDs, which EF would otherwise take as already-existing rows and try to UPDATE
+        var added = BuildEditions(editions);
+        foreach (var edition in added)
+        {
+            edition.PlayableId = playable.Id;
+        }
+
+        context.PlayableEditions.AddRange(added);
         context.SaveChanges();
         return Result.Ok(playable);
     }
