@@ -1,5 +1,6 @@
 @page "/admin/gamelist"
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @using Humanizer
 @model Index
 
@@ -42,6 +43,10 @@
                             <li class="admin-row" draggable="true" data-search-item data-state-item data-id="@item.Id">
                                 <div class="row-body">
                                     <div class="row-title" data-search>@item.Title</div>
+                                    @if (item.Platforms.Count > 0)
+                                    {
+                                        <div class="row-sub" data-search>@string.Join(", ", item.Platforms.Select(p => p.DisplayName))</div>
+                                    }
                                 </div>
                                 <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions" data-state-form>
                                     <select name="state" aria-label="State" class="inline-select">
