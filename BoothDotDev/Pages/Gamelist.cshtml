@@ -60,9 +60,46 @@
                                     <div class="stack-meta stack-meta--row">
                                         <div>
                                             <p class="title">@item.Title</p>
-                                            <partial name="Partials/_PlatformChips" model="item.Platforms" />
+                                            @if (item.Editions.Count == 0)
+                                            {
+                                                <partial name="Partials/_PlatformChips" model="item.Platforms" />
+                                            }
+                                            else
+                                            {
+                                                <div class="edition-list">
+                                                    <div class="edition-row">
+                                                        <span class="edition-label">original</span>
+                                                        <div class="edition-detail">
+                                                            <partial name="Partials/_PlatformChips" model="item.Platforms" />
+                                                            @if (item.IgdbSlug is { } primarySlug)
+                                                            {
+                                                                <a href="https://www.igdb.com/games/@primarySlug" class="meta-link" target="_blank"
+                                                                   rel="noopener" aria-label="@item.Title on IGDB">
+                                                                    <i class="ti ti-external-link" style="font-size:14px"></i> IGDB
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    @foreach (var edition in item.Editions)
+                                                    {
+                                                        <div class="edition-row">
+                                                            <span class="edition-label">@edition.Label</span>
+                                                            <div class="edition-detail">
+                                                                <partial name="Partials/_PlatformChips" model="edition.Platforms" />
+                                                                @if (edition.IgdbSlug is { } editionSlug)
+                                                                {
+                                                                    <a href="https://www.igdb.com/games/@editionSlug" class="meta-link" target="_blank"
+                                                                       rel="noopener" aria-label="@edition.Label on IGDB">
+                                                                        <i class="ti ti-external-link" style="font-size:14px"></i> IGDB
+                                                                    </a>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
                                         </div>
-                                        @if (item.IgdbSlug is { } slug)
+                                        @if (item.Editions.Count == 0 && item.IgdbSlug is { } slug)
                                         {
                                             <a href="https://www.igdb.com/games/@slug" class="meta-link" target="_blank" rel="noopener">
                                                 <i class="ti ti-external-link" style="font-size:14px"></i> View on IGDB
