@@ -56,7 +56,7 @@ public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<Igd
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             request.Headers.Add("Client-ID", config.ClientId);
             request.Content = new StringContent(
-                $"search \"{escaped}\"; fields name,slug,first_release_date; limit {MaxResults};",
+                $"search \"{escaped}\"; fields name,slug,first_release_date,game_type.type; limit {MaxResults};",
                 Encoding.UTF8,
                 "text/plain");
 
@@ -85,7 +85,13 @@ public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<Igd
                     ? DateTimeOffset.FromUnixTimeSeconds(seconds).Year
                     : (int?)null;
 
-                candidates.Add(new IgdbCandidate(name, slug, year));
+                var type = game.TryGetProperty("game_type", out var typeProperty) &&
+                           typeProperty.ValueKind == JsonValueKind.Object &&
+                           typeProperty.TryGetProperty("type", out var typeNameProperty)
+                    ? typeNameProperty.GetString()
+                    : null;
+
+                candidates.Add(new IgdbCandidate(name, slug, year, type));
             }
 
             return candidates.Count > 0
@@ -137,4 +143,7 @@ public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<Igd
 /// <param name="Title">The title of the game.</param>
 /// <param name="Slug">The IGDB slug of the game.</param>
 /// <param name="Year">The release year, or <see langword="null" /> if unknown.</param>
-public sealed record IgdbCandidate(string Title, string Slug, int? Year);
+/// <param name="Type">
+///     The IGDB game type, such as <c>Main Game</c> or <c>Port</c>, or <see langword="null" /> if unknown.
+/// </param>
+public sealed record IgdbCandidate(string Title, string Slug, int? Year, string? Type);
