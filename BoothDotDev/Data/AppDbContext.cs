@@ -289,6 +289,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of games on the game list.
+    /// </summary>
+    /// <value>The collection of games.</value>
+    public DbSet<Playable> Playables
+    {
+        get => Set<Playable>();
+    }
+
+    /// <summary>
     ///     Gets the collection of watchlist items in the database.
     /// </summary>
     /// <value>The collection of watchlist items.</value>
@@ -307,6 +316,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.HasPostgresEnum<FontStyle>("public", "font_style", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<LinkKind>("public", "link_kind", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<PaletteHue>("public", "palette_hue", new NpgsqlSnakeCaseNameTranslator());
+        modelBuilder.HasPostgresEnum<PlayableState>("public", "playable_state", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectStatus>("public", "project_status", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<ProjectType>("public", "project_type", new NpgsqlSnakeCaseNameTranslator());
         modelBuilder.HasPostgresEnum<StreakCadenceUnit>("public", "streak_cadence_unit", new NpgsqlSnakeCaseNameTranslator());
@@ -332,6 +342,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new NoteDraftConfiguration());
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new PortfolioEntryConfiguration());
+        modelBuilder.ApplyConfiguration(new PlayableConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());

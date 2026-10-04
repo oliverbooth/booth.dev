@@ -10,6 +10,7 @@ namespace BoothDotDev.Pages;
 /// </summary>
 public sealed class Now : PageModel
 {
+    private readonly GamelistService _gamelistService;
     private readonly PhoneStatusService _phoneStatusService;
     private readonly ReadingListService _readingListService;
     private readonly WatchlistService _watchlistService;
@@ -20,15 +21,18 @@ public sealed class Now : PageModel
     /// </summary>
     /// <param name="readingListService">The reading list service.</param>
     /// <param name="watchlistService">The watchlist service.</param>
+    /// <param name="gamelistService">The game list service.</param>
     /// <param name="phoneStatusService">The phone status service.</param>
     /// <param name="weatherService">The weather service.</param>
     public Now(ReadingListService readingListService,
         WatchlistService watchlistService,
+        GamelistService gamelistService,
         PhoneStatusService phoneStatusService,
         WeatherService weatherService)
     {
         _readingListService = readingListService;
         _watchlistService = watchlistService;
+        _gamelistService = gamelistService;
         _phoneStatusService = phoneStatusService;
         _weatherService = weatherService;
     }
@@ -44,6 +48,12 @@ public sealed class Now : PageModel
     /// </summary>
     /// <value>The movies/shows currently being watched.</value>
     public IReadOnlyCollection<Watchable> CurrentlyWatching { get; private set; } = [];
+
+    /// <summary>
+    ///     Gets the games currently being played.
+    /// </summary>
+    /// <value>The games currently being played.</value>
+    public IReadOnlyCollection<Playable> CurrentlyPlaying { get; private set; } = [];
 
     /// <summary>
     ///     Gets the most recently reported phone status.
@@ -65,6 +75,7 @@ public sealed class Now : PageModel
     {
         CurrentlyReading = _readingListService.GetBooks(BookState.Reading);
         CurrentlyWatching = _watchlistService.GetWatchables(WatchableState.Watching);
+        CurrentlyPlaying = _gamelistService.GetPlayables(PlayableState.Playing);
         PhoneStatus = _phoneStatusService.GetStatus();
         Weather = await _weatherService.GetCurrentWeatherAsync(cancellationToken);
     }
