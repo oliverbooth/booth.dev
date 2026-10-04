@@ -80,7 +80,16 @@ public sealed partial class Edit : PageModel
         Id = playable.Id;
         Input = new EditModel
         {
-            Title = playable.Title, State = playable.State, Igdb = playable.IgdbSlug, Platforms = playable.Platforms
+            Title = playable.Title,
+            State = playable.State,
+            Igdb = playable.IgdbSlug,
+            Platforms = playable.Platforms,
+            Editions = playable.Editions
+                .Select(edition => new EditionModel
+                {
+                    Label = edition.Label, Igdb = edition.IgdbSlug, Platforms = edition.Platforms
+                })
+                .ToList()
         };
 
         if (playable.IgdbSlug is { } slug)
@@ -123,21 +132,26 @@ public sealed partial class Edit : PageModel
             return Page();
         }
 
-        string? slug = null;
-        if (Input.Igdb?.Trim() is { Length: > 0 } reference)
+        var valid = TryParseSlug(Input.Igdb, $"{nameof(Input)}.{nameof(Input.Igdb)}", out var slug);
+
+        var editions = new List<EditionInput>();
+        for (var index = 0; index < Input.Editions.Count; index++)
         {
-            slug = ExtractSlug(reference);
-            if (!SlugPattern().IsMatch(slug))
-            {
-                ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Igdb)}", "That doesn't look like an IGDB slug or link.");
-                return Page();
-            }
+            var edition = Input.Editions[index];
+            var field = $"{nameof(Input)}.{nameof(Input.Editions)}[{index}].{nameof(EditionModel.Igdb)}";
+            valid &= TryParseSlug(edition.Igdb, field, out var editionSlug);
+            editions.Add(new EditionInput(edition.Label.Trim(), editionSlug, edition.Platforms));
+        }
+
+        if (!valid)
+        {
+            return Page();
         }
 
         var title = Input.Title.Trim();
         var result = id is null
-            ? _gamelistService.AddPlayable(title, Input.State, slug, Input.Platforms)
-            : _gamelistService.UpdatePlayable(id.Value, title, Input.State, slug, Input.Platforms);
+            ? _gamelistService.AddPlayable(title, Input.State, slug, Input.Platforms, editions)
+            : _gamelistService.UpdatePlayable(id.Value, title, Input.State, slug, Input.Platforms, editions);
 
         if (result.IsFailed)
         {
@@ -162,6 +176,24 @@ public sealed partial class Edit : PageModel
 
         _gamelistService.DeletePlayable(playableId);
         return RedirectToPage("Index");
+    }
+
+    private bool TryParseSlug(string? reference, string field, out string? slug)
+    {
+        slug = null;
+        if (reference?.Trim() is not { Length: > 0 } trimmed)
+        {
+            return true;
+        }
+
+        slug = ExtractSlug(trimmed);
+        if (SlugPattern().IsMatch(slug))
+        {
+            return true;
+        }
+
+        ModelState.AddModelError(field, "That doesn't look like an IGDB slug or link.");
+        return false;
     }
 
     private static string ExtractSlug(string reference)
@@ -206,9 +238,49 @@ public sealed partial class Edit : PageModel
         public List<GamePlatform> Platforms { get; set; } = [];
 
         /// <summary>
+        ///     Gets or sets the additional editions of the game that have also been played.
+        /// </summary>
+        /// <value>The additional editions.</value>
+        public List<EditionModel> Editions { get; set; } = [];
+
+        /// <summary>
         ///     Gets or sets the IGDB game to link to: a slug or an <c>igdb.com</c> URL.
         /// </summary>
         /// <value>The reference, or <see langword="null" /> if the game shouldn't be linked to IGDB.</value>
         public string? Igdb { get; set; }
     }
+
+    /// <summary>
+    ///     Represents the model for an additional edition of a game.
+    /// </summary>
+    public sealed class EditionModel
+    {
+        /// <summary>
+        ///     Gets or sets the label of the edition.
+        /// </summary>
+        /// <value>The label, such as <c>Director's Cut</c>.</value>
+        [Required]
+        [StringLength(64)]
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Label { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the IGDB game the edition links to: a slug or an <c>igdb.com</c> URL.
+        /// </summary>
+        /// <value>The reference, or <see langword="null" /> if the edition has no IGDB entry of its own.</value>
+        public string? Igdb { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the platforms the edition has been played on.
+        /// </summary>
+        /// <value>The platforms.</value>
+        public List<GamePlatform> Platforms { get; set; } = [];
+    }
+
+    /// <summary>
+    ///     Represents an edition's form fields, as rendered by the edition block partial.
+    /// </summary>
+    /// <param name="Index">The index the fields are named with, or a placeholder for the client-side template.</param>
+    /// <param name="Edition">The edition.</param>
+    public sealed record EditionBlock(string Index, EditionModel Edition);
 }
