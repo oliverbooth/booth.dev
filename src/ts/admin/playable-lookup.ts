@@ -2,6 +2,7 @@ interface PlayableLookupCandidate {
     title: string;
     slug: string;
     year: number | null;
+    type: string | null;
 }
 
 interface PlayableLookupResponse {
@@ -60,6 +61,13 @@ export function initPlayableLookup(): void {
             const meta = document.createElement('p');
             meta.className = 'meta';
             meta.textContent = String(candidate.year ?? 'unknown year');
+
+            if (candidate.type) {
+                const badge = document.createElement('span');
+                badge.className = candidate.type === 'Main Game' ? 'badge badge-unlisted' : 'badge badge-brand';
+                badge.textContent = candidate.type;
+                meta.append(badge);
+            }
 
             body.append(name, meta);
             button.append(body);

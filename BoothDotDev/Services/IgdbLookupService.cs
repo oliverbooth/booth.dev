@@ -15,7 +15,8 @@ namespace BoothDotDev.Services;
 /// <param name="options">The IGDB options.</param>
 public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<IgdbOptions> options)
 {
-    private const int MaxResults = 8;
+    private const int FetchLimit = 20;
+    private const int MaxResults = 10;
     private const string SearchUrl = "https://api.igdb.com/v4/games";
     private const string TokenUrl = "https://id.twitch.tv/oauth2/token";
 
@@ -56,7 +57,7 @@ public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<Igd
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             request.Headers.Add("Client-ID", config.ClientId);
             request.Content = new StringContent(
-                $"search \"{escaped}\"; fields name,slug,first_release_date; limit {MaxResults};",
+                $"search \"{escaped}\"; fields name,slug,first_release_date,game_type.type; limit {FetchLimit};",
                 Encoding.UTF8,
                 "text/plain");
 
@@ -85,17 +86,40 @@ public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<Igd
                     ? DateTimeOffset.FromUnixTimeSeconds(seconds).Year
                     : (int?)null;
 
-                candidates.Add(new IgdbCandidate(name, slug, year));
+                var type = game.TryGetProperty("game_type", out var typeProperty) &&
+                           typeProperty.ValueKind == JsonValueKind.Object &&
+                           typeProperty.TryGetProperty("type", out var typeNameProperty)
+                    ? typeNameProperty.GetString()
+                    : null;
+
+                candidates.Add(new IgdbCandidate(name, slug, year, type));
             }
 
-            return candidates.Count > 0
-                ? Result.Ok<IReadOnlyList<IgdbCandidate>>(candidates)
+            // OrderBy is stable, so IGDB's own relevance order is kept within each type
+            var ranked = candidates.OrderBy(c => Rank(c.Type)).Take(MaxResults).ToList();
+            return ranked.Count > 0
+                ? Result.Ok<IReadOnlyList<IgdbCandidate>>(ranked)
                 : Result.Fail("No matches found. Enter the details by hand instead.");
         }
         catch (HttpRequestException)
         {
             return Result.Fail("Couldn't reach IGDB. Enter the details by hand instead.");
         }
+    }
+
+    private static int Rank(string? type)
+    {
+        return type switch
+        {
+            "Main Game" => 0,
+            "Port" => 1,
+            "Remaster" => 2,
+            "Remake" => 3,
+            "Expanded Game" => 4,
+            "Standalone Expansion" => 5,
+            null => 99,
+            _ => 10
+        };
     }
 
     private async Task<string?> GetTokenAsync(IgdbOptions config, CancellationToken cancellationToken)
@@ -137,4 +161,7 @@ public sealed class IgdbLookupService(HttpClient httpClient, IOptionsMonitor<Igd
 /// <param name="Title">The title of the game.</param>
 /// <param name="Slug">The IGDB slug of the game.</param>
 /// <param name="Year">The release year, or <see langword="null" /> if unknown.</param>
-public sealed record IgdbCandidate(string Title, string Slug, int? Year);
+/// <param name="Type">
+///     The IGDB game type, such as <c>Main Game</c> or <c>Port</c>, or <see langword="null" /> if unknown.
+/// </param>
+public sealed record IgdbCandidate(string Title, string Slug, int? Year, string? Type);
