@@ -6,6 +6,7 @@
 
 @{
     Layout = "_AdminLayout";
+    const string templateIndex = "__index__";
 }
 
 <div class="admin-page">
@@ -80,6 +81,24 @@
                             class="ti ti-external-link"></i></a>
                 }
             </p>
+        </div>
+
+        <div class="field" data-editions>
+            <label>Other editions</label>
+            <p class="hint">
+                Only for a game you've also played in another edition, such as a remaster or director's cut. Each edition has its
+                own platforms. The fields above describe the original, or the only edition you've played.
+            </p>
+            <div class="edition-list-admin" data-edition-list>
+                @for (var index = 0; index < Model.Input.Editions.Count; index++)
+                {
+                    <partial name="_EditionBlock" model="new Edit.EditionBlock(index.ToString(), Model.Input.Editions[index])" />
+                }
+            </div>
+            <button type="button" class="btn" data-edition-add><i class="ti ti-plus"></i> Add edition</button>
+            <template data-edition-template>
+                <partial name="_EditionBlock" model="new Edit.EditionBlock(templateIndex, new Edit.EditionModel())" />
+            </template>
         </div>
 
         <div class="form-actions">

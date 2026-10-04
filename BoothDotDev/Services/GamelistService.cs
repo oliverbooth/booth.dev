@@ -29,7 +29,7 @@ public sealed class GamelistService
     public IReadOnlyCollection<Playable> GetPlayables(PlayableState state)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Playables.Where(p => p.State == state).ToArray();
+        return context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).Where(p => p.State == state).ToArray();
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public sealed class GamelistService
     public IReadOnlyCollection<Playable> GetAllPlayables()
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Playables.OrderBy(p => p.Title).ToArray();
+        return context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).OrderBy(p => p.Title).ToArray();
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public sealed class GamelistService
     public Result<Playable> GetPlayableById(Guid id)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var playable = context.Playables.Find(id);
+        var playable = context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).FirstOrDefault(p => p.Id == id);
         return playable is null ? Result.Fail($"No game with ID '{id}' was found.") : Result.Ok(playable);
     }
 
@@ -71,19 +71,25 @@ public sealed class GamelistService
     /// <param name="state">The state.</param>
     /// <param name="igdbSlug">The IGDB slug to link the game to, if any.</param>
     /// <param name="platforms">The platforms the game has been played on.</param>
-    /// <returns>A <see cref="Result{T}" /> containing the added game, or an error if the slug is already linked.</returns>
+    /// <param name="editions">The additional editions of the game that have also been played.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the added game, or an error if a slug is already linked.</returns>
     public Result<Playable> AddPlayable(string title, PlayableState state, string? igdbSlug,
-        IEnumerable<GamePlatform> platforms)
+        IEnumerable<GamePlatform> platforms, IReadOnlyList<EditionInput> editions)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        if (FindSlugConflict(context, igdbSlug, null) is { } conflict)
+        if (FindSlugConflict(context, CollectSlugs(igdbSlug, editions), null) is { } conflict)
         {
             return Result.Fail(conflict);
         }
 
         var playable = new Playable
         {
-            Id = Guid.NewGuid(), Title = title, State = state, IgdbSlug = igdbSlug, Platforms = Normalize(platforms)
+            Id = Guid.NewGuid(),
+            Title = title,
+            State = state,
+            IgdbSlug = igdbSlug,
+            Platforms = Normalize(platforms),
+            Editions = BuildEditions(editions)
         };
         context.Playables.Add(playable);
         context.SaveChanges();
@@ -98,21 +104,22 @@ public sealed class GamelistService
     /// <param name="state">The new state.</param>
     /// <param name="igdbSlug">The IGDB slug to link the game to, or <see langword="null" /> to unlink it.</param>
     /// <param name="platforms">The platforms the game has been played on.</param>
+    /// <param name="editions">The additional editions of the game that have also been played.</param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the updated game, or an error if no game with the specified ID was
     ///     found or the slug is already linked to another game.
     /// </returns>
     public Result<Playable> UpdatePlayable(Guid id, string title, PlayableState state, string? igdbSlug,
-        IEnumerable<GamePlatform> platforms)
+        IEnumerable<GamePlatform> platforms, IReadOnlyList<EditionInput> editions)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var playable = context.Playables.Find(id);
+        var playable = context.Playables.Include(p => p.Editions).FirstOrDefault(p => p.Id == id);
         if (playable is null)
         {
             return Result.Fail($"No game with ID '{id}' was found.");
         }
 
-        if (FindSlugConflict(context, igdbSlug, id) is { } conflict)
+        if (FindSlugConflict(context, CollectSlugs(igdbSlug, editions), id) is { } conflict)
         {
             return Result.Fail(conflict);
         }
@@ -121,6 +128,8 @@ public sealed class GamelistService
         playable.State = state;
         playable.IgdbSlug = igdbSlug;
         playable.Platforms = Normalize(platforms);
+        playable.Editions.Clear();
+        playable.Editions.AddRange(BuildEditions(editions));
         context.SaveChanges();
         return Result.Ok(playable);
     }
@@ -169,14 +178,47 @@ public sealed class GamelistService
         return platforms.Where(platform => Enum.IsDefined(platform)).Distinct().Order().ToList();
     }
 
-    private static string? FindSlugConflict(AppDbContext context, string? igdbSlug, Guid? exceptId)
+    private static List<string> CollectSlugs(string? primary, IReadOnlyList<EditionInput> editions)
     {
-        if (igdbSlug is null)
+        return editions.Select(e => e.IgdbSlug).Prepend(primary).OfType<string>().ToList();
+    }
+
+    private static List<PlayableEdition> BuildEditions(IReadOnlyList<EditionInput> editions)
+    {
+        return editions.Select((edition, position) => new PlayableEdition
+        {
+            Id = Guid.NewGuid(),
+            Label = edition.Label,
+            IgdbSlug = edition.IgdbSlug,
+            Platforms = Normalize(edition.Platforms),
+            Position = position
+        }).ToList();
+    }
+
+    private static string? FindSlugConflict(AppDbContext context, List<string> slugs, Guid? exceptId)
+    {
+        if (slugs.Count != slugs.Distinct().Count())
+        {
+            return "The same IGDB game can't be linked more than once.";
+        }
+
+        if (slugs.Count == 0)
         {
             return null;
         }
 
-        var other = context.Playables.FirstOrDefault(p => p.IgdbSlug == igdbSlug && p.Id != exceptId);
-        return other is null ? null : $"'{other.Title}' is already linked to that IGDB game.";
+        var other = context.Playables.FirstOrDefault(p => p.Id != exceptId &&
+                                                          ((p.IgdbSlug != null && slugs.Contains(p.IgdbSlug)) ||
+                                                           p.Editions.Any(e => e.IgdbSlug != null &&
+                                                                               slugs.Contains(e.IgdbSlug))));
+        return other is null ? null : $"'{other.Title}' is already linked to one of those IGDB games.";
     }
 }
+
+/// <summary>
+///     Represents the details of an additional edition of a game, as submitted for saving.
+/// </summary>
+/// <param name="Label">The label of the edition.</param>
+/// <param name="IgdbSlug">The IGDB slug of the edition, or <see langword="null" /> if it has none.</param>
+/// <param name="Platforms">The platforms the edition has been played on.</param>
+public sealed record EditionInput(string Label, string? IgdbSlug, IEnumerable<GamePlatform> Platforms);

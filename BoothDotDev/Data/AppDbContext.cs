@@ -298,6 +298,15 @@ public sealed class AppDbContext : DbContext
     }
 
     /// <summary>
+    ///     Gets the collection of additional game editions.
+    /// </summary>
+    /// <value>The collection of game editions.</value>
+    public DbSet<PlayableEdition> PlayableEditions
+    {
+        get => Set<PlayableEdition>();
+    }
+
+    /// <summary>
     ///     Gets the collection of watchlist items in the database.
     /// </summary>
     /// <value>The collection of watchlist items.</value>
@@ -343,6 +352,7 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PasskeyCredentialConfiguration());
         modelBuilder.ApplyConfiguration(new PortfolioEntryConfiguration());
         modelBuilder.ApplyConfiguration(new PlayableConfiguration());
+        modelBuilder.ApplyConfiguration(new PlayableEditionConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectDevlogDraftConfiguration());
