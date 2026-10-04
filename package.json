@@ -1,6 +1,6 @@
 {
   "name": "booth.dev",
-  "version": "26.6.3",
+  "version": "26.7",
   "description": "Source code for https://booth.dev",
   "main": "index.js",
   "scripts": {
