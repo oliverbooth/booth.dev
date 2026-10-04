@@ -18,6 +18,12 @@ public sealed class Playable
     public string? IgdbSlug { get; set; }
 
     /// <summary>
+    ///     Gets or sets the platforms the game has been played on.
+    /// </summary>
+    /// <value>The platforms, in display order, or an empty list if none were recorded.</value>
+    public List<GamePlatform> Platforms { get; set; } = [];
+
+    /// <summary>
     ///     Gets or sets the state of the game.
     /// </summary>
     /// <value>The state of the game.</value>

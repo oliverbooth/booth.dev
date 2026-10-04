@@ -1,0 +1,23 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model IReadOnlyCollection<GamePlatform>
+
+@if (Model.Count > 0)
+{
+    <div class="platform-list">
+        @foreach (var platform in Model)
+        {
+            <span class="platform-chip">
+                @if (platform.BrandGlyph is { } glyph)
+                {
+                    <span class="platform-glyph" style="--glyph: url('/img/brand/@glyph')" aria-hidden="true"></span>
+                }
+                else
+                {
+                    <i class="ti ti-@platform.Icon" aria-hidden="true"></i>
+                }
+                @platform.DisplayName
+            </span>
+        }
+    </div>
+}
