@@ -23,6 +23,7 @@ public static class AppDbContextConfig
             options.MapEnum<FontStyle>("font_style", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<LinkKind>("link_kind", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<PaletteHue>("palette_hue", "public", new NpgsqlSnakeCaseNameTranslator());
+            options.MapEnum<PlayableState>("playable_state", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<ProjectStatus>("project_status", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<ProjectType>("project_type", "public", new NpgsqlSnakeCaseNameTranslator());
             options.MapEnum<Visibility>("visibility", "public", new NpgsqlSnakeCaseNameTranslator());
