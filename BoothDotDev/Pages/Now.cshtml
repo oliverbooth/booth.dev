@@ -108,4 +108,29 @@
         </div>
     }
 
+    <div class="section-head">
+        <h2>Currently playing</h2>
+        <a asp-page="/Gamelist">See all &rarr;</a>
+    </div>
+
+    @if (Model.CurrentlyPlaying.Count == 0)
+    {
+        <p class="page-intro">Nothing on the go right now. See the full <a asp-page="/Gamelist">game list</a>.</p>
+    }
+    else
+    {
+        <div class="stack-list section-list">
+            @foreach (var item in Model.CurrentlyPlaying.OrderBy(p => p.Title))
+            {
+                <div data-hue="grape">
+                    <div class="stack-icon"><i class="ti ti-device-gamepad-2"></i></div>
+                    <div class="stack-meta">
+                        <p class="title">@item.Title</p>
+                        <partial name="Partials/_PlatformChips" model="item.Platforms" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
 </div>

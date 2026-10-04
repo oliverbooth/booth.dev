@@ -8,7 +8,7 @@
   position: relative;
   cursor: pointer;
 
-  input {
+  input:is([type="radio"], [type="checkbox"]) {
     position: absolute;
     opacity: 0;
     pointer-events: none;

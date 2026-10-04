@@ -93,6 +93,8 @@ builder.Services.AddSingleton<TemplateService>();
 builder.Services.AddSingleton<TutorialService>();
 builder.Services.AddSingleton<BookLookupService>();
 builder.Services.AddSingleton<PhoneStatusService>();
+builder.Services.AddSingleton<GamelistService>();
+builder.Services.AddSingleton<IgdbLookupService>();
 builder.Services.AddSingleton<WatchlistService>();
 builder.Services.AddSingleton<TmdbLookupService>();
 builder.Services.AddSingleton<TraktAuthService>();
@@ -101,6 +103,8 @@ builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddScoped<RazorPartialRenderer>();
 builder.Services.Configure<PhoneStatusOptions>(
     builder.Configuration.GetSection(PhoneStatusOptions.SectionName));
+builder.Services.Configure<IgdbOptions>(
+    builder.Configuration.GetSection(IgdbOptions.SectionName));
 builder.Services.Configure<TmdbOptions>(
     builder.Configuration.GetSection(TmdbOptions.SectionName));
 builder.Services.Configure<TraktOptions>(

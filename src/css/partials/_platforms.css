@@ -1,0 +1,31 @@
+.platform-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.platform-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  .ti {
+    font-size: 13px;
+  }
+}
+
+.platform-glyph {
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  mask: var(--glyph) center / contain no-repeat;
+}

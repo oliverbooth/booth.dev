@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BoothDotDev.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BoothDotDev.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261004134858_AddPlayables")]
+    partial class AddPlayables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -782,11 +785,6 @@ namespace BoothDotDev.Data.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("igdb_slug");
-
-                    b.PrimitiveCollection<string[]>("Platforms")
-                        .IsRequired()
-                        .HasColumnType("text[]")
-                        .HasColumnName("platforms");
 
                     b.Property<PlayableState>("State")
                         .HasColumnType("public.playable_state")

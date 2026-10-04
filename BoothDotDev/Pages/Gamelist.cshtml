@@ -1,0 +1,81 @@
+@page "/gamelist"
+@using BoothDotDev.Data
+@using BoothDotDev.Pages.Shared.Partials
+@using BoothDotDev.Services
+@using Humanizer
+@inject GamelistService GamelistService
+@{
+    ViewData["Title"] = "Game list";
+}
+
+<div class="page">
+
+    <span class="eyebrow">
+        <a asp-page="/Index"><i class="ti ti-arrow-narrow-left"></i> back home</a>
+    </span>
+    <h1>Game list</h1>
+    <partial name="Partials/_AdminLinks" model="@(new AdminLink[] { new("manage game list", "/Admin/Gamelist/Index") })" />
+
+    <div class="page-intro">
+        <p>Games I've played, am playing, or plan to play. Not exhaustive. Updated whenever I remember to.</p>
+    </div>
+
+    <div data-filter-scope>
+        <div class="filter-row" id="gamelist-filters">
+            <button type="button" class="pill active" aria-pressed="true" data-filter="all">All</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="playing">Playing</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="plan-to-play">Plan to play</button>
+            <button type="button" class="pill" aria-pressed="false" data-filter="played">Played</button>
+        </div>
+
+        @{
+            PlayableState[] states = [PlayableState.Playing, PlayableState.PlanToPlay, PlayableState.Played];
+            string[] filterKey = ["playing", "plan-to-play", "played"];
+            string[] sectionIcon = ["device-gamepad-2", "calendar-event", "check"];
+            string[] sectionIconModifier = ["accent", "muted", "success"];
+            string[] itemIcon = ["point-filled", "circle", "check"];
+            string[] itemIconModifier = ["success", "muted", "success"];
+
+            for (var index = 0; index < states.Length; index++)
+            {
+                var state = states[index];
+                var items = GamelistService.GetPlayables(state);
+
+                <div class="reading-list-section" data-state="@filterKey[index]">
+                    <div class="collapse-inner">
+                        <div class="section-head">
+                            <h2>
+                                <i class="ti ti-@sectionIcon[index] section-icon section-icon--@sectionIconModifier[index]"></i>
+                                @state.Humanize(LetterCasing.Title)
+                            </h2>
+                        </div>
+
+                        <div class="stack-list section-list">
+                            @foreach (var item in items.OrderBy(p => p.Title))
+                            {
+                                <div data-hue="grape">
+                                    <div class="stack-icon">
+                                        <i class="ti ti-@itemIcon[index] item-icon item-icon--@itemIconModifier[index]"></i>
+                                    </div>
+                                    <div class="stack-meta stack-meta--row">
+                                        <div>
+                                            <p class="title">@item.Title</p>
+                                            <partial name="Partials/_PlatformChips" model="item.Platforms" />
+                                        </div>
+                                        @if (item.IgdbSlug is { } slug)
+                                        {
+                                            <a href="https://www.igdb.com/games/@slug" class="meta-link" target="_blank" rel="noopener">
+                                                <i class="ti ti-external-link" style="font-size:14px"></i> View on IGDB
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>
