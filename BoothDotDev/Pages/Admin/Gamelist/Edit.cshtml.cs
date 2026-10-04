@@ -105,7 +105,7 @@ public sealed partial class Edit : PageModel
             return new JsonResult(new { error = result.Errors[0].Message });
         }
 
-        var candidates = result.Value.Select(c => new { c.Title, c.Slug, c.Year });
+        var candidates = result.Value.Select(c => new { c.Title, c.Slug, c.Year, c.Type });
         return new JsonResult(new { candidates });
     }
 
