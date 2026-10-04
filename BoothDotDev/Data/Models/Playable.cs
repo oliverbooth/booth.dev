@@ -12,6 +12,21 @@ public sealed class Playable
     public Guid Id { get; set; }
 
     /// <summary>
+    ///     Gets the platforms the game has been played on across every edition.
+    /// </summary>
+    /// <value>The distinct platforms, in display order.</value>
+    public IReadOnlyList<GamePlatform> AllPlatforms
+    {
+        get => Platforms.Concat(Editions.SelectMany(edition => edition.Platforms)).Distinct().Order().ToList();
+    }
+
+    /// <summary>
+    ///     Gets or sets the additional editions of the game that have also been played.
+    /// </summary>
+    /// <value>The additional editions, in display order. The game's own fields describe the primary edition.</value>
+    public List<PlayableEdition> Editions { get; set; } = [];
+
+    /// <summary>
     ///     Gets or sets the IGDB slug of the game.
     /// </summary>
     /// <value>The IGDB slug of the game, or <see langword="null" /> if it isn't linked to IGDB.</value>

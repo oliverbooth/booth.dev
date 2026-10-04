@@ -1,0 +1,40 @@
+@using BoothDotDev.Data
+@using BoothDotDev.Extensions
+@model Edit.EditionBlock
+@{
+    var prefix = $"Input.Editions[{Model.Index}]";
+}
+
+<div class="edition-block" data-edition-block>
+    <div class="field-row">
+        <div class="field">
+            <label>Label</label>
+            <input type="text" name="@(prefix).Label" value="@Model.Edition.Label" maxlength="64" required
+                   placeholder="Director's Cut" autocomplete="off">
+        </div>
+        <div class="field">
+            <label>IGDB</label>
+            <input type="text" name="@(prefix).Igdb" value="@Model.Edition.Igdb" placeholder="Slug or igdb.com link (optional)"
+                   autocomplete="off">
+        </div>
+    </div>
+
+    @foreach (var group in Enum.GetValues<GamePlatform>().GroupBy(p => p.Group))
+    {
+        <div class="edition-platforms">
+            <span class="edition-group-label">@group.Key</span>
+            <div class="segmented">
+                @foreach (var platform in group)
+                {
+                    <label class="segmented-option">
+                        <input type="checkbox" name="@(prefix).Platforms" value="@platform"
+                               checked="@Model.Edition.Platforms.Contains(platform)">
+                        <span>@platform.DisplayName</span>
+                    </label>
+                }
+            </div>
+        </div>
+    }
+
+    <button type="button" class="btn icon-btn danger" data-edition-remove><i class="ti ti-trash"></i> Remove edition</button>
+</div>
