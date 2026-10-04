@@ -1,0 +1,71 @@
+@page "/admin/gamelist"
+@using BoothDotDev.Data
+@using Humanizer
+@model Index
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Game list</h1>
+            <p>Add, update, and remove entries on the game list</p>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a asp-page="/Admin/Gamelist/Edit" class="btn btn-primary"><i class="ti ti-plus" style="font-size:15px"></i>New entry</a>
+        </div>
+    </div>
+
+    <div data-search-scope>
+        <div class="table-toolbar">
+            <div class="search-input">
+                <i class="ti ti-search"></i>
+                <input type="text" id="search" placeholder="Search game list&hellip;">
+            </div>
+        </div>
+
+        <div class="row-groups" data-state-groups>
+            @foreach (var group in Model.StateGroups)
+            {
+                <div class="row-group">
+                    <div class="row-group-header">
+                        <span class="@group.DotClass"></span>
+                        <span class="row-group-title">@group.Label</span>
+                        <span class="row-group-count">@("title".ToQuantity(group.Playables.Count))</span>
+                    </div>
+                    <ul class="admin-row-list admin-row-list--dropzone" data-state-drop-zone data-state="@group.State">
+                        @foreach (var item in group.Playables)
+                        {
+                            <li class="admin-row" draggable="true" data-search-item data-state-item data-id="@item.Id">
+                                <div class="row-body">
+                                    <div class="row-title" data-search>@item.Title</div>
+                                </div>
+                                <form method="post" asp-page-handler="SetState" asp-route-id="@item.Id" class="row-actions" data-state-form>
+                                    <select name="state" aria-label="State" class="inline-select">
+                                        @foreach (var state in Enum.GetValues<PlayableState>())
+                                        {
+                                            <option value="@state"
+                                                    selected="@(state == item.State)">@state.Humanize(LetterCasing.Title)</option>
+                                        }
+                                    </select>
+                                </form>
+                                <div class="row-actions">
+                                    <a asp-page="/Admin/Gamelist/Edit" asp-route-id="@item.Id" class="icon-btn">edit</a>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
+                                          data-confirm="Remove '@item.Title' from the game list?">
+                                        <button type="submit" class="icon-btn danger">delete</button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+        <p class="list-empty-state" data-search-empty hidden>No game list entries found</p>
+    </div>
+
+</div>
