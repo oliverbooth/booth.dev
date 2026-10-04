@@ -53,7 +53,7 @@ public sealed partial class Edit : PageModel
     [BindProperty]
     public EditModel Input { get; set; } = new();
 
-    [GeneratedRegex("^[a-z0-9]+(-[a-z0-9]+)*$")]
+    [GeneratedRegex(@"^[^\s/\\?#%]+$")]
     private static partial Regex SlugPattern();
 
     /// <summary>
