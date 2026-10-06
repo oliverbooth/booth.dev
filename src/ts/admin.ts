@@ -21,6 +21,7 @@ import {initBookLookup} from './admin/book-lookup.ts';
 import {initEditionEditor} from './admin/edition-editor.ts';
 import {initPlayableLookup} from './admin/playable-lookup.ts';
 import {initWatchableLookup} from './admin/watchable-lookup.ts';
+import {initSortTitle} from './admin/sort-title.ts';
 import {initStateGroups} from './admin/state-groups.ts';
 import {initNavDrawer} from './admin/nav-drawer.ts';
 
@@ -48,6 +49,7 @@ import {initNavDrawer} from './admin/nav-drawer.ts';
     initEditionEditor();
     initPlayableLookup();
     initWatchableLookup();
+    initSortTitle();
     initStateGroups();
     initNavDrawer();
 })();

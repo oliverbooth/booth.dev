@@ -1,0 +1,64 @@
+@page "/admin/books/edit/{isbn}"
+@using BoothDotDev.Data
+@using Humanizer
+@model Edit
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-page">
+
+    <p class="crumb"><a asp-page="/Admin/Books/Index">Books</a> / Edit</p>
+
+    <form class="form-grid" method="post">
+
+        <div asp-validation-summary="All"></div>
+
+        <div class="admin-header">
+            <div><h1>@Model.Input.Title</h1></div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Save" asp-route-isbn="@Model.Isbn">
+                    <i class="ti ti-cloud"></i> Save
+                </button>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="title">Title</label>
+                <input type="text" id="title" asp-for="Input.Title">
+            </div>
+            <div class="field">
+                <label for="author">Author</label>
+                <input type="text" id="author" asp-for="Input.Author">
+            </div>
+        </div>
+
+        <partial name="Partials/_SortTitleField" model="Model.Input.SortTitle" />
+
+        <div class="field-row">
+            <div class="field">
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" value="@Model.Isbn" disabled>
+            </div>
+            <div class="field">
+                <label asp-for="Input.State">State</label>
+                <select asp-for="Input.State">
+                    @foreach (var state in Enum.GetValues<BookState>())
+                    {
+                        <option value="@state">@state.Humanize(LetterCasing.Title)</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" asp-page-handler="Save" asp-route-isbn="@Model.Isbn">
+                <i class="ti ti-cloud"></i> Save
+            </button>
+        </div>
+
+    </form>
+
+</div>

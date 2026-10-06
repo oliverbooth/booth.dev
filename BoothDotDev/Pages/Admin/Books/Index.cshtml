@@ -55,6 +55,7 @@
                                     </select>
                                 </form>
                                 <div class="row-actions">
+                                    <a asp-page="/Admin/Books/Edit" asp-route-isbn="@book.Isbn" class="icon-btn">edit</a>
                                     <form method="post" asp-page-handler="Delete"
                                           data-confirm="Remove '@book.Title' from the reading list?">
                                         <input type="hidden" name="isbn" value="@book.Isbn">

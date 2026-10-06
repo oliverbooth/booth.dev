@@ -81,6 +81,7 @@ public sealed partial class Edit : PageModel
         Input = new EditModel
         {
             Title = playable.Title,
+            SortTitle = playable.SortTitle,
             State = playable.State,
             Igdb = playable.IgdbSlug,
             Platforms = playable.Platforms,
@@ -119,6 +120,16 @@ public sealed partial class Edit : PageModel
     }
 
     /// <summary>
+    ///     Handles the POST request for recomputing the sort title from a title.
+    /// </summary>
+    /// <param name="title">The title to compute the sort title of.</param>
+    /// <returns>A JSON payload of the sort title, or <see langword="null" /> if the title needs none.</returns>
+    public IActionResult OnPostSortTitle(string? title)
+    {
+        return new JsonResult(new { sortTitle = SortTitles.Recompute(title ?? string.Empty) });
+    }
+
+    /// <summary>
     ///     Handles the POST request for saving the entry.
     /// </summary>
     /// <param name="id">The ID of the entry being edited. If <see langword="null" />, a new entry is being created.</param>
@@ -149,9 +160,10 @@ public sealed partial class Edit : PageModel
         }
 
         var title = Input.Title.Trim();
+        var sortTitle = SortTitles.Normalize(Input.SortTitle);
         var result = id is null
-            ? _gamelistService.AddPlayable(title, Input.State, slug, Input.Platforms, editions)
-            : _gamelistService.UpdatePlayable(id.Value, title, Input.State, slug, Input.Platforms, editions);
+            ? _gamelistService.AddPlayable(title, Input.State, slug, Input.Platforms, editions, sortTitle)
+            : _gamelistService.UpdatePlayable(id.Value, title, Input.State, slug, Input.Platforms, editions, sortTitle);
 
         if (result.IsFailed)
         {
@@ -224,6 +236,13 @@ public sealed partial class Edit : PageModel
         [StringLength(128)]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the sort title, which overrides the default of filing under the title minus a leading article.
+        /// </summary>
+        /// <value>The sort title, or <see langword="null" /> to file it by its title.</value>
+        [StringLength(128)]
+        public string? SortTitle { get; set; }
 
         /// <summary>
         ///     Gets or sets the state of the game.

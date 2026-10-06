@@ -57,6 +57,16 @@ public sealed class Create : PageModel
     }
 
     /// <summary>
+    ///     Handles the POST request for recomputing the sort title from a title.
+    /// </summary>
+    /// <param name="title">The title to compute the sort title of.</param>
+    /// <returns>A JSON payload of the sort title, or <see langword="null" /> if the title needs none.</returns>
+    public IActionResult OnPostSortTitle(string? title)
+    {
+        return new JsonResult(new { sortTitle = SortTitles.Recompute(title ?? string.Empty) });
+    }
+
+    /// <summary>
     ///     Handles the POST request for adding the book to the reading list.
     /// </summary>
     /// <returns>An <see cref="IActionResult" /> representing the result of the request.</returns>
@@ -71,6 +81,7 @@ public sealed class Create : PageModel
         {
             Isbn = BookLookupService.NormalizeIsbn(Input.Isbn),
             Title = Input.Title.Trim(),
+            SortTitle = SortTitles.Normalize(Input.SortTitle),
             Author = Input.Author.Trim(),
             State = Input.State
         };
@@ -108,6 +119,13 @@ public sealed class Create : PageModel
         [StringLength(64)]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the sort title, which overrides the default of filing under the title minus a leading article.
+        /// </summary>
+        /// <value>The sort title, or <see langword="null" /> to file it by its title.</value>
+        [StringLength(64)]
+        public string? SortTitle { get; set; }
 
         /// <summary>
         ///     Gets or sets the author of the book.
