@@ -69,7 +69,7 @@
     else
     {
         <div class="stack-list section-list">
-            @foreach (var book in Model.CurrentlyReading.OrderBy(b => b.Author).ThenBy(b => b.Title))
+            @foreach (var book in Model.CurrentlyReading)
             {
                 <div data-hue="grape">
                     <div class="stack-icon"><i class="ti ti-book"></i></div>
@@ -94,7 +94,7 @@
     else
     {
         <div class="stack-list section-list">
-            @foreach (var item in Model.CurrentlyWatching.OrderBy(w => w.Title))
+            @foreach (var item in Model.CurrentlyWatching)
             {
                 <div data-hue="grape">
                     <div class="stack-icon">
@@ -120,7 +120,7 @@
     else
     {
         <div class="stack-list section-list">
-            @foreach (var item in Model.CurrentlyPlaying.OrderBy(p => p.Title))
+            @foreach (var item in Model.CurrentlyPlaying)
             {
                 <div data-hue="grape">
                     <div class="stack-icon"><i class="ti ti-device-gamepad-2"></i></div>
