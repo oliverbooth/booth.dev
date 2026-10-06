@@ -46,6 +46,18 @@ public sealed class ReadingListService
     }
 
     /// <summary>
+    ///     Gets a single book by its ISBN.
+    /// </summary>
+    /// <param name="isbn">The ISBN of the book.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the book, or an error if no book with the specified ISBN was found.</returns>
+    public Result<Book> GetBookByIsbn(string isbn)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var book = context.Books.Find(isbn);
+        return book is null ? Result.Fail($"No book with ISBN '{isbn}' was found.") : Result.Ok(book);
+    }
+
+    /// <summary>
     ///     Gets the total number of books in the reading list.
     /// </summary>
     /// <returns>The total number of books in the reading list.</returns>
@@ -71,6 +83,32 @@ public sealed class ReadingListService
         context.Books.Add(book);
         context.SaveChanges();
         return Result.Ok(book);
+    }
+
+    /// <summary>
+    ///     Updates an existing book. The ISBN is its key, so it can't change.
+    /// </summary>
+    /// <param name="isbn">The ISBN of the book to update.</param>
+    /// <param name="title">The new title.</param>
+    /// <param name="author">The new author.</param>
+    /// <param name="state">The new state.</param>
+    /// <param name="sortTitle">The new sort title, or <see langword="null" /> to file it by its title.</param>
+    /// <returns>A <see cref="Result" /> indicating success, or an error if no book with the specified ISBN was found.</returns>
+    public Result UpdateBook(string isbn, string title, string author, BookState state, string? sortTitle)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var book = context.Books.Find(isbn);
+        if (book is null)
+        {
+            return Result.Fail($"No book with ISBN '{isbn}' was found.");
+        }
+
+        book.Title = title;
+        book.Author = author;
+        book.State = state;
+        book.SortTitle = sortTitle;
+        context.SaveChanges();
+        return Result.Ok();
     }
 
     /// <summary>
