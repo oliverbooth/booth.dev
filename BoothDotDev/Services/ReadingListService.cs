@@ -25,13 +25,14 @@ public sealed class ReadingListService
     ///     Gets the books in the reading list with the specified state.
     /// </summary>
     /// <param name="state">The state.</param>
-    /// <returns>A collection of books in the specified state.</returns>
+    /// <returns>A collection of books in the specified state, ordered by author and then sort key.</returns>
     public IReadOnlyCollection<Book> GetBooks(BookState state)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return state == (BookState)(-1)
+        var books = state == (BookState)(-1)
             ? context.Books.ToArray()
             : context.Books.Where(b => b.State == state).ToArray();
+        return Sort(books);
     }
 
     /// <summary>
@@ -41,7 +42,7 @@ public sealed class ReadingListService
     public IReadOnlyCollection<Book> GetAllBooks()
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Books.OrderBy(b => b.Author).ThenBy(b => b.Title).ToArray();
+        return Sort(context.Books.ToArray());
     }
 
     /// <summary>
@@ -109,5 +110,10 @@ public sealed class ReadingListService
         context.Books.Remove(book);
         context.SaveChanges();
         return Result.Ok();
+    }
+
+    private static Book[] Sort(Book[] books)
+    {
+        return books.OrderBy(b => b.Author).ThenBy(b => b.SortKey).ToArray();
     }
 }
