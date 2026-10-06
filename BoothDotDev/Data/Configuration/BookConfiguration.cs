@@ -17,6 +17,7 @@ internal sealed class BookConfiguration : IEntityTypeConfiguration<Book>
 
         builder.Property(entry => entry.Isbn).IsRequired().HasMaxLength(13);
         builder.Property(entry => entry.Title).IsRequired().HasMaxLength(64);
+        builder.Property(entry => entry.SortTitle).IsRequired(false).HasMaxLength(64);
         builder.Property(entry => entry.Author).IsRequired().HasMaxLength(64);
         builder.Property(entry => entry.State).IsRequired();
     }

@@ -30,6 +30,21 @@ public sealed class Watchable
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
+    ///     Gets or sets the sort title of the item, which overrides the default of filing under the title minus a leading article.
+    /// </summary>
+    /// <value>The sort title, or <see langword="null" /> to file the item by its title.</value>
+    public string? SortTitle { get; set; }
+
+    /// <summary>
+    ///     Gets the name the item files under in lists.
+    /// </summary>
+    /// <value>The sort title, or the title minus a leading "The", "A" or "An" if there isn't one.</value>
+    public string SortKey
+    {
+        get => SortTitle ?? SortTitles.Default(Title);
+    }
+
+    /// <summary>
     ///     Gets or sets where this entry came from.
     /// </summary>
     /// <value>The source of the entry.</value>
