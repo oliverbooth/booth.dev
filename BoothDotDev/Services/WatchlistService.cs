@@ -25,11 +25,11 @@ public sealed class WatchlistService
     ///     Gets the watchlist items with the specified state.
     /// </summary>
     /// <param name="state">The state.</param>
-    /// <returns>A collection of watchlist items in the specified state.</returns>
+    /// <returns>A collection of watchlist items in the specified state, ordered by sort key.</returns>
     public IReadOnlyCollection<Watchable> GetWatchables(WatchableState state)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Watchables.Where(w => w.State == state).ToArray();
+        return context.Watchables.Where(w => w.State == state).ToArray().OrderBy(w => w.SortKey).ToArray();
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public sealed class WatchlistService
     public IReadOnlyCollection<Watchable> GetAllWatchables()
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Watchables.OrderBy(w => w.Title).ToArray();
+        return context.Watchables.ToArray().OrderBy(w => w.SortKey).ToArray();
     }
 
     /// <summary>
@@ -71,13 +71,16 @@ public sealed class WatchlistService
     /// <param name="kind">The kind.</param>
     /// <param name="state">The state.</param>
     /// <param name="traktId">The Trakt ID to link the item to, if any.</param>
+    /// <param name="sortTitle">The sort title, or <see langword="null" /> to file it by its title.</param>
     /// <returns>A <see cref="Result{T}" /> containing the added item, or an error if the Trakt ID is already linked.</returns>
-    public Result<Watchable> AddWatchable(string title, WatchableKind kind, WatchableState state, int? traktId = null)
+    public Result<Watchable> AddWatchable(string title, WatchableKind kind, WatchableState state, int? traktId = null,
+        string? sortTitle = null)
     {
         var watchable = new Watchable
         {
             Id = Guid.NewGuid(),
             Title = title,
+            SortTitle = sortTitle,
             Kind = kind,
             State = state,
             Source = WatchableSource.Manual,
@@ -103,11 +106,13 @@ public sealed class WatchlistService
     /// <param name="kind">The new kind.</param>
     /// <param name="state">The new state.</param>
     /// <param name="traktId">The Trakt ID to link the item to, or <see langword="null" /> to unlink it.</param>
+    /// <param name="sortTitle">The new sort title, or <see langword="null" /> to file it by its title.</param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the updated item, or an error if no item with the specified ID was found
     ///     or the Trakt ID is already linked to another item.
     /// </returns>
-    public Result<Watchable> UpdateWatchable(Guid id, string title, WatchableKind kind, WatchableState state, int? traktId)
+    public Result<Watchable> UpdateWatchable(Guid id, string title, WatchableKind kind, WatchableState state, int? traktId,
+        string? sortTitle)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var watchable = context.Watchables.Find(id);
@@ -122,6 +127,7 @@ public sealed class WatchlistService
         }
 
         watchable.Title = title;
+        watchable.SortTitle = sortTitle;
         watchable.Kind = kind;
         watchable.State = state;
         watchable.TraktId = traktId;

@@ -25,13 +25,14 @@ public sealed class ReadingListService
     ///     Gets the books in the reading list with the specified state.
     /// </summary>
     /// <param name="state">The state.</param>
-    /// <returns>A collection of books in the specified state.</returns>
+    /// <returns>A collection of books in the specified state, ordered by author and then sort key.</returns>
     public IReadOnlyCollection<Book> GetBooks(BookState state)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return state == (BookState)(-1)
+        var books = state == (BookState)(-1)
             ? context.Books.ToArray()
             : context.Books.Where(b => b.State == state).ToArray();
+        return Sort(books);
     }
 
     /// <summary>
@@ -41,7 +42,19 @@ public sealed class ReadingListService
     public IReadOnlyCollection<Book> GetAllBooks()
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Books.OrderBy(b => b.Author).ThenBy(b => b.Title).ToArray();
+        return Sort(context.Books.ToArray());
+    }
+
+    /// <summary>
+    ///     Gets a single book by its ISBN.
+    /// </summary>
+    /// <param name="isbn">The ISBN of the book.</param>
+    /// <returns>A <see cref="Result{T}" /> containing the book, or an error if no book with the specified ISBN was found.</returns>
+    public Result<Book> GetBookByIsbn(string isbn)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var book = context.Books.Find(isbn);
+        return book is null ? Result.Fail($"No book with ISBN '{isbn}' was found.") : Result.Ok(book);
     }
 
     /// <summary>
@@ -70,6 +83,32 @@ public sealed class ReadingListService
         context.Books.Add(book);
         context.SaveChanges();
         return Result.Ok(book);
+    }
+
+    /// <summary>
+    ///     Updates an existing book. The ISBN is its key, so it can't change.
+    /// </summary>
+    /// <param name="isbn">The ISBN of the book to update.</param>
+    /// <param name="title">The new title.</param>
+    /// <param name="author">The new author.</param>
+    /// <param name="state">The new state.</param>
+    /// <param name="sortTitle">The new sort title, or <see langword="null" /> to file it by its title.</param>
+    /// <returns>A <see cref="Result" /> indicating success, or an error if no book with the specified ISBN was found.</returns>
+    public Result UpdateBook(string isbn, string title, string author, BookState state, string? sortTitle)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var book = context.Books.Find(isbn);
+        if (book is null)
+        {
+            return Result.Fail($"No book with ISBN '{isbn}' was found.");
+        }
+
+        book.Title = title;
+        book.Author = author;
+        book.State = state;
+        book.SortTitle = sortTitle;
+        context.SaveChanges();
+        return Result.Ok();
     }
 
     /// <summary>
@@ -109,5 +148,10 @@ public sealed class ReadingListService
         context.Books.Remove(book);
         context.SaveChanges();
         return Result.Ok();
+    }
+
+    private static Book[] Sort(Book[] books)
+    {
+        return books.OrderBy(b => b.Author).ThenBy(b => b.SortKey).ToArray();
     }
 }

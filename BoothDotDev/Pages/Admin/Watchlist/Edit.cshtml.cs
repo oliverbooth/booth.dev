@@ -79,7 +79,11 @@ public sealed class Edit : PageModel
         Id = watchable.Id;
         Input = new EditModel
         {
-            Title = watchable.Title, Kind = watchable.Kind, State = watchable.State, Trakt = watchable.TraktId?.ToString()
+            Title = watchable.Title,
+            SortTitle = watchable.SortTitle,
+            Kind = watchable.Kind,
+            State = watchable.State,
+            Trakt = watchable.TraktId?.ToString()
         };
 
         if (watchable.TraktId is { } traktId)
@@ -108,6 +112,16 @@ public sealed class Edit : PageModel
         // default numeric JSON, since nothing else in the config pipeline sets up string enum serialization.
         var candidates = result.Value.Select(c => new { c.Title, Kind = c.Kind.ToString(), c.Year });
         return new JsonResult(new { candidates });
+    }
+
+    /// <summary>
+    ///     Handles the POST request for recomputing the sort title from a title.
+    /// </summary>
+    /// <param name="title">The title to compute the sort title of.</param>
+    /// <returns>A JSON payload of the sort title, or <see langword="null" /> if the title needs none.</returns>
+    public IActionResult OnPostSortTitle(string? title)
+    {
+        return new JsonResult(new { sortTitle = SortTitles.Recompute(title ?? string.Empty) });
     }
 
     /// <summary>
@@ -150,9 +164,10 @@ public sealed class Edit : PageModel
         }
 
         var title = Input.Title.Trim();
+        var sortTitle = SortTitles.Normalize(Input.SortTitle);
         var result = id is null
-            ? _watchlistService.AddWatchable(title, Input.Kind, Input.State, traktId)
-            : _watchlistService.UpdateWatchable(id.Value, title, Input.Kind, Input.State, traktId);
+            ? _watchlistService.AddWatchable(title, Input.Kind, Input.State, traktId, sortTitle)
+            : _watchlistService.UpdateWatchable(id.Value, title, Input.Kind, Input.State, traktId, sortTitle);
 
         if (result.IsFailed)
         {
@@ -192,6 +207,13 @@ public sealed class Edit : PageModel
         [StringLength(128)]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the sort title, which overrides the default of filing under the title minus a leading article.
+        /// </summary>
+        /// <value>The sort title, or <see langword="null" /> to file it by its title.</value>
+        [StringLength(128)]
+        public string? SortTitle { get; set; }
 
         /// <summary>
         ///     Gets or sets the kind of the item.
