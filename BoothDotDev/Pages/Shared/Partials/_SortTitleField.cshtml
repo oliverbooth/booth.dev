@@ -1,0 +1,12 @@
+@model string?
+
+<div class="field" data-sort-title>
+    <label for="sort-title">Sort title</label>
+    <div class="input-with-button">
+        <input type="text" id="sort-title" name="Input.SortTitle" value="@Model" maxlength="128" autocomplete="off"
+               placeholder="Leave empty to file it by its title">
+        <button type="button" class="btn" data-sort-title-recompute><i class="ti ti-refresh"></i> Recompute</button>
+        <button type="button" class="btn" data-sort-title-clear><i class="ti ti-x"></i> Clear</button>
+    </div>
+    <p class="hint">Where this files in the list. Empty files it by its title without a leading The, A or An.</p>
+</div>

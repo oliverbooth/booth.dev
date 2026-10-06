@@ -49,4 +49,19 @@ public sealed class Playable
     /// </summary>
     /// <value>The title of the game.</value>
     public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the sort title of the game, which overrides the default of filing under the title minus a leading article.
+    /// </summary>
+    /// <value>The sort title, or <see langword="null" /> to file the game by its title.</value>
+    public string? SortTitle { get; set; }
+
+    /// <summary>
+    ///     Gets the name the game files under in lists.
+    /// </summary>
+    /// <value>The sort title, or the title minus a leading "The", "A" or "An" if there isn't one.</value>
+    public string SortKey
+    {
+        get => SortTitle ?? SortTitles.Default(Title);
+    }
 }

@@ -25,11 +25,12 @@ public sealed class GamelistService
     ///     Gets the games with the specified state.
     /// </summary>
     /// <param name="state">The state.</param>
-    /// <returns>A collection of games in the specified state.</returns>
+    /// <returns>A collection of games in the specified state, ordered by sort key.</returns>
     public IReadOnlyCollection<Playable> GetPlayables(PlayableState state)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).Where(p => p.State == state).ToArray();
+        return context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).Where(p => p.State == state).ToArray()
+            .OrderBy(p => p.SortKey).ToArray();
     }
 
     /// <summary>
@@ -39,7 +40,7 @@ public sealed class GamelistService
     public IReadOnlyCollection<Playable> GetAllPlayables()
     {
         using var context = _dbContextFactory.CreateDbContext();
-        return context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).OrderBy(p => p.Title).ToArray();
+        return context.Playables.Include(p => p.Editions.OrderBy(e => e.Position)).ToArray().OrderBy(p => p.SortKey).ToArray();
     }
 
     /// <summary>
@@ -72,9 +73,10 @@ public sealed class GamelistService
     /// <param name="igdbSlug">The IGDB slug to link the game to, if any.</param>
     /// <param name="platforms">The platforms the game has been played on.</param>
     /// <param name="editions">The additional editions of the game that have also been played.</param>
+    /// <param name="sortTitle">The sort title, or <see langword="null" /> to file it by its title.</param>
     /// <returns>A <see cref="Result{T}" /> containing the added game, or an error if a slug is already linked.</returns>
     public Result<Playable> AddPlayable(string title, PlayableState state, string? igdbSlug,
-        IEnumerable<GamePlatform> platforms, IReadOnlyList<EditionInput> editions)
+        IEnumerable<GamePlatform> platforms, IReadOnlyList<EditionInput> editions, string? sortTitle)
     {
         using var context = _dbContextFactory.CreateDbContext();
         if (FindSlugConflict(context, CollectSlugs(igdbSlug, editions), null) is { } conflict)
@@ -86,6 +88,7 @@ public sealed class GamelistService
         {
             Id = Guid.NewGuid(),
             Title = title,
+            SortTitle = sortTitle,
             State = state,
             IgdbSlug = igdbSlug,
             Platforms = Normalize(platforms),
@@ -105,12 +108,13 @@ public sealed class GamelistService
     /// <param name="igdbSlug">The IGDB slug to link the game to, or <see langword="null" /> to unlink it.</param>
     /// <param name="platforms">The platforms the game has been played on.</param>
     /// <param name="editions">The additional editions of the game that have also been played.</param>
+    /// <param name="sortTitle">The new sort title, or <see langword="null" /> to file it by its title.</param>
     /// <returns>
     ///     A <see cref="Result{T}" /> containing the updated game, or an error if no game with the specified ID was
     ///     found or the slug is already linked to another game.
     /// </returns>
     public Result<Playable> UpdatePlayable(Guid id, string title, PlayableState state, string? igdbSlug,
-        IEnumerable<GamePlatform> platforms, IReadOnlyList<EditionInput> editions)
+        IEnumerable<GamePlatform> platforms, IReadOnlyList<EditionInput> editions, string? sortTitle)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var playable = context.Playables.Include(p => p.Editions).FirstOrDefault(p => p.Id == id);
@@ -125,6 +129,7 @@ public sealed class GamelistService
         }
 
         playable.Title = title;
+        playable.SortTitle = sortTitle;
         playable.State = state;
         playable.IgdbSlug = igdbSlug;
         playable.Platforms = Normalize(platforms);
