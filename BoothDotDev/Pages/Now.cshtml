@@ -74,7 +74,17 @@
                 <div data-hue="grape">
                     <div class="stack-icon"><i class="ti ti-book"></i></div>
                     <div class="stack-meta">
-                        <p class="title">@book.Title</p>
+                        <p class="title">
+                            @if (!string.IsNullOrEmpty(book.Isbn))
+                            {
+                                <a href="https://www.goodreads.com/book/isbn/@book.Isbn" class="title-link" target="_blank"
+                                   rel="noopener">@book.Title</a>
+                            }
+                            else
+                            {
+                                @book.Title
+                            }
+                        </p>
                         <p class="sub">by @book.Author</p>
                     </div>
                 </div>
@@ -101,7 +111,18 @@
                         <i class="ti ti-@(item.Kind == WatchableKind.Movie ? "movie" : "device-tv")"></i>
                     </div>
                     <div class="stack-meta">
-                        <p class="title">@item.Title</p>
+                        <p class="title">
+                            @if (item.TraktId is { } traktId)
+                            {
+                                var traktPath = item.Kind == WatchableKind.Movie ? "movies" : "shows";
+                                <a href="https://trakt.tv/@traktPath/@traktId" class="title-link" target="_blank"
+                                   rel="noopener">@item.Title</a>
+                            }
+                            else
+                            {
+                                @item.Title
+                            }
+                        </p>
                     </div>
                 </div>
             }
@@ -125,7 +146,17 @@
                 <div data-hue="grape">
                     <div class="stack-icon"><i class="ti ti-device-gamepad-2"></i></div>
                     <div class="stack-meta">
-                        <p class="title">@item.Title</p>
+                        <p class="title">
+                            @if (item.IgdbSlug is { } slug)
+                            {
+                                <a href="https://www.igdb.com/games/@slug" class="title-link" target="_blank"
+                                   rel="noopener">@item.Title</a>
+                            }
+                            else
+                            {
+                                @item.Title
+                            }
+                        </p>
                         <partial name="Partials/_PlatformChips" model="item.AllPlatforms" />
                     </div>
                 </div>
