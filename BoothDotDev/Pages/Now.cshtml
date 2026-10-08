@@ -1,5 +1,6 @@
 @page "/now"
 @using BoothDotDev.Data
+@using BoothDotDev.Extensions
 @model Now
 
 @{
@@ -71,7 +72,7 @@
         <div class="stack-list section-list">
             @foreach (var book in Model.CurrentlyReading)
             {
-                <div data-hue="grape">
+                <div data-hue="tangerine">
                     <div class="stack-icon"><i class="ti ti-book"></i></div>
                     <div class="stack-meta">
                         <p class="title">
@@ -106,7 +107,7 @@
         <div class="stack-list section-list">
             @foreach (var item in Model.CurrentlyWatching)
             {
-                <div data-hue="grape">
+                <div data-hue="@item.Kind.ToHue().ToDataHue()">
                     <div class="stack-icon">
                         <i class="ti ti-@(item.Kind == WatchableKind.Movie ? "movie" : "device-tv")"></i>
                     </div>
@@ -143,7 +144,7 @@
         <div class="stack-list section-list">
             @foreach (var item in Model.CurrentlyPlaying)
             {
-                <div data-hue="grape">
+                <div data-hue="sky">
                     <div class="stack-icon"><i class="ti ti-device-gamepad-2"></i></div>
                     <div class="stack-meta">
                         <p class="title">
