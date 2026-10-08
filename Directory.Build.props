@@ -9,7 +9,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <DebugType>pdbonly</DebugType>
         <DebugSymbols>true</DebugSymbols>
-        <VersionPrefix>26.7.6</VersionPrefix>
+        <VersionPrefix>26.7.7</VersionPrefix>
         <Authors>Oliver Booth</Authors>
         <Nullable>enable</Nullable>
         <NeutralLanguage>en</NeutralLanguage>
