@@ -531,6 +531,12 @@ public sealed class TutorialService
             return Result.Fail($"Article with ID '{id}' not found.");
         }
 
+        var moveResult = _cdnMediaService.MoveDate(article.Id, article.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<TutorialArticle>();
+        }
+
         var draft = NewDraft(article.Id, request.Content);
         context.TutorialArticleDrafts.Add(draft);
 
@@ -557,6 +563,12 @@ public sealed class TutorialService
         if (article is null)
         {
             return Result.Fail($"Article with ID '{id}' not found.");
+        }
+
+        var moveResult = _cdnMediaService.MoveDate(article.Id, article.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<TutorialArticle>();
         }
 
         var draft = NewDraft(article.Id, request.Content);

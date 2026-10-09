@@ -70,6 +70,12 @@ public sealed class NoteService
             return Result.Fail($"Note with ID '{id}' not found.");
         }
 
+        var moveResult = _cdnMediaService.MoveDate(note.Id, note.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<Note>();
+        }
+
         var draft = NewDraft(note.Id, request.Content);
         context.NoteDrafts.Add(draft);
 
@@ -96,6 +102,12 @@ public sealed class NoteService
         if (note is null)
         {
             return Result.Fail($"Note with ID '{id}' not found.");
+        }
+
+        var moveResult = _cdnMediaService.MoveDate(note.Id, note.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<Note>();
         }
 
         var draft = NewDraft(note.Id, request.Content);

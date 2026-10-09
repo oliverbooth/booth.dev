@@ -116,6 +116,12 @@ public sealed class BlogPostService : BackgroundService
             return slugCheck;
         }
 
+        var moveResult = _cdnMediaService.MoveDate(post.Id, post.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<BlogPost>();
+        }
+
         var draft = NewDraft(post.Id, request.Content);
         context.BlogPostDrafts.Add(draft);
 
@@ -155,6 +161,12 @@ public sealed class BlogPostService : BackgroundService
         if (slugCheck.IsFailed)
         {
             return slugCheck;
+        }
+
+        var moveResult = _cdnMediaService.MoveDate(post.Id, post.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<BlogPost>();
         }
 
         var draft = NewDraft(post.Id, request.Content);

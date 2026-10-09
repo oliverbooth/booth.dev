@@ -208,6 +208,11 @@ public sealed class Edit : PageModel
             return ReRenderPage();
         }
 
+        if (Input.UseCurrentTime)
+        {
+            Input.PublishedAt = DateTimeOffset.UtcNow;
+        }
+
         var request = BuildSaveRequest();
         var result = id is null
             ? _tutorialService.CreateArticle(request)
@@ -563,6 +568,13 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The publication date and time of the article.</value>
         public DateTimeOffset PublishedAt { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether <see cref="PublishedAt" /> is overridden with the time the
+        ///     publish request is received.
+        /// </summary>
+        /// <value><see langword="true" /> to ignore the submitted date; otherwise, <see langword="false" />.</value>
+        public bool UseCurrentTime { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether comments are enabled for the article.
