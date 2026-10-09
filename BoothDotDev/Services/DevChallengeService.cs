@@ -73,6 +73,12 @@ public sealed class DevChallengeService
             return Result.Fail($"Challenge with ID '{id}' not found.");
         }
 
+        var moveResult = _cdnMediaService.MoveDate(challenge.Id, challenge.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<DevChallenge>();
+        }
+
         var draft = NewDraft(challenge.Id, request.Content);
         context.DevChallengeDrafts.Add(draft);
 
@@ -99,6 +105,12 @@ public sealed class DevChallengeService
         if (challenge is null)
         {
             return Result.Fail($"Challenge with ID '{id}' not found.");
+        }
+
+        var moveResult = _cdnMediaService.MoveDate(challenge.Id, challenge.PublishedAt, request.PublishedAt.ToUniversalTime(), Area);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<DevChallenge>();
         }
 
         var draft = NewDraft(challenge.Id, request.Content);
