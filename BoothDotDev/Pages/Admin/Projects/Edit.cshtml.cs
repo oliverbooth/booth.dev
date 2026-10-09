@@ -121,6 +121,11 @@ public sealed class Edit : PageModel
             return Page();
         }
 
+        if (Input.UseCurrentTime)
+        {
+            Input.CreatedAt = DateTimeOffset.UtcNow;
+        }
+
         var request = BuildSaveRequest();
         var result = id is null ? _projectService.CreateProject(request) : _projectService.UpdateProject(id.Value, request);
 
@@ -307,5 +312,12 @@ public sealed class Edit : PageModel
         /// </summary>
         /// <value>The creation date and time.</value>
         public DateTimeOffset CreatedAt { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether <see cref="CreatedAt" /> is overridden with the time the
+        ///     publish request is received.
+        /// </summary>
+        /// <value><see langword="true" /> to ignore the submitted date; otherwise, <see langword="false" />.</value>
+        public bool UseCurrentTime { get; set; }
     }
 }
