@@ -61,11 +61,10 @@ function kebaberize(input: string): string {
 
 /**
  * Converts a Date object to a string suitable for a datetime-local input field.
+ * The server round-trips these fields as UTC, so the value is deliberately not shifted to the browser's time zone.
  * @param date The Date object to convert.
- * @returns A string in the format "YYYY-MM-DDTHH:mm:ss.sss" representing the local date and time.
+ * @returns A string in the format "YYYY-MM-DDTHH:mm:ss.sss" representing the UTC date and time.
  */
 function toDatetimeLocalValue(date: Date): string {
-    const offsetMs = date.getTimezoneOffset() * 60_000;
-    const localIso = new Date(date.getTime() - offsetMs).toISOString();
-    return localIso.slice(0, 23); // "YYYY-MM-DDTHH:mm:ss.sss" format
+    return date.toISOString().slice(0, 23);
 }

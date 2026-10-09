@@ -448,6 +448,12 @@ public sealed class ProjectService
             return Result.Fail($"The devlog entry with ID {id} was not found");
         }
 
+        var moveResult = _cdnMediaService.MoveDate(devlog.Id, devlog.PublishedAt, request.PublishedAt.ToUniversalTime(), DevlogArea);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<ProjectDevlog>();
+        }
+
         var draft = NewDraft(devlog.Id, request.Content);
         context.ProjectDevlogDrafts.Add(draft);
 
@@ -476,6 +482,12 @@ public sealed class ProjectService
         if (devlog is null)
         {
             return Result.Fail($"The devlog entry with ID {id} was not found");
+        }
+
+        var moveResult = _cdnMediaService.MoveDate(devlog.Id, devlog.PublishedAt, request.PublishedAt.ToUniversalTime(), DevlogArea);
+        if (moveResult.IsFailed)
+        {
+            return moveResult.ToResult<ProjectDevlog>();
         }
 
         var draft = NewDraft(devlog.Id, request.Content);
